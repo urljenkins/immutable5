@@ -1,0 +1,12 @@
+{
+  "@@locale": "fr",
+  "appTitle": "Immutable5",
+  "home": "Accueil",
+  "calendar": "Calendrier",
+  "hajj": "Hadj",
+  "settings": "Paramètres",
+  "quran": "Coran",
+  "hajjGuide": "Guide du Hajj",
+  "completed": "Terminé",
+  "selectTopic": "Sélectionner un sujet"
+}

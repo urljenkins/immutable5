@@ -1,0 +1,17 @@
+{
+  "@@locale": "zh",
+  "appTitle": "Immutable5",
+  "home": "主页",
+  "calendar": "日历",
+  "hajj": "朝觐",
+  "settings": "设置",
+  "quran": "古兰经",
+  "hajjGuide": "朝觐指南",
+  "completed": "已完成",
+  "selectTopic": "选择主题",
+  "calculationMethod": "计算方法",
+  "selectCalculationMethod": "选择计算方法",
+  "madhab": "Madhab",
+  "selectMadhab": "选择Madhab",
+  "notifications": "通知"
+}

@@ -1,0 +1,12 @@
+{
+  "@@locale": "ar",
+  "appTitle": "Immutable5",
+  "home": "الرئيسية",
+  "calendar": "التقويم",
+  "hajj": "الحج",
+  "settings": "الإعدادات",
+  "quran": "القرآن",
+  "hajjGuide": "دليل الحج",
+  "completed": "مكتمل",
+  "selectTopic": "اختر الموضوع"
+}
