@@ -19,5 +19,12 @@
   "selectMadhab": "Seleccionar Madhab",
   "notifications": "Notificaciones",
   "amoledTheme": "Tema Oscuro AMOLED",
-  "amoledThemeSubtitle": "Usar fondo negro verdadero para ahorrar batería"
+  "amoledThemeSubtitle": "Usar fondo negro verdadero para ahorrar batería",
+  "locationServicesDisabled": "Los servicios de ubicación están deshabilitados. Por favor habilite los servicios de ubicación.",
+  "locationPermissionDenied": "Los permisos de ubicación están denegados. Por favor otorgue acceso a la ubicación.",
+  "locationPermissionPermanentlyDenied": "Los permisos de ubicación están denegados permanentemente. Por favor habilite la ubicación en la configuración de su dispositivo.",
+  "usingCachedPrayerTimes": "Usando horarios de oración en caché (sin conexión)",
+  "refreshPrayerTimes": "Actualizar horarios de oración",
+  "nextPrayer": "Próxima Oración",
+  "loading": "Cargando..."
 }

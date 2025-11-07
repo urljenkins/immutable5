@@ -19,5 +19,12 @@
   "selectMadhab": "选择Madhab",
   "notifications": "通知",
   "amoledTheme": "AMOLED 深色主题",
-  "amoledThemeSubtitle": "使用纯黑背景以节省电池"
+  "amoledThemeSubtitle": "使用纯黑背景以节省电池",
+  "locationServicesDisabled": "位置服务已禁用。请启用位置服务。",
+  "locationPermissionDenied": "位置权限被拒绝。请授予位置访问权限。",
+  "locationPermissionPermanentlyDenied": "位置权限被永久拒绝。请在设备设置中启用位置。",
+  "usingCachedPrayerTimes": "使用缓存的祷告时间（离线）",
+  "refreshPrayerTimes": "刷新祷告时间",
+  "nextPrayer": "下次祷告",
+  "loading": "加载中..."
 }

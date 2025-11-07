@@ -19,5 +19,12 @@
   "selectMadhab": "Select Madhab",
   "notifications": "Notifications",
   "amoledTheme": "AMOLED Dark Theme",
-  "amoledThemeSubtitle": "Use true black background to save battery"
+  "amoledThemeSubtitle": "Use true black background to save battery",
+  "locationServicesDisabled": "Location services are disabled. Please enable location services.",
+  "locationPermissionDenied": "Location permissions are denied. Please grant location access.",
+  "locationPermissionPermanentlyDenied": "Location permissions are permanently denied. Please enable location in your device settings.",
+  "usingCachedPrayerTimes": "Using cached prayer times (offline)",
+  "refreshPrayerTimes": "Refresh prayer times",
+  "nextPrayer": "Next Prayer",
+  "loading": "Loading..."
 }

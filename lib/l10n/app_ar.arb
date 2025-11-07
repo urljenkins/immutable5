@@ -19,5 +19,12 @@
   "selectMadhab": "اختر المذهب",
   "notifications": "الإشعارات",
   "amoledTheme": "الوضع الداكن AMOLED",
-  "amoledThemeSubtitle": "استخدم خلفية سوداء حقيقية لتوفير البطارية"
+  "amoledThemeSubtitle": "استخدم خلفية سوداء حقيقية لتوفير البطارية",
+  "locationServicesDisabled": "خدمات الموقع معطلة. يرجى تفعيل خدمات الموقع.",
+  "locationPermissionDenied": "تم رفض أذونات الموقع. يرجى منح الوصول إلى الموقع.",
+  "locationPermissionPermanentlyDenied": "تم رفض أذونات الموقع بشكل دائم. يرجى تفعيل الموقع في إعدادات جهازك.",
+  "usingCachedPrayerTimes": "استخدام أوقات الصلاة المخزنة (غير متصل)",
+  "refreshPrayerTimes": "تحديث أوقات الصلاة",
+  "nextPrayer": "الصلاة التالية",
+  "loading": "جاري التحميل..."
 }

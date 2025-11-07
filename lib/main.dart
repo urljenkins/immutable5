@@ -127,7 +127,7 @@ class _MyHomePageState extends State<MyHomePage> {
       bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
       if (!serviceEnabled) {
         setState(() {
-          _locationError = 'Location services are disabled.';
+          _locationError = AppLocalizations.of(context)!.locationServicesDisabled;
         });
         return;
       }
@@ -136,14 +136,14 @@ class _MyHomePageState extends State<MyHomePage> {
         permission = await Geolocator.requestPermission();
         if (permission == LocationPermission.denied) {
           setState(() {
-            _locationError = 'Location permissions are denied.';
+            _locationError = AppLocalizations.of(context)!.locationPermissionDenied;
           });
           return;
         }
       }
       if (permission == LocationPermission.deniedForever) {
         setState(() {
-          _locationError = 'Location permissions are permanently denied.';
+          _locationError = AppLocalizations.of(context)!.locationPermissionPermanentlyDenied;
         });
         return;
       }
@@ -153,7 +153,9 @@ class _MyHomePageState extends State<MyHomePage> {
       final method = calcMethodString.contains('4') ? 4 : 2;
       final madhabString = prefs.getString('madhab') ?? 'Shafi';
       const madhabList = ['Shafi', 'Hanafi', 'Maliki', 'Hanbali'];
-      final madhab = madhabList.indexOf(madhabString);
+      var madhab = madhabList.indexOf(madhabString);
+      // If madhab not found, default to Shafi (0)
+      if (madhab == -1) madhab = 0;
       _prayerTimesService = PrayerTimesService(
         latitude: position.latitude,
         longitude: position.longitude,
@@ -201,7 +203,7 @@ class _MyHomePageState extends State<MyHomePage> {
             _nextPrayerName = nextPrayer.key;
             _countdown = nextPrayer.value.difference(now);
             _isUsingCache = true;
-            _locationError = 'Using cached prayer times (offline)';
+            _locationError = AppLocalizations.of(context)!.usingCachedPrayerTimes;
           });
           _startTimer();
         } else {
@@ -286,7 +288,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     )
                   : const Icon(Icons.refresh),
               onPressed: _isRefreshing ? null : _refreshData,
-              tooltip: 'Refresh prayer times',
+              tooltip: AppLocalizations.of(context)!.refreshPrayerTimes,
             ),
         ],
       ),
@@ -309,7 +311,7 @@ class _MyHomePageState extends State<MyHomePage> {
                               const SizedBox(width: 8),
                               Expanded(
                                 child: Text(
-                                  _locationError ?? 'Using cached prayer times (offline)',
+                                  _locationError ?? AppLocalizations.of(context)!.usingCachedPrayerTimes,
                                   style: const TextStyle(fontSize: 12),
                                 ),
                               ),
@@ -349,7 +351,9 @@ class _MyHomePageState extends State<MyHomePage> {
                         child: Column(
                           children: [
                             Text(
-                              _nextPrayerName != null ? 'Next Prayer: $_nextPrayerName' : 'Loading...',
+                              _nextPrayerName != null
+                                  ? '${AppLocalizations.of(context)!.nextPrayer}: $_nextPrayerName'
+                                  : AppLocalizations.of(context)!.loading,
                               style: Theme.of(context).textTheme.headlineSmall,
                             ),
                             const SizedBox(height: 8),

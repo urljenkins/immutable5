@@ -19,5 +19,12 @@
   "selectMadhab": "Selecteer Madhab",
   "notifications": "Meldingen",
   "amoledTheme": "AMOLED Donker Thema",
-  "amoledThemeSubtitle": "Gebruik echte zwarte achtergrond om batterij te besparen"
+  "amoledThemeSubtitle": "Gebruik echte zwarte achtergrond om batterij te besparen",
+  "locationServicesDisabled": "Locatieservices zijn uitgeschakeld. Schakel locatieservices in.",
+  "locationPermissionDenied": "Locatietoegang is geweigerd. Geef toegang tot locatie.",
+  "locationPermissionPermanentlyDenied": "Locatietoegang is permanent geweigerd. Schakel locatie in via apparaatinstellingen.",
+  "usingCachedPrayerTimes": "Opgeslagen gebedsuren gebruiken (offline)",
+  "refreshPrayerTimes": "Gebedsuren vernieuwen",
+  "nextPrayer": "Volgende Gebed",
+  "loading": "Laden..."
 }
