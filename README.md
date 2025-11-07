@@ -102,6 +102,52 @@ assets/
   └── common_words.csv     # Common words database
 ```
 
+## Production Configuration
+
+### Android Application ID
+
+Before publishing to the Google Play Store, update the application ID in `android/app/build.gradle.kts`:
+
+```kotlin
+defaultConfig {
+    applicationId = "com.yourcompany.immutable5"  // Change from com.example.immutable5
+    // ...
+}
+```
+
+### Android Release Signing
+
+For production releases, set up proper signing credentials:
+
+1. Generate a keystore file:
+```bash
+keytool -genkey -v -keystore ~/immutable5-release-key.jks -keyalg RSA -keysize 2048 -validity 10000 -alias immutable5
+```
+
+2. Create `android/key.properties`:
+```properties
+storePassword=<your-store-password>
+keyPassword=<your-key-password>
+keyAlias=immutable5
+storeFile=<path-to-keystore>/immutable5-release-key.jks
+```
+
+3. Update `android/app/build.gradle.kts` to use the signing configuration (replace the current debug signing).
+
+**Important**: Never commit `key.properties` or your keystore to version control. Add them to `.gitignore`.
+
+### Hajj Page Images
+
+The Hajj guide currently uses placeholder images. To add actual images:
+
+1. Add image assets to `assets/hajj/` directory
+2. Update `pubspec.yaml` to include the new assets:
+```yaml
+assets:
+  - assets/hajj/
+```
+3. Modify `lib/features/hajj/hajj_page.dart` to display the images instead of placeholders
+
 ## Configuration
 
 Access the Settings page to customize:

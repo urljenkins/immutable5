@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import '../../main.dart';
 
 class SettingsPage extends StatefulWidget {
   const SettingsPage({Key? key}) : super(key: key);
@@ -13,6 +14,7 @@ class _SettingsPageState extends State<SettingsPage> {
   static const _keyCalculationMethod = 'calculationMethod';
   static const _keyMadhab = 'madhab';
   static const _keyNotificationsEnabled = 'notificationsEnabled';
+  static const _keyUseAmoledTheme = 'useAmoledTheme';
   List<String> _methods = [
     'Method 2 (University of Islamic Sciences)',
     'Method 4 (Islamic Society of North America)',
@@ -21,6 +23,7 @@ class _SettingsPageState extends State<SettingsPage> {
   String _calculationMethod = _methods[0];
   String _madhab = 'Shafi';
   bool _notificationsEnabled = true;
+  bool _useAmoledTheme = true;
 
   @override
   void initState() {
@@ -34,6 +37,7 @@ class _SettingsPageState extends State<SettingsPage> {
       _calculationMethod = prefs.getString(_keyCalculationMethod) ?? _calculationMethod;
       _madhab = prefs.getString(_keyMadhab) ?? _madhab;
       _notificationsEnabled = prefs.getBool(_keyNotificationsEnabled) ?? _notificationsEnabled;
+      _useAmoledTheme = prefs.getBool(_keyUseAmoledTheme) ?? _useAmoledTheme;
     });
   }
 
@@ -100,6 +104,18 @@ class _SettingsPageState extends State<SettingsPage> {
               final prefs = await SharedPreferences.getInstance();
               setState(() => _notificationsEnabled = value);
               prefs.setBool(_keyNotificationsEnabled, value);
+            },
+          ),
+          SwitchListTile(
+            title: const Text('AMOLED Dark Theme'),
+            subtitle: const Text('Use true black background to save battery'),
+            value: _useAmoledTheme,
+            onChanged: (value) async {
+              final prefs = await SharedPreferences.getInstance();
+              setState(() => _useAmoledTheme = value);
+              await prefs.setBool(_keyUseAmoledTheme, value);
+              // Update the global theme notifier
+              themeNotifier.value = value ? ThemeMode.dark : ThemeMode.light;
             },
           ),
         ],
