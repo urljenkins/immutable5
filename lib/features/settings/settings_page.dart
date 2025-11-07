@@ -107,8 +107,8 @@ class _SettingsPageState extends State<SettingsPage> {
             },
           ),
           SwitchListTile(
-            title: const Text('AMOLED Dark Theme'),
-            subtitle: const Text('Use true black background to save battery'),
+            title: Text(AppLocalizations.of(context)!.amoledTheme),
+            subtitle: Text(AppLocalizations.of(context)!.amoledThemeSubtitle),
             value: _useAmoledTheme,
             onChanged: (value) async {
               final prefs = await SharedPreferences.getInstance();

@@ -101,6 +101,8 @@ class _MyHomePageState extends State<MyHomePage> {
   Duration _countdown = Duration.zero;
   bool _locationLoaded = false;
   String? _locationError;
+  bool _isRefreshing = false;
+  bool _isUsingCache = false;
 
   // Quote topics and selection
   List<String> _topics = [];
@@ -172,16 +174,62 @@ class _MyHomePageState extends State<MyHomePage> {
 
   Future<void> _loadData() async {
     if (_prayerTimesService == null) return;
-    final nextPrayerTime = await _prayerTimesService!.getNextPrayerTime();
-    final nextPrayerName = await _prayerTimesService!.getNextPrayerName();
-    final quote = await _quotePickerService.getQuote(topic: _selectedTopic);
-    setState(() {
-      _nextPrayerTime = nextPrayerTime;
-      _nextPrayerName = nextPrayerName;
-      _quote = quote;
-      _countdown = nextPrayerTime.difference(DateTime.now());
-    });
-    _startTimer();
+    try {
+      final nextPrayerTime = await _prayerTimesService!.getNextPrayerTime();
+      final nextPrayerName = await _prayerTimesService!.getNextPrayerName();
+      final quote = await _quotePickerService.getQuote(topic: _selectedTopic);
+      setState(() {
+        _nextPrayerTime = nextPrayerTime;
+        _nextPrayerName = nextPrayerName;
+        _quote = quote;
+        _countdown = nextPrayerTime.difference(DateTime.now());
+        _locationError = null;
+        _isUsingCache = false;
+      });
+      _startTimer();
+    } catch (e) {
+      // Try to use cached data on error
+      try {
+        final cachedTimes = await _prayerTimesService!.getTodayPrayerTimes();
+        final now = DateTime.now();
+        final upcoming = cachedTimes.entries.where((e) => e.value.isAfter(now)).toList();
+        if (upcoming.isNotEmpty) {
+          upcoming.sort((a, b) => a.value.compareTo(b.value));
+          final nextPrayer = upcoming.first;
+          setState(() {
+            _nextPrayerTime = nextPrayer.value;
+            _nextPrayerName = nextPrayer.key;
+            _countdown = nextPrayer.value.difference(now);
+            _isUsingCache = true;
+            _locationError = 'Using cached prayer times (offline)';
+          });
+          _startTimer();
+        } else {
+          setState(() {
+            _locationError = 'Failed to load prayer times: ${e.toString()}';
+          });
+        }
+      } catch (cacheError) {
+        setState(() {
+          _locationError = 'Failed to load prayer times: ${e.toString()}';
+        });
+      }
+    }
+  }
+
+  Future<void> _refreshData() async {
+    if (_prayerTimesService == null || _isRefreshing) return;
+    setState(() => _isRefreshing = true);
+    try {
+      await _prayerTimesService!.refreshPrayerTimes();
+      await _loadData();
+    } catch (e) {
+      setState(() {
+        _locationError = 'Failed to refresh: ${e.toString()}';
+      });
+    } finally {
+      setState(() => _isRefreshing = false);
+    }
   }
 
   void _startTimer() {
@@ -227,9 +275,23 @@ class _MyHomePageState extends State<MyHomePage> {
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         title: Text(widget.title),
+        actions: [
+          if (_locationLoaded)
+            IconButton(
+              icon: _isRefreshing
+                  ? const SizedBox(
+                      width: 20,
+                      height: 20,
+                      child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+                    )
+                  : const Icon(Icons.refresh),
+              onPressed: _isRefreshing ? null : _refreshData,
+              tooltip: 'Refresh prayer times',
+            ),
+        ],
       ),
       body: SafeArea(
-        child: _locationError != null
+        child: _locationError != null && !_isUsingCache
             ? Center(child: Text(_locationError!))
             : !_locationLoaded
                 ? const Center(child: CircularProgressIndicator())
@@ -237,6 +299,23 @@ class _MyHomePageState extends State<MyHomePage> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
+                      if (_isUsingCache)
+                        Container(
+                          color: Colors.orange.withOpacity(0.2),
+                          padding: const EdgeInsets.all(8.0),
+                          child: Row(
+                            children: [
+                              const Icon(Icons.cloud_off, size: 16, color: Colors.orange),
+                              const SizedBox(width: 8),
+                              Expanded(
+                                child: Text(
+                                  _locationError ?? 'Using cached prayer times (offline)',
+                                  style: const TextStyle(fontSize: 12),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
                       Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: TableCalendar(

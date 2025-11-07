@@ -8,5 +8,16 @@
   "quran": "Koran",
   "hajjGuide": "Hadj Gids",
   "completed": "Voltooid",
-  "selectTopic": "Selecteer onderwerp"
+  "selectTopic": "Selecteer onderwerp",
+  "commonWords": "Veel Voorkomende Woorden",
+  "arabic": "Arabisch",
+  "transliteration": "Transliteratie",
+  "english": "Engels",
+  "calculationMethod": "Rekenmethode",
+  "selectCalculationMethod": "Selecteer Rekenmethode",
+  "madhab": "Madhab",
+  "selectMadhab": "Selecteer Madhab",
+  "notifications": "Meldingen",
+  "amoledTheme": "AMOLED Donker Thema",
+  "amoledThemeSubtitle": "Gebruik echte zwarte achtergrond om batterij te besparen"
 }

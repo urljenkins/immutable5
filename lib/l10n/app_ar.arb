@@ -8,5 +8,16 @@
   "quran": "القرآن",
   "hajjGuide": "دليل الحج",
   "completed": "مكتمل",
-  "selectTopic": "اختر الموضوع"
+  "selectTopic": "اختر الموضوع",
+  "commonWords": "الكلمات الشائعة",
+  "arabic": "العربية",
+  "transliteration": "النقحرة",
+  "english": "الإنجليزية",
+  "calculationMethod": "طريقة الحساب",
+  "selectCalculationMethod": "اختر طريقة الحساب",
+  "madhab": "المذهب",
+  "selectMadhab": "اختر المذهب",
+  "notifications": "الإشعارات",
+  "amoledTheme": "الوضع الداكن AMOLED",
+  "amoledThemeSubtitle": "استخدم خلفية سوداء حقيقية لتوفير البطارية"
 }

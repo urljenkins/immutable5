@@ -9,5 +9,15 @@
   "hajjGuide": "Hajj Guide",
   "completed": "Completed",
   "selectTopic": "Select topic",
-  "commonWords": "Common Words"
+  "commonWords": "Common Words",
+  "arabic": "Arabic",
+  "transliteration": "Transliteration",
+  "english": "English",
+  "calculationMethod": "Calculation Method",
+  "selectCalculationMethod": "Select Calculation Method",
+  "madhab": "Madhab",
+  "selectMadhab": "Select Madhab",
+  "notifications": "Notifications",
+  "amoledTheme": "AMOLED Dark Theme",
+  "amoledThemeSubtitle": "Use true black background to save battery"
 }

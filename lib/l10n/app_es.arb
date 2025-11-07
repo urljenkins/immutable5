@@ -8,5 +8,16 @@
   "quran": "Corán",
   "hajjGuide": "Guía del Hach",
   "completed": "Completado",
-  "selectTopic": "Seleccionar tema"
+  "selectTopic": "Seleccionar tema",
+  "commonWords": "Palabras Comunes",
+  "arabic": "Árabe",
+  "transliteration": "Transliteración",
+  "english": "Inglés",
+  "calculationMethod": "Método de Cálculo",
+  "selectCalculationMethod": "Seleccionar Método de Cálculo",
+  "madhab": "Madhab",
+  "selectMadhab": "Seleccionar Madhab",
+  "notifications": "Notificaciones",
+  "amoledTheme": "Tema Oscuro AMOLED",
+  "amoledThemeSubtitle": "Usar fondo negro verdadero para ahorrar batería"
 }

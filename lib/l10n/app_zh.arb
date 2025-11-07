@@ -9,9 +9,15 @@
   "hajjGuide": "朝觐指南",
   "completed": "已完成",
   "selectTopic": "选择主题",
+  "commonWords": "常用词汇",
+  "arabic": "阿拉伯语",
+  "transliteration": "音译",
+  "english": "英语",
   "calculationMethod": "计算方法",
   "selectCalculationMethod": "选择计算方法",
   "madhab": "Madhab",
   "selectMadhab": "选择Madhab",
-  "notifications": "通知"
+  "notifications": "通知",
+  "amoledTheme": "AMOLED 深色主题",
+  "amoledThemeSubtitle": "使用纯黑背景以节省电池"
 }
