@@ -1,0 +1,515 @@
+.app {
+  max-width: 1200px;
+  margin: 0 auto;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Header */
+.app-header {
+  background: linear-gradient(135deg, var(--primary-color), #1B5E20);
+  color: white;
+  padding: 2rem;
+  text-align: center;
+  box-shadow: var(--shadow);
+}
+
+.app-header h1 {
+  font-size: 2.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.app-header .subtitle {
+  font-size: 1.1rem;
+  opacity: 0.9;
+}
+
+/* Navigation */
+.navigation {
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 1rem;
+  background-color: white;
+  box-shadow: var(--shadow);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.nav-button {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  background-color: transparent;
+  color: var(--text-secondary);
+  transition: all 0.3s ease;
+}
+
+.nav-button:hover {
+  background-color: var(--background);
+  color: var(--primary-color);
+}
+
+.nav-button.active {
+  background-color: var(--primary-color);
+  color: white;
+  box-shadow: var(--shadow);
+}
+
+.nav-icon {
+  font-size: 1.5rem;
+}
+
+.nav-label {
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+/* Main Content */
+.app-main {
+  flex: 1;
+  padding: 2rem 1rem;
+}
+
+/* Prayer Times */
+.prayer-times-container {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.next-prayer-card {
+  background: linear-gradient(135deg, #4CAF50, var(--primary-color));
+  color: white;
+  padding: 2rem;
+  border-radius: 16px;
+  text-align: center;
+  box-shadow: var(--shadow-hover);
+}
+
+.next-prayer-card h2 {
+  font-size: 1.25rem;
+  margin-bottom: 1rem;
+  opacity: 0.9;
+}
+
+.prayer-name {
+  font-size: 2.5rem;
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+}
+
+.prayer-time {
+  font-size: 3rem;
+  font-weight: bold;
+  margin-bottom: 1rem;
+}
+
+.countdown {
+  font-size: 1.5rem;
+  opacity: 0.9;
+}
+
+.prayer-times-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1rem;
+}
+
+.prayer-card {
+  background-color: var(--card-bg);
+  padding: 1.5rem;
+  border-radius: 12px;
+  box-shadow: var(--shadow);
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  transition: all 0.3s ease;
+}
+
+.prayer-card:hover {
+  box-shadow: var(--shadow-hover);
+  transform: translateY(-2px);
+}
+
+.prayer-card.next {
+  border: 2px solid var(--primary-color);
+  background-color: #E8F5E9;
+}
+
+.prayer-icon {
+  font-size: 2.5rem;
+}
+
+.prayer-info {
+  flex: 1;
+}
+
+.prayer-label {
+  font-size: 1rem;
+  color: var(--text-secondary);
+  margin-bottom: 0.25rem;
+}
+
+.prayer-value {
+  font-size: 1.75rem;
+  font-weight: bold;
+  color: var(--primary-color);
+}
+
+.additional-times {
+  background-color: var(--card-bg);
+  padding: 1.5rem;
+  border-radius: 12px;
+  box-shadow: var(--shadow);
+}
+
+.additional-times h3 {
+  margin-bottom: 1rem;
+  color: var(--text-primary);
+}
+
+.times-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.time-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.75rem;
+  background-color: var(--background);
+  border-radius: 8px;
+}
+
+.time-label {
+  color: var(--text-secondary);
+}
+
+.time-value {
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+/* Qibla Compass */
+.qibla-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2rem;
+}
+
+.qibla-container h2 {
+  font-size: 2rem;
+  color: var(--primary-color);
+}
+
+.compass-wrapper {
+  position: relative;
+  width: 300px;
+  height: 300px;
+}
+
+.compass {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transition: transform 0.3s ease-out;
+}
+
+.compass-circle {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  border: 4px solid var(--primary-color);
+  background: linear-gradient(135deg, #f5f5f5, #ffffff);
+  box-shadow: inset 0 0 20px rgba(0,0,0,0.1);
+}
+
+.compass-mark {
+  position: absolute;
+  font-weight: bold;
+  font-size: 1.25rem;
+}
+
+.compass-mark.north {
+  top: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  color: #F44336;
+}
+
+.compass-mark.east {
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.compass-mark.south {
+  bottom: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.compass-mark.west {
+  left: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.qibla-arrow {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform-origin: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.arrow-head {
+  font-size: 3rem;
+  color: var(--primary-color);
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+}
+
+.arrow-label {
+  margin-top: -20px;
+  font-weight: bold;
+  color: var(--primary-color);
+  background: white;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.875rem;
+}
+
+.qibla-info {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.info-card {
+  background-color: var(--card-bg);
+  padding: 1rem 1.5rem;
+  border-radius: 8px;
+  box-shadow: var(--shadow);
+  text-align: center;
+  min-width: 120px;
+}
+
+.info-label {
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  margin-bottom: 0.5rem;
+}
+
+.info-value {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: var(--primary-color);
+}
+
+.instruction {
+  text-align: center;
+  padding: 1rem;
+  background-color: var(--card-bg);
+  border-radius: 8px;
+  box-shadow: var(--shadow);
+  max-width: 500px;
+}
+
+/* Duas Collection */
+.duas-container {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.duas-container h2 {
+  font-size: 2rem;
+  color: var(--primary-color);
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+
+.category-filter {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-bottom: 2rem;
+}
+
+.category-chip {
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  background-color: var(--background);
+  color: var(--text-primary);
+  font-size: 0.875rem;
+  border: 1px solid var(--border-color);
+  transition: all 0.3s ease;
+}
+
+.category-chip:hover {
+  background-color: #e0e0e0;
+}
+
+.category-chip.active {
+  background-color: var(--primary-color);
+  color: white;
+  border-color: var(--primary-color);
+}
+
+.duas-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.dua-card {
+  background-color: var(--card-bg);
+  padding: 1.5rem;
+  border-radius: 12px;
+  box-shadow: var(--shadow);
+  transition: all 0.3s ease;
+}
+
+.dua-card:hover {
+  box-shadow: var(--shadow-hover);
+  transform: translateY(-2px);
+}
+
+.dua-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.category-badge {
+  display: inline-block;
+  padding: 0.25rem 0.75rem;
+  border-radius: 12px;
+  color: white;
+  font-size: 0.75rem;
+  font-weight: bold;
+}
+
+.bookmark-btn {
+  font-size: 1.5rem;
+  color: var(--accent-color);
+  transition: transform 0.2s;
+}
+
+.bookmark-btn:hover {
+  transform: scale(1.2);
+}
+
+.dua-arabic {
+  font-size: 1.75rem;
+  line-height: 2.5;
+  text-align: right;
+  direction: rtl;
+  margin-bottom: 1rem;
+  color: var(--text-primary);
+}
+
+.dua-transliteration {
+  font-style: italic;
+  color: var(--text-secondary);
+  background-color: var(--background);
+  padding: 0.75rem;
+  border-radius: 6px;
+  margin-bottom: 1rem;
+}
+
+.dua-translation {
+  color: var(--text-primary);
+  line-height: 1.6;
+  margin-bottom: 1rem;
+}
+
+.copy-btn {
+  padding: 0.5rem 1rem;
+  background-color: var(--primary-color);
+  color: white;
+  border-radius: 6px;
+  font-size: 0.875rem;
+  transition: all 0.3s ease;
+}
+
+.copy-btn:hover {
+  background-color: #1B5E20;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 3rem;
+  color: var(--text-secondary);
+}
+
+/* Footer */
+.app-footer {
+  background-color: var(--primary-color);
+  color: white;
+  padding: 2rem;
+  text-align: center;
+  margin-top: auto;
+}
+
+.app-footer p {
+  margin: 0.25rem 0;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .app-header h1 {
+    font-size: 2rem;
+  }
+
+  .navigation {
+    gap: 0.25rem;
+  }
+
+  .nav-button {
+    padding: 0.5rem 1rem;
+  }
+
+  .nav-label {
+    font-size: 0.75rem;
+  }
+
+  .prayer-name {
+    font-size: 2rem;
+  }
+
+  .prayer-time {
+    font-size: 2.5rem;
+  }
+
+  .prayer-times-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .compass-wrapper {
+    width: 250px;
+    height: 250px;
+  }
+
+  .qibla-info {
+    width: 100%;
+  }
+
+  .info-card {
+    flex: 1;
+    min-width: auto;
+  }
+}
