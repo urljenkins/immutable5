@@ -10,6 +10,9 @@ An Islamic companion app built with Flutter that helps Muslims with daily prayer
 - Support for multiple calculation methods (University of Islamic Sciences, etc.)
 - Madhab selection (Shafi, Hanafi, Maliki, Hanbali)
 - **Home screen widget** - View prayer times without opening the app (Android & iOS)
+  - Customizable themes (Light, Dark, Green Accent, Blue Accent)
+  - Multiple layouts (Compact, Detailed, Minimal)
+  - Live preview of widget appearance
 - Prayer notifications with scheduled reminders
 - Prayer tracking with completion statistics and streaks
 
@@ -29,6 +32,14 @@ An Islamic companion app built with Flutter that helps Muslims with daily prayer
 - Learn commonly used Arabic words
 - Useful for learning Islamic terminology
 
+### Daily Duas Collection
+- 20+ curated authentic duas with categories
+- Arabic text with transliteration and English translation
+- Category filtering (Morning, Evening, Travel, Masjid, etc.)
+- Bookmark/favorite functionality
+- Copy to clipboard feature
+- Color-coded categories for easy navigation
+
 ### Inspirational Quotes
 - Daily inspirational quotes
 - Filter quotes by topic
@@ -39,6 +50,15 @@ An Islamic companion app built with Flutter that helps Muslims with daily prayer
 - Light theme option
 - Localization support (multiple languages)
 - Configurable prayer calculation methods
+- Widget theme and layout customization
+
+### Performance & Battery
+- Advanced caching system with 5MB limit
+- LRU (Least Recently Used) cache eviction
+- Battery saver mode for extended battery life
+- Network request throttling
+- Automatic cleanup of expired cache
+- Cache statistics and manual clearing
 
 ## Technical Details
 
