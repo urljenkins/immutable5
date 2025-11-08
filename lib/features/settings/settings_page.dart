@@ -5,7 +5,7 @@ import '../../main.dart';
 import '../notifications/notification_service.dart';
 
 class SettingsPage extends StatefulWidget {
-  const SettingsPage({Key? key}) : super(key: key);
+  const SettingsPage({Key? key,}) : super(key: key);
 
   @override
   _SettingsPageState createState() => _SettingsPageState();
@@ -74,7 +74,7 @@ class _SettingsPageState extends State<SettingsPage> {
                           title: Text(m),
                           value: m,
                           groupValue: _calculationMethod,
-                          onChanged: (v) => Navigator.pop(context, v),
+                          onChanged: (v) => Navigator.pop(context, v,),
                         ),
                       )
                       .toList(),
@@ -101,7 +101,7 @@ class _SettingsPageState extends State<SettingsPage> {
                           title: Text(m),
                           value: m,
                           groupValue: _madhab,
-                          onChanged: (v) => Navigator.pop(context, v),
+                          onChanged: (v) => Navigator.pop(context, v,),
                         ),
                       )
                       .toList(),

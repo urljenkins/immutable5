@@ -36,7 +36,7 @@ void main() async {
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  const MyApp({super.key,});
 
   // This widget is the root of your application.
   @override
@@ -69,7 +69,7 @@ class MyApp extends StatelessWidget {
             //
             // This works for code too, not just values: Most code changes can be
             // tested with just a hot reload.
-            colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+            colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple,),
           ),
           darkTheme: ThemeData.dark().copyWith(
             scaffoldBackgroundColor: Colors.black,
@@ -87,7 +87,7 @@ class MyApp extends StatelessWidget {
 }
 
 class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
+  const MyHomePage({super.key, required this.title,});
 
   // This widget is the home page of your application. It is stateful, meaning
   // that it has a State object (defined below) that contains fields that affect
@@ -130,8 +130,8 @@ class _MyHomePageState extends State<MyHomePage> {
   void initState() {
     super.initState();
     // load available topics
-    _quotePickerService.getTopics().then((topics) {
-      setState(() => _topics = topics);
+    _quotePickerService.getTopics().then((topics,) {
+      setState(() => _topics = topics,);
     });
     _initLocationAndLoadData();
   }
@@ -142,7 +142,7 @@ class _MyHomePageState extends State<MyHomePage> {
       if (!serviceEnabled) {
         setState(() {
           _locationError = AppLocalizations.of(context)!.locationServicesDisabled;
-        });
+        },);
         return;
       }
       LocationPermission permission = await Geolocator.checkPermission();
@@ -151,14 +151,14 @@ class _MyHomePageState extends State<MyHomePage> {
         if (permission == LocationPermission.denied) {
           setState(() {
             _locationError = AppLocalizations.of(context)!.locationPermissionDenied;
-          });
+          },);
           return;
         }
       }
       if (permission == LocationPermission.deniedForever) {
         setState(() {
           _locationError = AppLocalizations.of(context)!.locationPermissionPermanentlyDenied;
-        });
+        },);
         return;
       }
       Position position = await Geolocator.getCurrentPosition(
@@ -189,12 +189,12 @@ class _MyHomePageState extends State<MyHomePage> {
       setState(() {
         _locationLoaded = true;
         _locationError = null;
-      });
+      },);
       _loadData();
     } catch (e) {
       setState(() {
         _locationError = 'Failed to get location: ${e.toString()}';
-      });
+      },);
     }
   }
 
@@ -222,7 +222,7 @@ class _MyHomePageState extends State<MyHomePage> {
         _countdown = nextPrayerTime.difference(DateTime.now());
         _locationError = null;
         _isUsingCache = false;
-      });
+      },);
       _startTimer();
     } catch (e) {
       // Try to use cached data on error
@@ -231,9 +231,9 @@ class _MyHomePageState extends State<MyHomePage> {
             await _prayerTimesService!.getTodayPrayerTimes();
         final now = DateTime.now();
         final upcoming =
-            cachedTimes.entries.where((e) => e.value.isAfter(now)).toList();
+            cachedTimes.entries.where((e,) => e.value.isAfter(now),).toList();
         if (upcoming.isNotEmpty) {
-          upcoming.sort((a, b) => a.value.compareTo(b.value));
+          upcoming.sort((a, b,) => a.value.compareTo(b.value,),);
           final nextPrayer = upcoming.first;
           setState(() {
             _nextPrayerTime = nextPrayer.value;
@@ -241,39 +241,39 @@ class _MyHomePageState extends State<MyHomePage> {
             _countdown = nextPrayer.value.difference(now);
             _isUsingCache = true;
             _locationError = AppLocalizations.of(context)!.usingCachedPrayerTimes;
-          });
+          },);
           _startTimer();
         } else {
           setState(() {
             _locationError = 'Failed to load prayer times: ${e.toString()}';
-          });
+          },);
         }
       } catch (cacheError) {
         setState(() {
           _locationError = 'Failed to load prayer times: ${e.toString()}';
-        });
+        },);
       }
     }
   }
 
   Future<void> _refreshData() async {
     if (_prayerTimesService == null || _isRefreshing) return;
-    setState(() => _isRefreshing = true);
+    setState(() => _isRefreshing = true,);
     try {
       await _prayerTimesService!.refreshPrayerTimes();
       await _loadData();
     } catch (e) {
       setState(() {
         _locationError = 'Failed to refresh: ${e.toString()}';
-      });
+      },);
     } finally {
-      setState(() => _isRefreshing = false);
+      setState(() => _isRefreshing = false,);
     }
   }
 
   void _startTimer() {
     _timer?.cancel();
-    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+    _timer = Timer.periodic(const Duration(seconds: 1,), (timer,) {
       if (_nextPrayerTime == null) return;
       final now = DateTime.now();
       final diff = _nextPrayerTime!.difference(now);
@@ -283,7 +283,7 @@ class _MyHomePageState extends State<MyHomePage> {
       } else {
         setState(() {
           _countdown = diff;
-        });
+        },);
       }
     });
   }
@@ -326,7 +326,7 @@ class _MyHomePageState extends State<MyHomePage> {
                         color: Colors.white,
                       ),
                     )
-                  : const Icon(Icons.refresh),
+                  : const Icon(Icons.refresh,),
               onPressed: _isRefreshing ? null : _refreshData,
               tooltip: AppLocalizations.of(context)!.refreshPrayerTimes,
             ),
@@ -368,34 +368,34 @@ class _MyHomePageState extends State<MyHomePage> {
                         padding: const EdgeInsets.all(8.0),
                         child: TableCalendar(
                           firstDay: DateTime.now().subtract(
-                            const Duration(days: 365),
+                            const Duration(days: 365,),
                           ),
                           lastDay: DateTime.now().add(
-                            const Duration(days: 365),
+                            const Duration(days: 365,),
                           ),
                           focusedDay: _focusedDay,
-                          selectedDayPredicate: (day) =>
-                              isSameDay(_selectedDay, day),
-                          onDaySelected: (sel, focus) {
+                          selectedDayPredicate: (day,) =>
+                              isSameDay(_selectedDay, day,),
+                          onDaySelected: (sel, focus,) {
                             setState(() {
                               _selectedDay = sel;
                               _focusedDay = focus;
-                            });
+                            },);
                           },
                           calendarBuilders: CalendarBuilders(
-                            dayBuilder: (context, date, _) {
+                            dayBuilder: (context, date, _,) {
                               final hijri = HijriCalendar.fromDate(date);
                               return Column(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
                                   Text(
                                     '${date.day}',
-                                    style: const TextStyle(fontSize: 16),
+                                    style: const TextStyle(fontSize: 16,),
                                   ),
                                   const SizedBox(height: 2),
                                   Text(
                                     '${hijri.hDay}',
-                                    style: const TextStyle(fontSize: 10),
+                                    style: const TextStyle(fontSize: 10,),
                                   ),
                                 ],
                               );
@@ -413,7 +413,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                   : AppLocalizations.of(context)!.loading,
                               style: Theme.of(context).textTheme.headlineSmall,
                             ),
-                            const SizedBox(height: 8),
+                            const SizedBox(height: 8,),
                             Text(
                               _nextPrayerTime != null
                                   ? _formatDuration(_countdown)
@@ -441,16 +441,16 @@ class _MyHomePageState extends State<MyHomePage> {
                             ),
                             items: _topics
                                 .map(
-                                  (t) => DropdownMenuItem<String>(
+                                  (t,) => DropdownMenuItem<String>(
                                     value: t,
-                                    child: Text(t),
+                                    child: Text(t,),
                                   ),
                                 )
                                 .toList(),
-                            onChanged: (value) {
+                            onChanged: (value,) {
                               setState(() {
                                 _selectedTopic = value;
-                              });
+                              },);
                               _loadData();
                             },
                           ),
@@ -458,16 +458,16 @@ class _MyHomePageState extends State<MyHomePage> {
                       Padding(
                         padding: const EdgeInsets.all(24.0),
                         child: AnimatedSwitcher(
-                          duration: const Duration(milliseconds: 500),
-                          transitionBuilder: (child, anim) => FadeTransition(
+                          duration: const Duration(milliseconds: 500,),
+                          transitionBuilder: (child, anim,) => FadeTransition(
                             opacity: anim,
                             child: child,
                           ),
                           child: Card(
-                            key: ValueKey<String>(_quote ?? ''),
+                            key: ValueKey<String>(_quote ?? '',),
                             elevation: 4,
                             shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12),
+                              borderRadius: BorderRadius.circular(12,),
                             ),
                             margin: EdgeInsets.zero,
                             child: Padding(
@@ -495,7 +495,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
 // Root widget with bottom navigation between Home and Settings
 class AppScaffold extends StatefulWidget {
-  const AppScaffold({Key? key}) : super(key: key);
+  const AppScaffold({Key? key,}) : super(key: key);
   @override
   State<AppScaffold> createState() => _AppScaffoldState();
 }
@@ -520,40 +520,40 @@ class _AppScaffoldState extends State<AppScaffold> {
         currentIndex: _currentIndex,
         items: [
           BottomNavigationBarItem(
-            icon: const Icon(Icons.home),
+            icon: const Icon(Icons.home,),
             label: AppLocalizations.of(context)!.home,
           ),
           BottomNavigationBarItem(
-            icon: const Icon(Icons.check_circle),
+            icon: const Icon(Icons.check_circle,),
             label: 'Track',
           ),
           BottomNavigationBarItem(
-            icon: const Icon(Icons.explore),
+            icon: const Icon(Icons.explore,),
             label: 'Qibla',
           ),
           BottomNavigationBarItem(
-            icon: const Icon(Icons.calendar_today),
+            icon: const Icon(Icons.calendar_today,),
             label: AppLocalizations.of(context)!.calendar,
           ),
           BottomNavigationBarItem(
-            icon: const Icon(Icons.directions_walk),
+            icon: const Icon(Icons.directions_walk,),
             label: AppLocalizations.of(context)!.hajj,
           ),
           BottomNavigationBarItem(
-            icon: const Icon(Icons.translate),
+            icon: const Icon(Icons.translate,),
             label: AppLocalizations.of(context)!.commonWords,
           ),
           BottomNavigationBarItem(
-            icon: const Icon(Icons.book),
+            icon: const Icon(Icons.book,),
             label: AppLocalizations.of(context)!.quran,
           ),
           BottomNavigationBarItem(
-            icon: const Icon(Icons.settings),
+            icon: const Icon(Icons.settings,),
             label: AppLocalizations.of(context)!.settings,
           ),
         ],
-        onTap: (index) {
-          setState(() => _currentIndex = index);
+        onTap: (index,) {
+          setState(() => _currentIndex = index,);
         },
       ),
     );
