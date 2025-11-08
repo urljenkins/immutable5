@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../../main.dart';
+import '../notifications/notification_service.dart';
 
 class SettingsPage extends StatefulWidget {
   const SettingsPage({Key? key}) : super(key: key);
@@ -99,11 +100,33 @@ class _SettingsPageState extends State<SettingsPage> {
           ),
           SwitchListTile(
             title: Text(AppLocalizations.of(context)!.notifications),
+            subtitle: const Text('Get notified for each prayer time'),
             value: _notificationsEnabled,
             onChanged: (value) async {
+              if (value) {
+                // Request notification permissions when enabling
+                final granted = await NotificationService().requestPermissions();
+                if (!granted) {
+                  // Show dialog explaining permissions are needed
+                  if (mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('Notification permissions are required to enable prayer reminders'),
+                      ),
+                    );
+                  }
+                  return;
+                }
+              }
+
               final prefs = await SharedPreferences.getInstance();
               setState(() => _notificationsEnabled = value);
-              prefs.setBool(_keyNotificationsEnabled, value);
+              await prefs.setBool(_keyNotificationsEnabled, value);
+
+              // Cancel all notifications if disabled
+              if (!value) {
+                await NotificationService().cancelAllNotifications();
+              }
             },
           ),
           SwitchListTile(

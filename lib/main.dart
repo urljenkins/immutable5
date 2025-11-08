@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'features/prayer/prayer_times_service.dart';
 import 'features/quotes/quote_picker_service.dart';
+import 'features/notifications/notification_service.dart';
 import 'dart:async';
 import 'package:geolocator/geolocator.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'features/settings/settings_page.dart';
 import 'features/quran/quran_page.dart';
+import 'features/qibla/qibla_page.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:hijri/hijri_calendar.dart';
 import 'features/calendar/calendar_page.dart';
@@ -18,6 +20,10 @@ final ValueNotifier<ThemeMode> themeNotifier = ValueNotifier(ThemeMode.dark);
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  // Initialize notification service
+  await NotificationService().initialize();
+
   final prefs = await SharedPreferences.getInstance();
   final useDark = prefs.getBool('useAmoledTheme') ?? true;
   themeNotifier.value = useDark ? ThemeMode.dark : ThemeMode.light;
@@ -180,6 +186,11 @@ class _MyHomePageState extends State<MyHomePage> {
       final nextPrayerTime = await _prayerTimesService!.getNextPrayerTime();
       final nextPrayerName = await _prayerTimesService!.getNextPrayerName();
       final quote = await _quotePickerService.getQuote(topic: _selectedTopic);
+
+      // Schedule notifications for today's prayers
+      final prayerTimes = await _prayerTimesService!.getTodayPrayerTimes();
+      await NotificationService().schedulePrayerNotifications(prayerTimes);
+
       setState(() {
         _nextPrayerTime = nextPrayerTime;
         _nextPrayerName = nextPrayerName;
@@ -420,11 +431,12 @@ class _AppScaffoldState extends State<AppScaffold> {
   int _currentIndex = 0;
   final List<Widget> _pages = [
     const MyHomePage(title: 'Immutable5'),
+    const QiblaPage(),
     const CalendarPage(),
     const HajjPage(),
     const CommonWordsPage(),
-    const SettingsPage(),
     const QuranPage(),
+    const SettingsPage(),
   ];
   @override
   Widget build(BuildContext context) {
@@ -434,11 +446,12 @@ class _AppScaffoldState extends State<AppScaffold> {
         currentIndex: _currentIndex,
         items: [
           BottomNavigationBarItem(icon: Icon(Icons.home), label: AppLocalizations.of(context)!.home),
+          BottomNavigationBarItem(icon: Icon(Icons.explore), label: 'Qibla'),
           BottomNavigationBarItem(icon: Icon(Icons.calendar_today), label: AppLocalizations.of(context)!.calendar),
           BottomNavigationBarItem(icon: Icon(Icons.directions_walk), label: AppLocalizations.of(context)!.hajj),
           BottomNavigationBarItem(icon: Icon(Icons.translate), label: AppLocalizations.of(context)!.commonWords),
-          BottomNavigationBarItem(icon: Icon(Icons.settings), label: AppLocalizations.of(context)!.settings),
           BottomNavigationBarItem(icon: Icon(Icons.book), label: AppLocalizations.of(context)!.quran),
+          BottomNavigationBarItem(icon: Icon(Icons.settings), label: AppLocalizations.of(context)!.settings),
         ],
         onTap: (index) {
           setState(() => _currentIndex = index);
