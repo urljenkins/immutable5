@@ -73,7 +73,10 @@ class MyApp extends StatelessWidget {
           ),
           darkTheme: ThemeData.dark().copyWith(
             scaffoldBackgroundColor: Colors.black,
-            colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple, brightness: Brightness.dark),
+            colorScheme: ColorScheme.fromSeed(
+              seedColor: Colors.deepPurple,
+              brightness: Brightness.dark,
+            ),
           ),
           themeMode: mode,
           home: const AppScaffold(),
@@ -158,9 +161,12 @@ class _MyHomePageState extends State<MyHomePage> {
         });
         return;
       }
-      Position position = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+      Position position = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high,
+      );
       final prefs = await SharedPreferences.getInstance();
-      final calcMethodString = prefs.getString('calculationMethod') ?? 'Method 2 (University of Islamic Sciences)';
+      final calcMethodString = prefs.getString('calculationMethod') ??
+          'Method 2 (University of Islamic Sciences)';
       final method = calcMethodString.contains('4') ? 4 : 2;
       final madhabString = prefs.getString('madhab') ?? 'Shafi';
       const madhabList = ['Shafi', 'Hanafi', 'Maliki', 'Hanbali'];
@@ -195,9 +201,12 @@ class _MyHomePageState extends State<MyHomePage> {
   Future<void> _loadData() async {
     if (_prayerTimesService == null) return;
     try {
-      final nextPrayerTime = await _prayerTimesService!.getNextPrayerTime();
-      final nextPrayerName = await _prayerTimesService!.getNextPrayerName();
-      final quote = await _quotePickerService.getQuote(topic: _selectedTopic);
+      final nextPrayerTime =
+          await _prayerTimesService!.getNextPrayerTime();
+      final nextPrayerName =
+          await _prayerTimesService!.getNextPrayerName();
+      final quote =
+          await _quotePickerService.getQuote(topic: _selectedTopic);
 
       // Schedule notifications for today's prayers
       final prayerTimes = await _prayerTimesService!.getTodayPrayerTimes();
@@ -218,9 +227,11 @@ class _MyHomePageState extends State<MyHomePage> {
     } catch (e) {
       // Try to use cached data on error
       try {
-        final cachedTimes = await _prayerTimesService!.getTodayPrayerTimes();
+        final cachedTimes =
+            await _prayerTimesService!.getTodayPrayerTimes();
         final now = DateTime.now();
-        final upcoming = cachedTimes.entries.where((e) => e.value.isAfter(now)).toList();
+        final upcoming =
+            cachedTimes.entries.where((e) => e.value.isAfter(now)).toList();
         if (upcoming.isNotEmpty) {
           upcoming.sort((a, b) => a.value.compareTo(b.value));
           final nextPrayer = upcoming.first;
@@ -310,7 +321,10 @@ class _MyHomePageState extends State<MyHomePage> {
                   ? const SizedBox(
                       width: 20,
                       height: 20,
-                      child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        color: Colors.white,
+                      ),
                     )
                   : const Icon(Icons.refresh),
               onPressed: _isRefreshing ? null : _refreshData,
@@ -333,11 +347,17 @@ class _MyHomePageState extends State<MyHomePage> {
                           padding: const EdgeInsets.all(8.0),
                           child: Row(
                             children: [
-                              const Icon(Icons.cloud_off, size: 16, color: Colors.orange),
+                              const Icon(
+                                Icons.cloud_off,
+                                size: 16,
+                                color: Colors.orange,
+                              ),
                               const SizedBox(width: 8),
                               Expanded(
                                 child: Text(
-                                  _locationError ?? AppLocalizations.of(context)!.usingCachedPrayerTimes,
+                                  _locationError ??
+                                      AppLocalizations.of(context)!
+                                          .usingCachedPrayerTimes,
                                   style: const TextStyle(fontSize: 12),
                                 ),
                               ),
@@ -347,10 +367,15 @@ class _MyHomePageState extends State<MyHomePage> {
                       Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: TableCalendar(
-                          firstDay: DateTime.now().subtract(Duration(days: 365)),
-                          lastDay: DateTime.now().add(Duration(days: 365)),
+                          firstDay: DateTime.now().subtract(
+                            const Duration(days: 365),
+                          ),
+                          lastDay: DateTime.now().add(
+                            const Duration(days: 365),
+                          ),
                           focusedDay: _focusedDay,
-                          selectedDayPredicate: (day) => isSameDay(_selectedDay, day),
+                          selectedDayPredicate: (day) =>
+                              isSameDay(_selectedDay, day),
                           onDaySelected: (sel, focus) {
                             setState(() {
                               _selectedDay = sel;
@@ -363,9 +388,15 @@ class _MyHomePageState extends State<MyHomePage> {
                               return Column(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-                                  Text('${date.day}', style: TextStyle(fontSize: 16)),
-                                  SizedBox(height: 2),
-                                  Text('${hijri.hDay}', style: TextStyle(fontSize: 10)),
+                                  Text(
+                                    '${date.day}',
+                                    style: const TextStyle(fontSize: 16),
+                                  ),
+                                  const SizedBox(height: 2),
+                                  Text(
+                                    '${hijri.hDay}',
+                                    style: const TextStyle(fontSize: 10),
+                                  ),
                                 ],
                               );
                             },
@@ -384,25 +415,42 @@ class _MyHomePageState extends State<MyHomePage> {
                             ),
                             const SizedBox(height: 8),
                             Text(
-                              _nextPrayerTime != null ? _formatDuration(_countdown) : '--:--:--',
-                              style: Theme.of(context).textTheme.displayMedium?.copyWith(fontWeight: FontWeight.bold),
+                              _nextPrayerTime != null
+                                  ? _formatDuration(_countdown)
+                                  : '--:--:--',
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .displayMedium
+                                  ?.copyWith(
+                                    fontWeight: FontWeight.bold,
+                                  ),
                             ),
                           ],
                         ),
                       ),
                       if (_topics.isNotEmpty)
                         Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 24.0),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 24.0,
+                          ),
                           child: DropdownButton<String>(
                             isExpanded: true,
                             value: _selectedTopic,
-                            hint: Text(AppLocalizations.of(context)!.selectTopic),
-                            items: _topics.map((t) => DropdownMenuItem<String>(
-                              value: t,
-                              child: Text(t),
-                            )).toList(),
+                            hint: Text(
+                              AppLocalizations.of(context)!.selectTopic,
+                            ),
+                            items: _topics
+                                .map(
+                                  (t) => DropdownMenuItem<String>(
+                                    value: t,
+                                    child: Text(t),
+                                  ),
+                                )
+                                .toList(),
                             onChanged: (value) {
-                              setState(() { _selectedTopic = value; });
+                              setState(() {
+                                _selectedTopic = value;
+                              });
                               _loadData();
                             },
                           ),
@@ -411,18 +459,28 @@ class _MyHomePageState extends State<MyHomePage> {
                         padding: const EdgeInsets.all(24.0),
                         child: AnimatedSwitcher(
                           duration: const Duration(milliseconds: 500),
-                          transitionBuilder: (child, anim) => FadeTransition(opacity: anim, child: child),
+                          transitionBuilder: (child, anim) => FadeTransition(
+                            opacity: anim,
+                            child: child,
+                          ),
                           child: Card(
                             key: ValueKey<String>(_quote ?? ''),
                             elevation: 4,
-                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
                             margin: EdgeInsets.zero,
                             child: Padding(
                               padding: const EdgeInsets.all(16.0),
                               child: Text(
                                 _quote ?? '...',
                                 textAlign: TextAlign.center,
-                                style: Theme.of(context).textTheme.titleLarge?.copyWith(fontStyle: FontStyle.italic),
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .titleLarge
+                                    ?.copyWith(
+                                      fontStyle: FontStyle.italic,
+                                    ),
                               ),
                             ),
                           ),
@@ -461,14 +519,38 @@ class _AppScaffoldState extends State<AppScaffold> {
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _currentIndex,
         items: [
-          BottomNavigationBarItem(icon: Icon(Icons.home), label: AppLocalizations.of(context)!.home),
-          BottomNavigationBarItem(icon: Icon(Icons.check_circle), label: 'Track'),
-          BottomNavigationBarItem(icon: Icon(Icons.explore), label: 'Qibla'),
-          BottomNavigationBarItem(icon: Icon(Icons.calendar_today), label: AppLocalizations.of(context)!.calendar),
-          BottomNavigationBarItem(icon: Icon(Icons.directions_walk), label: AppLocalizations.of(context)!.hajj),
-          BottomNavigationBarItem(icon: Icon(Icons.translate), label: AppLocalizations.of(context)!.commonWords),
-          BottomNavigationBarItem(icon: Icon(Icons.book), label: AppLocalizations.of(context)!.quran),
-          BottomNavigationBarItem(icon: Icon(Icons.settings), label: AppLocalizations.of(context)!.settings),
+          BottomNavigationBarItem(
+            icon: const Icon(Icons.home),
+            label: AppLocalizations.of(context)!.home,
+          ),
+          BottomNavigationBarItem(
+            icon: const Icon(Icons.check_circle),
+            label: 'Track',
+          ),
+          BottomNavigationBarItem(
+            icon: const Icon(Icons.explore),
+            label: 'Qibla',
+          ),
+          BottomNavigationBarItem(
+            icon: const Icon(Icons.calendar_today),
+            label: AppLocalizations.of(context)!.calendar,
+          ),
+          BottomNavigationBarItem(
+            icon: const Icon(Icons.directions_walk),
+            label: AppLocalizations.of(context)!.hajj,
+          ),
+          BottomNavigationBarItem(
+            icon: const Icon(Icons.translate),
+            label: AppLocalizations.of(context)!.commonWords,
+          ),
+          BottomNavigationBarItem(
+            icon: const Icon(Icons.book),
+            label: AppLocalizations.of(context)!.quran,
+          ),
+          BottomNavigationBarItem(
+            icon: const Icon(Icons.settings),
+            label: AppLocalizations.of(context)!.settings,
+          ),
         ],
         onTap: (index) {
           setState(() => _currentIndex = index);

@@ -20,7 +20,12 @@ class _SettingsPageState extends State<SettingsPage> {
     'Method 2 (University of Islamic Sciences)',
     'Method 4 (Islamic Society of North America)',
   ];
-  List<String> _madhabs = ['Shafi', 'Hanafi', 'Maliki', 'Hanbali'];
+  List<String> _madhabs = [
+    'Shafi',
+    'Hanafi',
+    'Maliki',
+    'Hanbali',
+  ];
   String _calculationMethod = _methods[0];
   String _madhab = 'Shafi';
   bool _notificationsEnabled = true;
@@ -35,10 +40,13 @@ class _SettingsPageState extends State<SettingsPage> {
   Future<void> _loadPrefs() async {
     final prefs = await SharedPreferences.getInstance();
     setState(() {
-      _calculationMethod = prefs.getString(_keyCalculationMethod) ?? _calculationMethod;
+      _calculationMethod =
+          prefs.getString(_keyCalculationMethod) ?? _calculationMethod;
       _madhab = prefs.getString(_keyMadhab) ?? _madhab;
-      _notificationsEnabled = prefs.getBool(_keyNotificationsEnabled) ?? _notificationsEnabled;
-      _useAmoledTheme = prefs.getBool(_keyUseAmoledTheme) ?? _useAmoledTheme;
+      _notificationsEnabled =
+          prefs.getBool(_keyNotificationsEnabled) ?? _notificationsEnabled;
+      _useAmoledTheme =
+          prefs.getBool(_keyUseAmoledTheme) ?? _useAmoledTheme;
     });
   }
 
@@ -55,18 +63,23 @@ class _SettingsPageState extends State<SettingsPage> {
             subtitle: Text(_calculationMethod),
             onTap: () async {
               final choice = await showDialog<String>(
-                  context: context,
-                  builder: (_) => SimpleDialog(
-                        title: Text(AppLocalizations.of(context)!.selectCalculationMethod),
-                        children: _methods
-                            .map((m) => RadioListTile(
-                                  title: Text(m),
-                                  value: m,
-                                  groupValue: _calculationMethod,
-                                  onChanged: (v) => Navigator.pop(context, v),
-                                ))
-                            .toList(),
-                      ));
+                context: context,
+                builder: (_) => SimpleDialog(
+                  title: Text(
+                    AppLocalizations.of(context)!.selectCalculationMethod,
+                  ),
+                  children: _methods
+                      .map(
+                        (m) => RadioListTile(
+                          title: Text(m),
+                          value: m,
+                          groupValue: _calculationMethod,
+                          onChanged: (v) => Navigator.pop(context, v),
+                        ),
+                      )
+                      .toList(),
+                ),
+              );
               if (choice != null) {
                 final prefs = await SharedPreferences.getInstance();
                 setState(() => _calculationMethod = choice);
@@ -79,18 +92,21 @@ class _SettingsPageState extends State<SettingsPage> {
             subtitle: Text(_madhab),
             onTap: () async {
               final choice = await showDialog<String>(
-                  context: context,
-                  builder: (_) => SimpleDialog(
-                        title: Text(AppLocalizations.of(context)!.selectMadhab),
-                        children: _madhabs
-                            .map((m) => RadioListTile(
-                                  title: Text(m),
-                                  value: m,
-                                  groupValue: _madhab,
-                                  onChanged: (v) => Navigator.pop(context, v),
-                                ))
-                            .toList(),
-                      ));
+                context: context,
+                builder: (_) => SimpleDialog(
+                  title: Text(AppLocalizations.of(context)!.selectMadhab),
+                  children: _madhabs
+                      .map(
+                        (m) => RadioListTile(
+                          title: Text(m),
+                          value: m,
+                          groupValue: _madhab,
+                          onChanged: (v) => Navigator.pop(context, v),
+                        ),
+                      )
+                      .toList(),
+                ),
+              );
               if (choice != null) {
                 final prefs = await SharedPreferences.getInstance();
                 setState(() => _madhab = choice);
@@ -111,7 +127,9 @@ class _SettingsPageState extends State<SettingsPage> {
                   if (mounted) {
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(
-                        content: Text('Notification permissions are required to enable prayer reminders'),
+                        content: Text(
+                          'Notification permissions are required to enable prayer reminders',
+                        ),
                       ),
                     );
                   }
