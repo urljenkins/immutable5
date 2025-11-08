@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'features/prayer/prayer_times_service.dart';
 import 'features/quotes/quote_picker_service.dart';
 import 'features/notifications/notification_service.dart';
+import 'features/prayer_tracking/prayer_stats_page.dart';
 import 'dart:async';
 import 'package:geolocator/geolocator.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -431,6 +432,7 @@ class _AppScaffoldState extends State<AppScaffold> {
   int _currentIndex = 0;
   final List<Widget> _pages = [
     const MyHomePage(title: 'Immutable5'),
+    const PrayerStatsPage(),
     const QiblaPage(),
     const CalendarPage(),
     const HajjPage(),
@@ -446,6 +448,7 @@ class _AppScaffoldState extends State<AppScaffold> {
         currentIndex: _currentIndex,
         items: [
           BottomNavigationBarItem(icon: Icon(Icons.home), label: AppLocalizations.of(context)!.home),
+          BottomNavigationBarItem(icon: Icon(Icons.check_circle), label: 'Track'),
           BottomNavigationBarItem(icon: Icon(Icons.explore), label: 'Qibla'),
           BottomNavigationBarItem(icon: Icon(Icons.calendar_today), label: AppLocalizations.of(context)!.calendar),
           BottomNavigationBarItem(icon: Icon(Icons.directions_walk), label: AppLocalizations.of(context)!.hajj),
