@@ -1,6 +1,9 @@
 # Immutable5
 
-An Islamic companion app built with Flutter that helps Muslims with daily prayers, Quran reading, and learning.
+An Islamic companion app built with Flutter (mobile) and React (web) that helps Muslims with daily prayers, Quran reading, and learning.
+
+**📱 Mobile App:** Full-featured Flutter application for Android & iOS
+**🌐 Web App:** Modern React web application (see `web-app/` folder)
 
 ## Features
 
@@ -84,7 +87,27 @@ An Islamic companion app built with Flutter that helps Muslims with daily prayer
 - `timezone` - Timezone support for notifications
 - `intl` - Internationalization and date formatting
 
-## Getting Started
+## Web Application
+
+A modern React web application is available in the `web-app/` directory with the following features:
+
+- 🕌 **Prayer Times** - Real-time prayer times with countdown
+- 🧭 **Qibla Compass** - Interactive compass with device orientation
+- 📿 **Daily Duas** - Collection of authentic duas with categories
+- 📱 **Responsive Design** - Works on desktop, tablet, and mobile
+- ⚡ **Fast & Modern** - Built with React 18 and Vite
+- 💾 **Offline Caching** - Prayer times cached for offline use
+
+### Quick Start (Web App)
+```bash
+cd web-app
+npm install
+npm run dev
+```
+
+See `web-app/README.md` for full documentation.
+
+## Getting Started (Mobile App)
 
 ### Prerequisites
 - Flutter SDK 3.7.2 or higher
