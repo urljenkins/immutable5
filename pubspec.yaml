@@ -76,6 +76,7 @@ flutter:
     - assets/quotes.csv
     - assets/quran.txt
     - assets/common_words.csv
+    - assets/duas.csv
 
   # To add assets to your application, add an assets section, like this:
   # assets:

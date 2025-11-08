@@ -2,6 +2,7 @@ import 'package:home_widget/home_widget.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:intl/intl.dart';
 import '../prayer/prayer_times_service.dart';
+import 'widget_preferences.dart';
 
 class PrayerWidgetService {
   static const String _widgetName = 'PrayerTimesWidget';
@@ -76,6 +77,17 @@ class PrayerWidgetService {
         'time_remaining',
         hours > 0 ? '${hours}h ${minutes}m' : '${minutes}m',
       );
+
+      // Store widget theme preferences
+      final theme = await WidgetPreferences.getTheme();
+      final layout = await WidgetPreferences.getLayout();
+      final colors = WidgetPreferences.getThemeColors(theme);
+
+      await HomeWidget.saveWidgetData<int>('theme_background', colors['background']);
+      await HomeWidget.saveWidgetData<int>('theme_text', colors['text']);
+      await HomeWidget.saveWidgetData<int>('theme_accent', colors['accent']);
+      await HomeWidget.saveWidgetData<int>('theme_card_bg', colors['cardBg']);
+      await HomeWidget.saveWidgetData<int>('layout_type', layout.index);
 
       // Update the widget UI
       await HomeWidget.updateWidget(

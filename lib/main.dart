@@ -17,6 +17,7 @@ import 'features/hajj/hajj_page.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'features/common_words/common_words_page.dart';
+import 'features/duas/duas_page.dart';
 
 final ValueNotifier<ThemeMode> themeNotifier = ValueNotifier(ThemeMode.dark);
 
@@ -507,6 +508,7 @@ class _AppScaffoldState extends State<AppScaffold> {
     const CalendarPage(),
     const HajjPage(),
     const CommonWordsPage(),
+    const DuasPage(),
     const QuranPage(),
     const SettingsPage(),
   ];
@@ -540,6 +542,10 @@ class _AppScaffoldState extends State<AppScaffold> {
           BottomNavigationBarItem(
             icon: const Icon(Icons.translate),
             label: AppLocalizations.of(context)!.commonWords,
+          ),
+          BottomNavigationBarItem(
+            icon: const Icon(Icons.menu_book),
+            label: 'Duas',
           ),
           BottomNavigationBarItem(
             icon: const Icon(Icons.book),

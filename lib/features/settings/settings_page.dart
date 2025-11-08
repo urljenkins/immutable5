@@ -3,6 +3,9 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import '../../main.dart';
 import '../notifications/notification_service.dart';
+import '../widget/widget_settings_page.dart';
+import '../../services/battery_optimizer.dart';
+import '../../services/cache_manager.dart';
 
 class SettingsPage extends StatefulWidget {
   const SettingsPage({Key? key}) : super(key: key);
@@ -25,6 +28,7 @@ class _SettingsPageState extends State<SettingsPage> {
   String _madhab = 'Shafi';
   bool _notificationsEnabled = true;
   bool _useAmoledTheme = true;
+  bool _batterySaverMode = false;
 
   @override
   void initState() {
@@ -34,11 +38,15 @@ class _SettingsPageState extends State<SettingsPage> {
 
   Future<void> _loadPrefs() async {
     final prefs = await SharedPreferences.getInstance();
+    final batteryOptimizer = BatteryOptimizer();
+    await batteryOptimizer.initialize();
+
     setState(() {
       _calculationMethod = prefs.getString(_keyCalculationMethod) ?? _calculationMethod;
       _madhab = prefs.getString(_keyMadhab) ?? _madhab;
       _notificationsEnabled = prefs.getBool(_keyNotificationsEnabled) ?? _notificationsEnabled;
       _useAmoledTheme = prefs.getBool(_keyUseAmoledTheme) ?? _useAmoledTheme;
+      _batterySaverMode = batteryOptimizer.isBatterySaverEnabled();
     });
   }
 
@@ -149,6 +157,94 @@ class _SettingsPageState extends State<SettingsPage> {
               await prefs.setBool(_keyUseAmoledTheme, value);
               // Update the global theme notifier
               themeNotifier.value = value ? ThemeMode.dark : ThemeMode.light;
+            },
+          ),
+          const Divider(),
+          SwitchListTile(
+            title: const Text('Battery Saver Mode'),
+            subtitle: const Text('Reduce battery usage by limiting background updates'),
+            value: _batterySaverMode,
+            secondary: const Icon(Icons.battery_saver),
+            onChanged: (value) async {
+              final batteryOptimizer = BatteryOptimizer();
+              await batteryOptimizer.setBatterySaverMode(value);
+              setState(() => _batterySaverMode = value);
+
+              if (mounted) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(
+                      value
+                          ? 'Battery saver enabled - Updates will be less frequent'
+                          : 'Battery saver disabled - Normal update frequency',
+                    ),
+                    duration: const Duration(seconds: 3),
+                  ),
+                );
+              }
+            },
+          ),
+          ListTile(
+            leading: const Icon(Icons.delete_outline),
+            title: const Text('Clear Cache'),
+            subtitle: const Text('Free up storage space'),
+            trailing: const Icon(Icons.arrow_forward_ios, size: 16),
+            onTap: () async {
+              final cacheManager = CacheManager();
+              final stats = await cacheManager.getStats();
+
+              if (mounted) {
+                showDialog(
+                  context: context,
+                  builder: (context) => AlertDialog(
+                    title: const Text('Clear Cache'),
+                    content: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text('Cache Size: ${stats['totalSizeKB']} KB'),
+                        Text('Items: ${stats['totalItems']}'),
+                        Text('Expired: ${stats['expiredItems']}'),
+                        const SizedBox(height: 16),
+                        const Text('Clear all cached data?'),
+                      ],
+                    ),
+                    actions: [
+                      TextButton(
+                        onPressed: () => Navigator.pop(context),
+                        child: const Text('Cancel'),
+                      ),
+                      TextButton(
+                        onPressed: () async {
+                          await cacheManager.clearAll();
+                          if (context.mounted) {
+                            Navigator.pop(context);
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(content: Text('Cache cleared')),
+                            );
+                          }
+                        },
+                        child: const Text('Clear'),
+                      ),
+                    ],
+                  ),
+                );
+              }
+            },
+          ),
+          const Divider(),
+          ListTile(
+            leading: const Icon(Icons.widgets),
+            title: const Text('Widget Settings'),
+            subtitle: const Text('Customize home screen widget'),
+            trailing: const Icon(Icons.arrow_forward_ios, size: 16),
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const WidgetSettingsPage(),
+                ),
+              );
             },
           ),
         ],
