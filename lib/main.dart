@@ -3,6 +3,7 @@ import 'features/prayer/prayer_times_service.dart';
 import 'features/quotes/quote_picker_service.dart';
 import 'features/notifications/notification_service.dart';
 import 'features/prayer_tracking/prayer_stats_page.dart';
+import 'features/widget/prayer_widget_service.dart';
 import 'dart:async';
 import 'package:geolocator/geolocator.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -24,6 +25,9 @@ void main() async {
 
   // Initialize notification service
   await NotificationService().initialize();
+
+  // Initialize widget service
+  await PrayerWidgetService.initialize();
 
   final prefs = await SharedPreferences.getInstance();
   final useDark = prefs.getBool('useAmoledTheme') ?? true;
@@ -163,6 +167,13 @@ class _MyHomePageState extends State<MyHomePage> {
       var madhab = madhabList.indexOf(madhabString);
       // If madhab not found, default to Shafi (0)
       if (madhab == -1) madhab = 0;
+
+      // Store location and settings for widget
+      await prefs.setDouble('location_latitude', position.latitude);
+      await prefs.setDouble('location_longitude', position.longitude);
+      await prefs.setInt('calculation_method', method);
+      await prefs.setInt('madhab', madhab);
+
       _prayerTimesService = PrayerTimesService(
         latitude: position.latitude,
         longitude: position.longitude,
@@ -191,6 +202,9 @@ class _MyHomePageState extends State<MyHomePage> {
       // Schedule notifications for today's prayers
       final prayerTimes = await _prayerTimesService!.getTodayPrayerTimes();
       await NotificationService().schedulePrayerNotifications(prayerTimes);
+
+      // Update home screen widget
+      await PrayerWidgetService.updateWidgetWithStoredSettings();
 
       setState(() {
         _nextPrayerTime = nextPrayerTime;

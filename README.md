@@ -9,6 +9,9 @@ An Islamic companion app built with Flutter that helps Muslims with daily prayer
 - Real-time countdown to the next prayer
 - Support for multiple calculation methods (University of Islamic Sciences, etc.)
 - Madhab selection (Shafi, Hanafi, Maliki, Hanbali)
+- **Home screen widget** - View prayer times without opening the app (Android & iOS)
+- Prayer notifications with scheduled reminders
+- Prayer tracking with completion statistics and streaks
 
 ### Calendar
 - Dual calendar display (Gregorian and Hijri dates)
@@ -54,6 +57,12 @@ An Islamic companion app built with Flutter that helps Muslims with daily prayer
 - `shared_preferences` - Local data storage
 - `http` - Network requests
 - `csv` - Quote and word data parsing
+- `home_widget` - Home screen widgets for Android and iOS
+- `flutter_local_notifications` - Prayer time notifications
+- `flutter_qiblah` - Qibla compass functionality
+- `permission_handler` - Runtime permissions handling
+- `timezone` - Timezone support for notifications
+- `intl` - Internationalization and date formatting
 
 ## Getting Started
 
@@ -88,14 +97,31 @@ The app requires location permissions to calculate accurate prayer times based o
 ```
 lib/
   ├── features/
-  │   ├── prayer/          # Prayer times calculation
-  │   ├── quotes/          # Inspirational quotes
-  │   ├── quran/           # Quran reader
-  │   ├── calendar/        # Calendar view
-  │   ├── hajj/            # Hajj information
-  │   ├── common_words/    # Arabic words learning
-  │   └── settings/        # App settings
-  └── main.dart            # App entry point
+  │   ├── prayer/              # Prayer times calculation
+  │   ├── prayer_tracking/     # Prayer completion tracking
+  │   ├── notifications/       # Prayer notifications service
+  │   ├── widget/              # Home screen widget service
+  │   ├── qibla/               # Qibla compass
+  │   ├── quotes/              # Inspirational quotes
+  │   ├── quran/               # Quran reader
+  │   ├── calendar/            # Calendar view
+  │   ├── hajj/                # Hajj information
+  │   ├── common_words/        # Arabic words learning
+  │   └── settings/            # App settings
+  └── main.dart                # App entry point
+android/
+  └── app/src/main/
+      ├── res/
+      │   ├── layout/
+      │   │   └── prayer_times_widget.xml
+      │   └── xml/
+      │       └── prayer_times_widget_info.xml
+      └── kotlin/com/example/immutable5/
+          └── PrayerTimesWidgetProvider.kt
+ios/
+  └── PrayerTimesWidget/
+      ├── PrayerTimesWidget.swift
+      └── Info.plist
 assets/
   ├── quotes.csv           # Quote database
   ├── quran.txt            # Quran text
@@ -147,6 +173,52 @@ assets:
   - assets/hajj/
 ```
 3. Modify `lib/features/hajj/hajj_page.dart` to display the images instead of placeholders
+
+## Home Screen Widget Setup
+
+The app includes a home screen widget that displays prayer times directly on your device's home screen.
+
+### Android Widget
+
+The Android widget is automatically configured and ready to use:
+
+1. Long-press on your home screen
+2. Select "Widgets"
+3. Find "Immutable5" or "Prayer Times"
+4. Drag the widget to your home screen
+5. The widget will automatically update with your prayer times
+
+The widget updates every 30 minutes and shows:
+- Next prayer name and time with countdown
+- All 5 daily prayer times (Fajr, Dhuhr, Asr, Maghrib, Isha)
+- Last update timestamp
+
+### iOS Widget
+
+The iOS widget requires additional setup in Xcode:
+
+1. Open the project in Xcode: `open ios/Runner.xcworkspace`
+2. Add a new Widget Extension target:
+   - File → New → Target
+   - Select "Widget Extension"
+   - Name it "PrayerTimesWidget"
+   - Uncheck "Include Configuration Intent"
+3. Copy the widget code from `ios/PrayerTimesWidget/PrayerTimesWidget.swift`
+4. Add App Group capability:
+   - Select your app target → Signing & Capabilities
+   - Add "App Groups" capability
+   - Create group: `group.immutable5.prayertimes`
+   - Repeat for the widget extension target
+5. Build and run the app
+
+To add the widget on iOS:
+1. Long-press on home screen
+2. Tap the "+" button in the top corner
+3. Search for "Immutable5" or "Prayer Times"
+4. Select widget size (Medium or Large)
+5. Add to home screen
+
+**Note**: iOS widgets update based on the system's widget timeline policy, typically every 15-30 minutes.
 
 ## Configuration
 
