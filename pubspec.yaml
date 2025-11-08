@@ -41,7 +41,7 @@ dependencies:
   table_calendar: ^3.0.8
   hijri: ^3.0.0
   flutter_local_notifications: ^17.0.0
-  flutter_qiblah: ^2.2.0
+  flutter_qiblah: ^3.0.3
   permission_handler: ^11.0.0
   timezone: ^0.9.0
   home_widget: ^0.6.0
