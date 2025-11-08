@@ -3,7 +3,7 @@ import 'package:flutter_qiblah/flutter_qiblah.dart';
 import 'dart:math' as math;
 
 class QiblaPage extends StatefulWidget {
-  const QiblaPage({Key? key,}) : super(key: key);
+  const QiblaPage({Key? key}) : super(key: key);
 
   @override
   _QiblaPageState createState() => _QiblaPageState();
@@ -35,7 +35,7 @@ class _QiblaPageState extends State<QiblaPage> {
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
       ),
       body: _loading
-          ? const Center(child: CircularProgressIndicator(),)
+          ? const Center(child: CircularProgressIndicator())
           : !_deviceSupported
               ? const Center(
                   child: Padding(
@@ -43,7 +43,7 @@ class _QiblaPageState extends State<QiblaPage> {
                     child: Text(
                       'Your device does not support the compass sensor required for Qibla direction',
                       textAlign: TextAlign.center,
-                      style: TextStyle(fontSize: 16,),
+                      style: TextStyle(fontSize: 16),
                     ),
                   ),
                 )
@@ -51,21 +51,21 @@ class _QiblaPageState extends State<QiblaPage> {
                   stream: FlutterQiblah.qiblahStream,
                   builder: (context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
-                      return const Center(child: CircularProgressIndicator(),);
+                      return const Center(child: CircularProgressIndicator());
                     }
 
                     if (snapshot.hasError) {
                       return Center(
                         child: Text(
                           'Error: ${snapshot.error}',
-                          style: const TextStyle(color: Colors.red,),
+                          style: const TextStyle(color: Colors.red),
                         ),
                       );
                     }
 
                     final qiblahDirection = snapshot.data;
                     if (qiblahDirection == null) {
-                      return const Center(child: Text('Loading Qibla direction...',),);
+                      return const Center(child: Text('Loading Qibla direction...'));
                     }
 
                     return _buildCompass(qiblahDirection);
@@ -80,12 +80,12 @@ class _QiblaPageState extends State<QiblaPage> {
       children: [
         Text(
           '${qiblahDirection.qibla.toStringAsFixed(1)}°',
-          style: const TextStyle(fontSize: 32, fontWeight: FontWeight.bold,),
+          style: const TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
         ),
         const SizedBox(height: 16),
         const Text(
           'Direction to Mecca',
-          style: TextStyle(fontSize: 18, color: Colors.grey,),
+          style: TextStyle(fontSize: 18, color: Colors.grey),
         ),
         const SizedBox(height: 48),
         SizedBox(
@@ -100,11 +100,11 @@ class _QiblaPageState extends State<QiblaPage> {
                 child: Container(
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    border: Border.all(color: Colors.grey, width: 2,),
+                    border: Border.all(color: Colors.grey, width: 2),
                   ),
                   child: CustomPaint(
                     painter: CompassPainter(),
-                    size: const Size(300, 300,),
+                    size: const Size(300, 300),
                   ),
                 ),
               ),
@@ -133,14 +133,14 @@ class _QiblaPageState extends State<QiblaPage> {
                     const Text('Offset from North:'),
                     Text(
                       '${qiblahDirection.offset.toStringAsFixed(1)}°',
-                      style: const TextStyle(fontWeight: FontWeight.bold,),
+                      style: const TextStyle(fontWeight: FontWeight.bold),
                     ),
                   ],
                 ),
                 const SizedBox(height: 8),
                 const Text(
                   'Align the green arrow with the compass direction',
-                  style: TextStyle(fontSize: 12, color: Colors.grey,),
+                  style: TextStyle(fontSize: 12, color: Colors.grey),
                   textAlign: TextAlign.center,
                 ),
               ],
@@ -196,7 +196,7 @@ class CompassPainter extends CustomPainter {
       final y1 = center.dy - (radius - 10) * math.cos(angle);
       final x2 = center.dx + radius * math.sin(angle);
       final y2 = center.dy - radius * math.cos(angle);
-      canvas.drawLine(Offset(x1, y1,), Offset(x2, y2,), paint,);
+      canvas.drawLine(Offset(x1, y1), Offset(x2, y2), paint);
     }
   }
 
