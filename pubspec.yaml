@@ -51,7 +51,6 @@ dependencies:
   get_it: ^7.6.4
   google_fonts: ^7.0.2
   flutter_animate: ^4.5.2
-  flutter_svg: ^2.2.3
 
 dev_dependencies:
   flutter_test:
