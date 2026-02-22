@@ -1,17 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import '../../generated/app_localizations.dart';
 import '../../main.dart';
 import '../notifications/notification_service.dart';
 import '../widget/widget_settings_page.dart';
 import '../../services/battery_optimizer.dart';
 import '../../services/cache_manager.dart';
+import '../../shared/app_colors.dart';
 
 class SettingsPage extends StatefulWidget {
-  const SettingsPage({Key? key}) : super(key: key);
+  const SettingsPage({super.key});
 
   @override
-  _SettingsPageState createState() => _SettingsPageState();
+  State<SettingsPage> createState() => _SettingsPageState();
 }
 
 class _SettingsPageState extends State<SettingsPage> {
@@ -19,21 +21,87 @@ class _SettingsPageState extends State<SettingsPage> {
   static const _keyMadhab = 'madhab';
   static const _keyNotificationsEnabled = 'notificationsEnabled';
   static const _keyUseAmoledTheme = 'useAmoledTheme';
-  List<String> _methods = [
+  static const _keyAccentColor = 'accent_color';
+  static const _keyJummahReminders = 'jummahReminders';
+  static const _keyIftarReminders = 'iftarReminders';
+  static const List<String> _methods = [
     'Method 2 (University of Islamic Sciences)',
     'Method 4 (Islamic Society of North America)',
   ];
-  List<String> _madhabs = ['Shafi', 'Hanafi', 'Maliki', 'Hanbali'];
+  static const List<String> _madhabs = ['Shafi', 'Hanafi', 'Maliki', 'Hanbali'];
   String _calculationMethod = _methods[0];
   String _madhab = 'Shafi';
   bool _notificationsEnabled = true;
   bool _useAmoledTheme = true;
+  bool _jummahReminders = true;
+  bool _iftarReminders = true;
   bool _batterySaverMode = false;
+  bool _showTrack = true;
+  bool _showQibla = true;
+  bool _showCalendar = true;
+  bool _showHajj = true;
+  bool _showCommonWords = true;
+  bool _showDuas = true;
+  bool _showQuran = true;
 
   @override
   void initState() {
     super.initState();
+    bottomNavVisibilityNotifier.addListener(_syncNavVisibility);
     _loadPrefs();
+  }
+
+  @override
+  void dispose() {
+    bottomNavVisibilityNotifier.removeListener(_syncNavVisibility);
+    super.dispose();
+  }
+
+  void _syncNavVisibility() {
+    final navVisibility = bottomNavVisibilityNotifier.value;
+    if (!mounted) return;
+    setState(() {
+      _showTrack = navVisibility.showTrack;
+      _showQibla = navVisibility.showQibla;
+      _showCalendar = navVisibility.showCalendar;
+      _showHajj = navVisibility.showHajj;
+      _showCommonWords = navVisibility.showCommonWords;
+      _showDuas = navVisibility.showDuas;
+      _showQuran = navVisibility.showQuran;
+    });
+  }
+
+  Future<void> _updateNavVisibility({
+    bool? showTrack,
+    bool? showQibla,
+    bool? showCalendar,
+    bool? showHajj,
+    bool? showCommonWords,
+    bool? showDuas,
+    bool? showQuran,
+  }) async {
+    final prefs = await SharedPreferences.getInstance();
+    final updated = bottomNavVisibilityNotifier.value.copyWith(
+      showTrack: showTrack,
+      showQibla: showQibla,
+      showCalendar: showCalendar,
+      showHajj: showHajj,
+      showCommonWords: showCommonWords,
+      showDuas: showDuas,
+      showQuran: showQuran,
+    );
+    bottomNavVisibilityNotifier.value = updated;
+    await updated.save(prefs);
+    if (!mounted) return;
+    setState(() {
+      _showTrack = updated.showTrack;
+      _showQibla = updated.showQibla;
+      _showCalendar = updated.showCalendar;
+      _showHajj = updated.showHajj;
+      _showCommonWords = updated.showCommonWords;
+      _showDuas = updated.showDuas;
+      _showQuran = updated.showQuran;
+    });
   }
 
   Future<void> _loadPrefs() async {
@@ -41,136 +109,300 @@ class _SettingsPageState extends State<SettingsPage> {
     final batteryOptimizer = BatteryOptimizer();
     await batteryOptimizer.initialize();
 
+    if (!mounted) return;
+
+    final navVisibility = BottomNavVisibility.fromPrefs(prefs);
+    bottomNavVisibilityNotifier.value = navVisibility;
+
     setState(() {
-      _calculationMethod = prefs.getString(_keyCalculationMethod) ?? _calculationMethod;
+      _calculationMethod =
+          prefs.getString(_keyCalculationMethod) ?? _calculationMethod;
       _madhab = prefs.getString(_keyMadhab) ?? _madhab;
-      _notificationsEnabled = prefs.getBool(_keyNotificationsEnabled) ?? _notificationsEnabled;
+      _notificationsEnabled =
+          prefs.getBool(_keyNotificationsEnabled) ?? _notificationsEnabled;
       _useAmoledTheme = prefs.getBool(_keyUseAmoledTheme) ?? _useAmoledTheme;
+      _jummahReminders = prefs.getBool(_keyJummahReminders) ?? _jummahReminders;
+      _iftarReminders = prefs.getBool(_keyIftarReminders) ?? _iftarReminders;
       _batterySaverMode = batteryOptimizer.isBatterySaverEnabled();
+      _showTrack = navVisibility.showTrack;
+      _showQibla = navVisibility.showQibla;
+      _showCalendar = navVisibility.showCalendar;
+      _showHajj = navVisibility.showHajj;
+      _showCommonWords = navVisibility.showCommonWords;
+      _showDuas = navVisibility.showDuas;
+      _showQuran = navVisibility.showQuran;
     });
+  }
+
+  Widget _buildSectionHeader(BuildContext context, String title) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 12.0),
+      child: Text(
+        title.toUpperCase(),
+        style: GoogleFonts.plusJakartaSans(
+          fontSize: 12,
+          fontWeight: FontWeight.w600,
+          letterSpacing: 1.5,
+          color: AppColors.accent,
+        ),
+      ),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      extendBodyBehindAppBar: true,
       appBar: AppBar(
-        title: Text(AppLocalizations.of(context)!.settings),
+        title: Text(
+          AppLocalizations.of(context)!.settings,
+          style: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.w600),
+        ),
+        backgroundColor: Colors.transparent,
+        elevation: 0,
       ),
-      body: ListView(
-        children: [
-          ListTile(
-            title: Text(AppLocalizations.of(context)!.calculationMethod),
-            subtitle: Text(_calculationMethod),
-            onTap: () async {
-              final choice = await showDialog<String>(
-                context: context,
-                builder: (_) => SimpleDialog(
-                  title: Text(
-                    AppLocalizations.of(context)!.selectCalculationMethod,
-                  ),
-                  children: _methods
-                      .map(
-                        (m) => RadioListTile(
-                          title: Text(m),
-                          value: m,
-                          groupValue: _calculationMethod,
-                          onChanged: (v) => Navigator.pop(context, v),
-                        ),
-                      )
-                      .toList(),
-                ),
-              );
-              if (choice != null) {
-                final prefs = await SharedPreferences.getInstance();
-                setState(() => _calculationMethod = choice);
-                prefs.setString(_keyCalculationMethod, choice);
-              }
-            },
-          ),
-          ListTile(
-            title: Text(AppLocalizations.of(context)!.madhab),
-            subtitle: Text(_madhab),
-            onTap: () async {
-              final choice = await showDialog<String>(
-                context: context,
-                builder: (_) => SimpleDialog(
-                  title: Text(AppLocalizations.of(context)!.selectMadhab),
-                  children: _madhabs
-                      .map(
-                        (m) => RadioListTile(
-                          title: Text(m),
-                          value: m,
-                          groupValue: _madhab,
-                          onChanged: (v) => Navigator.pop(context, v),
-                        ),
-                      )
-                      .toList(),
-                ),
-              );
-              if (choice != null) {
-                final prefs = await SharedPreferences.getInstance();
-                setState(() => _madhab = choice);
-                prefs.setString(_keyMadhab, choice);
-              }
-            },
-          ),
-          SwitchListTile(
-            title: Text(AppLocalizations.of(context)!.notifications),
-            subtitle: const Text('Get notified for each prayer time'),
-            value: _notificationsEnabled,
-            onChanged: (value) async {
-              if (value) {
-                // Request notification permissions when enabling
-                final granted = await NotificationService().requestPermissions();
-                if (!granted) {
-                  // Show dialog explaining permissions are needed
-                  if (mounted) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text(
-                          'Notification permissions are required to enable prayer reminders',
+      body: SafeArea(
+        child: ListView(
+          padding: const EdgeInsets.only(bottom: 100), // Space for nav bar
+          children: [
+            _buildSectionHeader(context, 'Calculation'),
+            ListTile(
+              title: Text(AppLocalizations.of(context)!.calculationMethod),
+              subtitle: Text(_calculationMethod),
+              contentPadding: const EdgeInsets.symmetric(horizontal: 24),
+              onTap: () async {
+                final choice = await showDialog<String>(
+                  context: context,
+                  builder: (_) => SimpleDialog(
+                    backgroundColor: AppColors.cardSurface,
+                    title: Text(
+                      AppLocalizations.of(context)!.selectCalculationMethod,
+                      style: GoogleFonts.plusJakartaSans(
+                          fontWeight: FontWeight.bold),
+                    ),
+                    children: [
+                      RadioGroup<String>(
+                        groupValue: _calculationMethod,
+                        onChanged: (v) => Navigator.pop(context, v),
+                        child: Column(
+                          children: _methods
+                              .map(
+                                (m) => RadioListTile(
+                                  title: Text(m),
+                                  value: m,
+                                  activeColor: AppColors.accent,
+                                ),
+                              )
+                              .toList(),
                         ),
                       ),
-                    );
-                  }
-                  return;
+                    ],
+                  ),
+                );
+                if (choice != null) {
+                  final prefs = await SharedPreferences.getInstance();
+                  if (!mounted) return;
+                  setState(() => _calculationMethod = choice);
+                  prefs.setString(_keyCalculationMethod, choice);
                 }
-              }
+              },
+            ),
+            ListTile(
+              title: Text(AppLocalizations.of(context)!.madhab),
+              subtitle: Text(_madhab),
+              contentPadding: const EdgeInsets.symmetric(horizontal: 24),
+              onTap: () async {
+                final choice = await showDialog<String>(
+                  context: context,
+                  builder: (_) => SimpleDialog(
+                    backgroundColor: AppColors.cardSurface,
+                    title: Text(AppLocalizations.of(context)!.selectMadhab),
+                    children: [
+                      RadioGroup<String>(
+                        groupValue: _madhab,
+                        onChanged: (v) => Navigator.pop(context, v),
+                        child: Column(
+                          children: _madhabs
+                              .map(
+                                (m) => RadioListTile(
+                                  title: Text(m),
+                                  value: m,
+                                  activeColor: AppColors.accent,
+                                ),
+                              )
+                              .toList(),
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+                if (choice != null) {
+                  final prefs = await SharedPreferences.getInstance();
+                  if (!mounted) return;
+                  setState(() => _madhab = choice);
+                  prefs.setString(_keyMadhab, choice);
+                }
+              },
+            ),
+            const Divider(),
+            _buildSectionHeader(context, 'Preferences'),
+            SwitchListTile(
+              title: Text(AppLocalizations.of(context)!.notifications),
+              subtitle: const Text('Get notified for each prayer time'),
+              value: _notificationsEnabled,
+              activeThumbColor: AppColors.accent,
+              contentPadding: const EdgeInsets.symmetric(horizontal: 24),
+              onChanged: (value) async {
+                if (value) {
+                  // Request notification permissions when enabling
+                  final granted =
+                      await NotificationService().requestPermissions();
+                  if (!granted) {
+                    // Show dialog explaining permissions are needed
+                    if (context.mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text(
+                            'Notification permissions are required to enable prayer reminders',
+                          ),
+                        ),
+                      );
+                    }
+                    return;
+                  }
+                }
 
-              final prefs = await SharedPreferences.getInstance();
-              setState(() => _notificationsEnabled = value);
-              await prefs.setBool(_keyNotificationsEnabled, value);
+                final prefs = await SharedPreferences.getInstance();
+                setState(() => _notificationsEnabled = value);
+                await prefs.setBool(_keyNotificationsEnabled, value);
 
-              // Cancel all notifications if disabled
-              if (!value) {
-                await NotificationService().cancelAllNotifications();
-              }
-            },
-          ),
-          SwitchListTile(
-            title: Text(AppLocalizations.of(context)!.amoledTheme),
-            subtitle: Text(AppLocalizations.of(context)!.amoledThemeSubtitle),
-            value: _useAmoledTheme,
-            onChanged: (value) async {
-              final prefs = await SharedPreferences.getInstance();
-              setState(() => _useAmoledTheme = value);
-              await prefs.setBool(_keyUseAmoledTheme, value);
-              // Update the global theme notifier
-              themeNotifier.value = value ? ThemeMode.dark : ThemeMode.light;
-            },
-          ),
-          const Divider(),
-          SwitchListTile(
-            title: const Text('Battery Saver Mode'),
-            subtitle: const Text('Reduce battery usage by limiting background updates'),
-            value: _batterySaverMode,
-            secondary: const Icon(Icons.battery_saver),
-            onChanged: (value) async {
-              final batteryOptimizer = BatteryOptimizer();
-              await batteryOptimizer.setBatterySaverMode(value);
-              setState(() => _batterySaverMode = value);
+                // Cancel all notifications if disabled
+                if (!value) {
+                  await NotificationService().cancelAllNotifications();
+                }
+              },
+            ),
+            if (_notificationsEnabled) ...[
+              SwitchListTile(
+                title: const Text('Jummah Prep Reminder'),
+                subtitle: const Text(
+                    'Remind me 1 hour before Friday Dhuhr (Jummah) to prepare.'),
+                value: _jummahReminders,
+                activeThumbColor: AppColors.accent,
+                contentPadding: const EdgeInsets.symmetric(horizontal: 40),
+                onChanged: (value) async {
+                  final prefs = await SharedPreferences.getInstance();
+                  setState(() => _jummahReminders = value);
+                  await prefs.setBool(_keyJummahReminders, value);
+                },
+              ),
+              SwitchListTile(
+                title: const Text('Iftar Prep Reminder'),
+                subtitle: const Text(
+                    'Remind me 15 minutes before Maghrib during Ramadan.'),
+                value: _iftarReminders,
+                activeThumbColor: AppColors.accent,
+                contentPadding: const EdgeInsets.symmetric(horizontal: 40),
+                onChanged: (value) async {
+                  final prefs = await SharedPreferences.getInstance();
+                  setState(() => _iftarReminders = value);
+                  await prefs.setBool(_keyIftarReminders, value);
+                },
+              ),
+            ],
+            SwitchListTile(
+              title: Text(AppLocalizations.of(context)!.amoledTheme),
+              subtitle: Text(AppLocalizations.of(context)!.amoledThemeSubtitle),
+              value: _useAmoledTheme,
+              activeThumbColor: AppColors.accent,
+              contentPadding: const EdgeInsets.symmetric(horizontal: 24),
+              onChanged: (value) async {
+                final prefs = await SharedPreferences.getInstance();
+                setState(() => _useAmoledTheme = value);
+                await prefs.setBool(_keyUseAmoledTheme, value);
+                // Update the global theme notifier
+                themeNotifier.value = value ? ThemeMode.dark : ThemeMode.light;
+              },
+            ),
+            ListTile(
+              title: const Text('Accent Color'),
+              subtitle: const Text('Change the app\'s highlight color'),
+              trailing: CircleAvatar(
+                backgroundColor: AppColors.accent,
+                radius: 12,
+              ),
+              contentPadding: const EdgeInsets.symmetric(horizontal: 24),
+              onTap: () => _showColorPicker(context),
+            ),
+            const Divider(),
+            _buildSectionHeader(context, 'Bottom bar shortcuts'),
+            SwitchListTile(
+              title: const Text('Track tab'),
+              value: _showTrack,
+              activeThumbColor: AppColors.accent,
+              contentPadding: const EdgeInsets.symmetric(horizontal: 24),
+              onChanged: (value) => _updateNavVisibility(showTrack: value),
+            ),
+            SwitchListTile(
+              title: const Text('Qibla tab'),
+              value: _showQibla,
+              activeThumbColor: AppColors.accent,
+              contentPadding: const EdgeInsets.symmetric(horizontal: 24),
+              onChanged: (value) => _updateNavVisibility(showQibla: value),
+            ),
+            SwitchListTile(
+              title: Text(AppLocalizations.of(context)!.calendar),
+              value: _showCalendar,
+              activeThumbColor: AppColors.accent,
+              contentPadding: const EdgeInsets.symmetric(horizontal: 24),
+              onChanged: (value) => _updateNavVisibility(showCalendar: value),
+            ),
+            SwitchListTile(
+              title: Text(AppLocalizations.of(context)!.hajj),
+              value: _showHajj,
+              activeThumbColor: AppColors.accent,
+              contentPadding: const EdgeInsets.symmetric(horizontal: 24),
+              onChanged: (value) => _updateNavVisibility(showHajj: value),
+            ),
+            SwitchListTile(
+              title: Text(AppLocalizations.of(context)!.commonWords),
+              value: _showCommonWords,
+              activeThumbColor: AppColors.accent,
+              contentPadding: const EdgeInsets.symmetric(horizontal: 24),
+              onChanged: (value) =>
+                  _updateNavVisibility(showCommonWords: value),
+            ),
+            SwitchListTile(
+              title: const Text('Duas'),
+              value: _showDuas,
+              activeThumbColor: AppColors.accent,
+              contentPadding: const EdgeInsets.symmetric(horizontal: 24),
+              onChanged: (value) => _updateNavVisibility(showDuas: value),
+            ),
+            SwitchListTile(
+              title: Text(AppLocalizations.of(context)!.quran),
+              value: _showQuran,
+              activeThumbColor: AppColors.accent,
+              contentPadding: const EdgeInsets.symmetric(horizontal: 24),
+              onChanged: (value) => _updateNavVisibility(showQuran: value),
+            ),
+            const Divider(),
+            _buildSectionHeader(context, 'Power & Data'),
+            SwitchListTile(
+              title: const Text('Battery Saver Mode'),
+              subtitle: const Text(
+                  'Reduce battery usage by limiting background updates'),
+              value: _batterySaverMode,
+              activeThumbColor: AppColors.accent,
+              contentPadding: const EdgeInsets.symmetric(horizontal: 24),
+              secondary: const Icon(Icons.battery_saver,
+                  color: AppColors.textSecondary),
+              onChanged: (value) async {
+                final batteryOptimizer = BatteryOptimizer();
+                await batteryOptimizer.setBatterySaverMode(value);
+                setState(() => _batterySaverMode = value);
 
-              if (mounted) {
+                if (!context.mounted) return;
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
                     content: Text(
@@ -181,22 +413,25 @@ class _SettingsPageState extends State<SettingsPage> {
                     duration: const Duration(seconds: 3),
                   ),
                 );
-              }
-            },
-          ),
-          ListTile(
-            leading: const Icon(Icons.delete_outline),
-            title: const Text('Clear Cache'),
-            subtitle: const Text('Free up storage space'),
-            trailing: const Icon(Icons.arrow_forward_ios, size: 16),
-            onTap: () async {
-              final cacheManager = CacheManager();
-              final stats = await cacheManager.getStats();
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.delete_outline,
+                  color: AppColors.textSecondary),
+              title: const Text('Clear Cache'),
+              subtitle: const Text('Free up storage space'),
+              contentPadding: const EdgeInsets.symmetric(horizontal: 24),
+              trailing: const Icon(Icons.arrow_forward_ios,
+                  size: 16, color: AppColors.textSecondary),
+              onTap: () async {
+                final cacheManager = CacheManager();
+                final stats = await cacheManager.getStats();
 
-              if (mounted) {
+                if (!context.mounted) return;
                 showDialog(
                   context: context,
                   builder: (context) => AlertDialog(
+                    backgroundColor: AppColors.cardSurface,
                     title: const Text('Clear Cache'),
                     content: Column(
                       mainAxisSize: MainAxisSize.min,
@@ -224,30 +459,94 @@ class _SettingsPageState extends State<SettingsPage> {
                             );
                           }
                         },
-                        child: const Text('Clear'),
+                        child: const Text('Clear',
+                            style: TextStyle(color: AppColors.error)),
                       ),
                     ],
                   ),
                 );
-              }
-            },
-          ),
-          const Divider(),
-          ListTile(
-            leading: const Icon(Icons.widgets),
-            title: const Text('Widget Settings'),
-            subtitle: const Text('Customize home screen widget'),
-            trailing: const Icon(Icons.arrow_forward_ios, size: 16),
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => const WidgetSettingsPage(),
+              },
+            ),
+            const Divider(),
+            ListTile(
+              leading:
+                  const Icon(Icons.widgets, color: AppColors.textSecondary),
+              title: const Text('Widget Settings'),
+              subtitle: const Text('Customize home screen widget'),
+              contentPadding: const EdgeInsets.symmetric(horizontal: 24),
+              trailing: const Icon(Icons.arrow_forward_ios,
+                  size: 16, color: AppColors.textSecondary),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const WidgetSettingsPage(),
+                  ),
+                );
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _showColorPicker(BuildContext context) {
+    final colors = [
+      const Color(0xFFD4AF37), // Muted Gold (Default)
+      const Color(0xFF10B981), // Emerald
+      const Color(0xFF3B82F6), // Blue
+      const Color(0xFF8B5CF6), // Violet
+      const Color(0xFFF43F5E), // Rose
+      const Color(0xFFF59E0B), // Amber
+      const Color(0xFF06B6D4), // Cyan
+    ];
+
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor: AppColors.cardSurface,
+        title: const Text('Select Accent Color'),
+        content: Wrap(
+          spacing: 12,
+          runSpacing: 12,
+          children: colors.map((color) {
+            final isSelected = color.toARGB32() == AppColors.accent.toARGB32();
+            return GestureDetector(
+              onTap: () async {
+                final prefs = await SharedPreferences.getInstance();
+                setState(() {
+                  AppColors.accent = color;
+                });
+                accentColorNotifier.value = color;
+                await prefs.setInt(_keyAccentColor, color.toARGB32());
+                if (context.mounted) Navigator.pop(context);
+              },
+              child: Container(
+                width: 50,
+                height: 50,
+                decoration: BoxDecoration(
+                  color: color,
+                  shape: BoxShape.circle,
+                  border: isSelected
+                      ? Border.all(color: Colors.white, width: 3)
+                      : null,
+                  boxShadow: [
+                    if (isSelected)
+                      BoxShadow(
+                        color: color.withValues(alpha: 0.5),
+                        blurRadius: 8,
+                        spreadRadius: 2,
+                      ),
+                  ],
                 ),
-              );
-            },
-          ),
-        ],
+                child: isSelected
+                    ? const Icon(Icons.check, color: Colors.white)
+                    : null,
+              ),
+            );
+          }).toList(),
+        ),
       ),
     );
   }

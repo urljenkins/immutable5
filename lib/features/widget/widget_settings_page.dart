@@ -3,7 +3,7 @@ import 'widget_preferences.dart';
 import 'prayer_widget_service.dart';
 
 class WidgetSettingsPage extends StatefulWidget {
-  const WidgetSettingsPage({Key? key}) : super(key: key);
+  const WidgetSettingsPage({super.key});
 
   @override
   State<WidgetSettingsPage> createState() => _WidgetSettingsPageState();
@@ -12,8 +12,6 @@ class WidgetSettingsPage extends StatefulWidget {
 class _WidgetSettingsPageState extends State<WidgetSettingsPage> {
   WidgetTheme _selectedTheme = WidgetTheme.light;
   WidgetLayout _selectedLayout = WidgetLayout.detailed;
-  bool _showNextPrayerOnly = false;
-  bool _showHijriDate = true;
 
   @override
   void initState() {
@@ -24,27 +22,22 @@ class _WidgetSettingsPageState extends State<WidgetSettingsPage> {
   Future<void> _loadPreferences() async {
     final theme = await WidgetPreferences.getTheme();
     final layout = await WidgetPreferences.getLayout();
-    final nextOnly = await WidgetPreferences.getShowNextPrayerOnly();
-    final hijri = await WidgetPreferences.getShowHijriDate();
 
     setState(() {
       _selectedTheme = theme;
       _selectedLayout = layout;
-      _showNextPrayerOnly = nextOnly;
-      _showHijriDate = hijri;
     });
   }
 
   Future<void> _updateWidget() async {
     await PrayerWidgetService.updateWidgetWithStoredSettings();
-    if (mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Widget updated!'),
-          duration: Duration(seconds: 2),
-        ),
-      );
-    }
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('Widget updated!'),
+        duration: Duration(seconds: 2),
+      ),
+    );
   }
 
   @override
@@ -141,23 +134,26 @@ class _WidgetSettingsPageState extends State<WidgetSettingsPage> {
       context: context,
       builder: (context) => AlertDialog(
         title: const Text('Select Widget Theme'),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: WidgetTheme.values.map((theme) {
-            return RadioListTile<WidgetTheme>(
-              title: Text(_getThemeName(theme)),
-              value: theme,
-              groupValue: _selectedTheme,
-              onChanged: (value) async {
-                if (value != null) {
-                  await WidgetPreferences.setTheme(value);
-                  setState(() => _selectedTheme = value);
-                  Navigator.pop(context);
-                  await _updateWidget();
-                }
-              },
-            );
-          }).toList(),
+        content: RadioGroup<WidgetTheme>(
+          groupValue: _selectedTheme,
+          onChanged: (value) async {
+            if (value != null) {
+              await WidgetPreferences.setTheme(value);
+              if (!mounted) return;
+              setState(() => _selectedTheme = value);
+              if (context.mounted) Navigator.pop(context);
+              await _updateWidget();
+            }
+          },
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: WidgetTheme.values.map((theme) {
+              return RadioListTile<WidgetTheme>(
+                title: Text(_getThemeName(theme)),
+                value: theme,
+              );
+            }).toList(),
+          ),
         ),
       ),
     );
@@ -168,23 +164,26 @@ class _WidgetSettingsPageState extends State<WidgetSettingsPage> {
       context: context,
       builder: (context) => AlertDialog(
         title: const Text('Select Widget Layout'),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: WidgetLayout.values.map((layout) {
-            return RadioListTile<WidgetLayout>(
-              title: Text(_getLayoutName(layout)),
-              value: layout,
-              groupValue: _selectedLayout,
-              onChanged: (value) async {
-                if (value != null) {
-                  await WidgetPreferences.setLayout(value);
-                  setState(() => _selectedLayout = value);
-                  Navigator.pop(context);
-                  await _updateWidget();
-                }
-              },
-            );
-          }).toList(),
+        content: RadioGroup<WidgetLayout>(
+          groupValue: _selectedLayout,
+          onChanged: (value) async {
+            if (value != null) {
+              await WidgetPreferences.setLayout(value);
+              if (!mounted) return;
+              setState(() => _selectedLayout = value);
+              if (context.mounted) Navigator.pop(context);
+              await _updateWidget();
+            }
+          },
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: WidgetLayout.values.map((layout) {
+              return RadioListTile<WidgetLayout>(
+                title: Text(_getLayoutName(layout)),
+                value: layout,
+              );
+            }).toList(),
+          ),
         ),
       ),
     );
@@ -218,7 +217,8 @@ class _WidgetSettingsPageState extends State<WidgetSettingsPage> {
               ),
               Text(
                 'Just now',
-                style: TextStyle(fontSize: 10, color: textColor.withOpacity(0.6)),
+                style: TextStyle(
+                    fontSize: 10, color: textColor.withValues(alpha: 0.6)),
               ),
             ],
           ),
@@ -234,7 +234,8 @@ class _WidgetSettingsPageState extends State<WidgetSettingsPage> {
               children: [
                 Text(
                   'Next Prayer',
-                  style: TextStyle(fontSize: 12, color: textColor.withOpacity(0.7)),
+                  style: TextStyle(
+                      fontSize: 12, color: textColor.withValues(alpha: 0.7)),
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -259,7 +260,8 @@ class _WidgetSettingsPageState extends State<WidgetSettingsPage> {
                 ),
                 Text(
                   'in 2h 30m',
-                  style: TextStyle(fontSize: 12, color: textColor.withOpacity(0.6)),
+                  style: TextStyle(
+                      fontSize: 12, color: textColor.withValues(alpha: 0.6)),
                 ),
               ],
             ),

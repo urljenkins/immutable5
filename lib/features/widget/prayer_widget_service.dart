@@ -5,7 +5,6 @@ import '../prayer/prayer_times_service.dart';
 import 'widget_preferences.dart';
 
 class PrayerWidgetService {
-  static const String _widgetName = 'PrayerTimesWidget';
   static const String _appGroupId = 'group.immutable5.prayertimes';
 
   // Main prayers to display on widget
@@ -83,7 +82,8 @@ class PrayerWidgetService {
       final layout = await WidgetPreferences.getLayout();
       final colors = WidgetPreferences.getThemeColors(theme);
 
-      await HomeWidget.saveWidgetData<int>('theme_background', colors['background']);
+      await HomeWidget.saveWidgetData<int>(
+          'theme_background', colors['background']);
       await HomeWidget.saveWidgetData<int>('theme_text', colors['text']);
       await HomeWidget.saveWidgetData<int>('theme_accent', colors['accent']);
       await HomeWidget.saveWidgetData<int>('theme_card_bg', colors['cardBg']);
@@ -136,7 +136,7 @@ class PrayerWidgetService {
 
   /// Register background callback for periodic updates
   static Future<void> registerBackgroundCallback() async {
-    await HomeWidget.registerBackgroundCallback(backgroundCallback);
+    await HomeWidget.registerInteractivityCallback(backgroundCallback);
   }
 
   /// Background callback for widget updates

@@ -1,8 +1,8 @@
 import 'package:shared_preferences/shared_preferences.dart';
-import 'dart:convert';
 
 class PrayerTrackingService {
-  static final PrayerTrackingService _instance = PrayerTrackingService._internal();
+  static final PrayerTrackingService _instance =
+      PrayerTrackingService._internal();
   factory PrayerTrackingService() => _instance;
   PrayerTrackingService._internal();
 
@@ -13,7 +13,8 @@ class PrayerTrackingService {
     final prefs = await SharedPreferences.getInstance();
     final key = _getPrayerKey(prayerName, date);
     await prefs.setBool(key, true);
-    await prefs.setInt('${key}_timestamp', DateTime.now().millisecondsSinceEpoch);
+    await prefs.setInt(
+        '${key}_timestamp', DateTime.now().millisecondsSinceEpoch);
   }
 
   /// Check if a prayer is completed for a specific date
@@ -42,7 +43,8 @@ class PrayerTrackingService {
   /// Get current prayer streak (consecutive days with all prayers completed)
   Future<int> getCurrentStreak() async {
     int streak = 0;
-    DateTime date = DateTime.now().subtract(const Duration(days: 1)); // Start from yesterday
+    DateTime date = DateTime.now()
+        .subtract(const Duration(days: 1)); // Start from yesterday
 
     while (true) {
       final completions = await getCompletedPrayersForDate(date);
@@ -79,7 +81,12 @@ class PrayerTrackingService {
   Future<int> getTotalPrayersCompleted() async {
     final prefs = await SharedPreferences.getInstance();
     final keys = prefs.getKeys();
-    return keys.where((k) => k.startsWith('prayer_') && k.endsWith('_completed') && prefs.getBool(k) == true).length;
+    return keys
+        .where((k) =>
+            k.startsWith('prayer_') &&
+            k.endsWith('_completed') &&
+            prefs.getBool(k) == true)
+        .length;
   }
 
   /// Get prayers completed in last 30 days

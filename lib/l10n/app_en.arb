@@ -26,5 +26,6 @@
   "usingCachedPrayerTimes": "Using cached prayer times (offline)",
   "refreshPrayerTimes": "Refresh prayer times",
   "nextPrayer": "Next Prayer",
-  "loading": "Loading..."
+  "loading": "Loading...",
+  "search": "Search"
 }

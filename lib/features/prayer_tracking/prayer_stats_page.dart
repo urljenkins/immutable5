@@ -3,10 +3,10 @@ import 'prayer_tracking_service.dart';
 import 'package:table_calendar/table_calendar.dart';
 
 class PrayerStatsPage extends StatefulWidget {
-  const PrayerStatsPage({Key? key}) : super(key: key);
+  const PrayerStatsPage({super.key});
 
   @override
-  _PrayerStatsPageState createState() => _PrayerStatsPageState();
+  State<PrayerStatsPage> createState() => _PrayerStatsPageState();
 }
 
 class _PrayerStatsPageState extends State<PrayerStatsPage> {
@@ -109,7 +109,8 @@ class _PrayerStatsPageState extends State<PrayerStatsPage> {
     );
   }
 
-  Widget _buildStatCard(String label, String value, IconData icon, Color color) {
+  Widget _buildStatCard(
+      String label, String value, IconData icon, Color color) {
     return Card(
       elevation: 2,
       child: Padding(
@@ -161,13 +162,16 @@ class _PrayerStatsPageState extends State<PrayerStatsPage> {
                       title: Text(prayer),
                       value: isCompleted,
                       onChanged: (value) async {
-                        await _trackingService.togglePrayerCompletion(prayer, _selectedDay);
+                        await _trackingService.togglePrayerCompletion(
+                            prayer, _selectedDay);
                         setState(() {
                           _loadData();
                         });
                       },
                       secondary: Icon(
-                        isCompleted ? Icons.check_circle : Icons.circle_outlined,
+                        isCompleted
+                            ? Icons.check_circle
+                            : Icons.circle_outlined,
                         color: isCompleted ? Colors.green : Colors.grey,
                       ),
                     );
@@ -197,6 +201,9 @@ class _PrayerStatsPageState extends State<PrayerStatsPage> {
               firstDay: DateTime.now().subtract(const Duration(days: 60)),
               lastDay: DateTime.now(),
               focusedDay: _focusedDay,
+              headerStyle: const HeaderStyle(
+                formatButtonVisible: false,
+              ),
               selectedDayPredicate: (day) => isSameDay(_selectedDay, day),
               onDaySelected: (selectedDay, focusedDay) {
                 setState(() {
@@ -222,7 +229,8 @@ class _PrayerStatsPageState extends State<PrayerStatsPage> {
     );
   }
 
-  Widget _buildCalendarDay(DateTime date, {bool isSelected = false, bool isToday = false}) {
+  Widget _buildCalendarDay(DateTime date,
+      {bool isSelected = false, bool isToday = false}) {
     final dateKey = _history.keys.firstWhere(
       (d) => isSameDay(d, date),
       orElse: () => date,
@@ -233,15 +241,15 @@ class _PrayerStatsPageState extends State<PrayerStatsPage> {
 
     Color? backgroundColor;
     if (completedCount == total && completedCount > 0) {
-      backgroundColor = Colors.green.withOpacity(0.3);
+      backgroundColor = Colors.green.withValues(alpha: 0.3);
     } else if (completedCount > 0) {
-      backgroundColor = Colors.orange.withOpacity(0.3);
+      backgroundColor = Colors.orange.withValues(alpha: 0.3);
     }
 
     if (isSelected) {
-      backgroundColor = Colors.blue.withOpacity(0.5);
+      backgroundColor = Colors.blue.withValues(alpha: 0.5);
     } else if (isToday) {
-      backgroundColor = Colors.purple.withOpacity(0.3);
+      backgroundColor = Colors.purple.withValues(alpha: 0.3);
     }
 
     return Container(

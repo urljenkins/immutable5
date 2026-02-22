@@ -3,31 +3,36 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 /// A page presenting the Hajj guide with steps, checkboxes, and progress.
 class HajjPage extends StatefulWidget {
-  const HajjPage({Key? key}) : super(key: key);
+  const HajjPage({super.key});
   @override
-  _HajjPageState createState() => _HajjPageState();
+  State<HajjPage> createState() => _HajjPageState();
 }
 
 class _HajjPageState extends State<HajjPage> {
   final List<Map<String, String>> _stepsData = [
     {
       'title': 'Ihram',
-      'desc': 'Enter the sacred state by wearing the white garments and making the intention for Hajj.',
-      'dua': 'Labbayka Allahumma Labbayk. Labbayka laa shareeka Laka, labbayk. Innal-hamda wan-n`imata Laka wal-mulk laa shareeka Lak.',
+      'desc':
+          'Enter the sacred state by wearing the white garments and making the intention for Hajj.',
+      'dua':
+          'Labbayka Allahumma Labbayk. Labbayka laa shareeka Laka, labbayk. Innal-hamda wan-n`imata Laka wal-mulk laa shareeka Lak.',
     },
     {
       'title': 'Tawaf',
-      'desc': 'Circumambulate the Kaaba seven times in a counter-clockwise direction.',
+      'desc':
+          'Circumambulate the Kaaba seven times in a counter-clockwise direction.',
       'dua': 'Rabbana taqabbal minna innaka Anta al-Samee`u al-`Aleem.',
     },
     {
       'title': 'Sa\'i',
       'desc': 'Walk seven times between the hills of Safa and Marwah.',
-      'dua': 'La ilaha illa Allah wahdahu la sharika lah lahul-mulk wa lahul-hamd wa huwa ala kulli shay’in qadeer.',
+      'dua':
+          'La ilaha illa Allah wahdahu la sharika lah lahul-mulk wa lahul-hamd wa huwa ala kulli shay’in qadeer.',
     },
     {
       'title': 'Arafat',
-      'desc': 'Stand in prayer and supplication at the plain of Arafat on the 9th day.',
+      'desc':
+          'Stand in prayer and supplication at the plain of Arafat on the 9th day.',
       'dua': 'Allahumma ighfir lil-mu’minina wal-mu’minat.',
     },
     {
@@ -37,7 +42,8 @@ class _HajjPageState extends State<HajjPage> {
     },
     {
       'title': 'Ramy al-Jamarat',
-      'desc': 'Throw stones at the three pillars symbolizing the rejection of evil.',
+      'desc':
+          'Throw stones at the three pillars symbolizing the rejection of evil.',
       'dua': 'Bismillah, Allahu Akbar.',
     },
     {
@@ -105,10 +111,14 @@ class _HajjPageState extends State<HajjPage> {
               currentStep: _currentStep,
               onStepTapped: (i) => setState(() => _currentStep = i),
               onStepContinue: () {
-                if (_currentStep < _stepsData.length - 1) setState(() => _currentStep++);
+                if (_currentStep < _stepsData.length - 1) {
+                  setState(() => _currentStep++);
+                }
               },
               onStepCancel: () {
-                if (_currentStep > 0) setState(() => _currentStep--);
+                if (_currentStep > 0) {
+                  setState(() => _currentStep--);
+                }
               },
               steps: List.generate(_stepsData.length, (i) {
                 final data = _stepsData[i];
@@ -130,7 +140,11 @@ class _HajjPageState extends State<HajjPage> {
                       const SizedBox(height: 8),
                       Text(data['desc']!),
                       const SizedBox(height: 8),
-                      Text('Dua: ${data['dua']}', style: Theme.of(context).textTheme.bodySmall?.copyWith(fontStyle: FontStyle.italic)),
+                      Text('Dua: ${data['dua']}',
+                          style: Theme.of(context)
+                              .textTheme
+                              .bodySmall
+                              ?.copyWith(fontStyle: FontStyle.italic)),
                       CheckboxListTile(
                           value: _completed[i],
                           title: const Text('Completed'),

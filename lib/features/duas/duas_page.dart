@@ -1,21 +1,30 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:csv/csv.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'dart:ui';
+
+import 'models/dua_model.dart';
+import 'dua_repository.dart';
+import '../../di/service_locator.dart';
+import '../../shared/app_colors.dart';
+import '../../shared/glass_container.dart';
 
 class DuasPage extends StatefulWidget {
-  const DuasPage({Key? key}) : super(key: key);
+  const DuasPage({super.key});
 
   @override
   State<DuasPage> createState() => _DuasPageState();
 }
 
 class _DuasPageState extends State<DuasPage> {
-  List<Map<String, String>> _duas = [];
-  List<Map<String, String>> _filteredDuas = [];
+  final DuaRepository _duaRepository = getIt<DuaRepository>();
+  List<Dua> _duas = [];
+  List<Dua> _filteredDuas = [];
   List<String> _categories = ['All'];
   String _selectedCategory = 'All';
   bool _loading = true;
-  Set<int> _favorites = {};
+  final Set<String> _favorites = {};
+  Dua? _selectedDua;
 
   @override
   void initState() {
@@ -25,32 +34,29 @@ class _DuasPageState extends State<DuasPage> {
 
   Future<void> _loadDuas() async {
     try {
-      final csvString = await rootBundle.loadString('assets/duas.csv');
-      final List<List<dynamic>> rowsAsListOfValues =
-          const CsvToListConverter().convert(csvString);
+      final duas = await _duaRepository.getAllDuas();
+      final sortedDuas = List<Dua>.from(duas)
+        ..sort((a, b) {
+          final categoryComparison = a.category.compareTo(b.category);
+          if (categoryComparison != 0) return categoryComparison;
 
-      final List<Map<String, String>> duas = [];
-      final Set<String> categories = {};
+          final priorityComparison = a.priority.compareTo(b.priority);
+          if (priorityComparison != 0) return priorityComparison;
 
-      // Skip header row
-      for (int i = 1; i < rowsAsListOfValues.length; i++) {
-        final row = rowsAsListOfValues[i];
-        if (row.length >= 5) {
-          duas.add({
-            'category': row[0].toString(),
-            'arabic': row[1].toString(),
-            'transliteration': row[2].toString(),
-            'translation': row[3].toString(),
-            'occasion': row[4].toString(),
-          });
-          categories.add(row[0].toString());
-        }
-      }
+          return a.id.compareTo(b.id);
+        });
+
+      final categories = sortedDuas
+          .map((d) => d.category)
+          .where((c) => c.isNotEmpty)
+          .toSet()
+          .toList()
+        ..sort();
 
       setState(() {
-        _duas = duas;
-        _filteredDuas = duas;
-        _categories = ['All', ...categories.toList()..sort()];
+        _duas = sortedDuas;
+        _filteredDuas = sortedDuas;
+        _categories = ['All', ...categories];
         _loading = false;
       });
     } catch (e) {
@@ -66,17 +72,17 @@ class _DuasPageState extends State<DuasPage> {
       if (category == 'All') {
         _filteredDuas = _duas;
       } else {
-        _filteredDuas = _duas.where((dua) => dua['category'] == category).toList();
+        _filteredDuas = _duas.where((dua) => dua.category == category).toList();
       }
     });
   }
 
-  void _toggleFavorite(int index) {
+  void _toggleFavorite(String id) {
     setState(() {
-      if (_favorites.contains(index)) {
-        _favorites.remove(index);
+      if (_favorites.contains(id)) {
+        _favorites.remove(id);
       } else {
-        _favorites.add(index);
+        _favorites.add(id);
       }
     });
   }
@@ -84,68 +90,113 @@ class _DuasPageState extends State<DuasPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      extendBodyBehindAppBar: true,
       appBar: AppBar(
-        title: const Text('Daily Duas'),
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+        title: Text(
+          'Duas',
+          style: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.w600),
+        ),
+        backgroundColor: Colors.transparent,
+        elevation: 0,
       ),
       body: _loading
-          ? const Center(child: CircularProgressIndicator())
-          : Column(
+          ? Center(child: CircularProgressIndicator(color: AppColors.accent))
+          : Stack(
               children: [
-                // Category Filter
-                Container(
-                  height: 60,
-                  padding: const EdgeInsets.symmetric(vertical: 8),
-                  child: ListView.builder(
-                    scrollDirection: Axis.horizontal,
-                    padding: const EdgeInsets.symmetric(horizontal: 8),
-                    itemCount: _categories.length,
-                    itemBuilder: (context, index) {
-                      final category = _categories[index];
-                      final isSelected = category == _selectedCategory;
-                      return Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 4),
-                        child: FilterChip(
-                          label: Text(category),
-                          selected: isSelected,
-                          onSelected: (_) => _filterByCategory(category),
-                          selectedColor: Theme.of(context).colorScheme.primary,
-                          labelStyle: TextStyle(
-                            color: isSelected ? Colors.white : null,
-                          ),
-                        ),
-                      );
-                    },
-                  ),
-                ),
-                const Divider(height: 1),
-
-                // Duas List
-                Expanded(
-                  child: _filteredDuas.isEmpty
-                      ? const Center(child: Text('No duas found'))
-                      : ListView.builder(
-                          itemCount: _filteredDuas.length,
+                SafeArea(
+                  // Wrap content in SafeArea to respect notches
+                  child: Column(
+                    children: [
+                      // Category Filter
+                      Container(
+                        height: 60,
+                        padding: const EdgeInsets.symmetric(vertical: 8),
+                        child: ListView.builder(
+                          scrollDirection: Axis.horizontal,
+                          padding: const EdgeInsets.symmetric(horizontal: 16),
+                          itemCount: _categories.length,
                           itemBuilder: (context, index) {
-                            final dua = _filteredDuas[index];
-                            final actualIndex = _duas.indexOf(dua);
-                            return _buildDuaCard(dua, actualIndex);
+                            final category = _categories[index];
+                            final isSelected = category == _selectedCategory;
+                            return Padding(
+                              padding: const EdgeInsets.only(right: 8),
+                              child: FilterChip(
+                                label: Text(category),
+                                selected: isSelected,
+                                onSelected: (selected) {
+                                  if (selected) {
+                                    _filterByCategory(category);
+                                  } else {
+                                    _filterByCategory('All');
+                                  }
+                                },
+                                selectedColor: AppColors.accent,
+                                checkmarkColor: AppColors.background,
+                                labelStyle: GoogleFonts.plusJakartaSans(
+                                  color: isSelected
+                                      ? AppColors.background
+                                      : AppColors.textSecondary,
+                                  fontWeight: isSelected
+                                      ? FontWeight.w600
+                                      : FontWeight.normal,
+                                ),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(20),
+                                  side: BorderSide(
+                                    color: isSelected
+                                        ? Colors.transparent
+                                        : AppColors.textSecondary
+                                            .withValues(alpha: 0.3),
+                                  ),
+                                ),
+                                backgroundColor: Colors.transparent,
+                              ),
+                            );
                           },
                         ),
+                      ),
+
+                      // Duas List
+                      Expanded(
+                        child: _filteredDuas.isEmpty
+                            ? Center(
+                                child: Text(
+                                  'No duas found',
+                                  style: GoogleFonts.plusJakartaSans(
+                                      color: AppColors.textSecondary),
+                                ),
+                              )
+                            : ListView.builder(
+                                padding: const EdgeInsets.fromLTRB(16, 8, 16,
+                                    100), // Bottom padding for nav bar
+                                itemCount: _filteredDuas.length,
+                                itemBuilder: (context, index) {
+                                  final dua = _filteredDuas[index];
+                                  return _buildDuaCard(dua);
+                                },
+                              ),
+                      ),
+                    ],
+                  ),
                 ),
+                if (_selectedDua != null)
+                  _DuaDetailSheet(
+                    dua: _selectedDua!,
+                    onClose: () => setState(() => _selectedDua = null),
+                  ),
               ],
             ),
     );
   }
 
-  Widget _buildDuaCard(Map<String, String> dua, int index) {
-    final isFavorite = _favorites.contains(index);
+  Widget _buildDuaCard(Dua dua) {
+    final isFavorite = _favorites.contains(dua.id);
 
-    return Card(
-      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      elevation: 2,
-      child: Padding(
-        padding: const EdgeInsets.all(16),
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 12.0),
+      child: GlassContainer(
+        padding: const EdgeInsets.all(20),
+        onTap: () => setState(() => _selectedDua = dua),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
@@ -154,129 +205,327 @@ class _DuasPageState extends State<DuasPage> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                   decoration: BoxDecoration(
-                    color: _getCategoryColor(dua['category']!),
+                    color: AppColors.accent.withValues(alpha: 0.2),
                     borderRadius: BorderRadius.circular(12),
+                    border: Border.all(
+                        color: AppColors.accent.withValues(alpha: 0.3)),
                   ),
                   child: Text(
-                    dua['category']!,
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 12,
+                    dua.category,
+                    style: GoogleFonts.plusJakartaSans(
+                      color: AppColors.accent,
+                      fontSize: 10,
                       fontWeight: FontWeight.bold,
+                      letterSpacing: 0.5,
                     ),
                   ),
                 ),
                 IconButton(
                   icon: Icon(
                     isFavorite ? Icons.bookmark : Icons.bookmark_border,
-                    color: isFavorite ? Colors.amber : null,
+                    color:
+                        isFavorite ? AppColors.accent : AppColors.textSecondary,
+                    size: 20,
                   ),
-                  onPressed: () => _toggleFavorite(index),
+                  onPressed: () => _toggleFavorite(dua.id),
+                  padding: EdgeInsets.zero,
+                  constraints: const BoxConstraints(),
                 ),
               ],
             ),
-            const SizedBox(height: 12),
+            const SizedBox(height: 16),
 
             // Occasion
-            Text(
-              dua['occasion']!,
-              style: TextStyle(
-                fontSize: 12,
-                color: Colors.grey[600],
-                fontStyle: FontStyle.italic,
+            if (dua.occasion.isNotEmpty ||
+                (dua.benefits != null && dua.benefits!.isNotEmpty))
+              Text(
+                dua.occasion.isNotEmpty ? dua.occasion : (dua.benefits ?? ''),
+                style: GoogleFonts.plusJakartaSans(
+                  fontSize: 13,
+                  color: AppColors.textSecondary,
+                  fontStyle: FontStyle.italic,
+                  height: 1.4,
+                ),
               ),
-            ),
-            const SizedBox(height: 12),
+            const SizedBox(height: 16),
 
             // Arabic Text
             Text(
-              dua['arabic']!,
+              dua.arabic,
               textAlign: TextAlign.right,
               style: const TextStyle(
+                // Keep standard font for Arabic for now, or ensure Amiri is loaded
                 fontSize: 24,
-                fontFamily: 'Amiri',
-                height: 2,
+                fontFamily: 'Amiri', // Assuming Amiri is available or fallback
+                height: 2.2,
+                color: AppColors.textPrimary,
               ),
             ),
-            const SizedBox(height: 12),
+            const SizedBox(height: 16),
 
             // Transliteration
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: Colors.grey[100],
-                borderRadius: BorderRadius.circular(8),
+                color: AppColors.background.withValues(alpha: 0.5),
+                borderRadius: BorderRadius.circular(12),
               ),
               child: Text(
-                dua['transliteration']!,
-                style: TextStyle(
+                dua.transliteration,
+                style: GoogleFonts.plusJakartaSans(
                   fontSize: 14,
                   fontStyle: FontStyle.italic,
-                  color: Colors.grey[800],
+                  color: AppColors.textSecondary,
+                  height: 1.5,
                 ),
               ),
             ),
-            const SizedBox(height: 12),
+            const SizedBox(height: 16),
 
             // Translation
             Text(
-              dua['translation']!,
-              style: const TextStyle(
+              dua.translationEn,
+              style: GoogleFonts.plusJakartaSans(
                 fontSize: 15,
-                height: 1.5,
+                height: 1.6,
+                color: AppColors.textPrimary,
               ),
             ),
 
             // Copy Button
             const SizedBox(height: 8),
-            Align(
-              alignment: Alignment.centerRight,
-              child: TextButton.icon(
-                icon: const Icon(Icons.copy, size: 16),
-                label: const Text('Copy'),
-                onPressed: () {
-                  Clipboard.setData(ClipboardData(
-                    text: '${dua['arabic']}\n\n${dua['transliteration']}\n\n${dua['translation']}',
-                  ));
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('Dua copied to clipboard'),
-                      duration: Duration(seconds: 2),
-                    ),
-                  );
-                },
-              ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                TextButton.icon(
+                  icon: const Icon(Icons.copy,
+                      size: 16, color: AppColors.textSecondary),
+                  label: Text(
+                    'Copy',
+                    style: GoogleFonts.plusJakartaSans(
+                        color: AppColors.textSecondary, fontSize: 12),
+                  ),
+                  onPressed: () {
+                    Clipboard.setData(ClipboardData(
+                      text: "${dua.arabic}\n\n${dua.translationEn}",
+                    ));
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('Dua copied to clipboard'),
+                        duration: Duration(seconds: 2),
+                      ),
+                    );
+                  },
+                ),
+              ],
             ),
           ],
         ),
       ),
     );
   }
+}
 
-  Color _getCategoryColor(String category) {
-    switch (category) {
-      case 'Morning':
-        return Colors.orange;
-      case 'Evening':
-        return Colors.deepPurple;
-      case 'Before Eating':
-      case 'After Eating':
-        return Colors.green;
-      case 'Travel':
-        return Colors.blue;
-      case 'Entering Masjid':
-      case 'Leaving Masjid':
-        return Colors.teal;
-      case 'Seeking Knowledge':
-        return Colors.indigo;
-      case 'Difficulty':
-        return Colors.red[700]!;
-      case 'Protection':
-        return Colors.brown;
-      default:
-        return Colors.grey;
-    }
+String prettyLabel(String value) {
+  final clean = value.replaceAll('_', ' ').trim();
+  if (clean.isEmpty) return value;
+  return clean
+      .split(' ')
+      .map((word) =>
+          word.isEmpty ? '' : '${word[0].toUpperCase()}${word.substring(1)}')
+      .join(' ');
+}
+
+class _DuaDetailSheet extends StatelessWidget {
+  const _DuaDetailSheet({
+    required this.dua,
+    required this.onClose,
+  });
+
+  final Dua dua;
+  final VoidCallback onClose;
+
+  @override
+  Widget build(BuildContext context) {
+    final tags = dua.tags.toSet().toList();
+    final timeWindows =
+        (dua.displayContext?.timeWindows ?? const <String>[]).toSet().toList();
+
+    return Positioned(
+      left: 0,
+      right: 0,
+      bottom: 0,
+      child: ClipRRect(
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+        child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+          child: Container(
+            color: AppColors.cardSurface.withValues(alpha: 0.9),
+            child: SafeArea(
+              // SafeArea for bottom padding
+              top: false,
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(24, 16, 24, 24),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Container(
+                          width: 40,
+                          height: 4,
+                          decoration: BoxDecoration(
+                            color: Colors.white.withValues(alpha: 0.2),
+                            borderRadius: BorderRadius.circular(2),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 24),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          'Details',
+                          style: GoogleFonts.plusJakartaSans(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                            color: AppColors.textPrimary,
+                          ),
+                        ),
+                        IconButton(
+                          icon: const Icon(Icons.close,
+                              color: AppColors.textSecondary),
+                          onPressed: onClose,
+                        )
+                      ],
+                    ),
+                    const SizedBox(height: 16),
+                    if (tags.isNotEmpty) ...[
+                      Text(
+                        'TAGS',
+                        style: GoogleFonts.plusJakartaSans(
+                          fontSize: 10,
+                          fontWeight: FontWeight.bold,
+                          letterSpacing: 1.2,
+                          color: AppColors.textSecondary,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      Wrap(
+                        spacing: 8,
+                        runSpacing: 8,
+                        children: tags
+                            .map(
+                              (tag) => Chip(
+                                label: Text(prettyLabel(tag)),
+                                labelStyle:
+                                    GoogleFonts.plusJakartaSans(fontSize: 12),
+                                backgroundColor: AppColors.background,
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(8)),
+                                side: BorderSide.none,
+                              ),
+                            )
+                            .toList(),
+                      ),
+                      const SizedBox(height: 16),
+                    ],
+                    if (timeWindows.isNotEmpty) ...[
+                      Text(
+                        'CONTEXTS',
+                        style: GoogleFonts.plusJakartaSans(
+                          fontSize: 10,
+                          fontWeight: FontWeight.bold,
+                          letterSpacing: 1.2,
+                          color: AppColors.textSecondary,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      Wrap(
+                        spacing: 8,
+                        runSpacing: 8,
+                        children: timeWindows
+                            .map(
+                              (window) => Chip(
+                                label: Text(prettyLabel(window)),
+                                labelStyle:
+                                    GoogleFonts.plusJakartaSans(fontSize: 12),
+                                backgroundColor: AppColors.background,
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(8)),
+                                side: BorderSide.none,
+                              ),
+                            )
+                            .toList(),
+                      ),
+                      const SizedBox(height: 16),
+                    ],
+                    if (dua.notes?.isNotEmpty ?? false) ...[
+                      Text(
+                        'NOTES',
+                        style: GoogleFonts.plusJakartaSans(
+                          fontSize: 10,
+                          fontWeight: FontWeight.bold,
+                          letterSpacing: 1.2,
+                          color: AppColors.textSecondary,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        dua.notes!,
+                        style: GoogleFonts.plusJakartaSans(
+                          fontSize: 14,
+                          color: AppColors.textPrimary,
+                          height: 1.5,
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                    ],
+                    if (dua.authenticity != null &&
+                        dua.authenticity!.grade != null &&
+                        dua.authenticity!.grade!.isNotEmpty) ...[
+                      Text(
+                        'AUTHENTICITY',
+                        style: GoogleFonts.plusJakartaSans(
+                          fontSize: 10,
+                          fontWeight: FontWeight.bold,
+                          letterSpacing: 1.2,
+                          color: AppColors.textSecondary,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 12, vertical: 6),
+                        decoration: BoxDecoration(
+                          color: AppColors.accent.withValues(alpha: 0.1),
+                          borderRadius: BorderRadius.circular(8),
+                          border: Border.all(
+                              color: AppColors.accent.withValues(alpha: 0.2)),
+                        ),
+                        child: Text(
+                          prettyLabel(dua.authenticity!.grade!),
+                          style: GoogleFonts.plusJakartaSans(
+                            color: AppColors.accent,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 12,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
   }
 }

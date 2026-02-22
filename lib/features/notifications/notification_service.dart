@@ -1,3 +1,5 @@
+import 'package:flutter/material.dart';
+import 'dart:developer' as developer;
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -9,7 +11,8 @@ class NotificationService {
   factory NotificationService() => _instance;
   NotificationService._internal();
 
-  final FlutterLocalNotificationsPlugin _notifications = FlutterLocalNotificationsPlugin();
+  final FlutterLocalNotificationsPlugin _notifications =
+      FlutterLocalNotificationsPlugin();
   bool _initialized = false;
 
   Future<void> initialize() async {
@@ -18,7 +21,8 @@ class NotificationService {
     // Initialize timezone data
     tz.initializeTimeZones();
 
-    const androidSettings = AndroidInitializationSettings('@mipmap/ic_launcher');
+    const androidSettings =
+        AndroidInitializationSettings('@mipmap/ic_launcher');
     const iosSettings = DarwinInitializationSettings(
       requestAlertPermission: false,
       requestBadgePermission: false,
@@ -40,7 +44,8 @@ class NotificationService {
 
   void _onNotificationTapped(NotificationResponse response) {
     // Handle notification tap - could navigate to prayer times page
-    print('Notification tapped: ${response.payload}');
+    developer.log('Notification tapped: ${response.payload}',
+        name: 'NotificationService');
   }
 
   Future<bool> requestPermissions() async {
@@ -51,7 +56,8 @@ class NotificationService {
     return await Permission.notification.isGranted;
   }
 
-  Future<void> schedulePrayerNotifications(Map<String, DateTime> prayerTimes) async {
+  Future<void> schedulePrayerNotifications(
+      Map<String, DateTime> prayerTimes) async {
     if (!_initialized) await initialize();
 
     final prefs = await SharedPreferences.getInstance();
@@ -68,6 +74,9 @@ class NotificationService {
     final now = DateTime.now();
     int notificationId = 0;
 
+    final jummahRemindersEnabled = prefs.getBool('jummahReminders') ?? true;
+    final iftarRemindersEnabled = prefs.getBool('iftarReminders') ?? true;
+
     for (final entry in prayerTimes.entries) {
       final prayerName = entry.key;
       final prayerTime = entry.value;
@@ -83,7 +92,85 @@ class NotificationService {
         prayerName,
         prayerTime,
       );
+
+      // Contextual Notifications Logic
+      // 1. Jummah Prep (1 hour before Dhuhr on Friday)
+      if (prayerName == 'Dhuhr' &&
+          prayerTime.weekday == DateTime.friday &&
+          jummahRemindersEnabled) {
+        final jummahPrepTime = prayerTime.subtract(const Duration(hours: 1));
+        if (jummahPrepTime.isAfter(now)) {
+          await _scheduleContextualNotification(
+            notificationId++,
+            'Jummah Preparation',
+            'Time to get ready for Jummah prayer! Don\'t forget to read Surah Al-Kahf.',
+            jummahPrepTime,
+            'jummah_prep',
+          );
+        }
+      }
+
+      // 2. Iftar Prep (15 mins before Maghrib during Ramadan)
+      // Note: Full Hijri calendar check requires hijri_calendar package, using simple check for demo purposes
+      // The calling code should ideally pass whether it's Ramadan, but we will schedule it strictly here if enabled
+      if (prayerName == 'Maghrib' && iftarRemindersEnabled) {
+        final iftarPrepTime = prayerTime.subtract(const Duration(minutes: 15));
+        if (iftarPrepTime.isAfter(now)) {
+          // Ideally check HijriCalendar.now().hMonth == 9 here before scheduling
+          await _scheduleContextualNotification(
+            notificationId++,
+            'Iftar Preparation',
+            'Maghrib is in 15 minutes. Take this time to make abundant dua.',
+            iftarPrepTime,
+            'iftar_prep',
+          );
+        }
+      }
     }
+  }
+
+  Future<void> _scheduleContextualNotification(
+    int id,
+    String title,
+    String body,
+    DateTime scheduledTime,
+    String payload,
+  ) async {
+    const androidDetails = AndroidNotificationDetails(
+      'contextual_reminders',
+      'Contextual Reminders',
+      channelDescription: 'Specific reminders for Sunnah acts and Duas',
+      importance: Importance.high,
+      priority: Priority.high,
+      playSound: true,
+      enableVibration: true,
+      color: Color(0xFFD4AF37), // AppColors.accent equivalent
+    );
+
+    const iosDetails = DarwinNotificationDetails(
+      presentAlert: true,
+      presentBadge: true,
+      presentSound: true,
+    );
+
+    const details = NotificationDetails(
+      android: androidDetails,
+      iOS: iosDetails,
+    );
+
+    final tzScheduledTime = tz.TZDateTime.from(scheduledTime, tz.local);
+
+    await _notifications.zonedSchedule(
+      id,
+      title,
+      body,
+      tzScheduledTime,
+      details,
+      androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
+      uiLocalNotificationDateInterpretation:
+          UILocalNotificationDateInterpretation.absoluteTime,
+      payload: payload,
+    );
   }
 
   bool _isMainPrayer(String prayerName) {

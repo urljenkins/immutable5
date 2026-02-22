@@ -26,5 +26,6 @@
   "usingCachedPrayerTimes": "استخدام أوقات الصلاة المخزنة (غير متصل)",
   "refreshPrayerTimes": "تحديث أوقات الصلاة",
   "nextPrayer": "الصلاة التالية",
-  "loading": "جاري التحميل..."
+  "loading": "جاري التحميل...",
+  "search": "بحث"
 }

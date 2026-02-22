@@ -1,0 +1,265 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://example.com/dua-schema.json",
+  "title": "Dua Entry",
+  "description": "Schema for Islamic supplication entries used for encyclopedia and contextual display.",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "id",
+    "source",
+    "license",
+    "arabic",
+    "transliteration",
+    "translation_en",
+    "tags"
+  ],
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$",
+      "description": "Semantic version of the schema this entry conforms to."
+    },
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z0-9_]+$",
+      "description": "Globally unique identifier, lowercase alphanumeric with underscores."
+    },
+    "source": {
+      "type": "string",
+      "description": "Primary content source or compilation origin."
+    },
+    "license": {
+      "type": "string",
+      "description": "License governing the original text."
+    },
+    "category": {
+      "type": "string",
+      "description": "Optional grouping label for UI (e.g., Morning, Travel)."
+    },
+    "occasion": {
+      "type": "string",
+      "description": "Plain-language context label for UI (e.g., Morning remembrance)."
+    },
+    "tags": {
+      "type": "array",
+      "items": { "type": "string" },
+      "minItems": 1,
+      "description": "Categorical tags for search and filtering."
+    },
+    "arabic": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Original Arabic text (immutable under ND license)."
+    },
+    "transliteration": {
+      "type": "string",
+      "description": "Romanized pronunciation guide (immutable under ND license)."
+    },
+    "translation_en": {
+      "type": "string",
+      "description": "English translation (immutable under ND license)."
+    },
+    "translations": {
+      "type": "object",
+      "additionalProperties": { "type": "string" },
+      "description": "Additional translations keyed by ISO 639-1 code (e.g., 'fr', 'ur', 'id')."
+    },
+    "length": {
+      "type": "string",
+      "enum": ["short", "medium", "long"],
+      "description": "UI hint: short (<10 words), medium (10-50), long (50+)."
+    },
+    "word_count_arabic": {
+      "type": "integer",
+      "minimum": 1,
+      "description": "Arabic word count for precise length calculations."
+    },
+    "repetitions": {
+      "type": "integer",
+      "minimum": 1,
+      "default": 1,
+      "description": "Recommended number of times to recite."
+    },
+    "priority": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 10,
+      "description": "Display priority when multiple duas match context (1 = highest)."
+    },
+    "frequency": {
+      "type": "string",
+      "enum": ["daily", "occasional", "rare"],
+      "description": "How often the dua is typically recited."
+    },
+    "display_context": {
+      "type": "object",
+      "properties": {
+        "time_windows": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "fajr",
+              "sunrise",
+              "morning",
+              "dhuhr",
+              "asr",
+              "maghrib",
+              "isha",
+              "evening",
+              "night",
+              "last_third_night",
+              "anytime"
+            ]
+          },
+          "description": "Prayer times or day segments when this dua is contextually relevant."
+        },
+        "hijri_dates": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "month": { "type": "integer", "minimum": 1, "maximum": 12 },
+              "day": { "type": "integer", "minimum": 1, "maximum": 30 },
+              "recurring": { "type": "boolean", "default": true }
+            }
+          },
+          "description": "Specific Islamic calendar dates."
+        },
+        "hijri_periods": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "ramadan",
+              "ramadan_last_ten",
+              "dhul_hijjah_first_ten",
+              "ashura",
+              "shaban",
+              "muharram"
+            ]
+          },
+          "description": "Named periods in the Islamic calendar."
+        },
+        "conditions": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Situational triggers (e.g., 'waking', 'travel', 'rain', 'illness')."
+        },
+        "days_of_week": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": ["monday", "thursday", "friday", "any"]
+          },
+          "description": "Specific days when dua has special merit."
+        }
+      },
+      "additionalProperties": false
+    },
+    "authenticity": {
+      "type": "object",
+      "properties": {
+        "grade": {
+          "type": "string",
+          "enum": ["sahih", "hasan", "daif", "mawdu", "unknown"],
+          "description": "Hadith grading."
+        },
+        "origin": {
+          "type": "string",
+          "enum": ["quran", "hadith", "mixed", "unknown"],
+          "description": "Primary origin of the dua."
+        },
+        "source_hadith": {
+          "type": "string",
+          "description": "Primary hadith reference (e.g., 'Sahih Muslim 2723')."
+        },
+        "source_quran": {
+          "type": "string",
+          "pattern": "^\\d+:\\d+(-\\d+)?$",
+          "description": "Quran reference in surah:ayah format (e.g., '2:201' or '3:8-9')."
+        },
+        "narrator": {
+          "type": "string",
+          "description": "Companion who narrated the hadith."
+        },
+        "additional_references": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Secondary sources or cross-references."
+        },
+        "scholarly_notes": {
+          "type": "string",
+          "description": "Brief note on authenticity disputes or scholarly consensus."
+        }
+      },
+      "additionalProperties": false
+    },
+    "benefits": {
+      "type": "string",
+      "description": "Brief explanation of virtues or rewards mentioned in sources."
+    },
+    "notes": {
+      "type": "string",
+      "description": "General notes, context, or usage guidance."
+    },
+    "related_ids": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "IDs of thematically related duas for cross-linking."
+    },
+    "variants": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "arabic": { "type": "string" },
+          "transliteration": { "type": "string" },
+          "translation_en": { "type": "string" },
+          "source": { "type": "string" },
+          "note": { "type": "string" }
+        }
+      },
+      "description": "Alternate narrations or wording variations."
+    },
+    "audio": {
+      "type": "object",
+      "properties": {
+        "url": {
+          "type": "string",
+          "format": "uri",
+          "description": "Remote audio URL."
+        },
+        "local_path": {
+          "type": "string",
+          "description": "Local asset path for bundled audio."
+        },
+        "duration_seconds": {
+          "type": "integer",
+          "description": "Audio duration for UI."
+        },
+        "reciter": {
+          "type": "string",
+          "description": "Name of reciter if applicable."
+        },
+        "license": {
+          "type": "string",
+          "description": "License for the audio asset."
+        }
+      },
+      "additionalProperties": false
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date",
+      "description": "Date entry was added to dataset."
+    },
+    "updated_at": {
+      "type": "string",
+      "format": "date",
+      "description": "Date entry was last modified."
+    }
+  },
+  "additionalProperties": false
+}
