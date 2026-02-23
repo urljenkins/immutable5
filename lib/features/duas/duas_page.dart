@@ -22,9 +22,17 @@ class _DuasPageState extends State<DuasPage> {
   List<Dua> _filteredDuas = [];
   List<String> _categories = ['All'];
   String _selectedCategory = 'All';
+  String _searchQuery = '';
+  final TextEditingController _searchController = TextEditingController();
   bool _loading = true;
   final Set<String> _favorites = {};
   Dua? _selectedDua;
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
 
   @override
   void initState() {
@@ -66,15 +74,38 @@ class _DuasPageState extends State<DuasPage> {
     }
   }
 
-  void _filterByCategory(String category) {
+  void _applyFilters() {
     setState(() {
-      _selectedCategory = category;
-      if (category == 'All') {
-        _filteredDuas = _duas;
-      } else {
-        _filteredDuas = _duas.where((dua) => dua.category == category).toList();
+      var filtered = _duas;
+
+      if (_selectedCategory != 'All') {
+        filtered =
+            filtered.where((dua) => dua.category == _selectedCategory).toList();
       }
+
+      if (_searchQuery.isNotEmpty) {
+        final query = _searchQuery.toLowerCase();
+        filtered = filtered.where((dua) {
+          return dua.translationEn.toLowerCase().contains(query) ||
+              dua.transliteration.toLowerCase().contains(query) ||
+              dua.arabic.contains(query) ||
+              dua.occasion.toLowerCase().contains(query) ||
+              dua.category.toLowerCase().contains(query);
+        }).toList();
+      }
+
+      _filteredDuas = filtered;
     });
+  }
+
+  void _filterByCategory(String category) {
+    _selectedCategory = category;
+    _applyFilters();
+  }
+
+  void _onSearchChanged(String query) {
+    _searchQuery = query;
+    _applyFilters();
   }
 
   void _toggleFavorite(String id) {
@@ -107,6 +138,63 @@ class _DuasPageState extends State<DuasPage> {
                   // Wrap content in SafeArea to respect notches
                   child: Column(
                     children: [
+                      // Search Bar
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
+                        child: TextField(
+                          controller: _searchController,
+                          onChanged: _onSearchChanged,
+                          style: GoogleFonts.plusJakartaSans(
+                            color: AppColors.textPrimary,
+                          ),
+                          decoration: InputDecoration(
+                            hintText: 'Search duas...',
+                            hintStyle: GoogleFonts.plusJakartaSans(
+                              color: AppColors.textSecondary
+                                  .withValues(alpha: 0.5),
+                            ),
+                            prefixIcon: const Icon(Icons.search,
+                                color: AppColors.textSecondary),
+                            suffixIcon: _searchQuery.isNotEmpty
+                                ? IconButton(
+                                    icon: const Icon(Icons.clear,
+                                        color: AppColors.textSecondary),
+                                    onPressed: () {
+                                      _searchController.clear();
+                                      _onSearchChanged('');
+                                    },
+                                    padding: EdgeInsets.zero,
+                                    constraints: const BoxConstraints(),
+                                  )
+                                : null,
+                            filled: true,
+                            fillColor:
+                                AppColors.cardSurface.withValues(alpha: 0.5),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(16),
+                              borderSide: BorderSide(
+                                color: AppColors.textSecondary
+                                    .withValues(alpha: 0.2),
+                              ),
+                            ),
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(16),
+                              borderSide: BorderSide(
+                                color: AppColors.textSecondary
+                                    .withValues(alpha: 0.2),
+                              ),
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(16),
+                              borderSide: BorderSide(
+                                color: AppColors.accent.withValues(alpha: 0.5),
+                              ),
+                            ),
+                            contentPadding: const EdgeInsets.symmetric(
+                                horizontal: 16, vertical: 12),
+                          ),
+                        ),
+                      ),
                       // Category Filter
                       Container(
                         height: 60,

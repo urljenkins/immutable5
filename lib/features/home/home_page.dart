@@ -394,13 +394,23 @@ class _ContextualDuaCard extends StatelessWidget {
               ),
               const SizedBox(height: 12),
               Text(
+                dua.transliteration,
+                textAlign: TextAlign.center,
+                style: GoogleFonts.plusJakartaSans(
+                  fontSize: 13,
+                  fontStyle: FontStyle.italic,
+                  color: AppColors.textSecondary,
+                  height: 1.4,
+                ),
+              ),
+              const SizedBox(height: 12),
+              Text(
                 dua.translationEn,
                 textAlign: TextAlign.center,
                 style: GoogleFonts.plusJakartaSans(
                   fontSize: 14,
                   height: 1.5,
                   color: AppColors.textPrimary.withValues(alpha: 0.8),
-                  fontStyle: FontStyle.italic,
                 ),
               ),
             ],
