@@ -4,6 +4,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../../generated/app_localizations.dart';
 import '../../main.dart';
 import '../notifications/notification_service.dart';
+import '../quran/juz_of_the_day_service.dart';
+import '../quran/quran_context_menu_settings.dart';
 import '../widget/widget_settings_page.dart';
 import '../../services/battery_optimizer.dart';
 import '../../services/cache_manager.dart';
@@ -24,6 +26,7 @@ class _SettingsPageState extends State<SettingsPage> {
   static const _keyAccentColor = 'accent_color';
   static const _keyJummahReminders = 'jummahReminders';
   static const _keyIftarReminders = 'iftarReminders';
+  static const _keyJuzMode = 'juzMode';
   static const List<String> _methods = [
     'Method 2 (University of Islamic Sciences)',
     'Method 4 (Islamic Society of North America)',
@@ -36,6 +39,8 @@ class _SettingsPageState extends State<SettingsPage> {
   bool _jummahReminders = true;
   bool _iftarReminders = true;
   bool _batterySaverMode = false;
+  JuzMode _juzMode = JuzMode.standard;
+  QuranContextMenuSettings _ctxMenuSettings = const QuranContextMenuSettings();
   bool _showTrack = true;
   bool _showQibla = true;
   bool _showCalendar = true;
@@ -124,6 +129,10 @@ class _SettingsPageState extends State<SettingsPage> {
       _jummahReminders = prefs.getBool(_keyJummahReminders) ?? _jummahReminders;
       _iftarReminders = prefs.getBool(_keyIftarReminders) ?? _iftarReminders;
       _batterySaverMode = batteryOptimizer.isBatterySaverEnabled();
+      final savedJuzMode = prefs.getString(_keyJuzMode);
+      _juzMode =
+          savedJuzMode == 'surahBased' ? JuzMode.surahBased : JuzMode.standard;
+      _ctxMenuSettings = QuranContextMenuSettings.fromPrefs(prefs);
       _showTrack = navVisibility.showTrack;
       _showQibla = navVisibility.showQibla;
       _showCalendar = navVisibility.showCalendar;
@@ -333,6 +342,131 @@ class _SettingsPageState extends State<SettingsPage> {
               ),
               contentPadding: const EdgeInsets.symmetric(horizontal: 24),
               onTap: () => _showColorPicker(context),
+            ),
+            const Divider(),
+            _buildSectionHeader(context, 'Quran'),
+            ListTile(
+              title: const Text('Juz Mode'),
+              subtitle: Text(
+                _juzMode == JuzMode.standard
+                    ? 'Standard (30 equal parts)'
+                    : 'Surah-based (whole surahs)',
+              ),
+              contentPadding: const EdgeInsets.symmetric(horizontal: 24),
+              onTap: () async {
+                final choice = await showDialog<JuzMode>(
+                  context: context,
+                  builder: (_) => SimpleDialog(
+                    backgroundColor: AppColors.cardSurface,
+                    title: Text(
+                      'Select Juz Mode',
+                      style: GoogleFonts.plusJakartaSans(
+                          fontWeight: FontWeight.bold),
+                    ),
+                    children: [
+                      RadioGroup<JuzMode>(
+                        groupValue: _juzMode,
+                        onChanged: (v) => Navigator.pop(context, v),
+                        child: Column(
+                          children: [
+                            RadioListTile(
+                              title: const Text('Standard (30 equal parts)'),
+                              subtitle: const Text(
+                                  'Traditional division — a juz may split a surah'),
+                              value: JuzMode.standard,
+                              activeColor: AppColors.accent,
+                            ),
+                            RadioListTile(
+                              title: const Text('Surah-based (whole surahs)'),
+                              subtitle: const Text(
+                                  'Groups of whole surahs — no surah is split'),
+                              value: JuzMode.surahBased,
+                              activeColor: AppColors.accent,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+                if (choice != null) {
+                  final prefs = await SharedPreferences.getInstance();
+                  if (!mounted) return;
+                  setState(() => _juzMode = choice);
+                  prefs.setString(
+                    _keyJuzMode,
+                    choice == JuzMode.surahBased ? 'surahBased' : 'standard',
+                  );
+                }
+              },
+            ),
+            // ── Long-press context menu toggles ──────────────────────────────
+            Padding(
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 24.0, vertical: 4),
+              child: Text(
+                'Long-press menu actions',
+                style: GoogleFonts.plusJakartaSans(
+                  fontSize: 12,
+                  color: AppColors.textSecondary,
+                ),
+              ),
+            ),
+            SwitchListTile(
+              title: const Text('Copy verse'),
+              subtitle: const Text('Copy Arabic text to clipboard'),
+              value: _ctxMenuSettings.showCopy,
+              activeThumbColor: AppColors.accent,
+              contentPadding: const EdgeInsets.symmetric(horizontal: 40),
+              onChanged: (v) async {
+                final prefs = await SharedPreferences.getInstance();
+                final updated = _ctxMenuSettings.copyWith(showCopy: v);
+                await updated.save(prefs);
+                if (!mounted) return;
+                setState(() => _ctxMenuSettings = updated);
+              },
+            ),
+            SwitchListTile(
+              title: const Text('Bookmark verse'),
+              subtitle: const Text('Save verse to your bookmarks'),
+              value: _ctxMenuSettings.showBookmark,
+              activeThumbColor: AppColors.accent,
+              contentPadding: const EdgeInsets.symmetric(horizontal: 40),
+              onChanged: (v) async {
+                final prefs = await SharedPreferences.getInstance();
+                final updated = _ctxMenuSettings.copyWith(showBookmark: v);
+                await updated.save(prefs);
+                if (!mounted) return;
+                setState(() => _ctxMenuSettings = updated);
+              },
+            ),
+            SwitchListTile(
+              title: const Text('Share verse'),
+              subtitle: const Text('Share verse via system share sheet'),
+              value: _ctxMenuSettings.showShare,
+              activeThumbColor: AppColors.accent,
+              contentPadding: const EdgeInsets.symmetric(horizontal: 40),
+              onChanged: (v) async {
+                final prefs = await SharedPreferences.getInstance();
+                final updated = _ctxMenuSettings.copyWith(showShare: v);
+                await updated.save(prefs);
+                if (!mounted) return;
+                setState(() => _ctxMenuSettings = updated);
+              },
+            ),
+            SwitchListTile(
+              title: const Text('Ayah info'),
+              subtitle: const Text('Show surah & verse number'),
+              value: _ctxMenuSettings.showAyahInfo,
+              activeThumbColor: AppColors.accent,
+              contentPadding: const EdgeInsets.symmetric(horizontal: 40),
+              onChanged: (v) async {
+                final prefs = await SharedPreferences.getInstance();
+                final updated = _ctxMenuSettings.copyWith(showAyahInfo: v);
+                await updated.save(prefs);
+                if (!mounted) return;
+                setState(() => _ctxMenuSettings = updated);
+              },
             ),
             const Divider(),
             _buildSectionHeader(context, 'Bottom bar shortcuts'),

@@ -2,10 +2,30 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:immutable5/features/home/home_controller.dart';
 import 'package:immutable5/features/quotes/quote_picker_service.dart';
 import 'package:immutable5/features/prayer/prayer_times_service.dart';
+import 'package:immutable5/features/duas/contextual_dua_service.dart';
+import 'package:immutable5/features/duas/models/dua_model.dart';
+import 'package:hijri/hijri_calendar.dart';
 
 class FakeQuoteService extends QuotePickerService {
   @override
   Future<String> getQuote({String? topic}) async => 'Test Quote';
+}
+
+class FakeContextualDuaService implements ContextualDuaService {
+  @override
+  Future<Dua?> getBestContextualDua({
+    required DateTime now,
+    required HijriCalendar hijriDate,
+    Map<String, DateTime>? todayPrayerTimes,
+  }) async {
+    return null;
+  }
+
+  @override
+  String? getContextualMessage(Dua dua, DateTime now,
+      Map<String, DateTime>? prayerTimes, HijriCalendar hijriDate) {
+    return null;
+  }
 }
 
 class FakeNotificationPort implements NotificationPort {
@@ -61,6 +81,7 @@ void main() {
       widgetPort: fakeWidget,
       prayerFactory: (_, __, ___, ____) => fakePrayer,
       initialPrayerService: fakePrayer,
+      contextualDuaService: FakeContextualDuaService(),
     );
 
     await controller.loadData();

@@ -1,7 +1,12 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:csv/csv.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:audioplayers/audioplayers.dart';
 import '../../generated/app_localizations.dart';
+import '../../shared/app_colors.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class CommonWordsPage extends StatefulWidget {
@@ -20,6 +25,7 @@ class _CommonWordsPageState extends State<CommonWordsPage> {
   bool _showMemorized = true;
   bool _isSearching = false;
   final TextEditingController _searchController = TextEditingController();
+  final AudioPlayer _audioPlayer = AudioPlayer();
   String _searchQuery = '';
 
   @override
@@ -37,6 +43,7 @@ class _CommonWordsPageState extends State<CommonWordsPage> {
   @override
   void dispose() {
     _searchController.dispose();
+    _audioPlayer.dispose();
     super.dispose();
   }
 
@@ -95,6 +102,181 @@ class _CommonWordsPageState extends State<CommonWordsPage> {
       }).toList();
     }
     setState(() {});
+  }
+
+  // ── Word detail bottom sheet ─────────────────────────────────────────────────
+
+  void _showWordDetail(int rowIndex) {
+    final row = _rows[rowIndex];
+    final arabic = row[0];
+    final transliteration = row[1];
+    final english = row[2];
+
+    showModalBottomSheet<void>(
+      context: context,
+      backgroundColor: Colors.transparent,
+      isScrollControlled: true,
+      builder: (sheetCtx) {
+        return StatefulBuilder(
+          builder: (_, setSheetState) {
+            final isMemorized = _memorized.contains(rowIndex);
+            return ClipRRect(
+              borderRadius:
+                  const BorderRadius.vertical(top: Radius.circular(28)),
+              child: BackdropFilter(
+                filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
+                child: Container(
+                  color: AppColors.cardSurface.withValues(alpha: 0.95),
+                  child: SafeArea(
+                    top: false,
+                    child: Padding(
+                      padding: const EdgeInsets.fromLTRB(24, 12, 24, 24),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          // Handle bar
+                          Center(
+                            child: Container(
+                              width: 40,
+                              height: 4,
+                              decoration: BoxDecoration(
+                                color: Colors.white.withValues(alpha: 0.2),
+                                borderRadius: BorderRadius.circular(2),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: 28),
+
+                          // Arabic text — large and centred
+                          Stack(
+                            alignment: Alignment.center,
+                            children: [
+                              Container(
+                                width: double.infinity,
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 16, vertical: 20),
+                                decoration: BoxDecoration(
+                                  color:
+                                      AppColors.accent.withValues(alpha: 0.07),
+                                  borderRadius: BorderRadius.circular(16),
+                                  border: Border.all(
+                                    color:
+                                        AppColors.accent.withValues(alpha: 0.2),
+                                  ),
+                                ),
+                                child: Text(
+                                  arabic,
+                                  textAlign: TextAlign.center,
+                                  textDirection: TextDirection.rtl,
+                                  style: const TextStyle(
+                                    fontFamily: 'Amiri',
+                                    fontSize: 72,
+                                    height: 1.3,
+                                    color: AppColors.textPrimary,
+                                  ),
+                                ),
+                              ),
+                              Positioned(
+                                right: 12,
+                                top: 12,
+                                child: IconButton(
+                                  icon: const Icon(Icons.volume_up_rounded),
+                                  color: AppColors.accent,
+                                  iconSize: 28,
+                                  onPressed: () {
+                                    _audioPlayer.play(AssetSource(
+                                        'audio/words/$rowIndex.mp3'));
+                                  },
+                                ),
+                              ),
+                            ],
+                          ),
+
+                          const SizedBox(height: 20),
+
+                          // Transliteration
+                          Text(
+                            transliteration,
+                            textAlign: TextAlign.center,
+                            style: GoogleFonts.plusJakartaSans(
+                              fontSize: 22,
+                              fontStyle: FontStyle.italic,
+                              color: AppColors.accent,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+
+                          const SizedBox(height: 8),
+
+                          // English meaning
+                          Text(
+                            english,
+                            textAlign: TextAlign.center,
+                            style: GoogleFonts.plusJakartaSans(
+                              fontSize: 18,
+                              color: AppColors.textSecondary,
+                              fontWeight: FontWeight.w400,
+                            ),
+                          ),
+
+                          const SizedBox(height: 28),
+
+                          // Memorised toggle button
+                          SizedBox(
+                            width: double.infinity,
+                            child: FilledButton.icon(
+                              onPressed: () async {
+                                await _toggleMemorized(rowIndex);
+                                setSheetState(() {});
+                                // Rebuild the list beneath so the opacity/badge updates
+                                setState(() {});
+                                _applyFilters();
+                              },
+                              icon: Icon(
+                                isMemorized
+                                    ? Icons.check_circle
+                                    : Icons.check_circle_outline,
+                                size: 20,
+                              ),
+                              label: Text(
+                                isMemorized
+                                    ? 'Remove from memorised'
+                                    : 'Mark as memorised',
+                                style: GoogleFonts.plusJakartaSans(
+                                    fontWeight: FontWeight.w600),
+                              ),
+                              style: FilledButton.styleFrom(
+                                backgroundColor: isMemorized
+                                    ? AppColors.error.withValues(alpha: 0.15)
+                                    : AppColors.success.withValues(alpha: 0.15),
+                                foregroundColor: isMemorized
+                                    ? AppColors.error
+                                    : AppColors.success,
+                                padding: const EdgeInsets.symmetric(
+                                    vertical: 14, horizontal: 24),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(14),
+                                  side: BorderSide(
+                                    color: isMemorized
+                                        ? AppColors.error.withValues(alpha: 0.3)
+                                        : AppColors.success
+                                            .withValues(alpha: 0.3),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            );
+          },
+        );
+      },
+    );
   }
 
   @override
@@ -158,12 +340,16 @@ class _CommonWordsPageState extends State<CommonWordsPage> {
                     direction: DismissDirection.endToStart,
                     background: Container(
                       decoration: BoxDecoration(
-                        color: Colors.green.withValues(alpha: 0.2),
+                        color: (isMemorized ? Colors.red : Colors.green)
+                            .withValues(alpha: 0.2),
                         borderRadius: BorderRadius.circular(12),
                       ),
                       alignment: Alignment.centerRight,
                       padding: const EdgeInsets.symmetric(horizontal: 20),
-                      child: const Icon(Icons.check, color: Colors.green),
+                      child: Icon(
+                        isMemorized ? Icons.close : Icons.check,
+                        color: isMemorized ? Colors.red : Colors.green,
+                      ),
                     ),
                     confirmDismiss: (_) async {
                       await _toggleMemorized(rowIndex);
@@ -178,52 +364,56 @@ class _CommonWordsPageState extends State<CommonWordsPage> {
                     },
                     child: Opacity(
                       opacity: isMemorized && _showMemorized ? 0.4 : 1,
-                      child: Card(
-                        margin: const EdgeInsets.symmetric(vertical: 6),
-                        child: Padding(
-                          padding: const EdgeInsets.all(16.0),
-                          child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      row[1],
-                                      style: const TextStyle(
-                                        fontStyle: FontStyle.italic,
-                                        fontSize: 15,
+                      child: GestureDetector(
+                        onLongPress: () => _showWordDetail(rowIndex),
+                        child: Card(
+                          margin: const EdgeInsets.symmetric(vertical: 6),
+                          child: Padding(
+                            padding: const EdgeInsets.all(16.0),
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        row[1],
+                                        style: const TextStyle(
+                                          fontStyle: FontStyle.italic,
+                                          fontSize: 15,
+                                        ),
                                       ),
-                                    ),
-                                    const SizedBox(height: 6),
-                                    Text(
-                                      row[2],
-                                      style: const TextStyle(
-                                        fontSize: 15,
-                                        fontWeight: FontWeight.w500,
+                                      const SizedBox(height: 6),
+                                      Text(
+                                        row[2],
+                                        style: const TextStyle(
+                                          fontSize: 15,
+                                          fontWeight: FontWeight.w500,
+                                        ),
                                       ),
-                                    ),
-                                  ],
+                                    ],
+                                  ),
                                 ),
-                              ),
-                              const SizedBox(width: 16),
-                              Text(
-                                row[0],
-                                textAlign: TextAlign.right,
-                                style: isRtl
-                                    ? const TextStyle(
-                                        fontFamily: 'Amiri',
-                                        fontSize: 22,
-                                      )
-                                    : const TextStyle(fontSize: 22),
-                              ),
-                              if (isMemorized) ...[
-                                const SizedBox(width: 8),
-                                const Icon(Icons.check_circle,
-                                    color: Colors.green),
+                                const SizedBox(width: 16),
+                                Text(
+                                  row[0],
+                                  textAlign: TextAlign.right,
+                                  style: isRtl
+                                      ? const TextStyle(
+                                          fontFamily: 'Amiri',
+                                          fontSize: 22,
+                                        )
+                                      : const TextStyle(fontSize: 22),
+                                ),
+                                if (isMemorized) ...[
+                                  const SizedBox(width: 8),
+                                  const Icon(Icons.check_circle,
+                                      color: Colors.green),
+                                ],
                               ],
-                            ],
+                            ),
                           ),
                         ),
                       ),

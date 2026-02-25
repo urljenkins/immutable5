@@ -1,12 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:share_plus/share_plus.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:ui';
 
+import 'juz_of_the_day_service.dart';
+import 'quran_bookmark_service.dart';
+import 'quran_context_menu_settings.dart';
 import 'quran_text_service.dart';
 import '../../shared/app_colors.dart';
 import '../../shared/glass_container.dart';
 
-/// A structured Qur'an reader with chapter navigation.
+/// A structured Qur'an reader with chapter navigation, bookmarking,
+/// and a customisable long-press context menu per verse.
 class QuranPage extends StatefulWidget {
   const QuranPage({super.key});
 
@@ -16,10 +23,16 @@ class QuranPage extends StatefulWidget {
 
 class _QuranPageState extends State<QuranPage> {
   final QuranTextService _service = QuranTextService();
+  final JuzOfTheDayService _juzService = JuzOfTheDayService();
+  final _bookmarks = QuranBookmarkService.instance;
   final ScrollController _scrollController = ScrollController();
   final Map<int, GlobalKey> _chapterKeys = {};
+  // Per-verse keys: key = surahNumber * 10000 + verseIndex
+  final Map<int, GlobalKey> _verseKeys = {};
 
   List<QuranChapter> _chapters = [];
+  JuzInfo? _todayJuz;
+  QuranContextMenuSettings _ctxSettings = const QuranContextMenuSettings();
   bool _loading = true;
 
   @override
@@ -30,11 +43,27 @@ class _QuranPageState extends State<QuranPage> {
 
   Future<void> _load() async {
     final chapters = await _service.getChapters();
+    final prefs = await SharedPreferences.getInstance();
+    final savedMode = prefs.getString('juzMode');
+    final mode =
+        savedMode == 'surahBased' ? JuzMode.surahBased : JuzMode.standard;
+    final todayJuz = _juzService.getJuzForToday(mode);
+    final ctxSettings = QuranContextMenuSettings.fromPrefs(prefs);
+    await _bookmarks.load();
     if (!mounted) return;
     setState(() {
       _chapterKeys.clear();
+      _verseKeys.clear();
       _chapters = List.of(chapters)
         ..sort((a, b) => a.number.compareTo(b.number));
+      for (final chapter in _chapters) {
+        _chapterKeys[chapter.number] = GlobalKey();
+        for (var i = 0; i < chapter.verses.length; i++) {
+          _verseKeys[chapter.number * 10000 + i] = GlobalKey();
+        }
+      }
+      _todayJuz = todayJuz;
+      _ctxSettings = ctxSettings;
       _loading = false;
     });
   }
@@ -44,6 +73,336 @@ class _QuranPageState extends State<QuranPage> {
     _scrollController.dispose();
     super.dispose();
   }
+
+  // ── Context menu ────────────────────────────────────────────────────────────
+
+  void _showVerseContextMenu(
+    BuildContext context, {
+    required QuranChapter chapter,
+    required int verseIndex,
+  }) {
+    final verse = chapter.verses[verseIndex];
+    final isBookmarked = _bookmarks.isBookmarked(chapter.number, verseIndex);
+
+    showModalBottomSheet<void>(
+      context: context,
+      backgroundColor: Colors.transparent,
+      builder: (sheetCtx) {
+        return ClipRRect(
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+          child: BackdropFilter(
+            filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
+            child: Container(
+              color: AppColors.cardSurface.withValues(alpha: 0.95),
+              child: SafeArea(
+                top: false,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const SizedBox(height: 12),
+                    // Handle bar
+                    Container(
+                      width: 40,
+                      height: 4,
+                      decoration: BoxDecoration(
+                        color: Colors.white.withValues(alpha: 0.2),
+                        borderRadius: BorderRadius.circular(2),
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    // Verse preview
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 20, vertical: 8),
+                      child: Text(
+                        '${chapter.title} · Verse ${verseIndex + 1}',
+                        style: GoogleFonts.plusJakartaSans(
+                          fontSize: 13,
+                          fontWeight: FontWeight.w600,
+                          color: AppColors.accent,
+                          letterSpacing: 0.5,
+                        ),
+                      ),
+                    ),
+                    Divider(
+                        color: AppColors.textSecondary.withValues(alpha: 0.15),
+                        height: 1),
+                    if (_ctxSettings.showCopy)
+                      _ContextMenuItem(
+                        icon: Icons.copy_rounded,
+                        label: 'Copy verse',
+                        onTap: () {
+                          Navigator.pop(sheetCtx);
+                          Clipboard.setData(ClipboardData(text: verse));
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text('Verse copied to clipboard'),
+                              duration: Duration(seconds: 2),
+                            ),
+                          );
+                        },
+                      ),
+                    if (_ctxSettings.showBookmark)
+                      _ContextMenuItem(
+                        icon: isBookmarked
+                            ? Icons.bookmark_rounded
+                            : Icons.bookmark_add_outlined,
+                        label:
+                            isBookmarked ? 'Remove bookmark' : 'Bookmark verse',
+                        iconColor: isBookmarked ? AppColors.accent : null,
+                        onTap: () async {
+                          Navigator.pop(sheetCtx);
+                          final messenger = ScaffoldMessenger.of(context);
+                          final added = await _bookmarks.toggle(
+                            QuranBookmark(
+                              surahNumber: chapter.number,
+                              surahTitle: chapter.title,
+                              verseIndex: verseIndex,
+                              verseText: verse,
+                              savedAt: DateTime.now(),
+                            ),
+                          );
+                          messenger.showSnackBar(
+                            SnackBar(
+                              content: Text(added
+                                  ? 'Verse bookmarked'
+                                  : 'Bookmark removed'),
+                              duration: const Duration(seconds: 2),
+                            ),
+                          );
+                        },
+                      ),
+                    if (_ctxSettings.showShare)
+                      _ContextMenuItem(
+                        icon: Icons.share_rounded,
+                        label: 'Share verse',
+                        onTap: () {
+                          Navigator.pop(sheetCtx);
+                          Share.share(
+                            '$verse\n\n— ${chapter.title}, Verse ${verseIndex + 1}',
+                          );
+                        },
+                      ),
+                    if (_ctxSettings.showAyahInfo)
+                      _ContextMenuItem(
+                        icon: Icons.info_outline_rounded,
+                        label: 'Ayah info',
+                        onTap: () {
+                          Navigator.pop(sheetCtx);
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(
+                                'Surah ${chapter.number} (${chapter.transliteration})'
+                                ' · Verse ${verseIndex + 1} of ${chapter.verses.length}',
+                              ),
+                              duration: const Duration(seconds: 3),
+                            ),
+                          );
+                        },
+                      ),
+                    const SizedBox(height: 8),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  // ── Bookmarks bottom-sheet ──────────────────────────────────────────────────
+
+  void _openBookmarks() {
+    showModalBottomSheet<void>(
+      context: context,
+      backgroundColor: Colors.transparent,
+      isScrollControlled: true,
+      builder: (sheetCtx) {
+        return ValueListenableBuilder<List<QuranBookmark>>(
+          valueListenable: _bookmarks.bookmarks,
+          builder: (_, list, __) {
+            return ClipRRect(
+              borderRadius:
+                  const BorderRadius.vertical(top: Radius.circular(24)),
+              child: BackdropFilter(
+                filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+                child: Container(
+                  color: AppColors.cardSurface.withValues(alpha: 0.95),
+                  height: MediaQuery.of(context).size.height * 0.6,
+                  child: SafeArea(
+                    child: Column(
+                      children: [
+                        const SizedBox(height: 12),
+                        Container(
+                          width: 40,
+                          height: 4,
+                          decoration: BoxDecoration(
+                            color: Colors.white.withValues(alpha: 0.2),
+                            borderRadius: BorderRadius.circular(2),
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.all(16.0),
+                          child: Row(
+                            children: [
+                              Icon(Icons.bookmark_rounded,
+                                  color: AppColors.accent, size: 20),
+                              const SizedBox(width: 8),
+                              Text(
+                                'Bookmarks',
+                                style: GoogleFonts.plusJakartaSans(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                  color: AppColors.textPrimary,
+                                ),
+                              ),
+                              const Spacer(),
+                              if (list.isNotEmpty)
+                                TextButton(
+                                  onPressed: () async {
+                                    final confirm = await showDialog<bool>(
+                                      context: context,
+                                      builder: (d) => AlertDialog(
+                                        backgroundColor: AppColors.cardSurface,
+                                        title:
+                                            const Text('Clear all bookmarks?'),
+                                        actions: [
+                                          TextButton(
+                                            onPressed: () =>
+                                                Navigator.pop(d, false),
+                                            child: const Text('Cancel'),
+                                          ),
+                                          TextButton(
+                                            onPressed: () =>
+                                                Navigator.pop(d, true),
+                                            child: const Text('Clear',
+                                                style: TextStyle(
+                                                    color: AppColors.error)),
+                                          ),
+                                        ],
+                                      ),
+                                    );
+                                    if (confirm == true) {
+                                      for (final b in List.of(
+                                          _bookmarks.bookmarks.value)) {
+                                        await _bookmarks.remove(
+                                            b.surahNumber, b.verseIndex);
+                                      }
+                                    }
+                                  },
+                                  child: const Text('Clear all',
+                                      style: TextStyle(color: AppColors.error)),
+                                ),
+                            ],
+                          ),
+                        ),
+                        if (list.isEmpty)
+                          Expanded(
+                            child: Center(
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Icon(Icons.bookmark_border_rounded,
+                                      size: 48,
+                                      color: AppColors.textSecondary
+                                          .withValues(alpha: 0.5)),
+                                  const SizedBox(height: 12),
+                                  Text(
+                                    'No bookmarks yet',
+                                    style: GoogleFonts.plusJakartaSans(
+                                      color: AppColors.textSecondary,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 4),
+                                  Text(
+                                    'Long-press a verse to bookmark it',
+                                    style: GoogleFonts.plusJakartaSans(
+                                      fontSize: 12,
+                                      color: AppColors.textSecondary
+                                          .withValues(alpha: 0.6),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          )
+                        else
+                          Expanded(
+                            child: ListView.separated(
+                              padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+                              itemCount: list.length,
+                              separatorBuilder: (_, __) => Divider(
+                                color: AppColors.textSecondary
+                                    .withValues(alpha: 0.1),
+                                height: 1,
+                              ),
+                              itemBuilder: (_, i) {
+                                final bm = list[i];
+                                return ListTile(
+                                  contentPadding: EdgeInsets.zero,
+                                  leading: Container(
+                                    width: 36,
+                                    height: 36,
+                                    decoration: BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      color: AppColors.accent
+                                          .withValues(alpha: 0.1),
+                                      border: Border.all(
+                                          color: AppColors.accent
+                                              .withValues(alpha: 0.3)),
+                                    ),
+                                    alignment: Alignment.center,
+                                    child: Icon(Icons.bookmark_rounded,
+                                        color: AppColors.accent, size: 18),
+                                  ),
+                                  title: Text(
+                                    '${bm.surahTitle} · Verse ${bm.verseIndex + 1}',
+                                    style: GoogleFonts.plusJakartaSans(
+                                      fontWeight: FontWeight.w600,
+                                      color: AppColors.textPrimary,
+                                      fontSize: 14,
+                                    ),
+                                  ),
+                                  subtitle: Text(
+                                    bm.verseText,
+                                    maxLines: 2,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: GoogleFonts.plusJakartaSans(
+                                      color: AppColors.textSecondary,
+                                      fontSize: 12,
+                                    ),
+                                  ),
+                                  trailing: IconButton(
+                                    icon: const Icon(Icons.delete_outline,
+                                        color: AppColors.textSecondary,
+                                        size: 20),
+                                    onPressed: () => _bookmarks.remove(
+                                        bm.surahNumber, bm.verseIndex),
+                                  ),
+                                  onTap: () {
+                                    Navigator.pop(sheetCtx);
+                                    _scrollToChapter(_chapters.firstWhere(
+                                        (c) => c.number == bm.surahNumber,
+                                        orElse: () => _chapters.first));
+                                  },
+                                );
+                              },
+                            ),
+                          ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+
+  // ── Chapter picker ──────────────────────────────────────────────────────────
 
   void _openChapterPicker() {
     if (_loading) return;
@@ -145,9 +504,13 @@ class _QuranPageState extends State<QuranPage> {
     );
   }
 
+  // ── Scroll helpers ──────────────────────────────────────────────────────────
+
   Future<void> _scrollToChapter(QuranChapter chapter) async {
     final index = _chapters.indexWhere((c) => c.number == chapter.number);
+    if (index == -1) return;
     final key = _chapterKeys[chapter.number];
+
     if (key?.currentContext != null) {
       await Scrollable.ensureVisible(
         key!.currentContext!,
@@ -160,22 +523,22 @@ class _QuranPageState extends State<QuranPage> {
 
     if (!_scrollController.hasClients) return;
 
-    final position = _scrollController.position;
-    final avgExtent = _chapters.isNotEmpty && position.hasPixels
-        ? position.maxScrollExtent / _chapters.length
-        : 600.0;
-    final chapterIndex = index >= 0 ? index : (chapter.number - 1);
-    final estimatedOffset =
-        (avgExtent * chapterIndex).clamp(0.0, position.maxScrollExtent);
+    double estimatedOffset = 0;
+    for (int i = 0; i < index; i++) {
+      estimatedOffset += 100 + _chapters[i].verses.length * 180.0;
+    }
 
-    await _scrollController.animateTo(
-      estimatedOffset,
-      duration: const Duration(milliseconds: 450),
-      curve: Curves.easeInOut,
+    _scrollController.jumpTo(
+      estimatedOffset.clamp(0.0, _scrollController.position.maxScrollExtent),
     );
+    await Future.delayed(const Duration(milliseconds: 100));
 
-    // Try again after scrolling now that more items are built.
-    await Future.delayed(const Duration(milliseconds: 16));
+    for (int attempt = 0;
+        attempt < 30 && key?.currentContext == null;
+        attempt++) {
+      await Future.delayed(const Duration(milliseconds: 50));
+    }
+
     if (key?.currentContext != null) {
       await Scrollable.ensureVisible(
         key!.currentContext!,
@@ -185,6 +548,8 @@ class _QuranPageState extends State<QuranPage> {
       );
     }
   }
+
+  // ── Helper widgets ──────────────────────────────────────────────────────────
 
   Widget _buildQuickJump() {
     if (_loading) return const SizedBox.shrink();
@@ -216,6 +581,103 @@ class _QuranPageState extends State<QuranPage> {
     );
   }
 
+  Widget _buildJuzBanner() {
+    if (_loading || _todayJuz == null) return const SizedBox.shrink();
+    final juz = _todayJuz!;
+    final summary = juz.summary(_chapters);
+    final firstSurah = juz.ranges.first.surahNumber;
+
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 8, 16, 4),
+      child: GlassContainer(
+        padding: const EdgeInsets.all(16),
+        gradientColors: [
+          AppColors.accent.withValues(alpha: 0.18),
+          AppColors.accent.withValues(alpha: 0.05),
+        ],
+        borderColor: AppColors.accent.withValues(alpha: 0.3),
+        child: Row(
+          children: [
+            Container(
+              width: 48,
+              height: 48,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: AppColors.accent.withValues(alpha: 0.15),
+                border: Border.all(
+                  color: AppColors.accent.withValues(alpha: 0.4),
+                  width: 2,
+                ),
+              ),
+              alignment: Alignment.center,
+              child: Text(
+                juz.juzNumber.toString(),
+                style: GoogleFonts.plusJakartaSans(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: AppColors.accent,
+                ),
+              ),
+            ),
+            const SizedBox(width: 14),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    "TODAY'S JUZ",
+                    style: GoogleFonts.plusJakartaSans(
+                      fontSize: 11,
+                      fontWeight: FontWeight.w700,
+                      letterSpacing: 1.5,
+                      color: AppColors.accent,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    summary,
+                    style: GoogleFonts.plusJakartaSans(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w500,
+                      color: AppColors.textPrimary,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  Text(
+                    juz.mode == JuzMode.standard
+                        ? 'Standard · Juz ${juz.juzNumber} of 30'
+                        : 'Surah-based · Part ${juz.juzNumber} of 30',
+                    style: GoogleFonts.plusJakartaSans(
+                      fontSize: 11,
+                      color: AppColors.textSecondary,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            IconButton(
+              onPressed: () {
+                final chapter = _chapters.firstWhere(
+                  (c) => c.number == firstSurah,
+                  orElse: () => _chapters.first,
+                );
+                _scrollToChapter(chapter);
+              },
+              style: IconButton.styleFrom(
+                backgroundColor: AppColors.accent.withValues(alpha: 0.15),
+              ),
+              icon: Icon(Icons.auto_stories, color: AppColors.accent),
+              tooltip: "Read today's Juz",
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  // ── Build ───────────────────────────────────────────────────────────────────
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -228,6 +690,51 @@ class _QuranPageState extends State<QuranPage> {
         backgroundColor: Colors.transparent,
         elevation: 0,
         actions: [
+          // Bookmark button with badge
+          ValueListenableBuilder<List<QuranBookmark>>(
+            valueListenable: _bookmarks.bookmarks,
+            builder: (_, list, __) {
+              return Stack(
+                alignment: Alignment.center,
+                children: [
+                  IconButton(
+                    icon: Icon(
+                      list.isEmpty
+                          ? Icons.bookmark_border_rounded
+                          : Icons.bookmark_rounded,
+                      color: list.isEmpty
+                          ? AppColors.textSecondary
+                          : AppColors.accent,
+                    ),
+                    onPressed: _openBookmarks,
+                    tooltip: 'Bookmarks',
+                  ),
+                  if (list.isNotEmpty)
+                    Positioned(
+                      top: 8,
+                      right: 8,
+                      child: Container(
+                        width: 16,
+                        height: 16,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: AppColors.accent,
+                        ),
+                        alignment: Alignment.center,
+                        child: Text(
+                          list.length > 9 ? '9+' : '${list.length}',
+                          style: const TextStyle(
+                            fontSize: 9,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black,
+                          ),
+                        ),
+                      ),
+                    ),
+                ],
+              );
+            },
+          ),
           IconButton(
             icon: const Icon(Icons.menu_book_outlined,
                 color: AppColors.textSecondary),
@@ -239,28 +746,32 @@ class _QuranPageState extends State<QuranPage> {
       body: _loading
           ? Center(child: CircularProgressIndicator(color: AppColors.accent))
           : SafeArea(
-              // Ensure content is safe
               child: Column(
                 children: [
+                  _buildJuzBanner(),
                   _buildQuickJump(),
                   Expanded(
                     child: Scrollbar(
                       controller: _scrollController,
                       child: ListView.builder(
                         controller: _scrollController,
-                        padding: const EdgeInsets.fromLTRB(
-                            16, 0, 16, 100), // Bottom padding for nav bar
-                        cacheExtent: 2000,
+                        padding: const EdgeInsets.fromLTRB(16, 0, 16, 100),
+                        cacheExtent: 5000,
                         itemCount: _chapters.length,
                         itemBuilder: (context, index) {
                           final chapter = _chapters[index];
-                          _chapterKeys.putIfAbsent(
-                            chapter.number,
-                            () => GlobalKey(),
-                          );
                           return _ChapterCard(
-                            key: ValueKey('chapter_${chapter.number}'),
+                            key: _chapterKeys[chapter.number],
                             chapter: chapter,
+                            verseKeys: _verseKeys,
+                            bookmarkService: _bookmarks,
+                            contextMenuSettings: _ctxSettings,
+                            onLongPressVerse: (verseIndex) =>
+                                _showVerseContextMenu(
+                              context,
+                              chapter: chapter,
+                              verseIndex: verseIndex,
+                            ),
                           );
                         },
                       ),
@@ -273,13 +784,63 @@ class _QuranPageState extends State<QuranPage> {
   }
 }
 
+// ── Context menu item ─────────────────────────────────────────────────────────
+
+class _ContextMenuItem extends StatelessWidget {
+  const _ContextMenuItem({
+    required this.icon,
+    required this.label,
+    required this.onTap,
+    this.iconColor,
+  });
+
+  final IconData icon;
+  final String label;
+  final VoidCallback onTap;
+  final Color? iconColor;
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: onTap,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
+        child: Row(
+          children: [
+            Icon(icon, color: iconColor ?? AppColors.textSecondary, size: 22),
+            const SizedBox(width: 16),
+            Text(
+              label,
+              style: GoogleFonts.plusJakartaSans(
+                fontSize: 15,
+                color: AppColors.textPrimary,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+// ── Chapter card ──────────────────────────────────────────────────────────────
+
 class _ChapterCard extends StatelessWidget {
   const _ChapterCard({
     super.key,
     required this.chapter,
+    required this.verseKeys,
+    required this.bookmarkService,
+    required this.contextMenuSettings,
+    required this.onLongPressVerse,
   });
 
   final QuranChapter chapter;
+  final Map<int, GlobalKey> verseKeys;
+  final QuranBookmarkService bookmarkService;
+  final QuranContextMenuSettings contextMenuSettings;
+  final void Function(int verseIndex) onLongPressVerse;
 
   @override
   Widget build(BuildContext context) {
@@ -290,6 +851,7 @@ class _ChapterCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            // Chapter header
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -338,21 +900,70 @@ class _ChapterCard extends StatelessWidget {
               ],
             ),
             const SizedBox(height: 16),
+            // Verses
             ListView.separated(
               physics: const NeverScrollableScrollPhysics(),
               shrinkWrap: true,
               itemCount: chapter.verses.length,
               separatorBuilder: (_, __) => const SizedBox(height: 12),
-              itemBuilder: (_, verseIndex) => SelectableText(
-                chapter.verses[verseIndex],
-                textAlign: TextAlign.right,
-                style: const TextStyle(
-                  fontFamily: 'Amiri',
-                  fontSize: 22,
-                  height: 2.0,
-                  color: AppColors.textPrimary,
-                ),
-              ),
+              itemBuilder: (_, verseIndex) {
+                final verseKey = verseKeys[chapter.number * 10000 + verseIndex];
+                return ValueListenableBuilder<List<QuranBookmark>>(
+                  key: verseKey,
+                  valueListenable: bookmarkService.bookmarks,
+                  builder: (_, bookmarks, __) {
+                    final isBookmarked = bookmarks.any((b) =>
+                        b.surahNumber == chapter.number &&
+                        b.verseIndex == verseIndex);
+                    return GestureDetector(
+                      onLongPress: () => onLongPressVerse(verseIndex),
+                      child: Container(
+                        decoration: isBookmarked
+                            ? BoxDecoration(
+                                borderRadius: BorderRadius.circular(8),
+                                color: AppColors.accent.withValues(alpha: 0.07),
+                                border: Border.all(
+                                  color:
+                                      AppColors.accent.withValues(alpha: 0.2),
+                                  width: 1,
+                                ),
+                              )
+                            : null,
+                        padding: isBookmarked
+                            ? const EdgeInsets.symmetric(
+                                horizontal: 8, vertical: 4)
+                            : EdgeInsets.zero,
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Expanded(
+                              child: SelectableText(
+                                chapter.verses[verseIndex],
+                                textAlign: TextAlign.right,
+                                style: const TextStyle(
+                                  fontFamily: 'Amiri',
+                                  fontSize: 22,
+                                  height: 2.0,
+                                  color: AppColors.textPrimary,
+                                ),
+                              ),
+                            ),
+                            if (isBookmarked)
+                              Padding(
+                                padding: const EdgeInsets.only(left: 6, top: 6),
+                                child: Icon(
+                                  Icons.bookmark_rounded,
+                                  color: AppColors.accent,
+                                  size: 16,
+                                ),
+                              ),
+                          ],
+                        ),
+                      ),
+                    );
+                  },
+                );
+              },
             ),
           ],
         ),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hijri/hijri_calendar.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../../generated/app_localizations.dart';
 import '../../di/service_locator.dart';
 import '../home/home_controller.dart';
@@ -102,172 +103,148 @@ class _MyHomePageState extends State<MyHomePage> {
 
               // 2. Main Content
               SafeArea(
-                child: state.locationError != null && !state.usingCache
+                child: state.loading
                     ? Center(
-                        child: Padding(
-                          padding: const EdgeInsets.all(24.0),
-                          child: Text(
-                            state.locationError!,
-                            style: const TextStyle(color: AppColors.error),
-                            textAlign: TextAlign.center,
-                          ),
-                        ),
-                      )
-                    : state.loading
-                        ? Center(
-                            child: CircularProgressIndicator(
-                                color: AppColors.accent))
-                        : Column(
-                            crossAxisAlignment: CrossAxisAlignment.stretch,
-                            children: [
-                              // Status Banners
-                              if (state.locationNotice != null)
-                                Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 24, vertical: 8),
-                                  child: _StatusBanner(
-                                    icon: state.locationPermissionIssue
-                                        ? Icons.location_off_outlined
-                                        : Icons.info_outline,
-                                    background: (state.locationPermissionIssue
-                                            ? AppColors.error
-                                            : AppColors.accent)
-                                        .withValues(alpha: 0.1),
-                                    foreground: state.locationPermissionIssue
+                        child:
+                            CircularProgressIndicator(color: AppColors.accent))
+                    : Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          // Status Banners
+                          if (state.locationNotice != null)
+                            Padding(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 24, vertical: 8),
+                              child: _StatusBanner(
+                                icon: state.locationPermissionIssue
+                                    ? Icons.location_off_outlined
+                                    : Icons.info_outline,
+                                background: (state.locationPermissionIssue
                                         ? AppColors.error
-                                        : AppColors.accent,
-                                    message: state.locationNotice!,
-                                    action: state.locationPermissionIssue
-                                        ? TextButton(
-                                            onPressed: _controller.refresh,
-                                            child: Text(
-                                              AppLocalizations.of(context)!
-                                                  .refreshPrayerTimes,
-                                              style: TextStyle(
-                                                color: state
-                                                        .locationPermissionIssue
-                                                    ? AppColors.error
-                                                    : AppColors.accent,
-                                                fontWeight: FontWeight.bold,
-                                              ),
-                                            ),
-                                          )
-                                        : null,
-                                  ),
-                                ),
-
-                              if (state.usingCache)
-                                Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 24, vertical: 8),
-                                  child: _StatusBanner(
-                                    icon: Icons.cloud_off,
-                                    background:
-                                        Colors.orange.withValues(alpha: 0.1),
-                                    foreground: Colors.orange,
-                                    message: state.locationError ??
-                                        AppLocalizations.of(context)!
-                                            .usingCachedPrayerTimes,
-                                  ),
-                                ),
-
-                              const SizedBox(height: 20),
-
-                              // Hero Section
-                              Expanded(
-                                flex: 3,
-                                child: Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 24.0),
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      _HijriDateBanner(),
-                                      const SizedBox(height: 40),
-                                      Text(
-                                        state.nextPrayerName ??
-                                            AppLocalizations.of(context)!
-                                                .loading,
-                                        style: GoogleFonts.plusJakartaSans(
-                                          fontSize: 32,
-                                          fontWeight: FontWeight.w300,
-                                          color: AppColors.textPrimary,
+                                        : AppColors.accent)
+                                    .withValues(alpha: 0.1),
+                                foreground: state.locationPermissionIssue
+                                    ? AppColors.error
+                                    : AppColors.accent,
+                                message: state.locationNotice!,
+                                action: state.locationPermissionIssue
+                                    ? TextButton(
+                                        onPressed: _controller.refresh,
+                                        child: Text(
+                                          AppLocalizations.of(context)!
+                                              .refreshPrayerTimes,
+                                          style: TextStyle(
+                                            color: state.locationPermissionIssue
+                                                ? AppColors.error
+                                                : AppColors.accent,
+                                            fontWeight: FontWeight.bold,
+                                          ),
                                         ),
-                                      ),
-                                      const SizedBox(height: 8),
-                                      Text(
-                                        state.nextPrayerTime != null
-                                            ? _formatDuration(state.countdown)
-                                            : '--:--:--',
-                                        style: GoogleFonts.plusJakartaSans(
-                                          fontSize: 64,
-                                          fontWeight: FontWeight.bold,
-                                          color: AppColors.accent,
-                                          height: 1.0,
-                                        ),
-                                      ),
-                                      const SizedBox(height: 16),
-                                      Text(
-                                        AppLocalizations.of(context)!
-                                            .nextPrayer
-                                            .toUpperCase(),
-                                        style: GoogleFonts.plusJakartaSans(
-                                          fontSize: 12,
-                                          letterSpacing: 2.0,
-                                          color: AppColors.textSecondary,
-                                          fontWeight: FontWeight.w600,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
+                                      )
+                                    : null,
                               ),
+                            ),
 
-                              // Contextual or Standard Quote Card
-                              Expanded(
-                                flex: 2,
-                                child: Padding(
-                                  padding:
-                                      const EdgeInsets.fromLTRB(24, 0, 24, 40),
-                                  child: AnimatedSwitcher(
-                                    duration: const Duration(milliseconds: 500),
-                                    transitionBuilder: (child, anim) =>
-                                        FadeTransition(
-                                            opacity: anim, child: child),
-                                    child: state.contextualDua != null
-                                        ? _ContextualDuaCard(
-                                            key: ValueKey(
-                                                'dua_${state.contextualDua!.id}'),
-                                            dua: state.contextualDua!,
-                                            message: state.contextualMessage,
-                                          )
-                                        : GlassContainer(
-                                            key: ValueKey<String>(
-                                                state.quote ?? ''),
-                                            width: double.infinity,
-                                            padding: const EdgeInsets.all(24),
-                                            child: Center(
-                                              child: SingleChildScrollView(
-                                                child: Text(
-                                                  state.quote ?? '...',
-                                                  textAlign: TextAlign.center,
-                                                  style: GoogleFonts
-                                                      .plusJakartaSans(
-                                                    fontSize: 16,
-                                                    height: 1.6,
-                                                    color: AppColors.textPrimary
-                                                        .withValues(alpha: 0.9),
-                                                    fontStyle: FontStyle.italic,
-                                                  ),
-                                                ),
+                          // Removed the 'using cached times' banner per user request
+
+                          const SizedBox(height: 20),
+
+                          // Hero Section
+                          Expanded(
+                            flex: 3,
+                            child: Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 24.0),
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  _HijriDateBanner(),
+                                  const SizedBox(height: 40),
+                                  Text(
+                                    state.nextPrayerName ??
+                                        (state.locationError != null &&
+                                                !state.usingCache
+                                            ? 'Offline'
+                                            : AppLocalizations.of(context)!
+                                                .loading),
+                                    style: GoogleFonts.plusJakartaSans(
+                                      fontSize: 32,
+                                      fontWeight: FontWeight.w300,
+                                      color: AppColors.textPrimary,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 8),
+                                  Text(
+                                    state.nextPrayerTime != null
+                                        ? _formatDuration(state.countdown)
+                                        : '--:--:--',
+                                    style: GoogleFonts.plusJakartaSans(
+                                      fontSize: 64,
+                                      fontWeight: FontWeight.bold,
+                                      color: AppColors.accent,
+                                      height: 1.0,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 16),
+                                  Text(
+                                    AppLocalizations.of(context)!
+                                        .nextPrayer
+                                        .toUpperCase(),
+                                    style: GoogleFonts.plusJakartaSans(
+                                      fontSize: 12,
+                                      letterSpacing: 2.0,
+                                      color: AppColors.textSecondary,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+
+                          // Contextual or Standard Quote Card
+                          Expanded(
+                            flex: 2,
+                            child: Padding(
+                              padding: const EdgeInsets.fromLTRB(24, 0, 24, 40),
+                              child: AnimatedSwitcher(
+                                duration: const Duration(milliseconds: 500),
+                                transitionBuilder: (child, anim) =>
+                                    FadeTransition(opacity: anim, child: child),
+                                child: state.contextualDua != null
+                                    ? _ContextualDuaCard(
+                                        key: ValueKey(
+                                            'dua_${state.contextualDua!.id}'),
+                                        dua: state.contextualDua!,
+                                        message: state.contextualMessage,
+                                      )
+                                    : GlassContainer(
+                                        key:
+                                            ValueKey<String>(state.quote ?? ''),
+                                        width: double.infinity,
+                                        padding: const EdgeInsets.all(24),
+                                        child: Center(
+                                          child: SingleChildScrollView(
+                                            child: Text(
+                                              state.quote ?? '...',
+                                              textAlign: TextAlign.center,
+                                              style:
+                                                  GoogleFonts.plusJakartaSans(
+                                                fontSize: 16,
+                                                height: 1.6,
+                                                color: AppColors.textPrimary
+                                                    .withValues(alpha: 0.9),
+                                                fontStyle: FontStyle.italic,
                                               ),
                                             ),
                                           ),
-                                  ),
-                                ),
+                                        ),
+                                      ),
                               ),
-                            ],
+                            ),
                           ),
+                        ],
+                      ),
               ),
             ],
           ),
@@ -327,21 +304,53 @@ class _StatusBanner extends StatelessWidget {
   }
 }
 
-class _HijriDateBanner extends StatelessWidget {
+class _HijriDateBanner extends StatefulWidget {
+  @override
+  State<_HijriDateBanner> createState() => _HijriDateBannerState();
+}
+
+class _HijriDateBannerState extends State<_HijriDateBanner> {
+  static const _keyHijriDayOffset = 'hijriDayOffset';
+  int _offset = 0;
+  bool _loaded = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadOffset();
+  }
+
+  Future<void> _loadOffset() async {
+    final prefs = await SharedPreferences.getInstance();
+    if (!mounted) return;
+    setState(() {
+      _offset = prefs.getInt(_keyHijriDayOffset) ?? 0;
+      _loaded = true;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
-    final hijri = HijriCalendar.now();
-    final hijriDate = hijri.fullDate();
+    // Shift today by the user's correction offset before converting to Hijri.
+    final adjusted = DateTime.now().add(Duration(days: _offset));
+    final hijri = HijriCalendar.fromDate(adjusted);
+    // Avoid fullDate() — its format() replaces the "dd" inside "DDDD" first,
+    // corrupting the day-name token. Build the string manually instead.
+    final hijriDate = '${hijri.longMonthName} ${hijri.hDay}, ${hijri.hYear}';
 
-    return Text(
-      hijriDate.toUpperCase(),
-      style: GoogleFonts.plusJakartaSans(
-        fontSize: 13,
-        letterSpacing: 2.0,
-        fontWeight: FontWeight.w600,
-        color: AppColors.textSecondary,
+    return AnimatedOpacity(
+      opacity: _loaded ? 1.0 : 0.0,
+      duration: const Duration(milliseconds: 300),
+      child: Text(
+        hijriDate.toUpperCase(),
+        style: GoogleFonts.plusJakartaSans(
+          fontSize: 13,
+          letterSpacing: 2.0,
+          fontWeight: FontWeight.w600,
+          color: AppColors.textSecondary,
+        ),
+        textAlign: TextAlign.center,
       ),
-      textAlign: TextAlign.center,
     );
   }
 }

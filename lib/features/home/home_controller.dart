@@ -32,7 +32,8 @@ class HomeController extends ChangeNotifier {
     this.defaultLongitude = 39.8579,
     PrayerTimesService? initialPrayerService,
     ContextualDuaService? contextualDuaService,
-  }) : contextualDuaService = contextualDuaService ?? getIt<ContextualDuaService>() {
+  }) : contextualDuaService =
+            contextualDuaService ?? getIt<ContextualDuaService>() {
     if (initialPrayerService != null) {
       _prayerTimesService = initialPrayerService;
       _state = _state.copyWith(loading: false, locationLoaded: true);
@@ -44,7 +45,7 @@ class HomeController extends ChangeNotifier {
   final WidgetUpdatePort widgetPort;
   final PrayerTimesServiceFactory prayerFactory;
   final ContextualDuaService contextualDuaService;
-  
+
   final double defaultLatitude;
   final double defaultLongitude;
 
@@ -125,6 +126,7 @@ class HomeController extends ChangeNotifier {
       }
       Position position = await Geolocator.getCurrentPosition(
         desiredAccuracy: LocationAccuracy.high,
+        timeLimit: const Duration(seconds: 10),
       );
       final prefs = await SharedPreferences.getInstance();
       await _configurePrayerService(
@@ -164,7 +166,9 @@ class HomeController extends ChangeNotifier {
     const madhabList = ['Shafi', 'Hanafi', 'Maliki', 'Hanbali'];
     var madhab = madhabList.indexOf(madhabString);
     final madhabIndex = int.tryParse(madhabString);
-    if (madhabIndex != null && madhabIndex >= 0 && madhabIndex < madhabList.length) {
+    if (madhabIndex != null &&
+        madhabIndex >= 0 &&
+        madhabIndex < madhabList.length) {
       madhab = madhabIndex;
     }
     if (madhab == -1) madhab = 0;
@@ -174,8 +178,7 @@ class HomeController extends ChangeNotifier {
     await prefsInstance.setInt('calculation_method', method);
     await prefsInstance.setInt('madhab', madhab);
 
-    _prayerTimesService =
-        prayerFactory(latitude, longitude, method, madhab);
+    _prayerTimesService = prayerFactory(latitude, longitude, method, madhab);
     _update(
       _state.copyWith(
         loading: false,
@@ -253,7 +256,8 @@ class HomeController extends ChangeNotifier {
       final quoteFresh = _cachedQuoteTimestamp != null &&
           now.difference(_cachedQuoteTimestamp!) < _quoteCacheTtl;
       if (forceRefresh || quote == null || !quoteFresh) {
-        quote = await quoteService.getQuote(); // Deprecated or changed API? Will fix compilation later if need be. 
+        quote = await quoteService
+            .getQuote(); // Deprecated or changed API? Will fix compilation later if need be.
         _cachedQuote = quote;
         _cachedQuoteTimestamp = DateTime.now();
       }
@@ -278,7 +282,8 @@ class HomeController extends ChangeNotifier {
 
       String? contextualMsg;
       if (contextualDua != null) {
-        contextualMsg = contextualDuaService.getContextualMessage(contextualDua, now, prayerTimes, hijriDate);
+        contextualMsg = contextualDuaService.getContextualMessage(
+            contextualDua, now, prayerTimes, hijriDate);
       }
 
       _update(
@@ -314,7 +319,8 @@ class HomeController extends ChangeNotifier {
           );
           String? contextualMsg;
           if (contextualDua != null) {
-            contextualMsg = contextualDuaService.getContextualMessage(contextualDua, now, cachedTimes, hijriDate);
+            contextualMsg = contextualDuaService.getContextualMessage(
+                contextualDua, now, cachedTimes, hijriDate);
           }
 
           _update(

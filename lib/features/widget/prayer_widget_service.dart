@@ -1,6 +1,9 @@
 import 'package:home_widget/home_widget.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:intl/intl.dart';
+import 'package:hijri/hijri_calendar.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 import '../prayer/prayer_times_service.dart';
 import 'widget_preferences.dart';
 
@@ -77,6 +80,23 @@ class PrayerWidgetService {
         hours > 0 ? '${hours}h ${minutes}m' : '${minutes}m',
       );
 
+      // Format countdown as HH:MM for widget header
+      final countdownHours = hours.toString().padLeft(2, '0');
+      final countdownMinutes = minutes.toString().padLeft(2, '0');
+      await HomeWidget.saveWidgetData<String>(
+        'countdown_formatted',
+        '$countdownHours:$countdownMinutes',
+      );
+
+      // Get and store location name
+      final locationName = await _getLocationName(latitude, longitude);
+      await HomeWidget.saveWidgetData<String>('location_name', locationName);
+
+      // Get and store Hijri date
+      final hijri = HijriCalendar.now();
+      final hijriDate = '${hijri.hDay} ${_getHijriMonthName(hijri.hMonth)} ${hijri.hYear}';
+      await HomeWidget.saveWidgetData<String>('hijri_date', hijriDate);
+
       // Store widget theme preferences
       final theme = await WidgetPreferences.getTheme();
       final layout = await WidgetPreferences.getLayout();
@@ -85,8 +105,11 @@ class PrayerWidgetService {
       await HomeWidget.saveWidgetData<int>(
           'theme_background', colors['background']);
       await HomeWidget.saveWidgetData<int>('theme_text', colors['text']);
+      await HomeWidget.saveWidgetData<int>(
+          'theme_text_secondary', colors['textSecondary']);
       await HomeWidget.saveWidgetData<int>('theme_accent', colors['accent']);
       await HomeWidget.saveWidgetData<int>('theme_card_bg', colors['cardBg']);
+      await HomeWidget.saveWidgetData<int>('theme_index', theme.index);
       await HomeWidget.saveWidgetData<int>('layout_type', layout.index);
 
       // Update the widget UI
@@ -105,6 +128,88 @@ class PrayerWidgetService {
         iOSName: 'PrayerTimesWidget',
       );
     }
+  }
+
+  /// Get location name from coordinates using reverse geocoding
+  static Future<String> _getLocationName(double latitude, double longitude) async {
+    try {
+      // Try to get cached location name first
+      final prefs = await SharedPreferences.getInstance();
+      final cachedLat = prefs.getDouble('cached_location_lat');
+      final cachedLon = prefs.getDouble('cached_location_lon');
+      final cachedName = prefs.getString('cached_location_name');
+
+      // If coordinates match cached values, return cached name
+      if (cachedName != null &&
+          cachedLat != null &&
+          cachedLon != null &&
+          (cachedLat - latitude).abs() < 0.01 &&
+          (cachedLon - longitude).abs() < 0.01) {
+        return cachedName;
+      }
+
+      // Use OpenStreetMap Nominatim for reverse geocoding
+      final url = Uri.parse(
+        'https://nominatim.openstreetmap.org/reverse?format=json&lat=$latitude&lon=$longitude&zoom=10',
+      );
+
+      final response = await http.get(
+        url,
+        headers: {'User-Agent': 'Immutable5PrayerApp/1.0'},
+      ).timeout(const Duration(seconds: 5));
+
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        final address = data['address'] as Map<String, dynamic>?;
+
+        String locationName = 'Unknown Location';
+
+        if (address != null) {
+          // Try to get city, town, or village name
+          locationName = address['city'] as String? ??
+              address['town'] as String? ??
+              address['village'] as String? ??
+              address['municipality'] as String? ??
+              address['county'] as String? ??
+              address['state'] as String? ??
+              'Unknown Location';
+        }
+
+        // Cache the result
+        await prefs.setDouble('cached_location_lat', latitude);
+        await prefs.setDouble('cached_location_lon', longitude);
+        await prefs.setString('cached_location_name', locationName);
+
+        return locationName;
+      }
+    } catch (e) {
+      // Fallback to cached name or default
+      final prefs = await SharedPreferences.getInstance();
+      return prefs.getString('cached_location_name') ?? 'Current Location';
+    }
+    return 'Current Location';
+  }
+
+  /// Get Hijri month name
+  static String _getHijriMonthName(int month) {
+    const months = [
+      'Muharram',
+      'Safar',
+      'Rabi\' al-Awwal',
+      'Rabi\' al-Thani',
+      'Jumada al-Ula',
+      'Jumada al-Thani',
+      'Rajab',
+      'Sha\'ban',
+      'Ramadan',
+      'Shawwal',
+      'Dhu al-Qi\'dah',
+      'Dhu al-Hijjah',
+    ];
+    if (month >= 1 && month <= 12) {
+      return months[month - 1];
+    }
+    return '';
   }
 
   /// Initialize the widget with app group (iOS requirement)
