@@ -29,6 +29,10 @@ gradle.projectsEvaluated {
         tasks.withType<KotlinCompile>().configureEach {
             kotlinOptions.jvmTarget = targetJvm
         }
+        
+        tasks.withType<JavaCompile>().configureEach {
+            options.compilerArgs.add("-Xlint:-options")
+        }
     }
 }
 
