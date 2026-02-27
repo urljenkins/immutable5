@@ -1,11 +1,11 @@
 import 'package:shared_preferences/shared_preferences.dart';
 
 enum WidgetTheme {
-  nightSky,    // Default - Dark navy background, gold accent
-  oceanBlue,   // Deep blue background, teal accent
-  forest,      // Dark green background, emerald accent
-  light,       // White background, slate text, navy accent
-  pureDark,    // True black background, white text, gold accent
+  nightSky, // Default - Dark navy background, gold accent
+  oceanBlue, // Deep blue background, teal accent
+  forest, // Dark green background, emerald accent
+  light, // White background, slate text, navy accent
+  pureDark, // True black background, white text, gold accent
 }
 
 enum WidgetLayout {
@@ -71,10 +71,10 @@ class WidgetPreferences {
         // Dark navy background, gold accent, soft white text
         return {
           'background': 0xFF0F172A,
-          'text': 0xFFF8FAFC,        // Soft white
+          'text': 0xFFF8FAFC, // Soft white
           'textSecondary': 0xFFCBD5E1, // Muted white for secondary text
-          'accent': 0xFFD4AF37,       // Gold
-          'cardBg': 0xFF1E293B,       // Slightly lighter navy
+          'accent': 0xFFD4AF37, // Gold
+          'cardBg': 0xFF1E293B, // Slightly lighter navy
         };
       case WidgetTheme.oceanBlue:
         // Deep blue background, teal accent
@@ -82,7 +82,7 @@ class WidgetPreferences {
           'background': 0xFF1A365D,
           'text': 0xFFF8FAFC,
           'textSecondary': 0xFFCBD5E1,
-          'accent': 0xFF38B2AC,       // Teal
+          'accent': 0xFF38B2AC, // Teal
           'cardBg': 0xFF2C5282,
         };
       case WidgetTheme.forest:
@@ -91,17 +91,17 @@ class WidgetPreferences {
           'background': 0xFF1A4731,
           'text': 0xFFF8FAFC,
           'textSecondary': 0xFFCBD5E1,
-          'accent': 0xFF10B981,       // Emerald
+          'accent': 0xFF10B981, // Emerald
           'cardBg': 0xFF22543D,
         };
       case WidgetTheme.light:
         // White background, slate text, navy accent
         return {
           'background': 0xFFFFFFFF,
-          'text': 0xFF334155,         // Slate
+          'text': 0xFF334155, // Slate
           'textSecondary': 0xFF64748B,
-          'accent': 0xFF1E293B,       // Navy
-          'cardBg': 0xFFF1F5F9,       // Light gray
+          'accent': 0xFF1E293B, // Navy
+          'cardBg': 0xFFF1F5F9, // Light gray
         };
       case WidgetTheme.pureDark:
         // True black background, white text, gold accent
@@ -109,8 +109,8 @@ class WidgetPreferences {
           'background': 0xFF000000,
           'text': 0xFFFFFFFF,
           'textSecondary': 0xFFA1A1AA,
-          'accent': 0xFFD4AF37,       // Gold
-          'cardBg': 0xFF18181B,       // Zinc-900
+          'accent': 0xFFD4AF37, // Gold
+          'cardBg': 0xFF18181B, // Zinc-900
         };
     }
   }

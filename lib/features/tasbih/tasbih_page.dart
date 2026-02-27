@@ -12,7 +12,8 @@ class TasbihPage extends StatefulWidget {
   State<TasbihPage> createState() => _TasbihPageState();
 }
 
-class _TasbihPageState extends State<TasbihPage> with SingleTickerProviderStateMixin {
+class _TasbihPageState extends State<TasbihPage>
+    with SingleTickerProviderStateMixin {
   int _count = 0;
   int _target = 33;
   bool _isVoiceEnabled = false;
@@ -77,7 +78,7 @@ class _TasbihPageState extends State<TasbihPage> with SingleTickerProviderStateM
           if (mounted) {
             setState(() => _isListening = false);
             ScaffoldMessenger.of(context).showSnackBar(
-               SnackBar(content: Text('Error: ${errorNotification.errorMsg}')),
+              SnackBar(content: Text('Error: ${errorNotification.errorMsg}')),
             );
           }
         },
@@ -88,9 +89,9 @@ class _TasbihPageState extends State<TasbihPage> with SingleTickerProviderStateM
         _startListening();
       } else {
         if (mounted) {
-           ScaffoldMessenger.of(context).showSnackBar(
-             const SnackBar(content: Text('Speech recognition not available')),
-           );
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Speech recognition not available')),
+          );
         }
       }
     } else {
@@ -117,13 +118,13 @@ class _TasbihPageState extends State<TasbihPage> with SingleTickerProviderStateM
         // This is a naive implementation where any result updates count.
         // To prevent rapid firing, we might need a debounce or only count on 'final' results.
         if (result.finalResult) {
-             _incrementCount();
-             // Restart listening for the next phrase
-             if (_isVoiceEnabled && mounted) {
-               Future.delayed(const Duration(milliseconds: 100), () {
-                 if (mounted && _isVoiceEnabled) _startListening();
-               });
-             }
+          _incrementCount();
+          // Restart listening for the next phrase
+          if (_isVoiceEnabled && mounted) {
+            Future.delayed(const Duration(milliseconds: 100), () {
+              if (mounted && _isVoiceEnabled) _startListening();
+            });
+          }
         }
       },
       listenFor: const Duration(seconds: 30),
@@ -137,30 +138,34 @@ class _TasbihPageState extends State<TasbihPage> with SingleTickerProviderStateM
       context: context,
       builder: (context) => AlertDialog(
         backgroundColor: AppColors.cardSurface,
-        title: Text(AppLocalizations.of(context)!.setTarget, style: GoogleFonts.plusJakartaSans(color: AppColors.textPrimary)),
+        title: Text(AppLocalizations.of(context)!.setTarget,
+            style: GoogleFonts.plusJakartaSans(color: AppColors.textPrimary)),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             ListTile(
-              title: const Text('33', style: TextStyle(color: AppColors.textPrimary)),
+              title: const Text('33',
+                  style: TextStyle(color: AppColors.textPrimary)),
               onTap: () {
                 setState(() => _target = 33);
                 Navigator.pop(context);
               },
             ),
-             ListTile(
-              title: const Text('100', style: TextStyle(color: AppColors.textPrimary)),
+            ListTile(
+              title: const Text('100',
+                  style: TextStyle(color: AppColors.textPrimary)),
               onTap: () {
                 setState(() => _target = 100);
                 Navigator.pop(context);
               },
             ),
-             ListTile(
-              title: const Text('Infinite (Custom)', style: TextStyle(color: AppColors.textPrimary)),
+            ListTile(
+              title: const Text('Infinite (Custom)',
+                  style: TextStyle(color: AppColors.textPrimary)),
               onTap: () {
-                 // Simple custom input could be added here
-                 setState(() => _target = 99999);
-                 Navigator.pop(context);
+                // Simple custom input could be added here
+                setState(() => _target = 99999);
+                Navigator.pop(context);
               },
             ),
           ],
@@ -176,7 +181,8 @@ class _TasbihPageState extends State<TasbihPage> with SingleTickerProviderStateM
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
-        title: Text(AppLocalizations.of(context)!.tasbih, style: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.w600)),
+        title: Text(AppLocalizations.of(context)!.tasbih,
+            style: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.w600)),
         backgroundColor: Colors.transparent,
         elevation: 0,
         actions: [
@@ -203,13 +209,21 @@ class _TasbihPageState extends State<TasbihPage> with SingleTickerProviderStateM
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                     Text(AppLocalizations.of(context)!.target, style: GoogleFonts.plusJakartaSans(color: AppColors.textSecondary)),
-                     Text('$_target', style: GoogleFonts.plusJakartaSans(fontSize: 24, fontWeight: FontWeight.bold, color: AppColors.textPrimary)),
+                    Text(AppLocalizations.of(context)!.target,
+                        style: GoogleFonts.plusJakartaSans(
+                            color: AppColors.textSecondary)),
+                    Text('$_target',
+                        style: GoogleFonts.plusJakartaSans(
+                            fontSize: 24,
+                            fontWeight: FontWeight.bold,
+                            color: AppColors.textPrimary)),
                   ],
                 ),
                 Row(
                   children: [
-                    Text(AppLocalizations.of(context)!.voiceMode, style: GoogleFonts.plusJakartaSans(color: AppColors.textSecondary)),
+                    Text(AppLocalizations.of(context)!.voiceMode,
+                        style: GoogleFonts.plusJakartaSans(
+                            color: AppColors.textSecondary)),
                     Switch(
                       value: _isVoiceEnabled,
                       onChanged: _toggleVoiceMode,
@@ -236,7 +250,8 @@ class _TasbihPageState extends State<TasbihPage> with SingleTickerProviderStateM
                       value: progress,
                       strokeWidth: 20,
                       backgroundColor: AppColors.cardSurface,
-                      valueColor: AlwaysStoppedAnimation<Color>(AppColors.accent),
+                      valueColor:
+                          AlwaysStoppedAnimation<Color>(AppColors.accent),
                       strokeCap: StrokeCap.round,
                     ),
                   ),
@@ -260,9 +275,13 @@ class _TasbihPageState extends State<TasbihPage> with SingleTickerProviderStateM
                             return Transform.scale(
                               scale: _isListening ? _pulseAnimation.value : 1.0,
                               child: Text(
-                                _isListening ? AppLocalizations.of(context)!.listening : 'Paused',
+                                _isListening
+                                    ? AppLocalizations.of(context)!.listening
+                                    : 'Paused',
                                 style: GoogleFonts.plusJakartaSans(
-                                  color: _isListening ? Colors.redAccent : AppColors.textSecondary,
+                                  color: _isListening
+                                      ? Colors.redAccent
+                                      : AppColors.textSecondary,
                                   fontSize: 14,
                                 ),
                               ),
