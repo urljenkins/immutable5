@@ -5,6 +5,7 @@ import '../features/prayer/prayer_times_service.dart';
 import '../features/quotes/quote_picker_service.dart';
 import '../features/widget/prayer_widget_service.dart';
 import '../features/home/home_controller.dart';
+import '../features/prayer_tracking/prayer_tracking_service.dart';
 
 import '../features/duas/dua_repository.dart';
 
@@ -18,9 +19,9 @@ void setupLocator() {
   getIt.registerLazySingleton<NotificationService>(() => NotificationService());
   getIt.registerLazySingleton<QuotePickerService>(() => QuotePickerService());
   getIt.registerLazySingleton<DuaRepository>(() => DuaRepository());
-  getIt.registerLazySingleton<ContextualDuaService>(
-      () => ContextualDuaService());
+  getIt.registerLazySingleton<ContextualDuaService>(() => ContextualDuaService());
   getIt.registerLazySingleton<PlacesService>(() => PlacesService());
+  getIt.registerLazySingleton<PrayerTrackingService>(() => PrayerTrackingService());
 
   // Adapters/ports
   getIt.registerLazySingleton<NotificationPort>(

@@ -31,5 +31,11 @@
   "places": "Places",
   "prayerPlaces": "Prayer Places",
   "getDirections": "Get Directions",
-  "openingHours": "Opening Hours"
+  "openingHours": "Opening Hours",
+  "tasbih": "Tasbih",
+  "target": "Target",
+  "voiceMode": "Voice Mode",
+  "reset": "Reset",
+  "setTarget": "Set Target",
+  "listening": "Listening..."
 }
