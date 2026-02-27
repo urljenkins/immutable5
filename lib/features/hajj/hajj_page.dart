@@ -98,8 +98,9 @@ class _HajjPageState extends State<HajjPage> {
     final progress = completedCount / _stepsData.length;
     return Scaffold(
       appBar: AppBar(
-          title: const Text('Hajj Guide'),
-          backgroundColor: Theme.of(context).colorScheme.inversePrimary),
+        title: const Text('Hajj Guide'),
+        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+      ),
       body: Column(
         children: [
           Padding(
@@ -134,22 +135,27 @@ class _HajjPageState extends State<HajjPage> {
                         width: double.infinity,
                         color: Colors.grey[300],
                         child: Center(
-                            child: Text('Wireframe: ${data['title']}',
-                                style: TextStyle(color: Colors.grey[600]))),
+                          child: Text(
+                            'Wireframe: ${data['title']}',
+                            style: TextStyle(color: Colors.grey[600]),
+                          ),
+                        ),
                       ),
                       const SizedBox(height: 8),
                       Text(data['desc']!),
                       const SizedBox(height: 8),
-                      Text('Dua: ${data['dua']}',
-                          style: Theme.of(context)
-                              .textTheme
-                              .bodySmall
-                              ?.copyWith(fontStyle: FontStyle.italic)),
+                      Text(
+                        'Dua: ${data['dua']}',
+                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                              fontStyle: FontStyle.italic,
+                            ),
+                      ),
                       CheckboxListTile(
-                          value: _completed[i],
-                          title: const Text('Completed'),
-                          controlAffinity: ListTileControlAffinity.leading,
-                          onChanged: (v) => _toggleStep(i, v)),
+                        value: _completed[i],
+                        title: const Text('Completed'),
+                        controlAffinity: ListTileControlAffinity.leading,
+                        onChanged: (v) => _toggleStep(i, v),
+                      ),
                     ],
                   ),
                 );

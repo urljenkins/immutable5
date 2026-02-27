@@ -193,7 +193,8 @@ class _SettingsPageState extends State<SettingsPage> {
                     title: Text(
                       AppLocalizations.of(context)!.selectCalculationMethod,
                       style: GoogleFonts.plusJakartaSans(
-                          fontWeight: FontWeight.bold),
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                     children: [
                       RadioGroup<String>(
@@ -301,7 +302,8 @@ class _SettingsPageState extends State<SettingsPage> {
               SwitchListTile(
                 title: const Text('Jummah Prep Reminder'),
                 subtitle: const Text(
-                    'Remind me 1 hour before Friday Dhuhr (Jummah) to prepare.'),
+                  'Remind me 1 hour before Friday Dhuhr (Jummah) to prepare.',
+                ),
                 value: _jummahReminders,
                 activeThumbColor: AppColors.accent,
                 contentPadding: const EdgeInsets.symmetric(horizontal: 40),
@@ -314,7 +316,8 @@ class _SettingsPageState extends State<SettingsPage> {
               SwitchListTile(
                 title: const Text('Iftar Prep Reminder'),
                 subtitle: const Text(
-                    'Remind me 15 minutes before Maghrib during Ramadan.'),
+                  'Remind me 15 minutes before Maghrib during Ramadan.',
+                ),
                 value: _iftarReminders,
                 activeThumbColor: AppColors.accent,
                 contentPadding: const EdgeInsets.symmetric(horizontal: 40),
@@ -367,7 +370,8 @@ class _SettingsPageState extends State<SettingsPage> {
                     title: Text(
                       'Select Juz Mode',
                       style: GoogleFonts.plusJakartaSans(
-                          fontWeight: FontWeight.bold),
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                     children: [
                       RadioGroup<JuzMode>(
@@ -378,14 +382,16 @@ class _SettingsPageState extends State<SettingsPage> {
                             RadioListTile(
                               title: const Text('Standard (30 equal parts)'),
                               subtitle: const Text(
-                                  'Traditional division — a juz may split a surah'),
+                                'Traditional division — a juz may split a surah',
+                              ),
                               value: JuzMode.standard,
                               activeColor: AppColors.accent,
                             ),
                             RadioListTile(
                               title: const Text('Surah-based (whole surahs)'),
                               subtitle: const Text(
-                                  'Groups of whole surahs — no surah is split'),
+                                'Groups of whole surahs — no surah is split',
+                              ),
                               value: JuzMode.surahBased,
                               activeColor: AppColors.accent,
                             ),
@@ -408,8 +414,10 @@ class _SettingsPageState extends State<SettingsPage> {
             ),
             // ── Long-press context menu toggles ──────────────────────────────
             Padding(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 24.0, vertical: 4),
+              padding: const EdgeInsets.symmetric(
+                horizontal: 24.0,
+                vertical: 4,
+              ),
               child: Text(
                 'Long-press menu actions',
                 style: GoogleFonts.plusJakartaSans(
@@ -538,12 +546,15 @@ class _SettingsPageState extends State<SettingsPage> {
             SwitchListTile(
               title: const Text('Battery Saver Mode'),
               subtitle: const Text(
-                  'Reduce battery usage by limiting background updates'),
+                'Reduce battery usage by limiting background updates',
+              ),
               value: _batterySaverMode,
               activeThumbColor: AppColors.accent,
               contentPadding: const EdgeInsets.symmetric(horizontal: 24),
-              secondary: const Icon(Icons.battery_saver,
-                  color: AppColors.textSecondary),
+              secondary: const Icon(
+                Icons.battery_saver,
+                color: AppColors.textSecondary,
+              ),
               onChanged: (value) async {
                 final batteryOptimizer = BatteryOptimizer();
                 await batteryOptimizer.setBatterySaverMode(value);
@@ -563,13 +574,18 @@ class _SettingsPageState extends State<SettingsPage> {
               },
             ),
             ListTile(
-              leading: const Icon(Icons.delete_outline,
-                  color: AppColors.textSecondary),
+              leading: const Icon(
+                Icons.delete_outline,
+                color: AppColors.textSecondary,
+              ),
               title: const Text('Clear Cache'),
               subtitle: const Text('Free up storage space'),
               contentPadding: const EdgeInsets.symmetric(horizontal: 24),
-              trailing: const Icon(Icons.arrow_forward_ios,
-                  size: 16, color: AppColors.textSecondary),
+              trailing: const Icon(
+                Icons.arrow_forward_ios,
+                size: 16,
+                color: AppColors.textSecondary,
+              ),
               onTap: () async {
                 final cacheManager = CacheManager();
                 final stats = await cacheManager.getStats();
@@ -606,8 +622,10 @@ class _SettingsPageState extends State<SettingsPage> {
                             );
                           }
                         },
-                        child: const Text('Clear',
-                            style: TextStyle(color: AppColors.error)),
+                        child: const Text(
+                          'Clear',
+                          style: TextStyle(color: AppColors.error),
+                        ),
                       ),
                     ],
                   ),
@@ -616,13 +634,18 @@ class _SettingsPageState extends State<SettingsPage> {
             ),
             const Divider(),
             ListTile(
-              leading:
-                  const Icon(Icons.widgets, color: AppColors.textSecondary),
+              leading: const Icon(
+                Icons.widgets,
+                color: AppColors.textSecondary,
+              ),
               title: const Text('Widget Settings'),
               subtitle: const Text('Customize home screen widget'),
               contentPadding: const EdgeInsets.symmetric(horizontal: 24),
-              trailing: const Icon(Icons.arrow_forward_ios,
-                  size: 16, color: AppColors.textSecondary),
+              trailing: const Icon(
+                Icons.arrow_forward_ios,
+                size: 16,
+                color: AppColors.textSecondary,
+              ),
               onTap: () {
                 Navigator.push(
                   context,

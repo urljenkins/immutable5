@@ -123,7 +123,10 @@ class _QuranPageState extends State<QuranPage> {
       });
 
       try {
-        final urls = await _audioService.getSurahAudioData(surah, _currentReciterId);
+        final urls = await _audioService.getSurahAudioData(
+          surah,
+          _currentReciterId,
+        );
         if (!mounted) return;
         // Check race condition: if playingSurah changed while awaiting, discard this result
         if (_playingSurah != surah) return;
@@ -139,9 +142,9 @@ class _QuranPageState extends State<QuranPage> {
           _playingSurah = null;
           _playingVerse = null;
         });
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Failed to load audio: $e')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Failed to load audio: $e')));
         return;
       }
     }
@@ -160,9 +163,9 @@ class _QuranPageState extends State<QuranPage> {
       });
       _scrollToVerse(surah, verse);
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error playing audio: $e')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Error playing audio: $e')));
     }
   }
 
@@ -260,7 +263,9 @@ class _QuranPageState extends State<QuranPage> {
                     // Verse preview
                     Padding(
                       padding: const EdgeInsets.symmetric(
-                          horizontal: 20, vertical: 8),
+                        horizontal: 20,
+                        vertical: 8,
+                      ),
                       child: Text(
                         '${chapter.title} · Verse ${verseIndex + 1}',
                         style: GoogleFonts.plusJakartaSans(
@@ -272,17 +277,18 @@ class _QuranPageState extends State<QuranPage> {
                       ),
                     ),
                     Divider(
-                        color: AppColors.textSecondary.withValues(alpha: 0.15),
-                        height: 1),
+                      color: AppColors.textSecondary.withValues(alpha: 0.15),
+                      height: 1,
+                    ),
                     // Play verse option
-                     _ContextMenuItem(
-                        icon: Icons.play_arrow_rounded,
-                        label: 'Play from here',
-                        onTap: () {
-                          Navigator.pop(sheetCtx);
-                          _playVerse(chapter.number, verseIndex);
-                        },
-                      ),
+                    _ContextMenuItem(
+                      icon: Icons.play_arrow_rounded,
+                      label: 'Play from here',
+                      onTap: () {
+                        Navigator.pop(sheetCtx);
+                        _playVerse(chapter.number, verseIndex);
+                      },
+                    ),
                     if (_ctxSettings.showCopy)
                       _ContextMenuItem(
                         icon: Icons.copy_rounded,
@@ -320,9 +326,9 @@ class _QuranPageState extends State<QuranPage> {
                           );
                           messenger.showSnackBar(
                             SnackBar(
-                              content: Text(added
-                                  ? 'Verse bookmarked'
-                                  : 'Bookmark removed'),
+                              content: Text(
+                                added ? 'Verse bookmarked' : 'Bookmark removed',
+                              ),
                               duration: const Duration(seconds: 2),
                             ),
                           );
@@ -379,8 +385,9 @@ class _QuranPageState extends State<QuranPage> {
           valueListenable: _bookmarks.bookmarks,
           builder: (_, list, __) {
             return ClipRRect(
-              borderRadius:
-                  const BorderRadius.vertical(top: Radius.circular(24)),
+              borderRadius: const BorderRadius.vertical(
+                top: Radius.circular(24),
+              ),
               child: BackdropFilter(
                 filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
                 child: Container(
@@ -402,8 +409,11 @@ class _QuranPageState extends State<QuranPage> {
                           padding: const EdgeInsets.all(16.0),
                           child: Row(
                             children: [
-                              Icon(Icons.bookmark_rounded,
-                                  color: AppColors.accent, size: 20),
+                              Icon(
+                                Icons.bookmark_rounded,
+                                color: AppColors.accent,
+                                size: 20,
+                              ),
                               const SizedBox(width: 8),
                               Text(
                                 'Bookmarks',
@@ -421,8 +431,9 @@ class _QuranPageState extends State<QuranPage> {
                                       context: context,
                                       builder: (d) => AlertDialog(
                                         backgroundColor: AppColors.cardSurface,
-                                        title:
-                                            const Text('Clear all bookmarks?'),
+                                        title: const Text(
+                                          'Clear all bookmarks?',
+                                        ),
                                         actions: [
                                           TextButton(
                                             onPressed: () =>
@@ -432,23 +443,31 @@ class _QuranPageState extends State<QuranPage> {
                                           TextButton(
                                             onPressed: () =>
                                                 Navigator.pop(d, true),
-                                            child: const Text('Clear',
-                                                style: TextStyle(
-                                                    color: AppColors.error)),
+                                            child: const Text(
+                                              'Clear',
+                                              style: TextStyle(
+                                                color: AppColors.error,
+                                              ),
+                                            ),
                                           ),
                                         ],
                                       ),
                                     );
                                     if (confirm == true) {
                                       for (final b in List.of(
-                                          _bookmarks.bookmarks.value)) {
+                                        _bookmarks.bookmarks.value,
+                                      )) {
                                         await _bookmarks.remove(
-                                            b.surahNumber, b.verseIndex);
+                                          b.surahNumber,
+                                          b.verseIndex,
+                                        );
                                       }
                                     }
                                   },
-                                  child: const Text('Clear all',
-                                      style: TextStyle(color: AppColors.error)),
+                                  child: const Text(
+                                    'Clear all',
+                                    style: TextStyle(color: AppColors.error),
+                                  ),
                                 ),
                             ],
                           ),
@@ -459,10 +478,13 @@ class _QuranPageState extends State<QuranPage> {
                               child: Column(
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
-                                  Icon(Icons.bookmark_border_rounded,
-                                      size: 48,
-                                      color: AppColors.textSecondary
-                                          .withValues(alpha: 0.5)),
+                                  Icon(
+                                    Icons.bookmark_border_rounded,
+                                    size: 48,
+                                    color: AppColors.textSecondary.withValues(
+                                      alpha: 0.5,
+                                    ),
+                                  ),
                                   const SizedBox(height: 12),
                                   Text(
                                     'No bookmarks yet',
@@ -475,8 +497,9 @@ class _QuranPageState extends State<QuranPage> {
                                     'Long-press a verse to bookmark it',
                                     style: GoogleFonts.plusJakartaSans(
                                       fontSize: 12,
-                                      color: AppColors.textSecondary
-                                          .withValues(alpha: 0.6),
+                                      color: AppColors.textSecondary.withValues(
+                                        alpha: 0.6,
+                                      ),
                                     ),
                                   ),
                                 ],
@@ -489,8 +512,9 @@ class _QuranPageState extends State<QuranPage> {
                               padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
                               itemCount: list.length,
                               separatorBuilder: (_, __) => Divider(
-                                color: AppColors.textSecondary
-                                    .withValues(alpha: 0.1),
+                                color: AppColors.textSecondary.withValues(
+                                  alpha: 0.1,
+                                ),
                                 height: 1,
                               ),
                               itemBuilder: (_, i) {
@@ -502,15 +526,21 @@ class _QuranPageState extends State<QuranPage> {
                                     height: 36,
                                     decoration: BoxDecoration(
                                       shape: BoxShape.circle,
-                                      color: AppColors.accent
-                                          .withValues(alpha: 0.1),
+                                      color: AppColors.accent.withValues(
+                                        alpha: 0.1,
+                                      ),
                                       border: Border.all(
-                                          color: AppColors.accent
-                                              .withValues(alpha: 0.3)),
+                                        color: AppColors.accent.withValues(
+                                          alpha: 0.3,
+                                        ),
+                                      ),
                                     ),
                                     alignment: Alignment.center,
-                                    child: Icon(Icons.bookmark_rounded,
-                                        color: AppColors.accent, size: 18),
+                                    child: Icon(
+                                      Icons.bookmark_rounded,
+                                      color: AppColors.accent,
+                                      size: 18,
+                                    ),
                                   ),
                                   title: Text(
                                     '${bm.surahTitle} · Verse ${bm.verseIndex + 1}',
@@ -530,17 +560,24 @@ class _QuranPageState extends State<QuranPage> {
                                     ),
                                   ),
                                   trailing: IconButton(
-                                    icon: const Icon(Icons.delete_outline,
-                                        color: AppColors.textSecondary,
-                                        size: 20),
+                                    icon: const Icon(
+                                      Icons.delete_outline,
+                                      color: AppColors.textSecondary,
+                                      size: 20,
+                                    ),
                                     onPressed: () => _bookmarks.remove(
-                                        bm.surahNumber, bm.verseIndex),
+                                      bm.surahNumber,
+                                      bm.verseIndex,
+                                    ),
                                   ),
                                   onTap: () {
                                     Navigator.pop(sheetCtx);
-                                    _scrollToChapter(_chapters.firstWhere(
+                                    _scrollToChapter(
+                                      _chapters.firstWhere(
                                         (c) => c.number == bm.surahNumber,
-                                        orElse: () => _chapters.first));
+                                        orElse: () => _chapters.first,
+                                      ),
+                                    );
                                   },
                                 );
                               },
@@ -615,8 +652,10 @@ class _QuranPageState extends State<QuranPage> {
                                 shape: BoxShape.circle,
                                 color: AppColors.accent.withValues(alpha: 0.1),
                                 border: Border.all(
-                                    color: AppColors.accent
-                                        .withValues(alpha: 0.3)),
+                                  color: AppColors.accent.withValues(
+                                    alpha: 0.3,
+                                  ),
+                                ),
                               ),
                               alignment: Alignment.center,
                               child: Text(
@@ -707,17 +746,25 @@ class _QuranPageState extends State<QuranPage> {
                           height: 1,
                         ),
                         itemBuilder: (_, index) {
-                          final reciter = QuranAudioService.availableReciters[index];
+                          final reciter =
+                              QuranAudioService.availableReciters[index];
                           final isSelected = reciter.id == _currentReciterId;
                           return ListTile(
                             leading: isSelected
-                              ? const Icon(Icons.check, color: AppColors.accent)
-                              : const SizedBox(width: 24),
+                                ? const Icon(
+                                    Icons.check,
+                                    color: AppColors.accent,
+                                  )
+                                : const SizedBox(width: 24),
                             title: Text(
                               reciter.name,
                               style: GoogleFonts.plusJakartaSans(
-                                color: isSelected ? AppColors.accent : AppColors.textPrimary,
-                                fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
+                                color: isSelected
+                                    ? AppColors.accent
+                                    : AppColors.textPrimary,
+                                fontWeight: isSelected
+                                    ? FontWeight.bold
+                                    : FontWeight.w500,
                               ),
                             ),
                             onTap: () {
@@ -931,7 +978,7 @@ class _QuranPageState extends State<QuranPage> {
             color: Colors.black.withValues(alpha: 0.3),
             blurRadius: 10,
             offset: const Offset(0, 4),
-          )
+          ),
         ],
       ),
       child: Row(
@@ -970,7 +1017,9 @@ class _QuranPageState extends State<QuranPage> {
           else
             IconButton(
               icon: Icon(
-                _isPlaying ? Icons.pause_circle_filled_rounded : Icons.play_circle_fill_rounded,
+                _isPlaying
+                    ? Icons.pause_circle_filled_rounded
+                    : Icons.play_circle_fill_rounded,
                 color: AppColors.accent,
                 size: 36,
               ),
@@ -1002,7 +1051,10 @@ class _QuranPageState extends State<QuranPage> {
         actions: [
           // Reciter button
           IconButton(
-            icon: const Icon(Icons.record_voice_over_outlined, color: AppColors.textSecondary),
+            icon: const Icon(
+              Icons.record_voice_over_outlined,
+              color: AppColors.textSecondary,
+            ),
             onPressed: _openReciterPicker,
             tooltip: 'Select Reciter',
           ),
@@ -1052,8 +1104,10 @@ class _QuranPageState extends State<QuranPage> {
             },
           ),
           IconButton(
-            icon: const Icon(Icons.menu_book_outlined,
-                color: AppColors.textSecondary),
+            icon: const Icon(
+              Icons.menu_book_outlined,
+              color: AppColors.textSecondary,
+            ),
             onPressed: _openChapterPicker,
             tooltip: 'Browse chapters',
           ),
@@ -1198,7 +1252,8 @@ class _ChapterCard extends StatelessWidget {
                     shape: BoxShape.circle,
                     color: AppColors.accent.withValues(alpha: 0.1),
                     border: Border.all(
-                        color: AppColors.accent.withValues(alpha: 0.3)),
+                      color: AppColors.accent.withValues(alpha: 0.3),
+                    ),
                   ),
                   alignment: Alignment.center,
                   child: Text(
@@ -1255,15 +1310,18 @@ class _ChapterCard extends StatelessWidget {
               separatorBuilder: (_, __) => const SizedBox(height: 12),
               itemBuilder: (_, verseIndex) {
                 final verseKey = verseKeys[chapter.number * 10000 + verseIndex];
-                final isPlayingThisVerse = isCurrentSurah && playingVerse == verseIndex;
+                final isPlayingThisVerse =
+                    isCurrentSurah && playingVerse == verseIndex;
 
                 return ValueListenableBuilder<List<QuranBookmark>>(
                   key: verseKey,
                   valueListenable: bookmarkService.bookmarks,
                   builder: (_, bookmarks, __) {
-                    final isBookmarked = bookmarks.any((b) =>
-                        b.surahNumber == chapter.number &&
-                        b.verseIndex == verseIndex);
+                    final isBookmarked = bookmarks.any(
+                      (b) =>
+                          b.surahNumber == chapter.number &&
+                          b.verseIndex == verseIndex,
+                    );
 
                     // Combine styles: playing verse highlight overrides/adds to bookmark style
                     BoxDecoration? decoration;
@@ -1293,7 +1351,9 @@ class _ChapterCard extends StatelessWidget {
                         decoration: decoration,
                         padding: (isBookmarked || isPlayingThisVerse)
                             ? const EdgeInsets.symmetric(
-                                horizontal: 8, vertical: 4)
+                                horizontal: 8,
+                                vertical: 4,
+                              )
                             : EdgeInsets.zero,
                         child: Row(
                           crossAxisAlignment: CrossAxisAlignment.start,

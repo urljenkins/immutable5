@@ -12,7 +12,11 @@ import '../duas/contextual_dua_service.dart';
 import '../../di/service_locator.dart';
 
 typedef PrayerTimesServiceFactory = PrayerTimesService Function(
-    double latitude, double longitude, int method, int madhab);
+  double latitude,
+  double longitude,
+  int method,
+  int madhab,
+);
 
 abstract class NotificationPort {
   Future<void> schedulePrayerNotifications(Map<String, DateTime> prayerTimes);
@@ -87,10 +91,12 @@ class HomeController extends ChangeNotifier {
           permissionIssue: true,
         );
         if (!handled) {
-          _update(_state.copyWith(
-            loading: false,
-            locationError: 'Location services disabled.',
-          ));
+          _update(
+            _state.copyWith(
+              loading: false,
+              locationError: 'Location services disabled.',
+            ),
+          );
         }
         return;
       }
@@ -103,10 +109,12 @@ class HomeController extends ChangeNotifier {
             permissionIssue: true,
           );
           if (!handled) {
-            _update(_state.copyWith(
-              loading: false,
-              locationError: 'Location permission denied.',
-            ));
+            _update(
+              _state.copyWith(
+                loading: false,
+                locationError: 'Location permission denied.',
+              ),
+            );
           }
           return;
         }
@@ -117,10 +125,12 @@ class HomeController extends ChangeNotifier {
           permissionIssue: true,
         );
         if (!handled) {
-          _update(_state.copyWith(
-            loading: false,
-            locationError: 'Location permanently denied.',
-          ));
+          _update(
+            _state.copyWith(
+              loading: false,
+              locationError: 'Location permanently denied.',
+            ),
+          );
         }
         return;
       }
@@ -141,10 +151,12 @@ class HomeController extends ChangeNotifier {
         notice: 'Using cached/default location.',
       );
       if (!handled) {
-        _update(_state.copyWith(
-          loading: false,
-          locationError: 'Failed to get location: $e',
-        ));
+        _update(
+          _state.copyWith(
+            loading: false,
+            locationError: 'Failed to get location: $e',
+          ),
+        );
       }
     }
   }
@@ -209,10 +221,12 @@ class HomeController extends ChangeNotifier {
       );
       await loadData();
       if (notice != null) {
-        _update(_state.copyWith(
-          locationNotice: notice,
-          locationPermissionIssue: permissionIssue,
-        ));
+        _update(
+          _state.copyWith(
+            locationNotice: notice,
+            locationPermissionIssue: permissionIssue,
+          ),
+        );
       }
       return true;
     } catch (_) {
@@ -230,15 +244,17 @@ class HomeController extends ChangeNotifier {
         _cachedNextPrayerTime!.isAfter(now);
 
     if (!forceRefresh && cacheFresh) {
-      _update(_state.copyWith(
-        loading: false,
-        locationError: null,
-        usingCache: true,
-        nextPrayerTime: _cachedNextPrayerTime,
-        nextPrayerName: _cachedNextPrayerName,
-        quote: _cachedQuote,
-        countdown: _cachedNextPrayerTime!.difference(DateTime.now()),
-      ));
+      _update(
+        _state.copyWith(
+          loading: false,
+          locationError: null,
+          usingCache: true,
+          nextPrayerTime: _cachedNextPrayerTime,
+          nextPrayerName: _cachedNextPrayerName,
+          quote: _cachedQuote,
+          countdown: _cachedNextPrayerTime!.difference(DateTime.now()),
+        ),
+      );
       _startTimer();
       return;
     }
@@ -283,7 +299,11 @@ class HomeController extends ChangeNotifier {
       String? contextualMsg;
       if (contextualDua != null) {
         contextualMsg = contextualDuaService.getContextualMessage(
-            contextualDua, now, prayerTimes, hijriDate);
+          contextualDua,
+          now,
+          prayerTimes,
+          hijriDate,
+        );
       }
 
       _update(
@@ -320,7 +340,11 @@ class HomeController extends ChangeNotifier {
           String? contextualMsg;
           if (contextualDua != null) {
             contextualMsg = contextualDuaService.getContextualMessage(
-                contextualDua, now, cachedTimes, hijriDate);
+              contextualDua,
+              now,
+              cachedTimes,
+              hijriDate,
+            );
           }
 
           _update(

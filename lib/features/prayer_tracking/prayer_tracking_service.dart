@@ -14,7 +14,9 @@ class PrayerTrackingService {
     final key = _getPrayerKey(prayerName, date);
     await prefs.setBool(key, true);
     await prefs.setInt(
-        '${key}_timestamp', DateTime.now().millisecondsSinceEpoch);
+      '${key}_timestamp',
+      DateTime.now().millisecondsSinceEpoch,
+    );
   }
 
   /// Check if a prayer is completed for a specific date
@@ -43,8 +45,9 @@ class PrayerTrackingService {
   /// Get current prayer streak (consecutive days with all prayers completed)
   Future<int> getCurrentStreak() async {
     int streak = 0;
-    DateTime date = DateTime.now()
-        .subtract(const Duration(days: 1)); // Start from yesterday
+    DateTime date = DateTime.now().subtract(
+      const Duration(days: 1),
+    ); // Start from yesterday
 
     while (true) {
       final completions = await getCompletedPrayersForDate(date);
@@ -82,10 +85,12 @@ class PrayerTrackingService {
     final prefs = await SharedPreferences.getInstance();
     final keys = prefs.getKeys();
     return keys
-        .where((k) =>
-            k.startsWith('prayer_') &&
-            k.endsWith('_completed') &&
-            prefs.getBool(k) == true)
+        .where(
+          (k) =>
+              k.startsWith('prayer_') &&
+              k.endsWith('_completed') &&
+              prefs.getBool(k) == true,
+        )
         .length;
   }
 

@@ -21,9 +21,13 @@ class QuranAudioService {
 
   /// Fetches audio data for a full Surah.
   /// Returns a list of audio URLs, where index i corresponds to verse i.
-  Future<List<String>> getSurahAudioData(int surahNumber, String reciterId) async {
+  Future<List<String>> getSurahAudioData(
+    int surahNumber,
+    String reciterId,
+  ) async {
     final url = Uri.parse(
-        'https://api.alquran.cloud/v1/surah/$surahNumber/$reciterId');
+      'https://api.alquran.cloud/v1/surah/$surahNumber/$reciterId',
+    );
 
     try {
       final response = await http.get(url);

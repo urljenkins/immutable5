@@ -20,8 +20,9 @@ import 'di/service_locator.dart';
 import 'shared/app_colors.dart';
 
 final ValueNotifier<ThemeMode> themeNotifier = ValueNotifier(ThemeMode.dark);
-final ValueNotifier<Color> accentColorNotifier =
-    ValueNotifier(AppColors.accent);
+final ValueNotifier<Color> accentColorNotifier = ValueNotifier(
+  AppColors.accent,
+);
 final ValueNotifier<BottomNavVisibility> bottomNavVisibilityNotifier =
     ValueNotifier(const BottomNavVisibility());
 const String _keyAccentColor = 'accent_color';
@@ -166,7 +167,9 @@ class _AppScaffoldState extends State<AppScaffold> {
                       filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
                       child: Container(
                         padding: const EdgeInsets.symmetric(
-                            vertical: 12, horizontal: 8),
+                          vertical: 12,
+                          horizontal: 8,
+                        ),
                         decoration: BoxDecoration(
                           color: AppColors.cardSurface.withValues(alpha: 0.8),
                           borderRadius: BorderRadius.circular(30),
@@ -220,7 +223,9 @@ class _AppScaffoldState extends State<AppScaffold> {
   }
 
   List<_NavItem> _buildNavItems(
-      BuildContext context, BottomNavVisibility visibility) {
+    BuildContext context,
+    BottomNavVisibility visibility,
+  ) {
     final items = <_NavItem>[
       _NavItem(
         page: const MyHomePage(title: 'Immutable5'),

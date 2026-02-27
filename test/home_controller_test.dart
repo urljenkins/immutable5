@@ -22,8 +22,12 @@ class FakeContextualDuaService implements ContextualDuaService {
   }
 
   @override
-  String? getContextualMessage(Dua dua, DateTime now,
-      Map<String, DateTime>? prayerTimes, HijriCalendar hijriDate) {
+  String? getContextualMessage(
+    Dua dua,
+    DateTime now,
+    Map<String, DateTime>? prayerTimes,
+    HijriCalendar hijriDate,
+  ) {
     return null;
   }
 }
@@ -32,7 +36,8 @@ class FakeNotificationPort implements NotificationPort {
   bool called = false;
   @override
   Future<void> schedulePrayerNotifications(
-      Map<String, DateTime> prayerTimes) async {
+    Map<String, DateTime> prayerTimes,
+  ) async {
     called = true;
   }
 }
@@ -53,13 +58,15 @@ class FakePrayerTimesService extends PrayerTimesService {
   final Map<String, DateTime> todayMap;
 
   @override
-  Future<MapEntry<String, DateTime>> getNextPrayer(
-          {bool forceRefresh = false}) async =>
+  Future<MapEntry<String, DateTime>> getNextPrayer({
+    bool forceRefresh = false,
+  }) async =>
       nextPrayer;
 
   @override
-  Future<Map<String, DateTime>> getTodayPrayerTimes(
-          {bool forceRefresh = false}) async =>
+  Future<Map<String, DateTime>> getTodayPrayerTimes({
+    bool forceRefresh = false,
+  }) async =>
       todayMap;
 }
 

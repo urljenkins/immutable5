@@ -85,8 +85,12 @@ class ContextualDuaService {
 
   /// Evaluates specific context string to show alongside the Dua (e.g., "Jummah Mubarak...")
   /// This returns a custom string for high-value known contexts.
-  String? getContextualMessage(Dua dua, DateTime now,
-      Map<String, DateTime>? prayerTimes, HijriCalendar hijriDate) {
+  String? getContextualMessage(
+    Dua dua,
+    DateTime now,
+    Map<String, DateTime>? prayerTimes,
+    HijriCalendar hijriDate,
+  ) {
     if (dua.id == 'walking_to_masjid_001' && now.weekday == DateTime.friday) {
       return "Jummah Mubarak. As you prepare to head to the masjid, remember the dua for walking.";
     }
@@ -106,7 +110,9 @@ class ContextualDuaService {
   }
 
   String _determineActiveTimeWindow(
-      DateTime now, Map<String, DateTime>? prayerTimes) {
+    DateTime now,
+    Map<String, DateTime>? prayerTimes,
+  ) {
     if (prayerTimes == null || prayerTimes.isEmpty) {
       // Fallback if no prayer times available, do basic hour checking
       final hour = now.hour;
@@ -147,8 +153,11 @@ class ContextualDuaService {
 
     // Standard prayer windows
     if (fajr != null &&
-        _isBetween(now, fajr.subtract(const Duration(hours: 1)),
-            fajr.add(const Duration(hours: 1)))) {
+        _isBetween(
+          now,
+          fajr.subtract(const Duration(hours: 1)),
+          fajr.add(const Duration(hours: 1)),
+        )) {
       return 'fajr';
     }
     if (dhuhr != null &&
@@ -160,8 +169,11 @@ class ContextualDuaService {
       return 'asr';
     }
     if (maghrib != null &&
-        _isBetween(now, maghrib,
-            isha ?? maghrib.add(const Duration(hours: 1, minutes: 30)))) {
+        _isBetween(
+          now,
+          maghrib,
+          isha ?? maghrib.add(const Duration(hours: 1, minutes: 30)),
+        )) {
       return 'maghrib';
     }
     if (isha != null &&

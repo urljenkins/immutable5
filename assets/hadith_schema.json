@@ -1,0 +1,112 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://example.com/hadith-schema.json",
+  "title": "Hadith Entry",
+  "description": "Schema for authentic hadith entries.",
+  "type": "object",
+  "required": [
+    "hadith_id",
+    "collection",
+    "book",
+    "hadith_number",
+    "arabic",
+    "translation_en",
+    "grade",
+    "topics",
+    "summary_en",
+    "key_lessons",
+    "length",
+    "priority"
+  ],
+  "properties": {
+    "hadith_id": {
+      "type": "string",
+      "description": "Unique identifier (e.g., 'bukhari_001')."
+    },
+    "collection": {
+      "type": "string",
+      "description": "Name of hadith collection (Bukhari, Muslim, etc.)."
+    },
+    "book": {
+      "type": "string",
+      "description": "Book/chapter name within the collection."
+    },
+    "book_number": {
+      "type": "integer",
+      "description": "Book number if applicable."
+    },
+    "hadith_number": {
+      "type": "string",
+      "description": "Reference number in the collection."
+    },
+    "narrator": {
+      "type": "string",
+      "description": "The companion who narrated (if known)."
+    },
+    "arabic": {
+      "type": "string",
+      "description": "Full Arabic text with diacritical marks."
+    },
+    "translation_en": {
+      "type": "string",
+      "description": "English translation (clear and reliable)."
+    },
+    "translation_language": {
+      "type": "string",
+      "default": "en",
+      "description": "Language of translation (currently 'en')."
+    },
+    "grade": {
+      "type": "string",
+      "description": "Authenticity grade (Sahih, Hasan, etc.)."
+    },
+    "grade_by": {
+      "type": "string",
+      "description": "Scholar who graded it (if not from the collection itself)."
+    },
+    "topics": {
+      "type": "array",
+      "items": { "type": "string" },
+      "minItems": 3,
+      "maxItems": 8,
+      "description": "Array of topic tags (3-8 tags per hadith)."
+    },
+    "summary_en": {
+      "type": "string",
+      "description": "1-2 sentence summary in English."
+    },
+    "key_lessons": {
+      "type": "array",
+      "items": { "type": "string" },
+      "minItems": 2,
+      "maxItems": 5,
+      "description": "Array of 2-5 practical lessons/benefits derived."
+    },
+    "related_dua_ids": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Array of dua IDs from existing collection that relate to this hadith."
+    },
+    "length": {
+      "type": "string",
+      "enum": ["short", "medium", "long"],
+      "description": "Length category."
+    },
+    "word_count_arabic": {
+      "type": "integer",
+      "description": "Approximate word count."
+    },
+    "priority": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 3,
+      "description": "1 = essential/frequently cited, 2 = important, 3 = supplementary."
+    },
+    "display_context": {
+       "type": "object",
+       "description": "Contextual relevance (e.g., Fridays, Ramadan).",
+        "additionalProperties": true
+    }
+  },
+  "additionalProperties": false
+}

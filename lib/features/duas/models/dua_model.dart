@@ -53,7 +53,8 @@ class Dua {
       frequency: json['frequency'] as String?,
       displayContext: json['display_context'] != null
           ? DisplayContext.fromJson(
-              json['display_context'] as Map<String, dynamic>)
+              json['display_context'] as Map<String, dynamic>,
+            )
           : null,
       authenticity: json['authenticity'] != null
           ? Authenticity.fromJson(json['authenticity'] as Map<String, dynamic>)
