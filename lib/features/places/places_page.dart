@@ -11,7 +11,7 @@ import 'add_place_page.dart';
 import '../../shared/app_colors.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../generated/app_localizations.dart';
-import '../home/home_controller.dart';
+import '../prayer/prayer_times_service.dart';
 
 class PlacesPage extends StatefulWidget {
   const PlacesPage({super.key});

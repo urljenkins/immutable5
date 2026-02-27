@@ -11,7 +11,7 @@ import 'features/qibla/qibla_page.dart';
 import 'features/calendar/calendar_page.dart';
 import 'features/hajj/hajj_page.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'generated/app_localizations.dart';
+import 'l10n/app_localizations.dart';
 import 'features/common_words/common_words_page.dart';
 import 'features/duas/duas_page.dart';
 import 'features/home/home_page.dart';

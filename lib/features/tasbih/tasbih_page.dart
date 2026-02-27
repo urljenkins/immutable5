@@ -3,7 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:speech_to_text/speech_to_text.dart' as stt;
 import '../../shared/app_colors.dart';
-import '../../generated/app_localizations.dart';
+import '../../l10n/app_localizations.dart';
 
 class TasbihPage extends StatefulWidget {
   const TasbihPage({super.key});
@@ -246,7 +246,7 @@ class _TasbihPageState extends State<TasbihPage>
                     Switch(
                       value: _isVoiceEnabled,
                       onChanged: _toggleVoiceMode,
-                      activeColor: AppColors.accent,
+                      activeThumbColor: AppColors.accent,
                     ),
                   ],
                 ),

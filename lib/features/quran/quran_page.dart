@@ -751,7 +751,7 @@ class _QuranPageState extends State<QuranPage> {
                           final isSelected = reciter.id == _currentReciterId;
                           return ListTile(
                             leading: isSelected
-                                ? const Icon(
+                                ? Icon(
                                     Icons.check,
                                     color: AppColors.accent,
                                   )

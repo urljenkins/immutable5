@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hijri/hijri_calendar.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../../generated/app_localizations.dart';
+import '../../l10n/app_localizations.dart';
 import '../../di/service_locator.dart';
 import '../prayer/prayer_times_service.dart';
 import '../home/home_controller.dart';

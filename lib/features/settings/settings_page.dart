@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../../generated/app_localizations.dart';
+import '../../l10n/app_localizations.dart';
 import '../../main.dart';
 import '../notifications/notification_service.dart';
 import '../quran/juz_of_the_day_service.dart';

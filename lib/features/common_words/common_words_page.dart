@@ -5,7 +5,7 @@ import 'package:flutter/services.dart' show rootBundle;
 import 'package:csv/csv.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:audioplayers/audioplayers.dart';
-import '../../generated/app_localizations.dart';
+import '../../l10n/app_localizations.dart';
 import '../../shared/app_colors.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 

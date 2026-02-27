@@ -120,8 +120,9 @@ class _RamadanDashboardPageState extends State<RamadanDashboardPage> {
   }
 
   void _updateCountdown() {
-    if (_fajrToday == null || _maghribToday == null || _fajrTomorrow == null)
+    if (_fajrToday == null || _maghribToday == null || _fajrTomorrow == null) {
       return;
+    }
 
     final now = DateTime.now();
     DateTime targetTime;
@@ -407,7 +408,7 @@ class _RamadanDashboardPageState extends State<RamadanDashboardPage> {
                                   Switch(
                                     value: _taraweehCompleted,
                                     onChanged: (val) => _toggleTaraweeh(),
-                                    activeColor: AppColors.accent,
+                                    activeThumbColor: AppColors.accent,
                                   ),
                                 ],
                               ),
