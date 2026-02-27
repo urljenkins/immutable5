@@ -1,10 +1,24 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import '../models/place_model.dart';
+import '../models/submission_model.dart';
 import 'dart:developer' as developer;
 
 class PlacesService {
   static const String _overpassUrl = 'https://overpass-api.de/api/interpreter';
+
+  // Local cache for pending submissions (simulating backend)
+  final List<SubmissionModel> _pendingSubmissions = [];
+
+  Future<void> submitPlace(SubmissionModel submission) async {
+    // Simulate network delay
+    await Future.delayed(const Duration(seconds: 1));
+    _pendingSubmissions.add(submission);
+  }
+
+  Future<List<SubmissionModel>> getPendingPlaces() async {
+    return _pendingSubmissions;
+  }
 
   Future<List<PlaceModel>> getNearbyPlaces(double lat, double lng,
       {double radius = 5000}) async {

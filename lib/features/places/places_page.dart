@@ -6,6 +6,8 @@ import 'package:url_launcher/url_launcher.dart';
 import '../../di/service_locator.dart';
 import 'services/places_service.dart';
 import 'models/place_model.dart';
+import 'models/submission_model.dart';
+import 'add_place_page.dart';
 import '../../shared/app_colors.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../generated/app_localizations.dart';
@@ -23,6 +25,7 @@ class _PlacesPageState extends State<PlacesPage> {
 
   LatLng _center = const LatLng(21.3891, 39.8579); // Default to Mecca
   List<PlaceModel> _places = [];
+  List<SubmissionModel> _pendingPlaces = [];
   bool _loading = false;
   bool _locationPermissionGranted = false;
 
@@ -68,9 +71,12 @@ class _PlacesPageState extends State<PlacesPage> {
     try {
       final places = await _placesService.getNearbyPlaces(
           _center.latitude, _center.longitude);
+      final pending = await _placesService.getPendingPlaces();
+
       if (mounted) {
         setState(() {
           _places = places;
+          _pendingPlaces = pending;
           _loading = false;
         });
       }
@@ -238,9 +244,48 @@ class _PlacesPageState extends State<PlacesPage> {
                           ),
                         ),
                       )),
+
+                  // Pending markers
+                  ..._pendingPlaces.map((place) => Marker(
+                        point: LatLng(place.lat, place.lng),
+                        width: 40,
+                        height: 40,
+                        child: Icon(
+                          Icons.location_on,
+                          color: Colors.orange, // Orange for pending
+                          size: 40,
+                        ),
+                      )),
                 ],
               ),
             ],
+          ),
+
+          // Add Place FAB
+          Positioned(
+            bottom: 100,
+            left: 20,
+            child: FloatingActionButton.extended(
+              heroTag: 'add_place',
+              backgroundColor: AppColors.accent,
+              foregroundColor: Colors.black,
+              label: Text(
+                'Add Spot',
+                style: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.bold),
+              ),
+              icon: const Icon(Icons.add_location_alt),
+              onPressed: () async {
+                final result = await Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => AddPlacePage(initialLocation: _center),
+                  ),
+                );
+                if (result == true) {
+                  _fetchPlaces();
+                }
+              },
+            ),
           ),
 
           // Header
