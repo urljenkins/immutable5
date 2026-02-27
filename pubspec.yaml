@@ -51,7 +51,7 @@ dependencies:
   flutter_localizations:
     sdk: flutter
   get_it: ^7.6.4
-  google_fonts: ^7.0.2
+  google_fonts: ^6.2.1
   flutter_animate: ^4.5.2
   share_plus: ^10.0.0
   speech_to_text: ^7.3.0
