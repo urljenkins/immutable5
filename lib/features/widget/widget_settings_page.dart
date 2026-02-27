@@ -186,9 +186,10 @@ class _WidgetSettingsPageState extends State<WidgetSettingsPage> {
                     WidgetPreferences.getThemeName(theme),
                     style: TextStyle(
                       fontSize: 10,
-                      fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                      fontWeight:
+                          isSelected ? FontWeight.bold : FontWeight.normal,
                       color: colors['text'] as int == 0xFFFFFFFF ||
-                             colors['text'] as int == 0xFFF8FAFC
+                              colors['text'] as int == 0xFFF8FAFC
                           ? Colors.white
                           : Colors.black87,
                     ),
@@ -290,11 +291,16 @@ class _WidgetSettingsPageState extends State<WidgetSettingsPage> {
             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 12),
             child: Row(
               children: [
-                _buildPrayerColumn('Fajr', '05:57', false, textColor, textSecondaryColor, accentColor),
-                _buildPrayerColumn('Dhuhr', '12:55', false, textColor, textSecondaryColor, accentColor),
-                _buildPrayerColumn('Asr', '15:37', false, textColor, textSecondaryColor, accentColor),
-                _buildPrayerColumn('Maghrib', '18:12', true, textColor, textSecondaryColor, accentColor),
-                _buildPrayerColumn('Isha', '19:46', false, textColor, textSecondaryColor, accentColor),
+                _buildPrayerColumn('Fajr', '05:57', false, textColor,
+                    textSecondaryColor, accentColor),
+                _buildPrayerColumn('Dhuhr', '12:55', false, textColor,
+                    textSecondaryColor, accentColor),
+                _buildPrayerColumn('Asr', '15:37', false, textColor,
+                    textSecondaryColor, accentColor),
+                _buildPrayerColumn('Maghrib', '18:12', true, textColor,
+                    textSecondaryColor, accentColor),
+                _buildPrayerColumn('Isha', '19:46', false, textColor,
+                    textSecondaryColor, accentColor),
               ],
             ),
           ),

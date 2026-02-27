@@ -27,5 +27,11 @@
   "refreshPrayerTimes": "Refresh prayer times",
   "nextPrayer": "Next Prayer",
   "loading": "Loading...",
-  "search": "Search"
+  "search": "Search",
+  "tasbih": "Tasbih",
+  "target": "Target",
+  "voiceMode": "Voice Mode",
+  "reset": "Reset",
+  "setTarget": "Set Target",
+  "listening": "Listening..."
 }
