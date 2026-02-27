@@ -104,12 +104,16 @@ class _CalendarPageState extends State<CalendarPage> {
                       children: [
                         Text(
                           primary,
-                          style: Theme.of(context).textTheme.titleMedium
+                          style: Theme.of(context)
+                              .textTheme
+                              .titleMedium
                               ?.copyWith(fontWeight: FontWeight.w700),
                         ),
                         Text(
                           secondary,
-                          style: Theme.of(context).textTheme.bodySmall
+                          style: Theme.of(context)
+                              .textTheme
+                              .bodySmall
                               ?.copyWith(color: Colors.grey[600]),
                         ),
                       ],
@@ -176,9 +180,9 @@ class _CalendarPageState extends State<CalendarPage> {
         Text(
           '${_hijriPrimary ? "H" : "G"} = ${_hijriPrimary ? "Hijri" : "Gregorian"} (primary)  •  ${_hijriPrimary ? "G" : "H"} = $secondaryLabel',
           style: Theme.of(context).textTheme.bodySmall?.copyWith(
-            color: Colors.grey[500],
-            fontSize: 11,
-          ),
+                color: Colors.grey[500],
+                fontSize: 11,
+              ),
         ),
       ],
     );
@@ -226,9 +230,8 @@ class _CalendarPageState extends State<CalendarPage> {
     final primaryColor = isSelected || isToday
         ? Colors.white
         : Theme.of(context).textTheme.bodyLarge?.color;
-    final secondaryColor = isSelected || isToday
-        ? Colors.white70
-        : Colors.grey[500];
+    final secondaryColor =
+        isSelected || isToday ? Colors.white70 : Colors.grey[500];
 
     return Container(
       margin: const EdgeInsets.all(2),
@@ -236,8 +239,8 @@ class _CalendarPageState extends State<CalendarPage> {
         color: isSelected
             ? Theme.of(context).colorScheme.primary
             : isToday
-            ? Theme.of(context).colorScheme.primary.withValues(alpha: 0.3)
-            : fastingBg,
+                ? Theme.of(context).colorScheme.primary.withValues(alpha: 0.3)
+                : fastingBg,
         shape: BoxShape.circle,
         border: isToday && !isSelected
             ? Border.all(color: Theme.of(context).colorScheme.primary, width: 2)
@@ -251,9 +254,8 @@ class _CalendarPageState extends State<CalendarPage> {
             '$primaryDate',
             style: TextStyle(
               fontSize: 14,
-              fontWeight: isToday || isSelected
-                  ? FontWeight.bold
-                  : FontWeight.normal,
+              fontWeight:
+                  isToday || isSelected ? FontWeight.bold : FontWeight.normal,
               color: primaryColor,
             ),
           ),

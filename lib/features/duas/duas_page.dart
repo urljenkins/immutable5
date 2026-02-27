@@ -54,13 +54,12 @@ class _DuasPageState extends State<DuasPage> {
           return a.id.compareTo(b.id);
         });
 
-      final categories =
-          sortedDuas
-              .map((d) => d.category)
-              .where((c) => c.isNotEmpty)
-              .toSet()
-              .toList()
-            ..sort();
+      final categories = sortedDuas
+          .map((d) => d.category)
+          .where((c) => c.isNotEmpty)
+          .toSet()
+          .toList()
+        ..sort();
 
       setState(() {
         _duas = sortedDuas;
@@ -80,9 +79,8 @@ class _DuasPageState extends State<DuasPage> {
       var filtered = _duas;
 
       if (_selectedCategory != 'All') {
-        filtered = filtered
-            .where((dua) => dua.category == _selectedCategory)
-            .toList();
+        filtered =
+            filtered.where((dua) => dua.category == _selectedCategory).toList();
       }
 
       if (_searchQuery.isNotEmpty) {
@@ -335,9 +333,8 @@ class _DuasPageState extends State<DuasPage> {
                 IconButton(
                   icon: Icon(
                     isFavorite ? Icons.bookmark : Icons.bookmark_border,
-                    color: isFavorite
-                        ? AppColors.accent
-                        : AppColors.textSecondary,
+                    color:
+                        isFavorite ? AppColors.accent : AppColors.textSecondary,
                     size: 20,
                   ),
                   onPressed: () => _toggleFavorite(dua.id),
@@ -467,9 +464,8 @@ class _DuaDetailSheet extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final tags = dua.tags.toSet().toList();
-    final timeWindows = (dua.displayContext?.timeWindows ?? const <String>[])
-        .toSet()
-        .toList();
+    final timeWindows =
+        (dua.displayContext?.timeWindows ?? const <String>[]).toSet().toList();
 
     return Positioned(
       left: 0,

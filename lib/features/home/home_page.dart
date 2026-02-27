@@ -139,11 +139,10 @@ class _MyHomePageState extends State<MyHomePage> {
                                 icon: state.locationPermissionIssue
                                     ? Icons.location_off_outlined
                                     : Icons.info_outline,
-                                background:
-                                    (state.locationPermissionIssue
-                                            ? AppColors.error
-                                            : AppColors.accent)
-                                        .withValues(alpha: 0.1),
+                                background: (state.locationPermissionIssue
+                                        ? AppColors.error
+                                        : AppColors.accent)
+                                    .withValues(alpha: 0.1),
                                 foreground: state.locationPermissionIssue
                                     ? AppColors.error
                                     : AppColors.accent,
@@ -154,7 +153,8 @@ class _MyHomePageState extends State<MyHomePage> {
                                         child: Text(
                                           AppLocalizations.of(
                                             context,
-                                          )!.refreshPrayerTimes,
+                                          )!
+                                              .refreshPrayerTimes,
                                           style: TextStyle(
                                             color: state.locationPermissionIssue
                                                 ? AppColors.error
@@ -189,7 +189,8 @@ class _MyHomePageState extends State<MyHomePage> {
                                             ? 'Offline'
                                             : AppLocalizations.of(
                                                 context,
-                                              )!.loading),
+                                              )!
+                                                .loading),
                                     style: GoogleFonts.plusJakartaSans(
                                       fontSize: 32,
                                       fontWeight: FontWeight.w300,
@@ -212,7 +213,9 @@ class _MyHomePageState extends State<MyHomePage> {
                                   Text(
                                     AppLocalizations.of(
                                       context,
-                                    )!.nextPrayer.toUpperCase(),
+                                    )!
+                                        .nextPrayer
+                                        .toUpperCase(),
                                     style: GoogleFonts.plusJakartaSans(
                                       fontSize: 12,
                                       letterSpacing: 2.0,
@@ -255,12 +258,12 @@ class _MyHomePageState extends State<MyHomePage> {
                                               textAlign: TextAlign.center,
                                               style:
                                                   GoogleFonts.plusJakartaSans(
-                                                    fontSize: 16,
-                                                    height: 1.6,
-                                                    color: AppColors.textPrimary
-                                                        .withValues(alpha: 0.9),
-                                                    fontStyle: FontStyle.italic,
-                                                  ),
+                                                fontSize: 16,
+                                                height: 1.6,
+                                                color: AppColors.textPrimary
+                                                    .withValues(alpha: 0.9),
+                                                fontStyle: FontStyle.italic,
+                                              ),
                                             ),
                                           ),
                                         ),

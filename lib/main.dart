@@ -141,9 +141,8 @@ class _AppScaffoldState extends State<AppScaffold> {
           valueListenable: bottomNavVisibilityNotifier,
           builder: (_, visibility, __) {
             final navItems = _buildNavItems(context, visibility);
-            final currentIndex = _currentIndex >= navItems.length
-                ? 0
-                : _currentIndex;
+            final currentIndex =
+                _currentIndex >= navItems.length ? 0 : _currentIndex;
 
             return Scaffold(
               extendBody: true, // Allows body to go behind the nav bar

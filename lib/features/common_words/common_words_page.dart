@@ -90,9 +90,8 @@ class _CommonWordsPageState extends State<CommonWordsPage> {
   void _applyFilters() {
     _visibleIndices = List.generate(_rows.length, (i) => i);
     if (!_showMemorized) {
-      _visibleIndices = _visibleIndices
-          .where((i) => !_memorized.contains(i))
-          .toList();
+      _visibleIndices =
+          _visibleIndices.where((i) => !_memorized.contains(i)).toList();
     }
     if (_searchQuery.isNotEmpty) {
       _visibleIndices = _visibleIndices.where((i) {

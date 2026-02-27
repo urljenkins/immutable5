@@ -84,16 +84,14 @@ class PrayerTimesService {
     );
 
     try {
-      final response = await http
-          .get(url)
-          .timeout(
-            const Duration(seconds: 10),
-            onTimeout: () {
-              throw TimeoutException(
-                'Prayer times request timed out. Please check your internet connection.',
-              );
-            },
+      final response = await http.get(url).timeout(
+        const Duration(seconds: 10),
+        onTimeout: () {
+          throw TimeoutException(
+            'Prayer times request timed out. Please check your internet connection.',
           );
+        },
+      );
 
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
@@ -186,16 +184,14 @@ class PrayerTimesService {
       );
 
       try {
-        final response = await http
-            .get(url)
-            .timeout(
-              const Duration(seconds: 10),
-              onTimeout: () {
-                throw TimeoutException(
-                  'Prayer times request timed out. Please check your internet connection.',
-                );
-              },
+        final response = await http.get(url).timeout(
+          const Duration(seconds: 10),
+          onTimeout: () {
+            throw TimeoutException(
+              'Prayer times request timed out. Please check your internet connection.',
             );
+          },
+        );
 
         if (response.statusCode == 200) {
           final data = json.decode(response.body);

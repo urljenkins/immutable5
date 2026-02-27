@@ -11,13 +11,12 @@ import '../quotes/quote_picker_service.dart';
 import '../duas/contextual_dua_service.dart';
 import '../../di/service_locator.dart';
 
-typedef PrayerTimesServiceFactory =
-    PrayerTimesService Function(
-      double latitude,
-      double longitude,
-      int method,
-      int madhab,
-    );
+typedef PrayerTimesServiceFactory = PrayerTimesService Function(
+  double latitude,
+  double longitude,
+  int method,
+  int madhab,
+);
 
 abstract class NotificationPort {
   Future<void> schedulePrayerNotifications(Map<String, DateTime> prayerTimes);
@@ -38,7 +37,7 @@ class HomeController extends ChangeNotifier {
     PrayerTimesService? initialPrayerService,
     ContextualDuaService? contextualDuaService,
   }) : contextualDuaService =
-           contextualDuaService ?? getIt<ContextualDuaService>() {
+            contextualDuaService ?? getIt<ContextualDuaService>() {
     if (initialPrayerService != null) {
       _prayerTimesService = initialPrayerService;
       _state = _state.copyWith(loading: false, locationLoaded: true);
@@ -169,8 +168,7 @@ class HomeController extends ChangeNotifier {
     bool clearNotice = false,
   }) async {
     final prefsInstance = prefs ?? await SharedPreferences.getInstance();
-    final calcMethodRaw =
-        prefsInstance.get('calculationMethod') ??
+    final calcMethodRaw = prefsInstance.get('calculationMethod') ??
         'Method 2 (University of Islamic Sciences)';
     final calcMethodString = calcMethodRaw.toString();
     final method = calcMethodString.contains('4') ? 4 : 2;
@@ -199,9 +197,8 @@ class HomeController extends ChangeNotifier {
         locationLoaded: true,
         locationError: null,
         locationNotice: clearNotice ? null : _state.locationNotice,
-        locationPermissionIssue: clearNotice
-            ? false
-            : _state.locationPermissionIssue,
+        locationPermissionIssue:
+            clearNotice ? false : _state.locationPermissionIssue,
       ),
     );
   }
@@ -241,8 +238,7 @@ class HomeController extends ChangeNotifier {
     if (_prayerTimesService == null) return;
 
     final now = DateTime.now();
-    final cacheFresh =
-        _cachedDataTimestamp != null &&
+    final cacheFresh = _cachedDataTimestamp != null &&
         now.difference(_cachedDataTimestamp!) < _dataCacheTtl &&
         _cachedNextPrayerTime != null &&
         _cachedNextPrayerTime!.isAfter(now);
@@ -273,8 +269,7 @@ class HomeController extends ChangeNotifier {
       final nextPrayerName = nextPrayer.key;
 
       String? quote = _cachedQuote;
-      final quoteFresh =
-          _cachedQuoteTimestamp != null &&
+      final quoteFresh = _cachedQuoteTimestamp != null &&
           now.difference(_cachedQuoteTimestamp!) < _quoteCacheTtl;
       if (forceRefresh || quote == null || !quoteFresh) {
         quote = await quoteService
@@ -329,9 +324,8 @@ class HomeController extends ChangeNotifier {
       // fallback to cached times if available
       try {
         final cachedTimes = await _prayerTimesService!.getTodayPrayerTimes();
-        final upcoming = cachedTimes.entries
-            .where((e) => e.value.isAfter(now))
-            .toList();
+        final upcoming =
+            cachedTimes.entries.where((e) => e.value.isAfter(now)).toList();
         if (upcoming.isNotEmpty) {
           upcoming.sort((a, b) => a.value.compareTo(b.value));
           final nextPrayer = upcoming.first;

@@ -135,9 +135,8 @@ class _SettingsPageState extends State<SettingsPage> {
       _iftarReminders = prefs.getBool(_keyIftarReminders) ?? _iftarReminders;
       _batterySaverMode = batteryOptimizer.isBatterySaverEnabled();
       final savedJuzMode = prefs.getString(_keyJuzMode);
-      _juzMode = savedJuzMode == 'surahBased'
-          ? JuzMode.surahBased
-          : JuzMode.standard;
+      _juzMode =
+          savedJuzMode == 'surahBased' ? JuzMode.surahBased : JuzMode.standard;
       _ctxMenuSettings = QuranContextMenuSettings.fromPrefs(prefs);
       _showTrack = navVisibility.showTrack;
       _showQibla = navVisibility.showQibla;
@@ -272,8 +271,8 @@ class _SettingsPageState extends State<SettingsPage> {
               onChanged: (value) async {
                 if (value) {
                   // Request notification permissions when enabling
-                  final granted = await NotificationService()
-                      .requestPermissions();
+                  final granted =
+                      await NotificationService().requestPermissions();
                   if (!granted) {
                     // Show dialog explaining permissions are needed
                     if (context.mounted) {

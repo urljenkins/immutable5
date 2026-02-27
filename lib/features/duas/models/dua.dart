@@ -86,9 +86,8 @@ class Dua {
           : null,
       benefits: json['benefits'] as String?,
       notes: json['notes'] as String?,
-      relatedIds: (json['related_ids'] as List?)
-          ?.map((e) => e.toString())
-          .toList(),
+      relatedIds:
+          (json['related_ids'] as List?)?.map((e) => e.toString()).toList(),
       variants: (json['variants'] as List?)
           ?.map((e) => DuaVariant.fromJson(e as Map<String, dynamic>))
           .toList(),
@@ -125,21 +124,20 @@ class DisplayContext {
     return DisplayContext(
       timeWindows:
           (json['time_windows'] as List?)?.map((e) => e.toString()).toList() ??
-          const [],
-      hijriDates:
-          (json['hijri_dates'] as List?)
+              const [],
+      hijriDates: (json['hijri_dates'] as List?)
               ?.map((e) => HijriDate.fromJson(e as Map<String, dynamic>))
               .toList() ??
           const [],
       hijriPeriods:
           (json['hijri_periods'] as List?)?.map((e) => e.toString()).toList() ??
-          const [],
+              const [],
       conditions:
           (json['conditions'] as List?)?.map((e) => e.toString()).toList() ??
-          const [],
+              const [],
       daysOfWeek:
           (json['days_of_week'] as List?)?.map((e) => e.toString()).toList() ??
-          const [],
+              const [],
     );
   }
 }

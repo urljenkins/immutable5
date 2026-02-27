@@ -46,62 +46,63 @@ class _QiblaPageState extends State<QiblaPage> {
       body: _loading
           ? Center(child: CircularProgressIndicator(color: AppColors.accent))
           : !_deviceSupported
-          ? Center(
-              child: Padding(
-                padding: const EdgeInsets.all(24.0),
-                child: Text(
-                  'Your device does not support the compass sensor required for Qibla direction',
-                  textAlign: TextAlign.center,
-                  style: GoogleFonts.plusJakartaSans(
-                    fontSize: 16,
-                    color: AppColors.textSecondary,
+              ? Center(
+                  child: Padding(
+                    padding: const EdgeInsets.all(24.0),
+                    child: Text(
+                      'Your device does not support the compass sensor required for Qibla direction',
+                      textAlign: TextAlign.center,
+                      style: GoogleFonts.plusJakartaSans(
+                        fontSize: 16,
+                        color: AppColors.textSecondary,
+                      ),
+                    ),
+                  ),
+                )
+              : SafeArea(
+                  child: Center(
+                    child: SingleChildScrollView(
+                      child: StreamBuilder<QiblahDirection>(
+                        stream: FlutterQiblah.qiblahStream,
+                        builder: (context, snapshot) {
+                          if (snapshot.connectionState ==
+                              ConnectionState.waiting) {
+                            return Center(
+                              child: CircularProgressIndicator(
+                                color: AppColors.accent,
+                              ),
+                            );
+                          }
+
+                          if (snapshot.hasError) {
+                            return Center(
+                              child: Text(
+                                'Error: ${snapshot.error}',
+                                style: GoogleFonts.plusJakartaSans(
+                                  color: AppColors.error,
+                                ),
+                              ),
+                            );
+                          }
+
+                          final qiblahDirection = snapshot.data;
+                          if (qiblahDirection == null) {
+                            return Center(
+                              child: Text(
+                                'Loading Qibla direction...',
+                                style: GoogleFonts.plusJakartaSans(
+                                  color: AppColors.textSecondary,
+                                ),
+                              ),
+                            );
+                          }
+
+                          return _buildCompass(qiblahDirection);
+                        },
+                      ),
+                    ),
                   ),
                 ),
-              ),
-            )
-          : SafeArea(
-              child: Center(
-                child: SingleChildScrollView(
-                  child: StreamBuilder<QiblahDirection>(
-                    stream: FlutterQiblah.qiblahStream,
-                    builder: (context, snapshot) {
-                      if (snapshot.connectionState == ConnectionState.waiting) {
-                        return Center(
-                          child: CircularProgressIndicator(
-                            color: AppColors.accent,
-                          ),
-                        );
-                      }
-
-                      if (snapshot.hasError) {
-                        return Center(
-                          child: Text(
-                            'Error: ${snapshot.error}',
-                            style: GoogleFonts.plusJakartaSans(
-                              color: AppColors.error,
-                            ),
-                          ),
-                        );
-                      }
-
-                      final qiblahDirection = snapshot.data;
-                      if (qiblahDirection == null) {
-                        return Center(
-                          child: Text(
-                            'Loading Qibla direction...',
-                            style: GoogleFonts.plusJakartaSans(
-                              color: AppColors.textSecondary,
-                            ),
-                          ),
-                        );
-                      }
-
-                      return _buildCompass(qiblahDirection);
-                    },
-                  ),
-                ),
-              ),
-            ),
     );
   }
 

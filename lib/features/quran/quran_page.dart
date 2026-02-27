@@ -59,9 +59,8 @@ class _QuranPageState extends State<QuranPage> {
     final prefs = await SharedPreferences.getInstance();
     final savedMode = prefs.getString('juzMode');
     final savedReciter = prefs.getString('quran_reciter_id');
-    final mode = savedMode == 'surahBased'
-        ? JuzMode.surahBased
-        : JuzMode.standard;
+    final mode =
+        savedMode == 'surahBased' ? JuzMode.surahBased : JuzMode.standard;
     final todayJuz = _juzService.getJuzForToday(mode);
     final ctxSettings = QuranContextMenuSettings.fromPrefs(prefs);
     await _bookmarks.load();
@@ -310,9 +309,8 @@ class _QuranPageState extends State<QuranPage> {
                         icon: isBookmarked
                             ? Icons.bookmark_rounded
                             : Icons.bookmark_add_outlined,
-                        label: isBookmarked
-                            ? 'Remove bookmark'
-                            : 'Bookmark verse',
+                        label:
+                            isBookmarked ? 'Remove bookmark' : 'Bookmark verse',
                         iconColor: isBookmarked ? AppColors.accent : null,
                         onTap: () async {
                           Navigator.pop(sheetCtx);
@@ -816,11 +814,9 @@ class _QuranPageState extends State<QuranPage> {
     );
     await Future.delayed(const Duration(milliseconds: 100));
 
-    for (
-      int attempt = 0;
-      attempt < 30 && key?.currentContext == null;
-      attempt++
-    ) {
+    for (int attempt = 0;
+        attempt < 30 && key?.currentContext == null;
+        attempt++) {
       await Future.delayed(const Duration(milliseconds: 50));
     }
 
@@ -1145,10 +1141,10 @@ class _QuranPageState extends State<QuranPage> {
                                 contextMenuSettings: _ctxSettings,
                                 onLongPressVerse: (verseIndex) =>
                                     _showVerseContextMenu(
-                                      context,
-                                      chapter: chapter,
-                                      verseIndex: verseIndex,
-                                    ),
+                                  context,
+                                  chapter: chapter,
+                                  verseIndex: verseIndex,
+                                ),
                                 playingSurah: _playingSurah,
                                 playingVerse: _playingVerse,
                                 isPlaying: _isPlaying,

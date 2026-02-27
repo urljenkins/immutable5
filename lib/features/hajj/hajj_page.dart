@@ -147,8 +147,8 @@ class _HajjPageState extends State<HajjPage> {
                       Text(
                         'Dua: ${data['dua']}',
                         style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          fontStyle: FontStyle.italic,
-                        ),
+                              fontStyle: FontStyle.italic,
+                            ),
                       ),
                       CheckboxListTile(
                         value: _completed[i],
