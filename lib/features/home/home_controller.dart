@@ -11,8 +11,13 @@ import '../quotes/quote_picker_service.dart';
 import '../duas/contextual_dua_service.dart';
 import '../../di/service_locator.dart';
 
-typedef PrayerTimesServiceFactory = PrayerTimesService Function(
-    double latitude, double longitude, int method, int madhab);
+typedef PrayerTimesServiceFactory =
+    PrayerTimesService Function(
+      double latitude,
+      double longitude,
+      int method,
+      int madhab,
+    );
 
 abstract class NotificationPort {
   Future<void> schedulePrayerNotifications(Map<String, DateTime> prayerTimes);
@@ -33,7 +38,7 @@ class HomeController extends ChangeNotifier {
     PrayerTimesService? initialPrayerService,
     ContextualDuaService? contextualDuaService,
   }) : contextualDuaService =
-            contextualDuaService ?? getIt<ContextualDuaService>() {
+           contextualDuaService ?? getIt<ContextualDuaService>() {
     if (initialPrayerService != null) {
       _prayerTimesService = initialPrayerService;
       _state = _state.copyWith(loading: false, locationLoaded: true);
@@ -87,10 +92,12 @@ class HomeController extends ChangeNotifier {
           permissionIssue: true,
         );
         if (!handled) {
-          _update(_state.copyWith(
-            loading: false,
-            locationError: 'Location services disabled.',
-          ));
+          _update(
+            _state.copyWith(
+              loading: false,
+              locationError: 'Location services disabled.',
+            ),
+          );
         }
         return;
       }
@@ -103,10 +110,12 @@ class HomeController extends ChangeNotifier {
             permissionIssue: true,
           );
           if (!handled) {
-            _update(_state.copyWith(
-              loading: false,
-              locationError: 'Location permission denied.',
-            ));
+            _update(
+              _state.copyWith(
+                loading: false,
+                locationError: 'Location permission denied.',
+              ),
+            );
           }
           return;
         }
@@ -117,10 +126,12 @@ class HomeController extends ChangeNotifier {
           permissionIssue: true,
         );
         if (!handled) {
-          _update(_state.copyWith(
-            loading: false,
-            locationError: 'Location permanently denied.',
-          ));
+          _update(
+            _state.copyWith(
+              loading: false,
+              locationError: 'Location permanently denied.',
+            ),
+          );
         }
         return;
       }
@@ -141,10 +152,12 @@ class HomeController extends ChangeNotifier {
         notice: 'Using cached/default location.',
       );
       if (!handled) {
-        _update(_state.copyWith(
-          loading: false,
-          locationError: 'Failed to get location: $e',
-        ));
+        _update(
+          _state.copyWith(
+            loading: false,
+            locationError: 'Failed to get location: $e',
+          ),
+        );
       }
     }
   }
@@ -156,7 +169,8 @@ class HomeController extends ChangeNotifier {
     bool clearNotice = false,
   }) async {
     final prefsInstance = prefs ?? await SharedPreferences.getInstance();
-    final calcMethodRaw = prefsInstance.get('calculationMethod') ??
+    final calcMethodRaw =
+        prefsInstance.get('calculationMethod') ??
         'Method 2 (University of Islamic Sciences)';
     final calcMethodString = calcMethodRaw.toString();
     final method = calcMethodString.contains('4') ? 4 : 2;
@@ -185,8 +199,9 @@ class HomeController extends ChangeNotifier {
         locationLoaded: true,
         locationError: null,
         locationNotice: clearNotice ? null : _state.locationNotice,
-        locationPermissionIssue:
-            clearNotice ? false : _state.locationPermissionIssue,
+        locationPermissionIssue: clearNotice
+            ? false
+            : _state.locationPermissionIssue,
       ),
     );
   }
@@ -209,10 +224,12 @@ class HomeController extends ChangeNotifier {
       );
       await loadData();
       if (notice != null) {
-        _update(_state.copyWith(
-          locationNotice: notice,
-          locationPermissionIssue: permissionIssue,
-        ));
+        _update(
+          _state.copyWith(
+            locationNotice: notice,
+            locationPermissionIssue: permissionIssue,
+          ),
+        );
       }
       return true;
     } catch (_) {
@@ -224,21 +241,24 @@ class HomeController extends ChangeNotifier {
     if (_prayerTimesService == null) return;
 
     final now = DateTime.now();
-    final cacheFresh = _cachedDataTimestamp != null &&
+    final cacheFresh =
+        _cachedDataTimestamp != null &&
         now.difference(_cachedDataTimestamp!) < _dataCacheTtl &&
         _cachedNextPrayerTime != null &&
         _cachedNextPrayerTime!.isAfter(now);
 
     if (!forceRefresh && cacheFresh) {
-      _update(_state.copyWith(
-        loading: false,
-        locationError: null,
-        usingCache: true,
-        nextPrayerTime: _cachedNextPrayerTime,
-        nextPrayerName: _cachedNextPrayerName,
-        quote: _cachedQuote,
-        countdown: _cachedNextPrayerTime!.difference(DateTime.now()),
-      ));
+      _update(
+        _state.copyWith(
+          loading: false,
+          locationError: null,
+          usingCache: true,
+          nextPrayerTime: _cachedNextPrayerTime,
+          nextPrayerName: _cachedNextPrayerName,
+          quote: _cachedQuote,
+          countdown: _cachedNextPrayerTime!.difference(DateTime.now()),
+        ),
+      );
       _startTimer();
       return;
     }
@@ -253,7 +273,8 @@ class HomeController extends ChangeNotifier {
       final nextPrayerName = nextPrayer.key;
 
       String? quote = _cachedQuote;
-      final quoteFresh = _cachedQuoteTimestamp != null &&
+      final quoteFresh =
+          _cachedQuoteTimestamp != null &&
           now.difference(_cachedQuoteTimestamp!) < _quoteCacheTtl;
       if (forceRefresh || quote == null || !quoteFresh) {
         quote = await quoteService
@@ -283,7 +304,11 @@ class HomeController extends ChangeNotifier {
       String? contextualMsg;
       if (contextualDua != null) {
         contextualMsg = contextualDuaService.getContextualMessage(
-            contextualDua, now, prayerTimes, hijriDate);
+          contextualDua,
+          now,
+          prayerTimes,
+          hijriDate,
+        );
       }
 
       _update(
@@ -304,8 +329,9 @@ class HomeController extends ChangeNotifier {
       // fallback to cached times if available
       try {
         final cachedTimes = await _prayerTimesService!.getTodayPrayerTimes();
-        final upcoming =
-            cachedTimes.entries.where((e) => e.value.isAfter(now)).toList();
+        final upcoming = cachedTimes.entries
+            .where((e) => e.value.isAfter(now))
+            .toList();
         if (upcoming.isNotEmpty) {
           upcoming.sort((a, b) => a.value.compareTo(b.value));
           final nextPrayer = upcoming.first;
@@ -320,7 +346,11 @@ class HomeController extends ChangeNotifier {
           String? contextualMsg;
           if (contextualDua != null) {
             contextualMsg = contextualDuaService.getContextualMessage(
-                contextualDua, now, cachedTimes, hijriDate);
+              contextualDua,
+              now,
+              cachedTimes,
+              hijriDate,
+            );
           }
 
           _update(

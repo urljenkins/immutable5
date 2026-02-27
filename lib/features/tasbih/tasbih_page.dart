@@ -138,30 +138,38 @@ class _TasbihPageState extends State<TasbihPage>
       context: context,
       builder: (context) => AlertDialog(
         backgroundColor: AppColors.cardSurface,
-        title: Text(AppLocalizations.of(context)!.setTarget,
-            style: GoogleFonts.plusJakartaSans(color: AppColors.textPrimary)),
+        title: Text(
+          AppLocalizations.of(context)!.setTarget,
+          style: GoogleFonts.plusJakartaSans(color: AppColors.textPrimary),
+        ),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             ListTile(
-              title: const Text('33',
-                  style: TextStyle(color: AppColors.textPrimary)),
+              title: const Text(
+                '33',
+                style: TextStyle(color: AppColors.textPrimary),
+              ),
               onTap: () {
                 setState(() => _target = 33);
                 Navigator.pop(context);
               },
             ),
             ListTile(
-              title: const Text('100',
-                  style: TextStyle(color: AppColors.textPrimary)),
+              title: const Text(
+                '100',
+                style: TextStyle(color: AppColors.textPrimary),
+              ),
               onTap: () {
                 setState(() => _target = 100);
                 Navigator.pop(context);
               },
             ),
             ListTile(
-              title: const Text('Infinite (Custom)',
-                  style: TextStyle(color: AppColors.textPrimary)),
+              title: const Text(
+                'Infinite (Custom)',
+                style: TextStyle(color: AppColors.textPrimary),
+              ),
               onTap: () {
                 // Simple custom input could be added here
                 setState(() => _target = 99999);
@@ -181,8 +189,10 @@ class _TasbihPageState extends State<TasbihPage>
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
-        title: Text(AppLocalizations.of(context)!.tasbih,
-            style: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.w600)),
+        title: Text(
+          AppLocalizations.of(context)!.tasbih,
+          style: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.w600),
+        ),
         backgroundColor: Colors.transparent,
         elevation: 0,
         actions: [
@@ -209,28 +219,37 @@ class _TasbihPageState extends State<TasbihPage>
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(AppLocalizations.of(context)!.target,
-                        style: GoogleFonts.plusJakartaSans(
-                            color: AppColors.textSecondary)),
-                    Text('$_target',
-                        style: GoogleFonts.plusJakartaSans(
-                            fontSize: 24,
-                            fontWeight: FontWeight.bold,
-                            color: AppColors.textPrimary)),
+                    Text(
+                      AppLocalizations.of(context)!.target,
+                      style: GoogleFonts.plusJakartaSans(
+                        color: AppColors.textSecondary,
+                      ),
+                    ),
+                    Text(
+                      '$_target',
+                      style: GoogleFonts.plusJakartaSans(
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                        color: AppColors.textPrimary,
+                      ),
+                    ),
                   ],
                 ),
                 Row(
                   children: [
-                    Text(AppLocalizations.of(context)!.voiceMode,
-                        style: GoogleFonts.plusJakartaSans(
-                            color: AppColors.textSecondary)),
+                    Text(
+                      AppLocalizations.of(context)!.voiceMode,
+                      style: GoogleFonts.plusJakartaSans(
+                        color: AppColors.textSecondary,
+                      ),
+                    ),
                     Switch(
                       value: _isVoiceEnabled,
                       onChanged: _toggleVoiceMode,
                       activeColor: AppColors.accent,
                     ),
                   ],
-                )
+                ),
               ],
             ),
           ),
@@ -250,8 +269,9 @@ class _TasbihPageState extends State<TasbihPage>
                       value: progress,
                       strokeWidth: 20,
                       backgroundColor: AppColors.cardSurface,
-                      valueColor:
-                          AlwaysStoppedAnimation<Color>(AppColors.accent),
+                      valueColor: AlwaysStoppedAnimation<Color>(
+                        AppColors.accent,
+                      ),
                       strokeCap: StrokeCap.round,
                     ),
                   ),

@@ -54,12 +54,13 @@ class _DuasPageState extends State<DuasPage> {
           return a.id.compareTo(b.id);
         });
 
-      final categories = sortedDuas
-          .map((d) => d.category)
-          .where((c) => c.isNotEmpty)
-          .toSet()
-          .toList()
-        ..sort();
+      final categories =
+          sortedDuas
+              .map((d) => d.category)
+              .where((c) => c.isNotEmpty)
+              .toSet()
+              .toList()
+            ..sort();
 
       setState(() {
         _duas = sortedDuas;
@@ -79,8 +80,9 @@ class _DuasPageState extends State<DuasPage> {
       var filtered = _duas;
 
       if (_selectedCategory != 'All') {
-        filtered =
-            filtered.where((dua) => dua.category == _selectedCategory).toList();
+        filtered = filtered
+            .where((dua) => dua.category == _selectedCategory)
+            .toList();
       }
 
       if (_searchQuery.isNotEmpty) {
@@ -150,15 +152,20 @@ class _DuasPageState extends State<DuasPage> {
                           decoration: InputDecoration(
                             hintText: 'Search duas...',
                             hintStyle: GoogleFonts.plusJakartaSans(
-                              color: AppColors.textSecondary
-                                  .withValues(alpha: 0.5),
+                              color: AppColors.textSecondary.withValues(
+                                alpha: 0.5,
+                              ),
                             ),
-                            prefixIcon: const Icon(Icons.search,
-                                color: AppColors.textSecondary),
+                            prefixIcon: const Icon(
+                              Icons.search,
+                              color: AppColors.textSecondary,
+                            ),
                             suffixIcon: _searchQuery.isNotEmpty
                                 ? IconButton(
-                                    icon: const Icon(Icons.clear,
-                                        color: AppColors.textSecondary),
+                                    icon: const Icon(
+                                      Icons.clear,
+                                      color: AppColors.textSecondary,
+                                    ),
                                     onPressed: () {
                                       _searchController.clear();
                                       _onSearchChanged('');
@@ -168,20 +175,23 @@ class _DuasPageState extends State<DuasPage> {
                                   )
                                 : null,
                             filled: true,
-                            fillColor:
-                                AppColors.cardSurface.withValues(alpha: 0.5),
+                            fillColor: AppColors.cardSurface.withValues(
+                              alpha: 0.5,
+                            ),
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(16),
                               borderSide: BorderSide(
-                                color: AppColors.textSecondary
-                                    .withValues(alpha: 0.2),
+                                color: AppColors.textSecondary.withValues(
+                                  alpha: 0.2,
+                                ),
                               ),
                             ),
                             enabledBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(16),
                               borderSide: BorderSide(
-                                color: AppColors.textSecondary
-                                    .withValues(alpha: 0.2),
+                                color: AppColors.textSecondary.withValues(
+                                  alpha: 0.2,
+                                ),
                               ),
                             ),
                             focusedBorder: OutlineInputBorder(
@@ -191,7 +201,9 @@ class _DuasPageState extends State<DuasPage> {
                               ),
                             ),
                             contentPadding: const EdgeInsets.symmetric(
-                                horizontal: 16, vertical: 12),
+                              horizontal: 16,
+                              vertical: 12,
+                            ),
                           ),
                         ),
                       ),
@@ -233,8 +245,9 @@ class _DuasPageState extends State<DuasPage> {
                                   side: BorderSide(
                                     color: isSelected
                                         ? Colors.transparent
-                                        : AppColors.textSecondary
-                                            .withValues(alpha: 0.3),
+                                        : AppColors.textSecondary.withValues(
+                                            alpha: 0.3,
+                                          ),
                                   ),
                                 ),
                                 backgroundColor: Colors.transparent,
@@ -251,12 +264,17 @@ class _DuasPageState extends State<DuasPage> {
                                 child: Text(
                                   'No duas found',
                                   style: GoogleFonts.plusJakartaSans(
-                                      color: AppColors.textSecondary),
+                                    color: AppColors.textSecondary,
+                                  ),
                                 ),
                               )
                             : ListView.builder(
-                                padding: const EdgeInsets.fromLTRB(16, 8, 16,
-                                    100), // Bottom padding for nav bar
+                                padding: const EdgeInsets.fromLTRB(
+                                  16,
+                                  8,
+                                  16,
+                                  100,
+                                ), // Bottom padding for nav bar
                                 itemCount: _filteredDuas.length,
                                 itemBuilder: (context, index) {
                                   final dua = _filteredDuas[index];
@@ -293,13 +311,16 @@ class _DuasPageState extends State<DuasPage> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 4,
+                  ),
                   decoration: BoxDecoration(
                     color: AppColors.accent.withValues(alpha: 0.2),
                     borderRadius: BorderRadius.circular(12),
                     border: Border.all(
-                        color: AppColors.accent.withValues(alpha: 0.3)),
+                      color: AppColors.accent.withValues(alpha: 0.3),
+                    ),
                   ),
                   child: Text(
                     dua.category,
@@ -314,8 +335,9 @@ class _DuasPageState extends State<DuasPage> {
                 IconButton(
                   icon: Icon(
                     isFavorite ? Icons.bookmark : Icons.bookmark_border,
-                    color:
-                        isFavorite ? AppColors.accent : AppColors.textSecondary,
+                    color: isFavorite
+                        ? AppColors.accent
+                        : AppColors.textSecondary,
                     size: 20,
                   ),
                   onPressed: () => _toggleFavorite(dua.id),
@@ -389,17 +411,24 @@ class _DuasPageState extends State<DuasPage> {
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
                 TextButton.icon(
-                  icon: const Icon(Icons.copy,
-                      size: 16, color: AppColors.textSecondary),
+                  icon: const Icon(
+                    Icons.copy,
+                    size: 16,
+                    color: AppColors.textSecondary,
+                  ),
                   label: Text(
                     'Copy',
                     style: GoogleFonts.plusJakartaSans(
-                        color: AppColors.textSecondary, fontSize: 12),
+                      color: AppColors.textSecondary,
+                      fontSize: 12,
+                    ),
                   ),
                   onPressed: () {
-                    Clipboard.setData(ClipboardData(
-                      text: "${dua.arabic}\n\n${dua.translationEn}",
-                    ));
+                    Clipboard.setData(
+                      ClipboardData(
+                        text: "${dua.arabic}\n\n${dua.translationEn}",
+                      ),
+                    );
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(
                         content: Text('Dua copied to clipboard'),
@@ -422,16 +451,15 @@ String prettyLabel(String value) {
   if (clean.isEmpty) return value;
   return clean
       .split(' ')
-      .map((word) =>
-          word.isEmpty ? '' : '${word[0].toUpperCase()}${word.substring(1)}')
+      .map(
+        (word) =>
+            word.isEmpty ? '' : '${word[0].toUpperCase()}${word.substring(1)}',
+      )
       .join(' ');
 }
 
 class _DuaDetailSheet extends StatelessWidget {
-  const _DuaDetailSheet({
-    required this.dua,
-    required this.onClose,
-  });
+  const _DuaDetailSheet({required this.dua, required this.onClose});
 
   final Dua dua;
   final VoidCallback onClose;
@@ -439,8 +467,9 @@ class _DuaDetailSheet extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final tags = dua.tags.toSet().toList();
-    final timeWindows =
-        (dua.displayContext?.timeWindows ?? const <String>[]).toSet().toList();
+    final timeWindows = (dua.displayContext?.timeWindows ?? const <String>[])
+        .toSet()
+        .toList();
 
     return Positioned(
       left: 0,
@@ -487,10 +516,12 @@ class _DuaDetailSheet extends StatelessWidget {
                           ),
                         ),
                         IconButton(
-                          icon: const Icon(Icons.close,
-                              color: AppColors.textSecondary),
+                          icon: const Icon(
+                            Icons.close,
+                            color: AppColors.textSecondary,
+                          ),
                           onPressed: onClose,
-                        )
+                        ),
                       ],
                     ),
                     const SizedBox(height: 16),
@@ -512,11 +543,13 @@ class _DuaDetailSheet extends StatelessWidget {
                             .map(
                               (tag) => Chip(
                                 label: Text(prettyLabel(tag)),
-                                labelStyle:
-                                    GoogleFonts.plusJakartaSans(fontSize: 12),
+                                labelStyle: GoogleFonts.plusJakartaSans(
+                                  fontSize: 12,
+                                ),
                                 backgroundColor: AppColors.background,
                                 shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(8)),
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
                                 side: BorderSide.none,
                               ),
                             )
@@ -542,11 +575,13 @@ class _DuaDetailSheet extends StatelessWidget {
                             .map(
                               (window) => Chip(
                                 label: Text(prettyLabel(window)),
-                                labelStyle:
-                                    GoogleFonts.plusJakartaSans(fontSize: 12),
+                                labelStyle: GoogleFonts.plusJakartaSans(
+                                  fontSize: 12,
+                                ),
                                 backgroundColor: AppColors.background,
                                 shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(8)),
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
                                 side: BorderSide.none,
                               ),
                             )
@@ -590,12 +625,15 @@ class _DuaDetailSheet extends StatelessWidget {
                       const SizedBox(height: 8),
                       Container(
                         padding: const EdgeInsets.symmetric(
-                            horizontal: 12, vertical: 6),
+                          horizontal: 12,
+                          vertical: 6,
+                        ),
                         decoration: BoxDecoration(
                           color: AppColors.accent.withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(8),
                           border: Border.all(
-                              color: AppColors.accent.withValues(alpha: 0.2)),
+                            color: AppColors.accent.withValues(alpha: 0.2),
+                          ),
                         ),
                         child: Text(
                           prettyLabel(dua.authenticity!.grade!),

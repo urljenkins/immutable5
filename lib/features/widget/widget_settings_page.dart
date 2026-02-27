@@ -62,10 +62,7 @@ class _WidgetSettingsPageState extends State<WidgetSettingsPage> {
               style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
             ),
           ),
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: _buildPreview(),
-          ),
+          Padding(padding: const EdgeInsets.all(16.0), child: _buildPreview()),
 
           const Divider(),
 
@@ -186,9 +183,11 @@ class _WidgetSettingsPageState extends State<WidgetSettingsPage> {
                     WidgetPreferences.getThemeName(theme),
                     style: TextStyle(
                       fontSize: 10,
-                      fontWeight:
-                          isSelected ? FontWeight.bold : FontWeight.normal,
-                      color: colors['text'] as int == 0xFFFFFFFF ||
+                      fontWeight: isSelected
+                          ? FontWeight.bold
+                          : FontWeight.normal,
+                      color:
+                          colors['text'] as int == 0xFFFFFFFF ||
                               colors['text'] as int == 0xFFF8FAFC
                           ? Colors.white
                           : Colors.black87,
@@ -258,10 +257,7 @@ class _WidgetSettingsPageState extends State<WidgetSettingsPage> {
                   children: [
                     Text(
                       'Maghrib in',
-                      style: TextStyle(
-                        fontSize: 11,
-                        color: textSecondaryColor,
-                      ),
+                      style: TextStyle(fontSize: 11, color: textSecondaryColor),
                     ),
                     const SizedBox(height: 2),
                     Text(
@@ -291,16 +287,46 @@ class _WidgetSettingsPageState extends State<WidgetSettingsPage> {
             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 12),
             child: Row(
               children: [
-                _buildPrayerColumn('Fajr', '05:57', false, textColor,
-                    textSecondaryColor, accentColor),
-                _buildPrayerColumn('Dhuhr', '12:55', false, textColor,
-                    textSecondaryColor, accentColor),
-                _buildPrayerColumn('Asr', '15:37', false, textColor,
-                    textSecondaryColor, accentColor),
-                _buildPrayerColumn('Maghrib', '18:12', true, textColor,
-                    textSecondaryColor, accentColor),
-                _buildPrayerColumn('Isha', '19:46', false, textColor,
-                    textSecondaryColor, accentColor),
+                _buildPrayerColumn(
+                  'Fajr',
+                  '05:57',
+                  false,
+                  textColor,
+                  textSecondaryColor,
+                  accentColor,
+                ),
+                _buildPrayerColumn(
+                  'Dhuhr',
+                  '12:55',
+                  false,
+                  textColor,
+                  textSecondaryColor,
+                  accentColor,
+                ),
+                _buildPrayerColumn(
+                  'Asr',
+                  '15:37',
+                  false,
+                  textColor,
+                  textSecondaryColor,
+                  accentColor,
+                ),
+                _buildPrayerColumn(
+                  'Maghrib',
+                  '18:12',
+                  true,
+                  textColor,
+                  textSecondaryColor,
+                  accentColor,
+                ),
+                _buildPrayerColumn(
+                  'Isha',
+                  '19:46',
+                  false,
+                  textColor,
+                  textSecondaryColor,
+                  accentColor,
+                ),
               ],
             ),
           ),

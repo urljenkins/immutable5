@@ -37,8 +37,9 @@ class QuranTextService {
     final text = await getFullText();
     final lines = text.split('\n');
 
-    final inlineHeading =
-        RegExp(r'^\s*(\d{1,3})\.\s+([^(]+?)\s*\(([^)]+)\)\s*$');
+    final inlineHeading = RegExp(
+      r'^\s*(\d{1,3})\.\s+([^(]+?)\s*\(([^)]+)\)\s*$',
+    );
     final headingLine = RegExp(r'^\s*(\d{1,3})\.\s+(.+)$');
     final parenLine = RegExp(r'^\s*\(([^)]+)\)\s*$');
 
@@ -52,7 +53,9 @@ class QuranTextService {
       if (inlineMatch != null) {
         final number = int.tryParse(inlineMatch.group(1) ?? '');
         if (number != null) {
-          occurrences.putIfAbsent(number, () => []).add(
+          occurrences
+              .putIfAbsent(number, () => [])
+              .add(
                 _Heading(
                   number: number,
                   title: inlineMatch.group(2)!.trim(),
@@ -70,7 +73,9 @@ class QuranTextService {
         final parenMatch = parenLine.firstMatch(lines[i + 1].trim());
         final number = int.tryParse(headingMatch.group(1) ?? '');
         if (parenMatch != null && number != null) {
-          occurrences.putIfAbsent(number, () => []).add(
+          occurrences
+              .putIfAbsent(number, () => [])
+              .add(
                 _Heading(
                   number: number,
                   title: headingMatch.group(2)!.trim(),
@@ -100,8 +105,9 @@ class QuranTextService {
     final chapters = <QuranChapter>[];
     for (var i = 0; i < headings.length; i++) {
       final start = headings[i].contentStart;
-      final end =
-          i + 1 < headings.length ? headings[i + 1].lineIndex : lines.length;
+      final end = i + 1 < headings.length
+          ? headings[i + 1].lineIndex
+          : lines.length;
       final verses = _parseVerses(
         lines.sublist(start, end),
         headings[i].number,
@@ -125,9 +131,11 @@ class QuranTextService {
     final versePattern = RegExp(r'^(\d{1,3})\.\s*(.*)$');
     final pageMarker = RegExp(r'^\d{1,3}$');
     final headerInline = RegExp(
-        '^$surahNumber\\.\\s+[^()]+\\([^)]*\\)\$'); // e.g. "2. THE HEIFER (al-Baqarah)"
-    final headerSimple =
-        RegExp('^$surahNumber\\.\\s+[A-Z \\-]+\$'); // e.g. "1. THE OPENING"
+      '^$surahNumber\\.\\s+[^()]+\\([^)]*\\)\$',
+    ); // e.g. "2. THE HEIFER (al-Baqarah)"
+    final headerSimple = RegExp(
+      '^$surahNumber\\.\\s+[A-Z \\-]+\$',
+    ); // e.g. "1. THE OPENING"
     final parenLine = RegExp(r'^\([^)]*\)$');
     String? current;
 
@@ -135,7 +143,8 @@ class QuranTextService {
       final raw = lines[i].trim();
       if (raw.isEmpty || pageMarker.hasMatch(raw)) continue;
 
-      final isHeader = headerInline.hasMatch(raw) ||
+      final isHeader =
+          headerInline.hasMatch(raw) ||
           (raw.startsWith('$surahNumber.') && headerSimple.hasMatch(raw));
       if (isHeader) {
         if (i + 1 < lines.length && parenLine.hasMatch(lines[i + 1].trim())) {

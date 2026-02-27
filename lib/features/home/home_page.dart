@@ -121,8 +121,10 @@ class _MyHomePageState extends State<MyHomePage> {
               SafeArea(
                 child: state.loading
                     ? Center(
-                        child:
-                            CircularProgressIndicator(color: AppColors.accent))
+                        child: CircularProgressIndicator(
+                          color: AppColors.accent,
+                        ),
+                      )
                     : Column(
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
@@ -130,15 +132,18 @@ class _MyHomePageState extends State<MyHomePage> {
                           if (state.locationNotice != null)
                             Padding(
                               padding: const EdgeInsets.symmetric(
-                                  horizontal: 24, vertical: 8),
+                                horizontal: 24,
+                                vertical: 8,
+                              ),
                               child: _StatusBanner(
                                 icon: state.locationPermissionIssue
                                     ? Icons.location_off_outlined
                                     : Icons.info_outline,
-                                background: (state.locationPermissionIssue
-                                        ? AppColors.error
-                                        : AppColors.accent)
-                                    .withValues(alpha: 0.1),
+                                background:
+                                    (state.locationPermissionIssue
+                                            ? AppColors.error
+                                            : AppColors.accent)
+                                        .withValues(alpha: 0.1),
                                 foreground: state.locationPermissionIssue
                                     ? AppColors.error
                                     : AppColors.accent,
@@ -147,8 +152,9 @@ class _MyHomePageState extends State<MyHomePage> {
                                     ? TextButton(
                                         onPressed: _controller.refresh,
                                         child: Text(
-                                          AppLocalizations.of(context)!
-                                              .refreshPrayerTimes,
+                                          AppLocalizations.of(
+                                            context,
+                                          )!.refreshPrayerTimes,
                                           style: TextStyle(
                                             color: state.locationPermissionIssue
                                                 ? AppColors.error
@@ -162,15 +168,15 @@ class _MyHomePageState extends State<MyHomePage> {
                             ),
 
                           // Removed the 'using cached times' banner per user request
-
                           const SizedBox(height: 20),
 
                           // Hero Section
                           Expanded(
                             flex: 3,
                             child: Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 24.0),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 24.0,
+                              ),
                               child: Column(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
@@ -181,8 +187,9 @@ class _MyHomePageState extends State<MyHomePage> {
                                         (state.locationError != null &&
                                                 !state.usingCache
                                             ? 'Offline'
-                                            : AppLocalizations.of(context)!
-                                                .loading),
+                                            : AppLocalizations.of(
+                                                context,
+                                              )!.loading),
                                     style: GoogleFonts.plusJakartaSans(
                                       fontSize: 32,
                                       fontWeight: FontWeight.w300,
@@ -203,9 +210,9 @@ class _MyHomePageState extends State<MyHomePage> {
                                   ),
                                   const SizedBox(height: 16),
                                   Text(
-                                    AppLocalizations.of(context)!
-                                        .nextPrayer
-                                        .toUpperCase(),
+                                    AppLocalizations.of(
+                                      context,
+                                    )!.nextPrayer.toUpperCase(),
                                     style: GoogleFonts.plusJakartaSans(
                                       fontSize: 12,
                                       letterSpacing: 2.0,
@@ -230,13 +237,15 @@ class _MyHomePageState extends State<MyHomePage> {
                                 child: state.contextualDua != null
                                     ? _ContextualDuaCard(
                                         key: ValueKey(
-                                            'dua_${state.contextualDua!.id}'),
+                                          'dua_${state.contextualDua!.id}',
+                                        ),
                                         dua: state.contextualDua!,
                                         message: state.contextualMessage,
                                       )
                                     : GlassContainer(
-                                        key:
-                                            ValueKey<String>(state.quote ?? ''),
+                                        key: ValueKey<String>(
+                                          state.quote ?? '',
+                                        ),
                                         width: double.infinity,
                                         padding: const EdgeInsets.all(24),
                                         child: Center(
@@ -246,12 +255,12 @@ class _MyHomePageState extends State<MyHomePage> {
                                               textAlign: TextAlign.center,
                                               style:
                                                   GoogleFonts.plusJakartaSans(
-                                                fontSize: 16,
-                                                height: 1.6,
-                                                color: AppColors.textPrimary
-                                                    .withValues(alpha: 0.9),
-                                                fontStyle: FontStyle.italic,
-                                              ),
+                                                    fontSize: 16,
+                                                    height: 1.6,
+                                                    color: AppColors.textPrimary
+                                                        .withValues(alpha: 0.9),
+                                                    fontStyle: FontStyle.italic,
+                                                  ),
                                             ),
                                           ),
                                         ),
@@ -290,10 +299,7 @@ class _StatusBanner extends StatelessWidget {
     return GlassContainer(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       borderRadius: 16,
-      gradientColors: [
-        background,
-        background.withValues(alpha: 0.05),
-      ],
+      gradientColors: [background, background.withValues(alpha: 0.05)],
       borderColor: foreground.withValues(alpha: 0.2),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,

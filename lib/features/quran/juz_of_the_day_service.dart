@@ -11,11 +11,7 @@ enum JuzMode { standard, surahBased }
 
 /// A contiguous range within a single surah that belongs to a Juz.
 class JuzRange {
-  const JuzRange({
-    required this.surahNumber,
-    this.startVerse,
-    this.endVerse,
-  });
+  const JuzRange({required this.surahNumber, this.startVerse, this.endVerse});
 
   final int surahNumber;
 
@@ -133,11 +129,13 @@ class JuzOfTheDayService {
 
     final ranges = <JuzRange>[];
     for (var s = startSurah; s <= endSurah; s++) {
-      ranges.add(JuzRange(
-        surahNumber: s,
-        startVerse: s == startSurah ? startVerse : null,
-        endVerse: s == endSurah ? endVerse : null,
-      ));
+      ranges.add(
+        JuzRange(
+          surahNumber: s,
+          startVerse: s == startSurah ? startVerse : null,
+          endVerse: s == endSurah ? endVerse : null,
+        ),
+      );
     }
     return ranges;
   }

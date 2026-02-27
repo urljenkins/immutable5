@@ -80,10 +80,15 @@ class _RamadanDashboardPageState extends State<RamadanDashboardPage> {
 
       // Get tomorrow's prayer times (need Fajr for Suhoor countdown)
       final tomorrow = now.add(const Duration(days: 1));
-      final tomorrowTimes = await _prayerTimesService!.getPrayerTimesForDate(tomorrow);
+      final tomorrowTimes = await _prayerTimesService!.getPrayerTimesForDate(
+        tomorrow,
+      );
 
       // Check Taraweeh status
-      final taraweehCompleted = await _trackingService.isPrayerCompleted('Taraweeh', now);
+      final taraweehCompleted = await _trackingService.isPrayerCompleted(
+        'Taraweeh',
+        now,
+      );
 
       if (mounted) {
         setState(() {
@@ -108,11 +113,15 @@ class _RamadanDashboardPageState extends State<RamadanDashboardPage> {
   void _startTimer() {
     _timer?.cancel();
     _updateCountdown(); // Initial update
-    _timer = Timer.periodic(const Duration(seconds: 1), (_) => _updateCountdown());
+    _timer = Timer.periodic(
+      const Duration(seconds: 1),
+      (_) => _updateCountdown(),
+    );
   }
 
   void _updateCountdown() {
-    if (_fajrToday == null || _maghribToday == null || _fajrTomorrow == null) return;
+    if (_fajrToday == null || _maghribToday == null || _fajrTomorrow == null)
+      return;
 
     final now = DateTime.now();
     DateTime targetTime;
@@ -173,7 +182,8 @@ class _RamadanDashboardPageState extends State<RamadanDashboardPage> {
   @override
   Widget build(BuildContext context) {
     final hijriDate = HijriCalendar.now();
-    final hijriString = '${hijriDate.longMonthName} ${hijriDate.hDay}, ${hijriDate.hYear}';
+    final hijriString =
+        '${hijriDate.longMonthName} ${hijriDate.hDay}, ${hijriDate.hYear}';
 
     return Scaffold(
       extendBodyBehindAppBar: true,
@@ -192,7 +202,9 @@ class _RamadanDashboardPageState extends State<RamadanDashboardPage> {
                 end: Alignment.bottomCenter,
                 colors: [
                   Theme.of(context).colorScheme.surface,
-                  Theme.of(context).colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
+                  Theme.of(
+                    context,
+                  ).colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
                 ],
               ),
             ),
@@ -221,9 +233,14 @@ class _RamadanDashboardPageState extends State<RamadanDashboardPage> {
 
           SafeArea(
             child: _loading
-              ? const Center(child: CircularProgressIndicator())
-              : _error.isNotEmpty
-                ? Center(child: Text(_error, style: TextStyle(color: AppColors.error)))
+                ? const Center(child: CircularProgressIndicator())
+                : _error.isNotEmpty
+                ? Center(
+                    child: Text(
+                      _error,
+                      style: TextStyle(color: AppColors.error),
+                    ),
+                  )
                 : SingleChildScrollView(
                     padding: const EdgeInsets.all(24),
                     child: Column(
@@ -244,7 +261,10 @@ class _RamadanDashboardPageState extends State<RamadanDashboardPage> {
 
                         // Countdown Card
                         GlassContainer(
-                          padding: const EdgeInsets.symmetric(vertical: 40, horizontal: 24),
+                          padding: const EdgeInsets.symmetric(
+                            vertical: 40,
+                            horizontal: 24,
+                          ),
                           borderRadius: 24,
                           gradientColors: [
                             AppColors.accent.withValues(alpha: 0.1),
@@ -254,13 +274,17 @@ class _RamadanDashboardPageState extends State<RamadanDashboardPage> {
                           child: Column(
                             children: [
                               Icon(
-                                _isFastingHours ? Icons.wb_sunny_outlined : Icons.nights_stay_outlined,
+                                _isFastingHours
+                                    ? Icons.wb_sunny_outlined
+                                    : Icons.nights_stay_outlined,
                                 size: 32,
                                 color: AppColors.accent,
                               ),
                               const SizedBox(height: 16),
                               Text(
-                                _isFastingHours ? 'IFTAR COUNTDOWN' : 'SUHOOR COUNTDOWN',
+                                _isFastingHours
+                                    ? 'IFTAR COUNTDOWN'
+                                    : 'SUHOOR COUNTDOWN',
                                 style: GoogleFonts.plusJakartaSans(
                                   fontSize: 12,
                                   letterSpacing: 2.0,
@@ -275,7 +299,9 @@ class _RamadanDashboardPageState extends State<RamadanDashboardPage> {
                                   fontSize: 48,
                                   fontWeight: FontWeight.bold,
                                   color: AppColors.textPrimary,
-                                  fontFeatures: [const FontFeature.tabularFigures()],
+                                  fontFeatures: [
+                                    const FontFeature.tabularFigures(),
+                                  ],
                                 ),
                               ),
                             ],
@@ -303,7 +329,9 @@ class _RamadanDashboardPageState extends State<RamadanDashboardPage> {
                                     ),
                                     const SizedBox(height: 4),
                                     Text(
-                                      _formatHoursMinutes(_maghribToday!.difference(_fajrToday!)),
+                                      _formatHoursMinutes(
+                                        _maghribToday!.difference(_fajrToday!),
+                                      ),
                                       style: GoogleFonts.plusJakartaSans(
                                         fontSize: 20,
                                         fontWeight: FontWeight.w600,
@@ -312,7 +340,12 @@ class _RamadanDashboardPageState extends State<RamadanDashboardPage> {
                                     ),
                                   ],
                                 ),
-                                Icon(Icons.timer_outlined, color: AppColors.accent.withValues(alpha: 0.5)),
+                                Icon(
+                                  Icons.timer_outlined,
+                                  color: AppColors.accent.withValues(
+                                    alpha: 0.5,
+                                  ),
+                                ),
                               ],
                             ),
                           ),
@@ -334,7 +367,9 @@ class _RamadanDashboardPageState extends State<RamadanDashboardPage> {
                                 ),
                                 child: Icon(
                                   Icons.mosque,
-                                  color: _taraweehCompleted ? Colors.green : Colors.grey,
+                                  color: _taraweehCompleted
+                                      ? Colors.green
+                                      : Colors.grey,
                                 ),
                               ),
                               const SizedBox(width: 16),
@@ -351,10 +386,14 @@ class _RamadanDashboardPageState extends State<RamadanDashboardPage> {
                                       ),
                                     ),
                                     Text(
-                                      _taraweehCompleted ? 'Completed' : 'Not completed yet',
+                                      _taraweehCompleted
+                                          ? 'Completed'
+                                          : 'Not completed yet',
                                       style: GoogleFonts.plusJakartaSans(
                                         fontSize: 12,
-                                        color: _taraweehCompleted ? Colors.green : AppColors.textSecondary,
+                                        color: _taraweehCompleted
+                                            ? Colors.green
+                                            : AppColors.textSecondary,
                                       ),
                                     ),
                                   ],

@@ -110,7 +110,11 @@ class _PrayerStatsPageState extends State<PrayerStatsPage> {
   }
 
   Widget _buildStatCard(
-      String label, String value, IconData icon, Color color) {
+    String label,
+    String value,
+    IconData icon,
+    Color color,
+  ) {
     return Card(
       elevation: 2,
       child: Padding(
@@ -163,7 +167,9 @@ class _PrayerStatsPageState extends State<PrayerStatsPage> {
                       value: isCompleted,
                       onChanged: (value) async {
                         await _trackingService.togglePrayerCompletion(
-                            prayer, _selectedDay);
+                          prayer,
+                          _selectedDay,
+                        );
                         setState(() {
                           _loadData();
                         });
@@ -201,9 +207,7 @@ class _PrayerStatsPageState extends State<PrayerStatsPage> {
               firstDay: DateTime.now().subtract(const Duration(days: 60)),
               lastDay: DateTime.now(),
               focusedDay: _focusedDay,
-              headerStyle: const HeaderStyle(
-                formatButtonVisible: false,
-              ),
+              headerStyle: const HeaderStyle(formatButtonVisible: false),
               selectedDayPredicate: (day) => isSameDay(_selectedDay, day),
               onDaySelected: (selectedDay, focusedDay) {
                 setState(() {
@@ -229,8 +233,11 @@ class _PrayerStatsPageState extends State<PrayerStatsPage> {
     );
   }
 
-  Widget _buildCalendarDay(DateTime date,
-      {bool isSelected = false, bool isToday = false}) {
+  Widget _buildCalendarDay(
+    DateTime date, {
+    bool isSelected = false,
+    bool isToday = false,
+  }) {
     final dateKey = _history.keys.firstWhere(
       (d) => isSameDay(d, date),
       orElse: () => date,
@@ -254,18 +261,12 @@ class _PrayerStatsPageState extends State<PrayerStatsPage> {
 
     return Container(
       margin: const EdgeInsets.all(4),
-      decoration: BoxDecoration(
-        color: backgroundColor,
-        shape: BoxShape.circle,
-      ),
+      decoration: BoxDecoration(color: backgroundColor, shape: BoxShape.circle),
       child: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text(
-              '${date.day}',
-              style: const TextStyle(fontSize: 14),
-            ),
+            Text('${date.day}', style: const TextStyle(fontSize: 14)),
             if (completedCount > 0)
               Text(
                 '$completedCount/$total',

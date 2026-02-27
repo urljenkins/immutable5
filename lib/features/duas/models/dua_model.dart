@@ -42,7 +42,7 @@ class Dua {
       occasion: json['occasion'] as String? ?? '',
       tags:
           (json['tags'] as List<dynamic>?)?.map((e) => e as String).toList() ??
-              [],
+          [],
       arabic: json['arabic'] as String,
       transliteration: json['transliteration'] as String,
       translationEn: json['translation_en'] as String,
@@ -53,7 +53,8 @@ class Dua {
       frequency: json['frequency'] as String?,
       displayContext: json['display_context'] != null
           ? DisplayContext.fromJson(
-              json['display_context'] as Map<String, dynamic>)
+              json['display_context'] as Map<String, dynamic>,
+            )
           : null,
       authenticity: json['authenticity'] != null
           ? Authenticity.fromJson(json['authenticity'] as Map<String, dynamic>)
@@ -79,19 +80,23 @@ class DisplayContext {
 
   factory DisplayContext.fromJson(Map<String, dynamic> json) {
     return DisplayContext(
-      timeWindows: (json['time_windows'] as List<dynamic>?)
+      timeWindows:
+          (json['time_windows'] as List<dynamic>?)
               ?.map((e) => e as String)
               .toList() ??
           [],
-      hijriPeriods: (json['hijri_periods'] as List<dynamic>?)
+      hijriPeriods:
+          (json['hijri_periods'] as List<dynamic>?)
               ?.map((e) => e as String)
               .toList() ??
           [],
-      conditions: (json['conditions'] as List<dynamic>?)
+      conditions:
+          (json['conditions'] as List<dynamic>?)
               ?.map((e) => e as String)
               .toList() ??
           [],
-      daysOfWeek: (json['days_of_week'] as List<dynamic>?)
+      daysOfWeek:
+          (json['days_of_week'] as List<dynamic>?)
               ?.map((e) => e as String)
               .toList() ??
           [],

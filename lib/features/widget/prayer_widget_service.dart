@@ -16,7 +16,7 @@ class PrayerWidgetService {
     'Dhuhr',
     'Asr',
     'Maghrib',
-    'Isha'
+    'Isha',
   ];
 
   /// Update the home screen widget with current prayer times
@@ -104,10 +104,14 @@ class PrayerWidgetService {
       final colors = WidgetPreferences.getThemeColors(theme);
 
       await HomeWidget.saveWidgetData<int>(
-          'theme_background', colors['background']);
+        'theme_background',
+        colors['background'],
+      );
       await HomeWidget.saveWidgetData<int>('theme_text', colors['text']);
       await HomeWidget.saveWidgetData<int>(
-          'theme_text_secondary', colors['textSecondary']);
+        'theme_text_secondary',
+        colors['textSecondary'],
+      );
       await HomeWidget.saveWidgetData<int>('theme_accent', colors['accent']);
       await HomeWidget.saveWidgetData<int>('theme_card_bg', colors['cardBg']);
       await HomeWidget.saveWidgetData<int>('theme_index', theme.index);
@@ -133,7 +137,9 @@ class PrayerWidgetService {
 
   /// Get location name from coordinates using reverse geocoding
   static Future<String> _getLocationName(
-      double latitude, double longitude) async {
+    double latitude,
+    double longitude,
+  ) async {
     try {
       // Try to get cached location name first
       final prefs = await SharedPreferences.getInstance();
@@ -155,10 +161,9 @@ class PrayerWidgetService {
         'https://nominatim.openstreetmap.org/reverse?format=json&lat=$latitude&lon=$longitude&zoom=10',
       );
 
-      final response = await http.get(
-        url,
-        headers: {'User-Agent': 'Immutable5PrayerApp/1.0'},
-      ).timeout(const Duration(seconds: 5));
+      final response = await http
+          .get(url, headers: {'User-Agent': 'Immutable5PrayerApp/1.0'})
+          .timeout(const Duration(seconds: 5));
 
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
@@ -168,7 +173,8 @@ class PrayerWidgetService {
 
         if (address != null) {
           // Try to get city, town, or village name
-          locationName = address['city'] as String? ??
+          locationName =
+              address['city'] as String? ??
               address['town'] as String? ??
               address['village'] as String? ??
               address['municipality'] as String? ??

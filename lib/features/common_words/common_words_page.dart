@@ -90,8 +90,9 @@ class _CommonWordsPageState extends State<CommonWordsPage> {
   void _applyFilters() {
     _visibleIndices = List.generate(_rows.length, (i) => i);
     if (!_showMemorized) {
-      _visibleIndices =
-          _visibleIndices.where((i) => !_memorized.contains(i)).toList();
+      _visibleIndices = _visibleIndices
+          .where((i) => !_memorized.contains(i))
+          .toList();
     }
     if (_searchQuery.isNotEmpty) {
       _visibleIndices = _visibleIndices.where((i) {
@@ -121,8 +122,9 @@ class _CommonWordsPageState extends State<CommonWordsPage> {
           builder: (_, setSheetState) {
             final isMemorized = _memorized.contains(rowIndex);
             return ClipRRect(
-              borderRadius:
-                  const BorderRadius.vertical(top: Radius.circular(28)),
+              borderRadius: const BorderRadius.vertical(
+                top: Radius.circular(28),
+              ),
               child: BackdropFilter(
                 filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
                 child: Container(
@@ -154,14 +156,18 @@ class _CommonWordsPageState extends State<CommonWordsPage> {
                               Container(
                                 width: double.infinity,
                                 padding: const EdgeInsets.symmetric(
-                                    horizontal: 16, vertical: 20),
+                                  horizontal: 16,
+                                  vertical: 20,
+                                ),
                                 decoration: BoxDecoration(
-                                  color:
-                                      AppColors.accent.withValues(alpha: 0.07),
+                                  color: AppColors.accent.withValues(
+                                    alpha: 0.07,
+                                  ),
                                   borderRadius: BorderRadius.circular(16),
                                   border: Border.all(
-                                    color:
-                                        AppColors.accent.withValues(alpha: 0.2),
+                                    color: AppColors.accent.withValues(
+                                      alpha: 0.2,
+                                    ),
                                   ),
                                 ),
                                 child: Text(
@@ -184,8 +190,9 @@ class _CommonWordsPageState extends State<CommonWordsPage> {
                                   color: AppColors.accent,
                                   iconSize: 28,
                                   onPressed: () {
-                                    _audioPlayer.play(AssetSource(
-                                        'audio/words/$rowIndex.mp3'));
+                                    _audioPlayer.play(
+                                      AssetSource('audio/words/$rowIndex.mp3'),
+                                    );
                                   },
                                 ),
                               ),
@@ -243,7 +250,8 @@ class _CommonWordsPageState extends State<CommonWordsPage> {
                                     ? 'Remove from memorised'
                                     : 'Mark as memorised',
                                 style: GoogleFonts.plusJakartaSans(
-                                    fontWeight: FontWeight.w600),
+                                  fontWeight: FontWeight.w600,
+                                ),
                               ),
                               style: FilledButton.styleFrom(
                                 backgroundColor: isMemorized
@@ -253,14 +261,17 @@ class _CommonWordsPageState extends State<CommonWordsPage> {
                                     ? AppColors.error
                                     : AppColors.success,
                                 padding: const EdgeInsets.symmetric(
-                                    vertical: 14, horizontal: 24),
+                                  vertical: 14,
+                                  horizontal: 24,
+                                ),
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(14),
                                   side: BorderSide(
                                     color: isMemorized
                                         ? AppColors.error.withValues(alpha: 0.3)
-                                        : AppColors.success
-                                            .withValues(alpha: 0.3),
+                                        : AppColors.success.withValues(
+                                            alpha: 0.3,
+                                          ),
                                   ),
                                 ),
                               ),
@@ -409,8 +420,10 @@ class _CommonWordsPageState extends State<CommonWordsPage> {
                                 ),
                                 if (isMemorized) ...[
                                   const SizedBox(width: 8),
-                                  const Icon(Icons.check_circle,
-                                      color: Colors.green),
+                                  const Icon(
+                                    Icons.check_circle,
+                                    color: Colors.green,
+                                  ),
                                 ],
                               ],
                             ),

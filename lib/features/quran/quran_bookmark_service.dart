@@ -19,20 +19,20 @@ class QuranBookmark {
   final DateTime savedAt;
 
   Map<String, dynamic> toJson() => {
-        'surahNumber': surahNumber,
-        'surahTitle': surahTitle,
-        'verseIndex': verseIndex,
-        'verseText': verseText,
-        'savedAt': savedAt.toIso8601String(),
-      };
+    'surahNumber': surahNumber,
+    'surahTitle': surahTitle,
+    'verseIndex': verseIndex,
+    'verseText': verseText,
+    'savedAt': savedAt.toIso8601String(),
+  };
 
   factory QuranBookmark.fromJson(Map<String, dynamic> json) => QuranBookmark(
-        surahNumber: json['surahNumber'] as int,
-        surahTitle: json['surahTitle'] as String,
-        verseIndex: json['verseIndex'] as int,
-        verseText: json['verseText'] as String,
-        savedAt: DateTime.parse(json['savedAt'] as String),
-      );
+    surahNumber: json['surahNumber'] as int,
+    surahTitle: json['surahTitle'] as String,
+    verseIndex: json['verseIndex'] as int,
+    verseText: json['verseText'] as String,
+    savedAt: DateTime.parse(json['savedAt'] as String),
+  );
 
   @override
   bool operator ==(Object other) =>
@@ -62,19 +62,21 @@ class QuranBookmarkService {
     final raw = prefs.getString(_prefsKey);
     if (raw == null) return;
     try {
-      final list = (jsonDecode(raw) as List)
-          .cast<Map<String, dynamic>>()
-          .map(QuranBookmark.fromJson)
-          .toList()
-        ..sort((a, b) => b.savedAt.compareTo(a.savedAt));
+      final list =
+          (jsonDecode(raw) as List)
+              .cast<Map<String, dynamic>>()
+              .map(QuranBookmark.fromJson)
+              .toList()
+            ..sort((a, b) => b.savedAt.compareTo(a.savedAt));
       bookmarks.value = list;
     } catch (_) {
       // Corrupted data — ignore.
     }
   }
 
-  bool isBookmarked(int surahNumber, int verseIndex) => bookmarks.value
-      .any((b) => b.surahNumber == surahNumber && b.verseIndex == verseIndex);
+  bool isBookmarked(int surahNumber, int verseIndex) => bookmarks.value.any(
+    (b) => b.surahNumber == surahNumber && b.verseIndex == verseIndex,
+  );
 
   /// Adds a bookmark; no-op if already present. Returns `true` if added.
   Future<bool> add(QuranBookmark bookmark) async {
@@ -89,8 +91,9 @@ class QuranBookmarkService {
   Future<bool> remove(int surahNumber, int verseIndex) async {
     final before = bookmarks.value.length;
     final updated = bookmarks.value
-        .where((b) =>
-            !(b.surahNumber == surahNumber && b.verseIndex == verseIndex))
+        .where(
+          (b) => !(b.surahNumber == surahNumber && b.verseIndex == verseIndex),
+        )
         .toList();
     if (updated.length == before) return false;
     bookmarks.value = updated;

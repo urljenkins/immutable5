@@ -46,13 +46,16 @@ class PrayerTimesService {
     return DateTime(date.year, date.month, date.day, hour, minute);
   }
 
-  Future<Map<String, DateTime>> getTodayPrayerTimes(
-      {bool forceRefresh = false}) async {
+  Future<Map<String, DateTime>> getTodayPrayerTimes({
+    bool forceRefresh = false,
+  }) async {
     return getPrayerTimesForDate(DateTime.now(), forceRefresh: forceRefresh);
   }
 
-  Future<Map<String, DateTime>> getPrayerTimesForDate(DateTime date,
-      {bool forceRefresh = false}) async {
+  Future<Map<String, DateTime>> getPrayerTimesForDate(
+    DateTime date, {
+    bool forceRefresh = false,
+  }) async {
     final cacheKey = _getCacheKey(date);
 
     // Check cache first unless force refresh
@@ -64,8 +67,9 @@ class PrayerTimesService {
           final Map<String, dynamic> cached = json.decode(cachedData);
           final Map<String, DateTime> result = {};
           cached.forEach((name, timestamp) {
-            result[name] =
-                DateTime.fromMillisecondsSinceEpoch(timestamp as int);
+            result[name] = DateTime.fromMillisecondsSinceEpoch(
+              timestamp as int,
+            );
           });
           return result;
         } catch (e) {
@@ -76,16 +80,20 @@ class PrayerTimesService {
 
     // Fetch from network
     final url = Uri.parse(
-        'https://api.aladhan.com/v1/timings/${date.millisecondsSinceEpoch ~/ 1000}?latitude=$latitude&longitude=$longitude&method=$method&school=$madhab');
+      'https://api.aladhan.com/v1/timings/${date.millisecondsSinceEpoch ~/ 1000}?latitude=$latitude&longitude=$longitude&method=$method&school=$madhab',
+    );
 
     try {
-      final response = await http.get(url).timeout(
-        const Duration(seconds: 10),
-        onTimeout: () {
-          throw TimeoutException(
-              'Prayer times request timed out. Please check your internet connection.');
-        },
-      );
+      final response = await http
+          .get(url)
+          .timeout(
+            const Duration(seconds: 10),
+            onTimeout: () {
+              throw TimeoutException(
+                'Prayer times request timed out. Please check your internet connection.',
+              );
+            },
+          );
 
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
@@ -101,8 +109,9 @@ class PrayerTimesService {
           } catch (e) {
             // Skip invalid prayer times
             developer.log(
-                'Warning: Could not parse prayer time for $name: $timeStr - $e',
-                name: 'PrayerTimesService');
+              'Warning: Could not parse prayer time for $name: $timeStr - $e',
+              name: 'PrayerTimesService',
+            );
           }
         });
 
@@ -113,18 +122,21 @@ class PrayerTimesService {
         return result;
       } else {
         throw Exception(
-            'Failed to fetch prayer times (Status: ${response.statusCode})');
+          'Failed to fetch prayer times (Status: ${response.statusCode})',
+        );
       }
     } on TimeoutException {
       throw TimeoutException(
-          'Prayer times request timed out. Please check your internet connection.');
+        'Prayer times request timed out. Please check your internet connection.',
+      );
     } catch (e) {
       throw Exception('Failed to fetch prayer times: $e');
     }
   }
 
-  Future<MapEntry<String, DateTime>> getNextPrayer(
-      {bool forceRefresh = false}) async {
+  Future<MapEntry<String, DateTime>> getNextPrayer({
+    bool forceRefresh = false,
+  }) async {
     final now = DateTime.now();
 
     // Use cached next prayer if it's still valid (within last minute and in the future)
@@ -155,8 +167,9 @@ class PrayerTimesService {
         try {
           final Map<String, dynamic> cached = json.decode(cachedTomorrowData);
           if (cached.containsKey('Fajr')) {
-            final fajrTime =
-                DateTime.fromMillisecondsSinceEpoch(cached['Fajr'] as int);
+            final fajrTime = DateTime.fromMillisecondsSinceEpoch(
+              cached['Fajr'] as int,
+            );
             final entry = MapEntry('Fajr', fajrTime);
             _cachedNextPrayer = entry;
             _cacheTimestamp = now;
@@ -169,16 +182,20 @@ class PrayerTimesService {
 
       // Fetch tomorrow's prayer times from network
       final url = Uri.parse(
-          'https://api.aladhan.com/v1/timings/${tomorrow.millisecondsSinceEpoch ~/ 1000}?latitude=$latitude&longitude=$longitude&method=$method&school=$madhab');
+        'https://api.aladhan.com/v1/timings/${tomorrow.millisecondsSinceEpoch ~/ 1000}?latitude=$latitude&longitude=$longitude&method=$method&school=$madhab',
+      );
 
       try {
-        final response = await http.get(url).timeout(
-          const Duration(seconds: 10),
-          onTimeout: () {
-            throw TimeoutException(
-                'Prayer times request timed out. Please check your internet connection.');
-          },
-        );
+        final response = await http
+            .get(url)
+            .timeout(
+              const Duration(seconds: 10),
+              onTimeout: () {
+                throw TimeoutException(
+                  'Prayer times request timed out. Please check your internet connection.',
+                );
+              },
+            );
 
         if (response.statusCode == 200) {
           final data = json.decode(response.body);
@@ -192,16 +209,20 @@ class PrayerTimesService {
               tomorrowCacheData[name] = dateTime.millisecondsSinceEpoch;
             } catch (e) {
               developer.log(
-                  'Warning: Could not parse tomorrow\'s prayer time for $name: $timeStr - $e',
-                  name: 'PrayerTimesService');
+                'Warning: Could not parse tomorrow\'s prayer time for $name: $timeStr - $e',
+                name: 'PrayerTimesService',
+              );
             }
           });
           await prefs.setString(
-              tomorrowCacheKey, json.encode(tomorrowCacheData));
+            tomorrowCacheKey,
+            json.encode(tomorrowCacheData),
+          );
 
           if (tomorrowCacheData.containsKey('Fajr')) {
-            final fajrTime =
-                DateTime.fromMillisecondsSinceEpoch(tomorrowCacheData['Fajr']!);
+            final fajrTime = DateTime.fromMillisecondsSinceEpoch(
+              tomorrowCacheData['Fajr']!,
+            );
             final entry = MapEntry('Fajr', fajrTime);
             _cachedNextPrayer = entry;
             _cacheTimestamp = now;
@@ -211,11 +232,13 @@ class PrayerTimesService {
           }
         } else {
           throw Exception(
-              'Failed to fetch tomorrow\'s prayer times (Status: ${response.statusCode})');
+            'Failed to fetch tomorrow\'s prayer times (Status: ${response.statusCode})',
+          );
         }
       } on TimeoutException {
         throw TimeoutException(
-            'Prayer times request timed out. Please check your internet connection.');
+          'Prayer times request timed out. Please check your internet connection.',
+        );
       } catch (e) {
         throw Exception('Failed to fetch tomorrow\'s prayer times: $e');
       }

@@ -18,26 +18,28 @@ void setupLocator() {
   getIt.registerLazySingleton<NotificationService>(() => NotificationService());
   getIt.registerLazySingleton<QuotePickerService>(() => QuotePickerService());
   getIt.registerLazySingleton<DuaRepository>(() => DuaRepository());
-  getIt.registerLazySingleton<ContextualDuaService>(() => ContextualDuaService());
-  getIt.registerLazySingleton<PrayerTrackingService>(() => PrayerTrackingService());
+  getIt.registerLazySingleton<ContextualDuaService>(
+    () => ContextualDuaService(),
+  );
+  getIt.registerLazySingleton<PrayerTrackingService>(
+    () => PrayerTrackingService(),
+  );
 
   // Adapters/ports
   getIt.registerLazySingleton<NotificationPort>(
     () => NotificationServicePort(getIt<NotificationService>()),
   );
-  getIt.registerLazySingleton<WidgetUpdatePort>(
-    () => PrayerWidgetPort(),
-  );
+  getIt.registerLazySingleton<WidgetUpdatePort>(() => PrayerWidgetPort());
 
   // Factory for prayer service based on location/method/madhab
   getIt.registerFactory<PrayerTimesServiceFactory>(
     () =>
         (double lat, double lon, int method, int madhab) => PrayerTimesService(
-              latitude: lat,
-              longitude: lon,
-              method: method,
-              madhab: madhab,
-            ),
+          latitude: lat,
+          longitude: lon,
+          method: method,
+          madhab: madhab,
+        ),
   );
 }
 
@@ -47,7 +49,8 @@ class NotificationServicePort implements NotificationPort {
 
   @override
   Future<void> schedulePrayerNotifications(
-      Map<String, DateTime> prayerTimes) async {
+    Map<String, DateTime> prayerTimes,
+  ) async {
     await _service.schedulePrayerNotifications(prayerTimes);
   }
 }

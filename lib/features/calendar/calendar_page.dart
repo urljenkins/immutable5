@@ -54,7 +54,7 @@ class _CalendarPageState extends State<CalendarPage> {
       'September',
       'October',
       'November',
-      'December'
+      'December',
     ];
     return '${months[day.month - 1]} ${day.year}';
   }
@@ -74,7 +74,8 @@ class _CalendarPageState extends State<CalendarPage> {
             SwitchListTile(
               title: const Text('Use Islamic date as primary'),
               subtitle: const Text(
-                  'Show Hijri day/month prominently in the calendar'),
+                'Show Hijri day/month prominently in the calendar',
+              ),
               value: _hijriPrimary,
               onChanged: _setHijriPrimary,
               dense: true,
@@ -88,9 +89,7 @@ class _CalendarPageState extends State<CalendarPage> {
                 firstDay: DateTime.now().subtract(const Duration(days: 365)),
                 lastDay: DateTime.now().add(const Duration(days: 365)),
                 focusedDay: _focusedDay,
-                headerStyle: const HeaderStyle(
-                  formatButtonVisible: false,
-                ),
+                headerStyle: const HeaderStyle(formatButtonVisible: false),
                 calendarBuilders: CalendarBuilders(
                   headerTitleBuilder: (context, day) {
                     final hijri = HijriCalendar.fromDate(day);
@@ -105,30 +104,35 @@ class _CalendarPageState extends State<CalendarPage> {
                       children: [
                         Text(
                           primary,
-                          style: Theme.of(context)
-                              .textTheme
-                              .titleMedium
+                          style: Theme.of(context).textTheme.titleMedium
                               ?.copyWith(fontWeight: FontWeight.w700),
                         ),
                         Text(
                           secondary,
-                          style: Theme.of(context)
-                              .textTheme
-                              .bodySmall
+                          style: Theme.of(context).textTheme.bodySmall
                               ?.copyWith(color: Colors.grey[600]),
                         ),
                       ],
                     );
                   },
                   defaultBuilder: (context, date, focusedDay) => _buildDayCell(
-                      context, date,
-                      isSelected: false, isToday: false),
+                    context,
+                    date,
+                    isSelected: false,
+                    isToday: false,
+                  ),
                   selectedBuilder: (context, date, focusedDay) => _buildDayCell(
-                      context, date,
-                      isSelected: true, isToday: false),
+                    context,
+                    date,
+                    isSelected: true,
+                    isToday: false,
+                  ),
                   todayBuilder: (context, date, focusedDay) => _buildDayCell(
-                      context, date,
-                      isSelected: false, isToday: true),
+                    context,
+                    date,
+                    isSelected: false,
+                    isToday: true,
+                  ),
                 ),
                 selectedDayPredicate: (day) => isSameDay(_selectedDay, day),
                 onDaySelected: (selected, focused) {
@@ -152,10 +156,9 @@ class _CalendarPageState extends State<CalendarPage> {
       children: [
         Text(
           'Highlights',
-          style: Theme.of(context)
-              .textTheme
-              .bodyMedium
-              ?.copyWith(fontWeight: FontWeight.w600),
+          style: Theme.of(
+            context,
+          ).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w600),
         ),
         const SizedBox(height: 6),
         Wrap(
@@ -164,16 +167,18 @@ class _CalendarPageState extends State<CalendarPage> {
           children: [
             _legendChip(color: _mandatoryFastColor, label: 'Ramadan'),
             _legendChip(
-                color: _optionalFastColor, label: 'Ayyam al-Bid (13-15)'),
+              color: _optionalFastColor,
+              label: 'Ayyam al-Bid (13-15)',
+            ),
           ],
         ),
         const SizedBox(height: 8),
         Text(
           '${_hijriPrimary ? "H" : "G"} = ${_hijriPrimary ? "Hijri" : "Gregorian"} (primary)  •  ${_hijriPrimary ? "G" : "H"} = $secondaryLabel',
           style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                color: Colors.grey[500],
-                fontSize: 11,
-              ),
+            color: Colors.grey[500],
+            fontSize: 11,
+          ),
         ),
       ],
     );
@@ -194,8 +199,12 @@ class _CalendarPageState extends State<CalendarPage> {
     );
   }
 
-  Widget _buildDayCell(BuildContext context, DateTime date,
-      {required bool isSelected, required bool isToday}) {
+  Widget _buildDayCell(
+    BuildContext context,
+    DateTime date, {
+    required bool isSelected,
+    required bool isToday,
+  }) {
     final hijri = HijriCalendar.fromDate(date);
     final isMandatoryFast = hijri.hMonth == 9;
     final isOptionalFast = _whiteDays.contains(hijri.hDay);
@@ -217,8 +226,9 @@ class _CalendarPageState extends State<CalendarPage> {
     final primaryColor = isSelected || isToday
         ? Colors.white
         : Theme.of(context).textTheme.bodyLarge?.color;
-    final secondaryColor =
-        isSelected || isToday ? Colors.white70 : Colors.grey[500];
+    final secondaryColor = isSelected || isToday
+        ? Colors.white70
+        : Colors.grey[500];
 
     return Container(
       margin: const EdgeInsets.all(2),
@@ -226,14 +236,11 @@ class _CalendarPageState extends State<CalendarPage> {
         color: isSelected
             ? Theme.of(context).colorScheme.primary
             : isToday
-                ? Theme.of(context).colorScheme.primary.withValues(alpha: 0.3)
-                : fastingBg,
+            ? Theme.of(context).colorScheme.primary.withValues(alpha: 0.3)
+            : fastingBg,
         shape: BoxShape.circle,
         border: isToday && !isSelected
-            ? Border.all(
-                color: Theme.of(context).colorScheme.primary,
-                width: 2,
-              )
+            ? Border.all(color: Theme.of(context).colorScheme.primary, width: 2)
             : null,
       ),
       alignment: Alignment.center,
@@ -244,8 +251,9 @@ class _CalendarPageState extends State<CalendarPage> {
             '$primaryDate',
             style: TextStyle(
               fontSize: 14,
-              fontWeight:
-                  isToday || isSelected ? FontWeight.bold : FontWeight.normal,
+              fontWeight: isToday || isSelected
+                  ? FontWeight.bold
+                  : FontWeight.normal,
               color: primaryColor,
             ),
           ),
@@ -262,10 +270,7 @@ class _CalendarPageState extends State<CalendarPage> {
               ),
               Text(
                 '$secondaryDate',
-                style: TextStyle(
-                  fontSize: 9,
-                  color: secondaryColor,
-                ),
+                style: TextStyle(fontSize: 9, color: secondaryColor),
               ),
             ],
           ),
