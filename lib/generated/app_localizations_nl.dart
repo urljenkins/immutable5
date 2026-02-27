@@ -66,19 +66,24 @@ class AppLocalizationsNl extends AppLocalizations {
   String get amoledTheme => 'AMOLED Donker Thema';
 
   @override
-  String get amoledThemeSubtitle => 'Gebruik echte zwarte achtergrond om batterij te besparen';
+  String get amoledThemeSubtitle =>
+      'Gebruik echte zwarte achtergrond om batterij te besparen';
 
   @override
-  String get locationServicesDisabled => 'Locatieservices zijn uitgeschakeld. Schakel locatieservices in.';
+  String get locationServicesDisabled =>
+      'Locatieservices zijn uitgeschakeld. Schakel locatieservices in.';
 
   @override
-  String get locationPermissionDenied => 'Locatietoegang is geweigerd. Geef toegang tot locatie.';
+  String get locationPermissionDenied =>
+      'Locatietoegang is geweigerd. Geef toegang tot locatie.';
 
   @override
-  String get locationPermissionPermanentlyDenied => 'Locatietoegang is permanent geweigerd. Schakel locatie in via apparaatinstellingen.';
+  String get locationPermissionPermanentlyDenied =>
+      'Locatietoegang is permanent geweigerd. Schakel locatie in via apparaatinstellingen.';
 
   @override
-  String get usingCachedPrayerTimes => 'Opgeslagen gebedsuren gebruiken (offline)';
+  String get usingCachedPrayerTimes =>
+      'Opgeslagen gebedsuren gebruiken (offline)';
 
   @override
   String get refreshPrayerTimes => 'Gebedsuren vernieuwen';

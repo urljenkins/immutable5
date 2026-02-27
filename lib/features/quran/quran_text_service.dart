@@ -124,9 +124,10 @@ class QuranTextService {
     final verses = <String>[];
     final versePattern = RegExp(r'^(\d{1,3})\.\s*(.*)$');
     final pageMarker = RegExp(r'^\d{1,3}$');
-    final headerInline =
-        RegExp('^$surahNumber\\.\\s+[^()]+\\([^)]*\\)\$'); // e.g. "2. THE HEIFER (al-Baqarah)"
-    final headerSimple = RegExp('^$surahNumber\\.\\s+[A-Z \\-]+\$'); // e.g. "1. THE OPENING"
+    final headerInline = RegExp(
+        '^$surahNumber\\.\\s+[^()]+\\([^)]*\\)\$'); // e.g. "2. THE HEIFER (al-Baqarah)"
+    final headerSimple =
+        RegExp('^$surahNumber\\.\\s+[A-Z \\-]+\$'); // e.g. "1. THE OPENING"
     final parenLine = RegExp(r'^\([^)]*\)$');
     String? current;
 
