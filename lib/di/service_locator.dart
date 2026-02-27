@@ -9,6 +9,7 @@ import '../features/home/home_controller.dart';
 import '../features/duas/dua_repository.dart';
 
 import '../features/duas/contextual_dua_service.dart';
+import '../features/places/services/places_service.dart';
 
 final getIt = GetIt.instance;
 
@@ -18,6 +19,7 @@ void setupLocator() {
   getIt.registerLazySingleton<QuotePickerService>(() => QuotePickerService());
   getIt.registerLazySingleton<DuaRepository>(() => DuaRepository());
   getIt.registerLazySingleton<ContextualDuaService>(() => ContextualDuaService());
+  getIt.registerLazySingleton<PlacesService>(() => PlacesService());
 
   // Adapters/ports
   getIt.registerLazySingleton<NotificationPort>(

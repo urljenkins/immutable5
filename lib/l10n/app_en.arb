@@ -27,5 +27,9 @@
   "refreshPrayerTimes": "Refresh prayer times",
   "nextPrayer": "Next Prayer",
   "loading": "Loading...",
-  "search": "Search"
+  "search": "Search",
+  "places": "Places",
+  "prayerPlaces": "Prayer Places",
+  "getDirections": "Get Directions",
+  "openingHours": "Opening Hours"
 }
