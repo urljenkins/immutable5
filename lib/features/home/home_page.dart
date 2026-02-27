@@ -10,7 +10,6 @@ import '../quotes/quote_picker_service.dart';
 import '../duas/models/dua_model.dart';
 import '../../shared/app_colors.dart';
 import '../../shared/glass_container.dart';
-import '../ramadan/ramadan_dashboard_page.dart';
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key, required this.title});
@@ -77,21 +76,6 @@ class _MyHomePageState extends State<MyHomePage> {
                     tooltip: AppLocalizations.of(context)!.refreshPrayerTimes,
                   )
                 : null,
-            actions: [
-              IconButton(
-                icon: const Icon(Icons.nights_stay_outlined),
-                color: AppColors.textSecondary,
-                tooltip: 'Ramadan Dashboard',
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const RamadanDashboardPage(),
-                    ),
-                  );
-                },
-              ),
-            ],
             // Premium: No title in AppBar, keeping it clean
           ),
           body: Stack(

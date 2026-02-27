@@ -48,12 +48,8 @@ class PrayerTimesService {
 
   Future<Map<String, DateTime>> getTodayPrayerTimes(
       {bool forceRefresh = false}) async {
-    return getPrayerTimesForDate(DateTime.now(), forceRefresh: forceRefresh);
-  }
-
-  Future<Map<String, DateTime>> getPrayerTimesForDate(DateTime date,
-      {bool forceRefresh = false}) async {
-    final cacheKey = _getCacheKey(date);
+    final now = DateTime.now();
+    final cacheKey = _getCacheKey(now);
 
     // Check cache first unless force refresh
     if (!forceRefresh) {
@@ -76,7 +72,7 @@ class PrayerTimesService {
 
     // Fetch from network
     final url = Uri.parse(
-        'https://api.aladhan.com/v1/timings/${date.millisecondsSinceEpoch ~/ 1000}?latitude=$latitude&longitude=$longitude&method=$method&school=$madhab');
+        'https://api.aladhan.com/v1/timings/${now.millisecondsSinceEpoch ~/ 1000}?latitude=$latitude&longitude=$longitude&method=$method&school=$madhab');
 
     try {
       final response = await http.get(url).timeout(
@@ -95,7 +91,7 @@ class PrayerTimesService {
 
         timings.forEach((name, timeStr) {
           try {
-            final dateTime = _parseTimeString(timeStr as String, date);
+            final dateTime = _parseTimeString(timeStr as String, now);
             result[name] = dateTime;
             cacheData[name] = dateTime.millisecondsSinceEpoch;
           } catch (e) {

@@ -4,13 +4,11 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:ui';
-import 'package:audioplayers/audioplayers.dart';
 
 import 'juz_of_the_day_service.dart';
 import 'quran_bookmark_service.dart';
 import 'quran_context_menu_settings.dart';
 import 'quran_text_service.dart';
-import 'quran_audio_service.dart';
 import '../../shared/app_colors.dart';
 import '../../shared/glass_container.dart';
 
@@ -26,39 +24,27 @@ class QuranPage extends StatefulWidget {
 class _QuranPageState extends State<QuranPage> {
   final QuranTextService _service = QuranTextService();
   final JuzOfTheDayService _juzService = JuzOfTheDayService();
-  final QuranAudioService _audioService = QuranAudioService();
   final _bookmarks = QuranBookmarkService.instance;
   final ScrollController _scrollController = ScrollController();
   final Map<int, GlobalKey> _chapterKeys = {};
   // Per-verse keys: key = surahNumber * 10000 + verseIndex
   final Map<int, GlobalKey> _verseKeys = {};
-  final AudioPlayer _audioPlayer = AudioPlayer();
 
   List<QuranChapter> _chapters = [];
   JuzInfo? _todayJuz;
   QuranContextMenuSettings _ctxSettings = const QuranContextMenuSettings();
   bool _loading = true;
 
-  // Audio State
-  String _currentReciterId = 'ar.alafasy';
-  int? _playingSurah;
-  int? _playingVerse;
-  bool _isPlaying = false;
-  bool _isAudioLoading = false;
-  List<String> _audioUrls = [];
-
   @override
   void initState() {
     super.initState();
     _load();
-    _audioPlayer.onPlayerComplete.listen((_) => _onPlayerComplete());
   }
 
   Future<void> _load() async {
     final chapters = await _service.getChapters();
     final prefs = await SharedPreferences.getInstance();
     final savedMode = prefs.getString('juzMode');
-    final savedReciter = prefs.getString('quran_reciter_id');
     final mode =
         savedMode == 'surahBased' ? JuzMode.surahBased : JuzMode.standard;
     final todayJuz = _juzService.getJuzForToday(mode);
@@ -78,9 +64,6 @@ class _QuranPageState extends State<QuranPage> {
       }
       _todayJuz = todayJuz;
       _ctxSettings = ctxSettings;
-      if (savedReciter != null) {
-        _currentReciterId = savedReciter;
-      }
       _loading = false;
     });
   }
@@ -88,137 +71,7 @@ class _QuranPageState extends State<QuranPage> {
   @override
   void dispose() {
     _scrollController.dispose();
-    _audioPlayer.dispose();
     super.dispose();
-  }
-
-  // ── Audio Logic ─────────────────────────────────────────────────────────────
-
-  Future<void> _changeReciter(String reciterId) async {
-    if (_currentReciterId == reciterId) return;
-
-    // Stop current playback if any
-    await _stopAudio();
-
-    setState(() {
-      _currentReciterId = reciterId;
-      _audioUrls = []; // Clear cached URLs as reciter changed
-    });
-
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setString('quran_reciter_id', reciterId);
-  }
-
-  Future<void> _playVerse(int surah, int verse) async {
-    // If playing same verse, do nothing
-    if (_playingSurah == surah && _playingVerse == verse && _isPlaying) return;
-
-    // If changing surah, we need to fetch URLs if not already available
-    if (_playingSurah != surah || _audioUrls.isEmpty) {
-      setState(() {
-        _isAudioLoading = true;
-        _playingSurah = surah;
-        _playingVerse = verse;
-        _isPlaying = false;
-      });
-
-      try {
-        final urls = await _audioService.getSurahAudioData(surah, _currentReciterId);
-        if (!mounted) return;
-        // Check race condition: if playingSurah changed while awaiting, discard this result
-        if (_playingSurah != surah) return;
-
-        setState(() {
-          _audioUrls = urls;
-          _isAudioLoading = false;
-        });
-      } catch (e) {
-        if (!mounted) return;
-        setState(() {
-          _isAudioLoading = false;
-          _playingSurah = null;
-          _playingVerse = null;
-        });
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Failed to load audio: $e')),
-        );
-        return;
-      }
-    }
-
-    if (verse >= _audioUrls.length) {
-      _stopAudio();
-      return;
-    }
-
-    try {
-      await _audioPlayer.play(UrlSource(_audioUrls[verse]));
-      setState(() {
-        _playingSurah = surah;
-        _playingVerse = verse;
-        _isPlaying = true;
-      });
-      _scrollToVerse(surah, verse);
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error playing audio: $e')),
-      );
-    }
-  }
-
-  Future<void> _togglePlay(int surah) async {
-    if (_playingSurah == surah) {
-      if (_isPlaying) {
-        await _audioPlayer.pause();
-        setState(() => _isPlaying = false);
-      } else {
-        await _audioPlayer.resume();
-        setState(() => _isPlaying = true);
-      }
-    } else {
-      // Start from beginning of Surah
-      await _playVerse(surah, 0);
-    }
-  }
-
-  Future<void> _stopAudio() async {
-    await _audioPlayer.stop();
-    setState(() {
-      _isPlaying = false;
-      _playingSurah = null;
-      _playingVerse = null;
-    });
-  }
-
-  void _onPlayerComplete() {
-    if (_playingSurah != null && _playingVerse != null) {
-      final nextVerse = _playingVerse! + 1;
-      // Check if we have more verses in this surah
-      if (_audioUrls.isNotEmpty && nextVerse < _audioUrls.length) {
-        _playVerse(_playingSurah!, nextVerse);
-      } else {
-        // End of Surah
-        setState(() {
-          _isPlaying = false;
-          _playingVerse = null;
-          // Keep playingSurah to show we are still "on" this surah, or reset?
-          // Resetting feels cleaner.
-          _playingSurah = null;
-        });
-      }
-    }
-  }
-
-  Future<void> _scrollToVerse(int surah, int verse) async {
-    final key = _verseKeys[surah * 10000 + verse];
-    if (key?.currentContext != null) {
-      await Scrollable.ensureVisible(
-        key!.currentContext!,
-        duration: const Duration(milliseconds: 300),
-        curve: Curves.easeInOut,
-        alignment: 0.3, // Position somewhat near top
-      );
-    }
   }
 
   // ── Context menu ────────────────────────────────────────────────────────────
@@ -274,15 +127,6 @@ class _QuranPageState extends State<QuranPage> {
                     Divider(
                         color: AppColors.textSecondary.withValues(alpha: 0.15),
                         height: 1),
-                    // Play verse option
-                     _ContextMenuItem(
-                        icon: Icons.play_arrow_rounded,
-                        label: 'Play from here',
-                        onTap: () {
-                          Navigator.pop(sheetCtx);
-                          _playVerse(chapter.number, verseIndex);
-                        },
-                      ),
                     if (_ctxSettings.showCopy)
                       _ContextMenuItem(
                         icon: Icons.copy_rounded,
@@ -660,84 +504,6 @@ class _QuranPageState extends State<QuranPage> {
     );
   }
 
-  // ── Reciter picker ──────────────────────────────────────────────────────────
-
-  void _openReciterPicker() {
-    showModalBottomSheet<void>(
-      context: context,
-      backgroundColor: Colors.transparent,
-      isScrollControlled: true,
-      builder: (sheetContext) {
-        return ClipRRect(
-          borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
-          child: BackdropFilter(
-            filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-            child: Container(
-              color: AppColors.cardSurface.withValues(alpha: 0.9),
-              height: MediaQuery.of(context).size.height * 0.5,
-              child: SafeArea(
-                child: Column(
-                  children: [
-                    const SizedBox(height: 12),
-                    Container(
-                      width: 40,
-                      height: 4,
-                      decoration: BoxDecoration(
-                        color: Colors.white.withValues(alpha: 0.2),
-                        borderRadius: BorderRadius.circular(2),
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: Text(
-                        'Select Reciter',
-                        style: GoogleFonts.plusJakartaSans(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                          color: AppColors.textPrimary,
-                        ),
-                      ),
-                    ),
-                    Expanded(
-                      child: ListView.separated(
-                        itemCount: QuranAudioService.availableReciters.length,
-                        padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-                        separatorBuilder: (_, __) => Divider(
-                          color: AppColors.textSecondary.withValues(alpha: 0.1),
-                          height: 1,
-                        ),
-                        itemBuilder: (_, index) {
-                          final reciter = QuranAudioService.availableReciters[index];
-                          final isSelected = reciter.id == _currentReciterId;
-                          return ListTile(
-                            leading: isSelected
-                              ? const Icon(Icons.check, color: AppColors.accent)
-                              : const SizedBox(width: 24),
-                            title: Text(
-                              reciter.name,
-                              style: GoogleFonts.plusJakartaSans(
-                                color: isSelected ? AppColors.accent : AppColors.textPrimary,
-                                fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
-                              ),
-                            ),
-                            onTap: () {
-                              Navigator.of(sheetContext).pop();
-                              _changeReciter(reciter.id);
-                            },
-                          );
-                        },
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ),
-        );
-      },
-    );
-  }
-
   // ── Scroll helpers ──────────────────────────────────────────────────────────
 
   Future<void> _scrollToChapter(QuranChapter chapter) async {
@@ -910,82 +676,6 @@ class _QuranPageState extends State<QuranPage> {
     );
   }
 
-  Widget _buildMiniPlayer() {
-    if (_playingSurah == null) return const SizedBox.shrink();
-
-    final chapter = _chapters.firstWhere(
-      (c) => c.number == _playingSurah,
-      orElse: () => _chapters.first,
-    );
-    final verseNum = (_playingVerse ?? 0) + 1;
-
-    return Container(
-      margin: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-      decoration: BoxDecoration(
-        color: AppColors.cardSurface.withValues(alpha: 0.95),
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: AppColors.accent.withValues(alpha: 0.2)),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.3),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
-          )
-        ],
-      ),
-      child: Row(
-        children: [
-          // Info
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(
-                  '${chapter.title} · Verse $verseNum',
-                  style: GoogleFonts.plusJakartaSans(
-                    fontWeight: FontWeight.bold,
-                    color: AppColors.textPrimary,
-                    fontSize: 14,
-                  ),
-                ),
-                Text(
-                  _isAudioLoading ? 'Loading...' : 'Playing',
-                  style: GoogleFonts.plusJakartaSans(
-                    color: AppColors.accent,
-                    fontSize: 12,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          // Controls
-          if (_isAudioLoading)
-            const SizedBox(
-              width: 24,
-              height: 24,
-              child: CircularProgressIndicator(strokeWidth: 2),
-            )
-          else
-            IconButton(
-              icon: Icon(
-                _isPlaying ? Icons.pause_circle_filled_rounded : Icons.play_circle_fill_rounded,
-                color: AppColors.accent,
-                size: 36,
-              ),
-              onPressed: () => _togglePlay(chapter.number),
-            ),
-
-          IconButton(
-            icon: const Icon(Icons.stop_rounded, color: AppColors.error),
-            onPressed: _stopAudio,
-          ),
-        ],
-      ),
-    );
-  }
-
   // ── Build ───────────────────────────────────────────────────────────────────
 
   @override
@@ -1000,12 +690,6 @@ class _QuranPageState extends State<QuranPage> {
         backgroundColor: Colors.transparent,
         elevation: 0,
         actions: [
-          // Reciter button
-          IconButton(
-            icon: const Icon(Icons.record_voice_over_outlined, color: AppColors.textSecondary),
-            onPressed: _openReciterPicker,
-            tooltip: 'Select Reciter',
-          ),
           // Bookmark button with badge
           ValueListenableBuilder<List<QuranBookmark>>(
             valueListenable: _bookmarks.bookmarks,
@@ -1062,47 +746,37 @@ class _QuranPageState extends State<QuranPage> {
       body: _loading
           ? Center(child: CircularProgressIndicator(color: AppColors.accent))
           : SafeArea(
-              child: Stack(
-                alignment: Alignment.bottomCenter,
+              child: Column(
                 children: [
-                  Column(
-                    children: [
-                      _buildJuzBanner(),
-                      _buildQuickJump(),
-                      Expanded(
-                        child: Scrollbar(
-                          controller: _scrollController,
-                          child: ListView.builder(
-                            controller: _scrollController,
-                            padding: const EdgeInsets.fromLTRB(16, 0, 16, 100),
-                            cacheExtent: 5000,
-                            itemCount: _chapters.length,
-                            itemBuilder: (context, index) {
-                              final chapter = _chapters[index];
-                              return _ChapterCard(
-                                key: _chapterKeys[chapter.number],
-                                chapter: chapter,
-                                verseKeys: _verseKeys,
-                                bookmarkService: _bookmarks,
-                                contextMenuSettings: _ctxSettings,
-                                onLongPressVerse: (verseIndex) =>
-                                    _showVerseContextMenu(
-                                  context,
-                                  chapter: chapter,
-                                  verseIndex: verseIndex,
-                                ),
-                                playingSurah: _playingSurah,
-                                playingVerse: _playingVerse,
-                                isPlaying: _isPlaying,
-                                onPlayTap: () => _togglePlay(chapter.number),
-                              );
-                            },
-                          ),
-                        ),
+                  _buildJuzBanner(),
+                  _buildQuickJump(),
+                  Expanded(
+                    child: Scrollbar(
+                      controller: _scrollController,
+                      child: ListView.builder(
+                        controller: _scrollController,
+                        padding: const EdgeInsets.fromLTRB(16, 0, 16, 100),
+                        cacheExtent: 5000,
+                        itemCount: _chapters.length,
+                        itemBuilder: (context, index) {
+                          final chapter = _chapters[index];
+                          return _ChapterCard(
+                            key: _chapterKeys[chapter.number],
+                            chapter: chapter,
+                            verseKeys: _verseKeys,
+                            bookmarkService: _bookmarks,
+                            contextMenuSettings: _ctxSettings,
+                            onLongPressVerse: (verseIndex) =>
+                                _showVerseContextMenu(
+                              context,
+                              chapter: chapter,
+                              verseIndex: verseIndex,
+                            ),
+                          );
+                        },
                       ),
-                    ],
+                    ),
                   ),
-                  _buildMiniPlayer(),
                 ],
               ),
             ),
@@ -1160,10 +834,6 @@ class _ChapterCard extends StatelessWidget {
     required this.bookmarkService,
     required this.contextMenuSettings,
     required this.onLongPressVerse,
-    this.playingSurah,
-    this.playingVerse,
-    this.isPlaying = false,
-    this.onPlayTap,
   });
 
   final QuranChapter chapter;
@@ -1171,15 +841,9 @@ class _ChapterCard extends StatelessWidget {
   final QuranBookmarkService bookmarkService;
   final QuranContextMenuSettings contextMenuSettings;
   final void Function(int verseIndex) onLongPressVerse;
-  final int? playingSurah;
-  final int? playingVerse;
-  final bool isPlaying;
-  final VoidCallback? onPlayTap;
 
   @override
   Widget build(BuildContext context) {
-    final isCurrentSurah = playingSurah == chapter.number;
-
     return Padding(
       padding: const EdgeInsets.only(bottom: 16),
       child: GlassContainer(
@@ -1233,17 +897,6 @@ class _ChapterCard extends StatelessWidget {
                     ],
                   ),
                 ),
-                // Play button for Surah
-                IconButton(
-                  icon: Icon(
-                    isCurrentSurah && isPlaying
-                        ? Icons.pause_circle_filled_rounded
-                        : Icons.play_circle_fill_rounded,
-                    color: AppColors.accent,
-                    size: 32,
-                  ),
-                  onPressed: onPlayTap,
-                ),
               ],
             ),
             const SizedBox(height: 16),
@@ -1255,8 +908,6 @@ class _ChapterCard extends StatelessWidget {
               separatorBuilder: (_, __) => const SizedBox(height: 12),
               itemBuilder: (_, verseIndex) {
                 final verseKey = verseKeys[chapter.number * 10000 + verseIndex];
-                final isPlayingThisVerse = isCurrentSurah && playingVerse == verseIndex;
-
                 return ValueListenableBuilder<List<QuranBookmark>>(
                   key: verseKey,
                   valueListenable: bookmarkService.bookmarks,
@@ -1264,34 +915,21 @@ class _ChapterCard extends StatelessWidget {
                     final isBookmarked = bookmarks.any((b) =>
                         b.surahNumber == chapter.number &&
                         b.verseIndex == verseIndex);
-
-                    // Combine styles: playing verse highlight overrides/adds to bookmark style
-                    BoxDecoration? decoration;
-                    if (isPlayingThisVerse) {
-                      decoration = BoxDecoration(
-                        borderRadius: BorderRadius.circular(8),
-                        color: AppColors.accent.withValues(alpha: 0.15),
-                        border: Border.all(
-                          color: AppColors.accent.withValues(alpha: 0.5),
-                          width: 1,
-                        ),
-                      );
-                    } else if (isBookmarked) {
-                      decoration = BoxDecoration(
-                        borderRadius: BorderRadius.circular(8),
-                        color: AppColors.accent.withValues(alpha: 0.07),
-                        border: Border.all(
-                          color: AppColors.accent.withValues(alpha: 0.2),
-                          width: 1,
-                        ),
-                      );
-                    }
-
                     return GestureDetector(
                       onLongPress: () => onLongPressVerse(verseIndex),
                       child: Container(
-                        decoration: decoration,
-                        padding: (isBookmarked || isPlayingThisVerse)
+                        decoration: isBookmarked
+                            ? BoxDecoration(
+                                borderRadius: BorderRadius.circular(8),
+                                color: AppColors.accent.withValues(alpha: 0.07),
+                                border: Border.all(
+                                  color:
+                                      AppColors.accent.withValues(alpha: 0.2),
+                                  width: 1,
+                                ),
+                              )
+                            : null,
+                        padding: isBookmarked
                             ? const EdgeInsets.symmetric(
                                 horizontal: 8, vertical: 4)
                             : EdgeInsets.zero,

@@ -46,7 +46,6 @@ class _SettingsPageState extends State<SettingsPage> {
   bool _showCalendar = true;
   bool _showHajj = true;
   bool _showCommonWords = true;
-  bool _showTasbih = true;
   bool _showDuas = true;
   bool _showQuran = true;
 
@@ -72,7 +71,6 @@ class _SettingsPageState extends State<SettingsPage> {
       _showCalendar = navVisibility.showCalendar;
       _showHajj = navVisibility.showHajj;
       _showCommonWords = navVisibility.showCommonWords;
-      _showTasbih = navVisibility.showTasbih;
       _showDuas = navVisibility.showDuas;
       _showQuran = navVisibility.showQuran;
     });
@@ -84,7 +82,6 @@ class _SettingsPageState extends State<SettingsPage> {
     bool? showCalendar,
     bool? showHajj,
     bool? showCommonWords,
-    bool? showTasbih,
     bool? showDuas,
     bool? showQuran,
   }) async {
@@ -95,7 +92,6 @@ class _SettingsPageState extends State<SettingsPage> {
       showCalendar: showCalendar,
       showHajj: showHajj,
       showCommonWords: showCommonWords,
-      showTasbih: showTasbih,
       showDuas: showDuas,
       showQuran: showQuran,
     );
@@ -108,7 +104,6 @@ class _SettingsPageState extends State<SettingsPage> {
       _showCalendar = updated.showCalendar;
       _showHajj = updated.showHajj;
       _showCommonWords = updated.showCommonWords;
-      _showTasbih = updated.showTasbih;
       _showDuas = updated.showDuas;
       _showQuran = updated.showQuran;
     });
@@ -143,7 +138,6 @@ class _SettingsPageState extends State<SettingsPage> {
       _showCalendar = navVisibility.showCalendar;
       _showHajj = navVisibility.showHajj;
       _showCommonWords = navVisibility.showCommonWords;
-      _showTasbih = navVisibility.showTasbih;
       _showDuas = navVisibility.showDuas;
       _showQuran = navVisibility.showQuran;
     });
@@ -195,23 +189,17 @@ class _SettingsPageState extends State<SettingsPage> {
                       style: GoogleFonts.plusJakartaSans(
                           fontWeight: FontWeight.bold),
                     ),
-                    children: [
-                      RadioGroup<String>(
-                        groupValue: _calculationMethod,
-                        onChanged: (v) => Navigator.pop(context, v),
-                        child: Column(
-                          children: _methods
-                              .map(
-                                (m) => RadioListTile(
-                                  title: Text(m),
-                                  value: m,
-                                  activeColor: AppColors.accent,
-                                ),
-                              )
-                              .toList(),
-                        ),
-                      ),
-                    ],
+                    children: _methods
+                        .map(
+                          (m) => RadioListTile<String>(
+                            title: Text(m),
+                            value: m,
+                            groupValue: _calculationMethod,
+                            onChanged: (v) => Navigator.pop(context, v),
+                            activeColor: AppColors.accent,
+                          ),
+                        )
+                        .toList(),
                   ),
                 );
                 if (choice != null) {
@@ -232,23 +220,17 @@ class _SettingsPageState extends State<SettingsPage> {
                   builder: (_) => SimpleDialog(
                     backgroundColor: AppColors.cardSurface,
                     title: Text(AppLocalizations.of(context)!.selectMadhab),
-                    children: [
-                      RadioGroup<String>(
-                        groupValue: _madhab,
-                        onChanged: (v) => Navigator.pop(context, v),
-                        child: Column(
-                          children: _madhabs
-                              .map(
-                                (m) => RadioListTile(
-                                  title: Text(m),
-                                  value: m,
-                                  activeColor: AppColors.accent,
-                                ),
-                              )
-                              .toList(),
-                        ),
-                      ),
-                    ],
+                    children: _madhabs
+                        .map(
+                          (m) => RadioListTile<String>(
+                            title: Text(m),
+                            value: m,
+                            groupValue: _madhab,
+                            onChanged: (v) => Navigator.pop(context, v),
+                            activeColor: AppColors.accent,
+                          ),
+                        )
+                        .toList(),
                   ),
                 );
                 if (choice != null) {
@@ -265,7 +247,7 @@ class _SettingsPageState extends State<SettingsPage> {
               title: Text(AppLocalizations.of(context)!.notifications),
               subtitle: const Text('Get notified for each prayer time'),
               value: _notificationsEnabled,
-              activeThumbColor: AppColors.accent,
+              activeColor: AppColors.accent,
               contentPadding: const EdgeInsets.symmetric(horizontal: 24),
               onChanged: (value) async {
                 if (value) {
@@ -303,7 +285,7 @@ class _SettingsPageState extends State<SettingsPage> {
                 subtitle: const Text(
                     'Remind me 1 hour before Friday Dhuhr (Jummah) to prepare.'),
                 value: _jummahReminders,
-                activeThumbColor: AppColors.accent,
+                activeColor: AppColors.accent,
                 contentPadding: const EdgeInsets.symmetric(horizontal: 40),
                 onChanged: (value) async {
                   final prefs = await SharedPreferences.getInstance();
@@ -316,7 +298,7 @@ class _SettingsPageState extends State<SettingsPage> {
                 subtitle: const Text(
                     'Remind me 15 minutes before Maghrib during Ramadan.'),
                 value: _iftarReminders,
-                activeThumbColor: AppColors.accent,
+                activeColor: AppColors.accent,
                 contentPadding: const EdgeInsets.symmetric(horizontal: 40),
                 onChanged: (value) async {
                   final prefs = await SharedPreferences.getInstance();
@@ -329,7 +311,7 @@ class _SettingsPageState extends State<SettingsPage> {
               title: Text(AppLocalizations.of(context)!.amoledTheme),
               subtitle: Text(AppLocalizations.of(context)!.amoledThemeSubtitle),
               value: _useAmoledTheme,
-              activeThumbColor: AppColors.accent,
+              activeColor: AppColors.accent,
               contentPadding: const EdgeInsets.symmetric(horizontal: 24),
               onChanged: (value) async {
                 final prefs = await SharedPreferences.getInstance();
@@ -370,27 +352,23 @@ class _SettingsPageState extends State<SettingsPage> {
                           fontWeight: FontWeight.bold),
                     ),
                     children: [
-                      RadioGroup<JuzMode>(
+                      RadioListTile<JuzMode>(
+                        title: const Text('Standard (30 equal parts)'),
+                        subtitle: const Text(
+                            'Traditional division — a juz may split a surah'),
+                        value: JuzMode.standard,
                         groupValue: _juzMode,
                         onChanged: (v) => Navigator.pop(context, v),
-                        child: Column(
-                          children: [
-                            RadioListTile(
-                              title: const Text('Standard (30 equal parts)'),
-                              subtitle: const Text(
-                                  'Traditional division — a juz may split a surah'),
-                              value: JuzMode.standard,
-                              activeColor: AppColors.accent,
-                            ),
-                            RadioListTile(
-                              title: const Text('Surah-based (whole surahs)'),
-                              subtitle: const Text(
-                                  'Groups of whole surahs — no surah is split'),
-                              value: JuzMode.surahBased,
-                              activeColor: AppColors.accent,
-                            ),
-                          ],
-                        ),
+                        activeColor: AppColors.accent,
+                      ),
+                      RadioListTile<JuzMode>(
+                        title: const Text('Surah-based (whole surahs)'),
+                        subtitle: const Text(
+                            'Groups of whole surahs — no surah is split'),
+                        value: JuzMode.surahBased,
+                        groupValue: _juzMode,
+                        onChanged: (v) => Navigator.pop(context, v),
+                        activeColor: AppColors.accent,
                       ),
                     ],
                   ),
@@ -422,7 +400,7 @@ class _SettingsPageState extends State<SettingsPage> {
               title: const Text('Copy verse'),
               subtitle: const Text('Copy Arabic text to clipboard'),
               value: _ctxMenuSettings.showCopy,
-              activeThumbColor: AppColors.accent,
+              activeColor: AppColors.accent,
               contentPadding: const EdgeInsets.symmetric(horizontal: 40),
               onChanged: (v) async {
                 final prefs = await SharedPreferences.getInstance();
@@ -436,7 +414,7 @@ class _SettingsPageState extends State<SettingsPage> {
               title: const Text('Bookmark verse'),
               subtitle: const Text('Save verse to your bookmarks'),
               value: _ctxMenuSettings.showBookmark,
-              activeThumbColor: AppColors.accent,
+              activeColor: AppColors.accent,
               contentPadding: const EdgeInsets.symmetric(horizontal: 40),
               onChanged: (v) async {
                 final prefs = await SharedPreferences.getInstance();
@@ -450,7 +428,7 @@ class _SettingsPageState extends State<SettingsPage> {
               title: const Text('Share verse'),
               subtitle: const Text('Share verse via system share sheet'),
               value: _ctxMenuSettings.showShare,
-              activeThumbColor: AppColors.accent,
+              activeColor: AppColors.accent,
               contentPadding: const EdgeInsets.symmetric(horizontal: 40),
               onChanged: (v) async {
                 final prefs = await SharedPreferences.getInstance();
@@ -464,7 +442,7 @@ class _SettingsPageState extends State<SettingsPage> {
               title: const Text('Ayah info'),
               subtitle: const Text('Show surah & verse number'),
               value: _ctxMenuSettings.showAyahInfo,
-              activeThumbColor: AppColors.accent,
+              activeColor: AppColors.accent,
               contentPadding: const EdgeInsets.symmetric(horizontal: 40),
               onChanged: (v) async {
                 final prefs = await SharedPreferences.getInstance();
@@ -479,57 +457,50 @@ class _SettingsPageState extends State<SettingsPage> {
             SwitchListTile(
               title: const Text('Track tab'),
               value: _showTrack,
-              activeThumbColor: AppColors.accent,
+              activeColor: AppColors.accent,
               contentPadding: const EdgeInsets.symmetric(horizontal: 24),
               onChanged: (value) => _updateNavVisibility(showTrack: value),
             ),
             SwitchListTile(
               title: const Text('Qibla tab'),
               value: _showQibla,
-              activeThumbColor: AppColors.accent,
+              activeColor: AppColors.accent,
               contentPadding: const EdgeInsets.symmetric(horizontal: 24),
               onChanged: (value) => _updateNavVisibility(showQibla: value),
             ),
             SwitchListTile(
               title: Text(AppLocalizations.of(context)!.calendar),
               value: _showCalendar,
-              activeThumbColor: AppColors.accent,
+              activeColor: AppColors.accent,
               contentPadding: const EdgeInsets.symmetric(horizontal: 24),
               onChanged: (value) => _updateNavVisibility(showCalendar: value),
             ),
             SwitchListTile(
               title: Text(AppLocalizations.of(context)!.hajj),
               value: _showHajj,
-              activeThumbColor: AppColors.accent,
+              activeColor: AppColors.accent,
               contentPadding: const EdgeInsets.symmetric(horizontal: 24),
               onChanged: (value) => _updateNavVisibility(showHajj: value),
             ),
             SwitchListTile(
               title: Text(AppLocalizations.of(context)!.commonWords),
               value: _showCommonWords,
-              activeThumbColor: AppColors.accent,
+              activeColor: AppColors.accent,
               contentPadding: const EdgeInsets.symmetric(horizontal: 24),
               onChanged: (value) =>
                   _updateNavVisibility(showCommonWords: value),
             ),
             SwitchListTile(
-              title: Text(AppLocalizations.of(context)!.tasbih),
-              value: _showTasbih,
-              activeThumbColor: AppColors.accent,
-              contentPadding: const EdgeInsets.symmetric(horizontal: 24),
-              onChanged: (value) => _updateNavVisibility(showTasbih: value),
-            ),
-            SwitchListTile(
               title: const Text('Duas'),
               value: _showDuas,
-              activeThumbColor: AppColors.accent,
+              activeColor: AppColors.accent,
               contentPadding: const EdgeInsets.symmetric(horizontal: 24),
               onChanged: (value) => _updateNavVisibility(showDuas: value),
             ),
             SwitchListTile(
               title: Text(AppLocalizations.of(context)!.quran),
               value: _showQuran,
-              activeThumbColor: AppColors.accent,
+              activeColor: AppColors.accent,
               contentPadding: const EdgeInsets.symmetric(horizontal: 24),
               onChanged: (value) => _updateNavVisibility(showQuran: value),
             ),
@@ -540,7 +511,7 @@ class _SettingsPageState extends State<SettingsPage> {
               subtitle: const Text(
                   'Reduce battery usage by limiting background updates'),
               value: _batterySaverMode,
-              activeThumbColor: AppColors.accent,
+              activeColor: AppColors.accent,
               contentPadding: const EdgeInsets.symmetric(horizontal: 24),
               secondary: const Icon(Icons.battery_saver,
                   color: AppColors.textSecondary),
@@ -658,7 +629,7 @@ class _SettingsPageState extends State<SettingsPage> {
           spacing: 12,
           runSpacing: 12,
           children: colors.map((color) {
-            final isSelected = color.toARGB32() == AppColors.accent.toARGB32();
+            final isSelected = color.value == AppColors.accent.value;
             return GestureDetector(
               onTap: () async {
                 final prefs = await SharedPreferences.getInstance();
@@ -666,7 +637,7 @@ class _SettingsPageState extends State<SettingsPage> {
                   AppColors.accent = color;
                 });
                 accentColorNotifier.value = color;
-                await prefs.setInt(_keyAccentColor, color.toARGB32());
+                await prefs.setInt(_keyAccentColor, color.value);
                 if (context.mounted) Navigator.pop(context);
               },
               child: Container(

@@ -15,7 +15,6 @@ import 'generated/app_localizations.dart';
 import 'features/common_words/common_words_page.dart';
 import 'features/duas/duas_page.dart';
 import 'features/home/home_page.dart';
-import 'features/tasbih/tasbih_page.dart';
 import 'di/service_locator.dart';
 import 'shared/app_colors.dart';
 
@@ -291,18 +290,6 @@ class _AppScaffoldState extends State<AppScaffold> {
       );
     }
 
-    if (visibility.showTasbih) {
-      items.add(
-        _NavItem(
-          page: const TasbihPage(),
-          item: BottomNavigationBarItem(
-            icon: const Icon(Icons.fingerprint),
-            label: AppLocalizations.of(context)!.tasbih,
-          ),
-        ),
-      );
-    }
-
     if (visibility.showDuas) {
       items.add(
         _NavItem(
@@ -353,7 +340,6 @@ class BottomNavVisibility {
   final bool showCalendar;
   final bool showHajj;
   final bool showCommonWords;
-  final bool showTasbih;
   final bool showDuas;
   final bool showQuran;
 
@@ -363,7 +349,6 @@ class BottomNavVisibility {
     this.showCalendar = true,
     this.showHajj = true,
     this.showCommonWords = true,
-    this.showTasbih = true,
     this.showDuas = true,
     this.showQuran = true,
   });
@@ -373,7 +358,6 @@ class BottomNavVisibility {
   static const _keyCalendar = 'nav_show_calendar';
   static const _keyHajj = 'nav_show_hajj';
   static const _keyCommonWords = 'nav_show_common_words';
-  static const _keyTasbih = 'nav_show_tasbih';
   static const _keyDuas = 'nav_show_duas';
   static const _keyQuran = 'nav_show_quran';
 
@@ -384,7 +368,6 @@ class BottomNavVisibility {
       showCalendar: prefs.getBool(_keyCalendar) ?? true,
       showHajj: prefs.getBool(_keyHajj) ?? true,
       showCommonWords: prefs.getBool(_keyCommonWords) ?? true,
-      showTasbih: prefs.getBool(_keyTasbih) ?? true,
       showDuas: prefs.getBool(_keyDuas) ?? true,
       showQuran: prefs.getBool(_keyQuran) ?? true,
     );
@@ -396,7 +379,6 @@ class BottomNavVisibility {
     bool? showCalendar,
     bool? showHajj,
     bool? showCommonWords,
-    bool? showTasbih,
     bool? showDuas,
     bool? showQuran,
   }) {
@@ -406,7 +388,6 @@ class BottomNavVisibility {
       showCalendar: showCalendar ?? this.showCalendar,
       showHajj: showHajj ?? this.showHajj,
       showCommonWords: showCommonWords ?? this.showCommonWords,
-      showTasbih: showTasbih ?? this.showTasbih,
       showDuas: showDuas ?? this.showDuas,
       showQuran: showQuran ?? this.showQuran,
     );
@@ -418,7 +399,6 @@ class BottomNavVisibility {
     await prefs.setBool(_keyCalendar, showCalendar);
     await prefs.setBool(_keyHajj, showHajj);
     await prefs.setBool(_keyCommonWords, showCommonWords);
-    await prefs.setBool(_keyTasbih, showTasbih);
     await prefs.setBool(_keyDuas, showDuas);
     await prefs.setBool(_keyQuran, showQuran);
   }

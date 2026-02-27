@@ -320,7 +320,7 @@ class _CommonWordsPageState extends State<CommonWordsPage> {
                   setState(() => _showMemorized = value);
                   _applyFilters();
                 },
-                activeThumbColor: Colors.greenAccent,
+                activeColor: Colors.greenAccent,
               ),
             ],
           ],
