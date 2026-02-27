@@ -94,7 +94,8 @@ class PrayerWidgetService {
 
       // Get and store Hijri date
       final hijri = HijriCalendar.now();
-      final hijriDate = '${hijri.hDay} ${_getHijriMonthName(hijri.hMonth)} ${hijri.hYear}';
+      final hijriDate =
+          '${hijri.hDay} ${_getHijriMonthName(hijri.hMonth)} ${hijri.hYear}';
       await HomeWidget.saveWidgetData<String>('hijri_date', hijriDate);
 
       // Store widget theme preferences
@@ -131,7 +132,8 @@ class PrayerWidgetService {
   }
 
   /// Get location name from coordinates using reverse geocoding
-  static Future<String> _getLocationName(double latitude, double longitude) async {
+  static Future<String> _getLocationName(
+      double latitude, double longitude) async {
     try {
       // Try to get cached location name first
       final prefs = await SharedPreferences.getInstance();

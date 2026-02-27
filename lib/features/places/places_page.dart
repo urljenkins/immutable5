@@ -42,7 +42,8 @@ class _PlacesPageState extends State<PlacesPage> {
       permission = await Geolocator.requestPermission();
     }
 
-    if (permission == LocationPermission.whileInUse || permission == LocationPermission.always) {
+    if (permission == LocationPermission.whileInUse ||
+        permission == LocationPermission.always) {
       if (!mounted) return;
       setState(() => _locationPermissionGranted = true);
       try {
@@ -65,7 +66,8 @@ class _PlacesPageState extends State<PlacesPage> {
     if (!mounted) return;
     setState(() => _loading = true);
     try {
-      final places = await _placesService.getNearbyPlaces(_center.latitude, _center.longitude);
+      final places = await _placesService.getNearbyPlaces(
+          _center.latitude, _center.longitude);
       if (mounted) {
         setState(() {
           _places = places;
@@ -77,7 +79,8 @@ class _PlacesPageState extends State<PlacesPage> {
         setState(() => _loading = false);
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Failed to load places. Please try again.', style: GoogleFonts.plusJakartaSans(color: Colors.white)),
+            content: Text('Failed to load places. Please try again.',
+                style: GoogleFonts.plusJakartaSans(color: Colors.white)),
             backgroundColor: AppColors.error,
           ),
         );
@@ -117,13 +120,15 @@ class _PlacesPageState extends State<PlacesPage> {
               ),
               const SizedBox(height: 16),
               if (place.details?['opening_hours'] != null) ...[
-                 Row(
+                Row(
                   children: [
-                    Icon(Icons.access_time, color: AppColors.textSecondary, size: 16),
+                    Icon(Icons.access_time,
+                        color: AppColors.textSecondary, size: 16),
                     const SizedBox(width: 8),
                     Text(
                       place.details!['opening_hours'],
-                      style: GoogleFonts.plusJakartaSans(color: AppColors.textSecondary),
+                      style: GoogleFonts.plusJakartaSans(
+                          color: AppColors.textSecondary),
                     ),
                   ],
                 ),
@@ -145,7 +150,8 @@ class _PlacesPageState extends State<PlacesPage> {
                   icon: const Icon(Icons.directions),
                   label: Text(
                     AppLocalizations.of(context)!.getDirections,
-                    style: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.bold),
+                    style: GoogleFonts.plusJakartaSans(
+                        fontWeight: FontWeight.bold),
                   ),
                 ),
               ),
@@ -157,14 +163,16 @@ class _PlacesPageState extends State<PlacesPage> {
   }
 
   Future<void> _launchMaps(double lat, double lng) async {
-    final googleMapsUrl = Uri.parse('https://www.google.com/maps/search/?api=1&query=$lat,$lng');
+    final googleMapsUrl =
+        Uri.parse('https://www.google.com/maps/search/?api=1&query=$lat,$lng');
     if (await canLaunchUrl(googleMapsUrl)) {
       await launchUrl(googleMapsUrl);
     } else {
-       if (mounted) {
+      if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Could not launch maps.', style: GoogleFonts.plusJakartaSans(color: Colors.white)),
+            content: Text('Could not launch maps.',
+                style: GoogleFonts.plusJakartaSans(color: Colors.white)),
             backgroundColor: AppColors.error,
           ),
         );
@@ -218,18 +226,18 @@ class _PlacesPageState extends State<PlacesPage> {
 
                   // Places markers
                   ..._places.map((place) => Marker(
-                    point: LatLng(place.lat, place.lng),
-                    width: 40,
-                    height: 40,
-                    child: GestureDetector(
-                      onTap: () => _showPlaceDetails(place),
-                      child: Icon(
-                        Icons.location_on,
-                        color: AppColors.accent,
-                        size: 40,
-                      ),
-                    ),
-                  )),
+                        point: LatLng(place.lat, place.lng),
+                        width: 40,
+                        height: 40,
+                        child: GestureDetector(
+                          onTap: () => _showPlaceDetails(place),
+                          child: Icon(
+                            Icons.location_on,
+                            color: AppColors.accent,
+                            size: 40,
+                          ),
+                        ),
+                      )),
                 ],
               ),
             ],
@@ -276,12 +284,12 @@ class _PlacesPageState extends State<PlacesPage> {
                     IconButton(
                       icon: const Icon(Icons.refresh, color: Colors.white),
                       onPressed: () {
-                         // Re-fetch based on current map center
-                         final center = _mapController.camera.center;
-                         setState(() {
-                           _center = center;
-                         });
-                         _fetchPlaces();
+                        // Re-fetch based on current map center
+                        final center = _mapController.camera.center;
+                        setState(() {
+                          _center = center;
+                        });
+                        _fetchPlaces();
                       },
                     ),
                 ],

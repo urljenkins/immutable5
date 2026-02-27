@@ -18,7 +18,8 @@ void setupLocator() {
   getIt.registerLazySingleton<NotificationService>(() => NotificationService());
   getIt.registerLazySingleton<QuotePickerService>(() => QuotePickerService());
   getIt.registerLazySingleton<DuaRepository>(() => DuaRepository());
-  getIt.registerLazySingleton<ContextualDuaService>(() => ContextualDuaService());
+  getIt.registerLazySingleton<ContextualDuaService>(
+      () => ContextualDuaService());
   getIt.registerLazySingleton<PlacesService>(() => PlacesService());
 
   // Adapters/ports
@@ -31,13 +32,13 @@ void setupLocator() {
 
   // Factory for prayer service based on location/method/madhab
   getIt.registerFactory<PrayerTimesServiceFactory>(
-    () => (double lat, double lon, int method, int madhab) =>
-        PrayerTimesService(
-      latitude: lat,
-      longitude: lon,
-      method: method,
-      madhab: madhab,
-    ),
+    () =>
+        (double lat, double lon, int method, int madhab) => PrayerTimesService(
+              latitude: lat,
+              longitude: lon,
+              method: method,
+              madhab: madhab,
+            ),
   );
 }
 

@@ -6,7 +6,8 @@ import 'dart:developer' as developer;
 class PlacesService {
   static const String _overpassUrl = 'https://overpass-api.de/api/interpreter';
 
-  Future<List<PlaceModel>> getNearbyPlaces(double lat, double lng, {double radius = 5000}) async {
+  Future<List<PlaceModel>> getNearbyPlaces(double lat, double lng,
+      {double radius = 5000}) async {
     // Overpass QL query: find nodes/ways with amenity=place_of_worship and religion=muslim within radius
     final query = '''
       [out:json][timeout:25];
@@ -25,11 +26,12 @@ class PlacesService {
 
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
-        final elements = (data['elements'] as List).cast<Map<String, dynamic>>();
+        final elements =
+            (data['elements'] as List).cast<Map<String, dynamic>>();
 
         return elements.map((e) {
           if (e['type'] == 'way' && e.containsKey('center')) {
-             return PlaceModel.fromJson({
+            return PlaceModel.fromJson({
               ...e,
               'lat': e['center']['lat'],
               'lon': e['center']['lon'],

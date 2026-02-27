@@ -69,13 +69,16 @@ class AppLocalizationsEn extends AppLocalizations {
   String get amoledThemeSubtitle => 'Use true black background to save battery';
 
   @override
-  String get locationServicesDisabled => 'Location services are disabled. Please enable location services.';
+  String get locationServicesDisabled =>
+      'Location services are disabled. Please enable location services.';
 
   @override
-  String get locationPermissionDenied => 'Location permissions are denied. Please grant location access.';
+  String get locationPermissionDenied =>
+      'Location permissions are denied. Please grant location access.';
 
   @override
-  String get locationPermissionPermanentlyDenied => 'Location permissions are permanently denied. Please enable location in your device settings.';
+  String get locationPermissionPermanentlyDenied =>
+      'Location permissions are permanently denied. Please enable location in your device settings.';
 
   @override
   String get usingCachedPrayerTimes => 'Using cached prayer times (offline)';
