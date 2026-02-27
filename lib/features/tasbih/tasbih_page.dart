@@ -37,6 +37,7 @@ class _TasbihPageState extends State<TasbihPage> with SingleTickerProviderStateM
 
   @override
   void dispose() {
+    _isVoiceEnabled = false;
     _pulseController.dispose();
     if (_isListening) {
       _speech.stop();
@@ -45,6 +46,7 @@ class _TasbihPageState extends State<TasbihPage> with SingleTickerProviderStateM
   }
 
   void _incrementCount() {
+    if (!mounted) return;
     HapticFeedback.mediumImpact();
     setState(() {
       _count++;
@@ -117,8 +119,10 @@ class _TasbihPageState extends State<TasbihPage> with SingleTickerProviderStateM
         if (result.finalResult) {
              _incrementCount();
              // Restart listening for the next phrase
-             if (_isVoiceEnabled) {
-               Future.delayed(const Duration(milliseconds: 100), _startListening);
+             if (_isVoiceEnabled && mounted) {
+               Future.delayed(const Duration(milliseconds: 100), () {
+                 if (mounted && _isVoiceEnabled) _startListening();
+               });
              }
         }
       },
