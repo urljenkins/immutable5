@@ -100,7 +100,7 @@ abstract class AppLocalizations {
     Locale('es'),
     Locale('fr'),
     Locale('nl'),
-    Locale('zh')
+    Locale('zh'),
   ];
 
   /// No description provided for @appTitle.
@@ -341,7 +341,14 @@ class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> 
   }
 
   @override
-  bool isSupported(Locale locale) => <String>['ar', 'en', 'es', 'fr', 'nl', 'zh'].contains(locale.languageCode);
+  bool isSupported(Locale locale) => <String>[
+        'ar',
+        'en',
+        'es',
+        'fr',
+        'nl',
+        'zh',
+      ].contains(locale.languageCode);
 
   @override
   bool shouldReload(_AppLocalizationsDelegate old) => false;

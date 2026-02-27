@@ -21,8 +21,9 @@ class NotificationService {
     // Initialize timezone data
     tz.initializeTimeZones();
 
-    const androidSettings =
-        AndroidInitializationSettings('@mipmap/ic_launcher');
+    const androidSettings = AndroidInitializationSettings(
+      '@mipmap/ic_launcher',
+    );
     const iosSettings = DarwinInitializationSettings(
       requestAlertPermission: false,
       requestBadgePermission: false,
@@ -44,8 +45,10 @@ class NotificationService {
 
   void _onNotificationTapped(NotificationResponse response) {
     // Handle notification tap - could navigate to prayer times page
-    developer.log('Notification tapped: ${response.payload}',
-        name: 'NotificationService');
+    developer.log(
+      'Notification tapped: ${response.payload}',
+      name: 'NotificationService',
+    );
   }
 
   Future<bool> requestPermissions() async {
@@ -57,7 +60,8 @@ class NotificationService {
   }
 
   Future<void> schedulePrayerNotifications(
-      Map<String, DateTime> prayerTimes) async {
+    Map<String, DateTime> prayerTimes,
+  ) async {
     if (!_initialized) await initialize();
 
     final prefs = await SharedPreferences.getInstance();

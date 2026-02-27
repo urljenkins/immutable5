@@ -52,13 +52,15 @@ class _JuzPageState extends State<JuzPage> {
 
       if (startVerse >= endVerse) continue;
 
-      slices.add(_JuzChapterSlice(
-        chapter: chapter,
-        verses: chapter.verses.sublist(
-          startVerse.clamp(0, chapter.verses.length),
-          endVerse.clamp(0, chapter.verses.length),
+      slices.add(
+        _JuzChapterSlice(
+          chapter: chapter,
+          verses: chapter.verses.sublist(
+            startVerse.clamp(0, chapter.verses.length),
+            endVerse.clamp(0, chapter.verses.length),
+          ),
         ),
-      ));
+      );
     }
 
     setState(() {
@@ -138,7 +140,8 @@ class _SliceCard extends StatelessWidget {
                     shape: BoxShape.circle,
                     color: AppColors.accent.withValues(alpha: 0.1),
                     border: Border.all(
-                        color: AppColors.accent.withValues(alpha: 0.3)),
+                      color: AppColors.accent.withValues(alpha: 0.3),
+                    ),
                   ),
                   alignment: Alignment.center,
                   child: Text(

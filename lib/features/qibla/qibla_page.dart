@@ -68,8 +68,10 @@ class _QiblaPageState extends State<QiblaPage> {
                           if (snapshot.connectionState ==
                               ConnectionState.waiting) {
                             return Center(
-                                child: CircularProgressIndicator(
-                                    color: AppColors.accent));
+                              child: CircularProgressIndicator(
+                                color: AppColors.accent,
+                              ),
+                            );
                           }
 
                           if (snapshot.hasError) {
@@ -77,7 +79,8 @@ class _QiblaPageState extends State<QiblaPage> {
                               child: Text(
                                 'Error: ${snapshot.error}',
                                 style: GoogleFonts.plusJakartaSans(
-                                    color: AppColors.error),
+                                  color: AppColors.error,
+                                ),
                               ),
                             );
                           }
@@ -88,7 +91,8 @@ class _QiblaPageState extends State<QiblaPage> {
                               child: Text(
                                 'Loading Qibla direction...',
                                 style: GoogleFonts.plusJakartaSans(
-                                    color: AppColors.textSecondary),
+                                  color: AppColors.textSecondary,
+                                ),
                               ),
                             );
                           }
@@ -157,8 +161,9 @@ class _QiblaPageState extends State<QiblaPage> {
                     borderRadius: BorderRadius.circular(2),
                     boxShadow: [
                       BoxShadow(
-                        color: AppColors.accent
-                            .withAlpha(128), // .withOpacity(0.5) alternatively
+                        color: AppColors.accent.withAlpha(
+                          128,
+                        ), // .withOpacity(0.5) alternatively
                         blurRadius: 8,
                       ),
                     ],
@@ -190,9 +195,7 @@ class _QiblaPageState extends State<QiblaPage> {
                           width: 2,
                         ),
                       ),
-                      child: CustomPaint(
-                        painter: CompassPainter(),
-                      ),
+                      child: CustomPaint(painter: CompassPainter()),
                     ),
 
                     // Kaaba Icon on the dial
@@ -204,7 +207,9 @@ class _QiblaPageState extends State<QiblaPage> {
                           // Connection line from center to Kaaba
                           Transform.translate(
                             offset: const Offset(
-                                0, -65), // Halfway between center and Kaaba
+                              0,
+                              -65,
+                            ), // Halfway between center and Kaaba
                             child: Container(
                               width: 2,
                               height: 130, // From center (0) outwards
@@ -224,7 +229,9 @@ class _QiblaPageState extends State<QiblaPage> {
                           // The Kaaba Icon itself
                           Transform.translate(
                             offset: const Offset(
-                                0, -115), // Placed neatly on the inner ring
+                              0,
+                              -115,
+                            ), // Placed neatly on the inner ring
                             child: const _KaabaIcon(size: 32),
                           ),
                         ],
@@ -236,11 +243,7 @@ class _QiblaPageState extends State<QiblaPage> {
 
               // Central Navigation Arrow
               // This arrow is fixed, always pointing forward (relative to the device heading)
-              Icon(
-                Icons.navigation,
-                size: 60,
-                color: AppColors.accent,
-              ),
+              Icon(Icons.navigation, size: 60, color: AppColors.accent),
             ],
           ),
         ),

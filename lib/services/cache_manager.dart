@@ -13,11 +13,7 @@ class CacheManager {
       24 * 60 * 60 * 1000; // 24 hours in milliseconds
 
   /// Store data in cache with optional TTL
-  Future<void> set(
-    String key,
-    String value, {
-    int? ttlMs,
-  }) async {
+  Future<void> set(String key, String value, {int? ttlMs}) async {
     final prefs = await SharedPreferences.getInstance();
     final now = DateTime.now().millisecondsSinceEpoch;
     final expiry = now + (ttlMs ?? _defaultTTL);
@@ -143,8 +139,9 @@ class CacheManager {
 
     try {
       final decoded = json.decode(metaJson) as Map<String, dynamic>;
-      return decoded
-          .map((key, value) => MapEntry(key, value as Map<String, dynamic>));
+      return decoded.map(
+        (key, value) => MapEntry(key, value as Map<String, dynamic>),
+      );
     } catch (e) {
       return {};
     }
@@ -178,8 +175,10 @@ class CacheManager {
     });
 
     final prefs = await SharedPreferences.getInstance();
-    int totalSize =
-        metadata.values.fold(0, (sum, meta) => sum + (meta['size'] as int));
+    int totalSize = metadata.values.fold(
+      0,
+      (sum, meta) => sum + (meta['size'] as int),
+    );
 
     // Remove oldest entries until under limit
     for (final entry in entries) {

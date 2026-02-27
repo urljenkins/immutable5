@@ -73,8 +73,9 @@ class QuranBookmarkService {
     }
   }
 
-  bool isBookmarked(int surahNumber, int verseIndex) => bookmarks.value
-      .any((b) => b.surahNumber == surahNumber && b.verseIndex == verseIndex);
+  bool isBookmarked(int surahNumber, int verseIndex) => bookmarks.value.any(
+        (b) => b.surahNumber == surahNumber && b.verseIndex == verseIndex,
+      );
 
   /// Adds a bookmark; no-op if already present. Returns `true` if added.
   Future<bool> add(QuranBookmark bookmark) async {
@@ -89,8 +90,9 @@ class QuranBookmarkService {
   Future<bool> remove(int surahNumber, int verseIndex) async {
     final before = bookmarks.value.length;
     final updated = bookmarks.value
-        .where((b) =>
-            !(b.surahNumber == surahNumber && b.verseIndex == verseIndex))
+        .where(
+          (b) => !(b.surahNumber == surahNumber && b.verseIndex == verseIndex),
+        )
         .toList();
     if (updated.length == before) return false;
     bookmarks.value = updated;

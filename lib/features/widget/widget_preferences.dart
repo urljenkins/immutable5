@@ -8,11 +8,7 @@ enum WidgetTheme {
   pureDark, // True black background, white text, gold accent
 }
 
-enum WidgetLayout {
-  compact,
-  detailed,
-  minimal,
-}
+enum WidgetLayout { compact, detailed, minimal }
 
 class WidgetPreferences {
   static const String _keyTheme = 'widget_theme';

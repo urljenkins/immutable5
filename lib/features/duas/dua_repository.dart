@@ -31,11 +31,16 @@ class DuaRepository {
 
       _duas = jsonList.map((json) => Dua.fromJson(json)).toList();
       _initialized = true;
-      developer.log('Successfully loaded ${_duas.length} duas',
-          name: 'DuaRepository');
+      developer.log(
+        'Successfully loaded ${_duas.length} duas',
+        name: 'DuaRepository',
+      );
     } catch (e) {
-      developer.log('Error loading duas.json: $e',
-          name: 'DuaRepository', error: e);
+      developer.log(
+        'Error loading duas.json: $e',
+        name: 'DuaRepository',
+        error: e,
+      );
       _duas = [];
     }
   }

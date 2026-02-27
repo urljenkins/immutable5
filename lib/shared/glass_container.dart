@@ -32,8 +32,10 @@ class GlassContainer extends StatelessWidget {
       child: ClipRRect(
         borderRadius: BorderRadius.circular(borderRadius),
         child: BackdropFilter(
-          filter:
-              ImageFilter.blur(sigmaX: 10, sigmaY: 10), // The "Frost" effect
+          filter: ImageFilter.blur(
+            sigmaX: 10,
+            sigmaY: 10,
+          ), // The "Frost" effect
           child: GestureDetector(
             onTap: onTap,
             child: Container(

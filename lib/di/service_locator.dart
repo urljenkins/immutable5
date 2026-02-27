@@ -27,9 +27,7 @@ void setupLocator() {
   getIt.registerLazySingleton<NotificationPort>(
     () => NotificationServicePort(getIt<NotificationService>()),
   );
-  getIt.registerLazySingleton<WidgetUpdatePort>(
-    () => PrayerWidgetPort(),
-  );
+  getIt.registerLazySingleton<WidgetUpdatePort>(() => PrayerWidgetPort());
 
   // Factory for prayer service based on location/method/madhab
   getIt.registerFactory<PrayerTimesServiceFactory>(
@@ -49,7 +47,8 @@ class NotificationServicePort implements NotificationPort {
 
   @override
   Future<void> schedulePrayerNotifications(
-      Map<String, DateTime> prayerTimes) async {
+    Map<String, DateTime> prayerTimes,
+  ) async {
     await _service.schedulePrayerNotifications(prayerTimes);
   }
 }
