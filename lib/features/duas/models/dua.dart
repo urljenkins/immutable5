@@ -54,8 +54,7 @@ class Dua {
   String get categoryLabel =>
       category ?? (tags.isNotEmpty ? tags.first : 'Uncategorized');
 
-  String get shareText =>
-      '$arabic\n\n$transliteration\n\n$translationEn';
+  String get shareText => '$arabic\n\n$transliteration\n\n$translationEn';
 
   factory Dua.fromJson(Map<String, dynamic> json) {
     return Dua(
@@ -82,12 +81,12 @@ class Dua {
               json['display_context'] as Map<String, dynamic>)
           : null,
       authenticity: json['authenticity'] != null
-          ? Authenticity.fromJson(
-              json['authenticity'] as Map<String, dynamic>)
+          ? Authenticity.fromJson(json['authenticity'] as Map<String, dynamic>)
           : null,
       benefits: json['benefits'] as String?,
       notes: json['notes'] as String?,
-      relatedIds: (json['related_ids'] as List?)?.map((e) => e.toString()).toList(),
+      relatedIds:
+          (json['related_ids'] as List?)?.map((e) => e.toString()).toList(),
       variants: (json['variants'] as List?)
           ?.map((e) => DuaVariant.fromJson(e as Map<String, dynamic>))
           .toList(),

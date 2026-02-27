@@ -46,6 +46,7 @@ class _SettingsPageState extends State<SettingsPage> {
   bool _showCalendar = true;
   bool _showHajj = true;
   bool _showCommonWords = true;
+  bool _showTasbih = true;
   bool _showDuas = true;
   bool _showQuran = true;
 
@@ -71,6 +72,7 @@ class _SettingsPageState extends State<SettingsPage> {
       _showCalendar = navVisibility.showCalendar;
       _showHajj = navVisibility.showHajj;
       _showCommonWords = navVisibility.showCommonWords;
+      _showTasbih = navVisibility.showTasbih;
       _showDuas = navVisibility.showDuas;
       _showQuran = navVisibility.showQuran;
     });
@@ -82,6 +84,7 @@ class _SettingsPageState extends State<SettingsPage> {
     bool? showCalendar,
     bool? showHajj,
     bool? showCommonWords,
+    bool? showTasbih,
     bool? showDuas,
     bool? showQuran,
   }) async {
@@ -92,6 +95,7 @@ class _SettingsPageState extends State<SettingsPage> {
       showCalendar: showCalendar,
       showHajj: showHajj,
       showCommonWords: showCommonWords,
+      showTasbih: showTasbih,
       showDuas: showDuas,
       showQuran: showQuran,
     );
@@ -104,6 +108,7 @@ class _SettingsPageState extends State<SettingsPage> {
       _showCalendar = updated.showCalendar;
       _showHajj = updated.showHajj;
       _showCommonWords = updated.showCommonWords;
+      _showTasbih = updated.showTasbih;
       _showDuas = updated.showDuas;
       _showQuran = updated.showQuran;
     });
@@ -138,6 +143,7 @@ class _SettingsPageState extends State<SettingsPage> {
       _showCalendar = navVisibility.showCalendar;
       _showHajj = navVisibility.showHajj;
       _showCommonWords = navVisibility.showCommonWords;
+      _showTasbih = navVisibility.showTasbih;
       _showDuas = navVisibility.showDuas;
       _showQuran = navVisibility.showQuran;
     });
@@ -505,6 +511,13 @@ class _SettingsPageState extends State<SettingsPage> {
               contentPadding: const EdgeInsets.symmetric(horizontal: 24),
               onChanged: (value) =>
                   _updateNavVisibility(showCommonWords: value),
+            ),
+            SwitchListTile(
+              title: Text(AppLocalizations.of(context)!.tasbih),
+              value: _showTasbih,
+              activeThumbColor: AppColors.accent,
+              contentPadding: const EdgeInsets.symmetric(horizontal: 24),
+              onChanged: (value) => _updateNavVisibility(showTasbih: value),
             ),
             SwitchListTile(
               title: const Text('Duas'),

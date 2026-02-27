@@ -31,13 +31,13 @@ void setupLocator() {
 
   // Factory for prayer service based on location/method/madhab
   getIt.registerFactory<PrayerTimesServiceFactory>(
-    () => (double lat, double lon, int method, int madhab) =>
-        PrayerTimesService(
-      latitude: lat,
-      longitude: lon,
-      method: method,
-      madhab: madhab,
-    ),
+    () =>
+        (double lat, double lon, int method, int madhab) => PrayerTimesService(
+              latitude: lat,
+              longitude: lon,
+              method: method,
+              madhab: madhab,
+            ),
   );
 }
 
