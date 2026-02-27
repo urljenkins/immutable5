@@ -11,6 +11,7 @@ import 'add_place_page.dart';
 import '../../shared/app_colors.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../generated/app_localizations.dart';
+import '../home/home_controller.dart';
 
 class PlacesPage extends StatefulWidget {
   const PlacesPage({super.key});
@@ -25,9 +26,20 @@ class _PlacesPageState extends State<PlacesPage> {
 
   LatLng _center = const LatLng(21.3891, 39.8579); // Default to Mecca
   List<PlaceModel> _places = [];
+  List<PlaceModel> _filteredPlaces = [];
   List<SubmissionModel> _pendingPlaces = [];
   bool _loading = false;
   bool _locationPermissionGranted = false;
+
+  String _selectedFilter = 'all'; // all, mosque, quiet_room, outdoor
+
+  String? _nextPrayerName;
+  String? _nextPrayerTime;
+
+  // Route vars
+  bool _isRouteMode = false;
+  List<LatLng> _routePoints = [];
+  LatLng? _routeDestination;
 
   @override
   void initState() {
@@ -56,6 +68,7 @@ class _PlacesPageState extends State<PlacesPage> {
           _center = LatLng(position.latitude, position.longitude);
         });
         _mapController.move(_center, 13.0);
+        _updatePrayerTimes();
         await _fetchPlaces();
       } catch (e) {
         // Fallback to default
@@ -63,6 +76,24 @@ class _PlacesPageState extends State<PlacesPage> {
     }
 
     if (mounted) setState(() => _loading = false);
+  }
+
+  Future<void> _updatePrayerTimes() async {
+    try {
+       // Using the factory from DI - we need to resolve it properly.
+       // Since `getIt` is available, we can grab the factory.
+       final factory = getIt<PrayerTimesServiceFactory>();
+       final service = factory(_center.latitude, _center.longitude, 2, 0); // Default method/madhab
+       final next = await service.getNextPrayer();
+       if (mounted) {
+         setState(() {
+           _nextPrayerName = next.key;
+           _nextPrayerTime = "${next.value.hour}:${next.value.minute.toString().padLeft(2, '0')}";
+         });
+       }
+    } catch (e) {
+      // Ignore prayer time errors for map view
+    }
   }
 
   Future<void> _fetchPlaces() async {
@@ -78,6 +109,7 @@ class _PlacesPageState extends State<PlacesPage> {
           _places = places;
           _pendingPlaces = pending;
           _loading = false;
+          _filterPlaces();
         });
       }
     } catch (e) {
@@ -92,6 +124,66 @@ class _PlacesPageState extends State<PlacesPage> {
         );
       }
     }
+  }
+
+  void _filterPlaces() {
+    if (_selectedFilter == 'all') {
+      _filteredPlaces = List.from(_places);
+    } else {
+      _filteredPlaces = _places.where((p) {
+        if (_selectedFilter == 'mosque') return p.type == 'mosque' || p.type == 'formal';
+        if (_selectedFilter == 'quiet_room') return p.type == 'informal';
+        if (_selectedFilter == 'outdoor') return p.type == 'outdoor';
+        return true;
+      }).toList();
+    }
+  }
+
+  Future<void> _planRoute(LatLng destination) async {
+    setState(() {
+      _loading = true;
+      _routeDestination = destination;
+    });
+
+    try {
+      final route = await _placesService.getRoute(_center, destination);
+      if (mounted) {
+        setState(() {
+          _routePoints = route;
+          _loading = false;
+          _isRouteMode = true;
+        });
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() => _loading = false);
+      }
+    }
+  }
+
+  void _toggleRouteMode() {
+    setState(() {
+      _isRouteMode = !_isRouteMode;
+      if (!_isRouteMode) {
+        _routePoints = [];
+        _routeDestination = null;
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Tap on map to set destination', style: GoogleFonts.plusJakartaSans(color: Colors.white)),
+            backgroundColor: AppColors.accent,
+            duration: const Duration(seconds: 2),
+          ),
+        );
+      }
+    });
+  }
+
+  void _onFilterChanged(String filter) {
+    setState(() {
+      _selectedFilter = filter;
+      _filterPlaces();
+    });
   }
 
   void _showPlaceDetails(PlaceModel place) {
@@ -186,6 +278,45 @@ class _PlacesPageState extends State<PlacesPage> {
     }
   }
 
+  Widget _buildFilterChip(String label, String value) {
+    final isSelected = _selectedFilter == value;
+    return GestureDetector(
+      onTap: () => _onFilterChanged(value),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        decoration: BoxDecoration(
+          color: isSelected ? AppColors.accent : AppColors.cardSurface.withOpacity(0.9),
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(
+            color: isSelected ? AppColors.accent : Colors.white.withOpacity(0.2),
+          ),
+        ),
+        child: Text(
+          label,
+          style: GoogleFonts.plusJakartaSans(
+            color: isSelected ? Colors.black : Colors.white,
+            fontWeight: FontWeight.w600,
+            fontSize: 13,
+          ),
+        ),
+      ),
+    );
+  }
+
+  Color _getMarkerColor(PlaceModel place) {
+    switch (place.type) {
+      case 'mosque':
+      case 'formal':
+        return AppColors.accent; // Gold
+      case 'informal':
+        return Colors.blueAccent;
+      case 'outdoor':
+        return Colors.green;
+      default:
+        return AppColors.accent;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -196,6 +327,11 @@ class _PlacesPageState extends State<PlacesPage> {
             options: MapOptions(
               initialCenter: _center,
               initialZoom: 13.0,
+              onTap: (tapPos, point) {
+                if (_isRouteMode) {
+                  _planRoute(point);
+                }
+              },
             ),
             children: [
               TileLayer(
@@ -203,8 +339,26 @@ class _PlacesPageState extends State<PlacesPage> {
                 userAgentPackageName: 'com.immutable.five',
                 // Dark mode filter could be added here if supported by tile provider
               ),
+              if (_routePoints.isNotEmpty)
+                PolylineLayer(
+                  polylines: [
+                    Polyline(
+                      points: _routePoints,
+                      strokeWidth: 4.0,
+                      color: Colors.blue,
+                    ),
+                  ],
+                ),
               MarkerLayer(
                 markers: [
+                  // Destination marker
+                  if (_routeDestination != null)
+                    Marker(
+                      point: _routeDestination!,
+                      width: 40,
+                      height: 40,
+                      child: Icon(Icons.flag, color: Colors.red, size: 40),
+                    ),
                   // User location marker
                   if (_locationPermissionGranted)
                     Marker(
@@ -231,7 +385,7 @@ class _PlacesPageState extends State<PlacesPage> {
                     ),
 
                   // Places markers
-                  ..._places.map((place) => Marker(
+                  ..._filteredPlaces.map((place) => Marker(
                         point: LatLng(place.lat, place.lng),
                         width: 40,
                         height: 40,
@@ -239,7 +393,7 @@ class _PlacesPageState extends State<PlacesPage> {
                           onTap: () => _showPlaceDetails(place),
                           child: Icon(
                             Icons.location_on,
-                            color: AppColors.accent,
+                            color: _getMarkerColor(place),
                             size: 40,
                           ),
                         ),
@@ -288,68 +442,133 @@ class _PlacesPageState extends State<PlacesPage> {
             ),
           ),
 
-          // Header
+          // Header & Filter Bar
           Positioned(
             top: 0,
             left: 0,
             right: 0,
-            child: Container(
-              padding: const EdgeInsets.fromLTRB(20, 60, 20, 20),
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                  colors: [
-                    Colors.black.withValues(alpha: 0.7),
-                    Colors.transparent,
-                  ],
-                ),
-              ),
-              child: Row(
-                children: [
-                  Text(
-                    AppLocalizations.of(context)!.prayerPlaces,
-                    style: GoogleFonts.plusJakartaSans(
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
+            child: Column(
+              children: [
+                Container(
+                  padding: const EdgeInsets.fromLTRB(20, 60, 20, 10),
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      colors: [
+                        Colors.black.withValues(alpha: 0.8),
+                        Colors.black.withValues(alpha: 0.4),
+                      ],
                     ),
                   ),
-                  const Spacer(),
-                  if (_loading)
-                    const SizedBox(
-                      width: 20,
-                      height: 20,
-                      child: CircularProgressIndicator(
-                        strokeWidth: 2,
-                        valueColor: AlwaysStoppedAnimation(Colors.white),
+                  child: Row(
+                    children: [
+                      Text(
+                        AppLocalizations.of(context)!.prayerPlaces,
+                        style: GoogleFonts.plusJakartaSans(
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
                       ),
-                    )
-                  else
-                    IconButton(
-                      icon: const Icon(Icons.refresh, color: Colors.white),
-                      onPressed: () {
-                        // Re-fetch based on current map center
-                        final center = _mapController.camera.center;
-                        setState(() {
-                          _center = center;
-                        });
-                        _fetchPlaces();
-                      },
+                      const Spacer(),
+                      if (_loading)
+                        const SizedBox(
+                          width: 20,
+                          height: 20,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            valueColor: AlwaysStoppedAnimation(Colors.white),
+                          ),
+                        )
+                      else
+                        IconButton(
+                          icon: const Icon(Icons.refresh, color: Colors.white),
+                          onPressed: () {
+                            final center = _mapController.camera.center;
+                            setState(() {
+                              _center = center;
+                            });
+                            _fetchPlaces();
+                          },
+                        ),
+                    ],
+                  ),
+                ),
+                // Filter Chips
+                SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  child: Row(
+                    children: [
+                      _buildFilterChip('All', 'all'),
+                      const SizedBox(width: 8),
+                      _buildFilterChip('Mosques', 'mosque'),
+                      const SizedBox(width: 8),
+                      _buildFilterChip('Quiet Rooms', 'quiet_room'),
+                      const SizedBox(width: 8),
+                      _buildFilterChip('Outdoor', 'outdoor'),
+                    ],
+                  ),
+                ),
+
+                // Next Prayer Overlay
+                if (_nextPrayerName != null)
+                  Container(
+                    margin: const EdgeInsets.only(top: 12),
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    decoration: BoxDecoration(
+                      color: AppColors.accent.withOpacity(0.9),
+                      borderRadius: BorderRadius.circular(20),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.2),
+                          blurRadius: 4,
+                          offset: const Offset(0, 2),
+                        ),
+                      ],
                     ),
-                ],
-              ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(Icons.access_time, size: 16, color: Colors.black),
+                        const SizedBox(width: 8),
+                        Text(
+                          'Next: $_nextPrayerName at $_nextPrayerTime',
+                          style: GoogleFonts.plusJakartaSans(
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black,
+                            fontSize: 13,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+              ],
             ),
           ),
 
-          // Fab to center
+          // Fab to center & Route Toggle
           Positioned(
             bottom: 100,
             right: 20,
-            child: FloatingActionButton(
-              backgroundColor: AppColors.cardSurface,
-              child: Icon(Icons.my_location, color: AppColors.accent),
-              onPressed: _initLocation,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                FloatingActionButton(
+                  heroTag: 'route_toggle',
+                  backgroundColor: _isRouteMode ? Colors.blue : AppColors.cardSurface,
+                  child: Icon(Icons.directions, color: _isRouteMode ? Colors.white : AppColors.accent),
+                  onPressed: _toggleRouteMode,
+                ),
+                const SizedBox(height: 16),
+                FloatingActionButton(
+                  heroTag: 'my_location',
+                  backgroundColor: AppColors.cardSurface,
+                  child: Icon(Icons.my_location, color: AppColors.accent),
+                  onPressed: _initLocation,
+                ),
+              ],
             ),
           ),
         ],
