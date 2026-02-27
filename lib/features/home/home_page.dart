@@ -4,6 +4,7 @@ import 'package:hijri/hijri_calendar.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../generated/app_localizations.dart';
 import '../../di/service_locator.dart';
+import '../prayer/prayer_times_service.dart';
 import '../home/home_controller.dart';
 import '../quotes/quote_picker_service.dart';
 

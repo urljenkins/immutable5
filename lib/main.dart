@@ -15,6 +15,7 @@ import 'generated/app_localizations.dart';
 import 'features/common_words/common_words_page.dart';
 import 'features/duas/duas_page.dart';
 import 'features/home/home_page.dart';
+import 'features/places/places_page.dart';
 import 'features/tasbih/tasbih_page.dart';
 import 'di/service_locator.dart';
 import 'shared/app_colors.dart';
@@ -248,6 +249,18 @@ class _AppScaffoldState extends State<AppScaffold> {
       );
     }
 
+    if (visibility.showPlaces) {
+      items.add(
+        _NavItem(
+          page: const PlacesPage(),
+          item: BottomNavigationBarItem(
+            icon: const Icon(Icons.map),
+            label: AppLocalizations.of(context)!.places,
+          ),
+        ),
+      );
+    }
+
     if (visibility.showQibla) {
       items.add(
         _NavItem(
@@ -355,6 +368,7 @@ class _NavItem {
 class BottomNavVisibility {
   final bool showTrack;
   final bool showQibla;
+  final bool showPlaces;
   final bool showCalendar;
   final bool showHajj;
   final bool showCommonWords;
@@ -365,6 +379,7 @@ class BottomNavVisibility {
   const BottomNavVisibility({
     this.showTrack = true,
     this.showQibla = true,
+    this.showPlaces = true,
     this.showCalendar = true,
     this.showHajj = true,
     this.showCommonWords = true,
@@ -375,6 +390,7 @@ class BottomNavVisibility {
 
   static const _keyTrack = 'nav_show_track';
   static const _keyQibla = 'nav_show_qibla';
+  static const _keyPlaces = 'nav_show_places';
   static const _keyCalendar = 'nav_show_calendar';
   static const _keyHajj = 'nav_show_hajj';
   static const _keyCommonWords = 'nav_show_common_words';
@@ -386,6 +402,7 @@ class BottomNavVisibility {
     return BottomNavVisibility(
       showTrack: prefs.getBool(_keyTrack) ?? true,
       showQibla: prefs.getBool(_keyQibla) ?? true,
+      showPlaces: prefs.getBool(_keyPlaces) ?? true,
       showCalendar: prefs.getBool(_keyCalendar) ?? true,
       showHajj: prefs.getBool(_keyHajj) ?? true,
       showCommonWords: prefs.getBool(_keyCommonWords) ?? true,
@@ -398,6 +415,7 @@ class BottomNavVisibility {
   BottomNavVisibility copyWith({
     bool? showTrack,
     bool? showQibla,
+    bool? showPlaces,
     bool? showCalendar,
     bool? showHajj,
     bool? showCommonWords,
@@ -408,6 +426,7 @@ class BottomNavVisibility {
     return BottomNavVisibility(
       showTrack: showTrack ?? this.showTrack,
       showQibla: showQibla ?? this.showQibla,
+      showPlaces: showPlaces ?? this.showPlaces,
       showCalendar: showCalendar ?? this.showCalendar,
       showHajj: showHajj ?? this.showHajj,
       showCommonWords: showCommonWords ?? this.showCommonWords,
@@ -420,6 +439,7 @@ class BottomNavVisibility {
   Future<void> save(SharedPreferences prefs) async {
     await prefs.setBool(_keyTrack, showTrack);
     await prefs.setBool(_keyQibla, showQibla);
+    await prefs.setBool(_keyPlaces, showPlaces);
     await prefs.setBool(_keyCalendar, showCalendar);
     await prefs.setBool(_keyHajj, showHajj);
     await prefs.setBool(_keyCommonWords, showCommonWords);

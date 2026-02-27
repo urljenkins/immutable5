@@ -54,6 +54,9 @@ dependencies:
   google_fonts: ^6.2.1
   flutter_animate: ^4.5.2
   share_plus: ^10.0.0
+  flutter_map: ^7.0.2
+  latlong2: ^0.9.1
+  url_launcher: ^6.3.1
   speech_to_text: ^7.3.0
 
 dev_dependencies:

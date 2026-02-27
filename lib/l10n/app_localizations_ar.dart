@@ -69,20 +69,16 @@ class AppLocalizationsAr extends AppLocalizations {
   String get amoledThemeSubtitle => 'استخدم خلفية سوداء حقيقية لتوفير البطارية';
 
   @override
-  String get locationServicesDisabled =>
-      'خدمات الموقع معطلة. يرجى تفعيل خدمات الموقع.';
+  String get locationServicesDisabled => 'خدمات الموقع معطلة. يرجى تفعيل خدمات الموقع.';
 
   @override
-  String get locationPermissionDenied =>
-      'تم رفض أذونات الموقع. يرجى منح الوصول إلى الموقع.';
+  String get locationPermissionDenied => 'تم رفض أذونات الموقع. يرجى منح الوصول إلى الموقع.';
 
   @override
-  String get locationPermissionPermanentlyDenied =>
-      'تم رفض أذونات الموقع بشكل دائم. يرجى تفعيل الموقع في إعدادات جهازك.';
+  String get locationPermissionPermanentlyDenied => 'تم رفض أذونات الموقع بشكل دائم. يرجى تفعيل الموقع في إعدادات جهازك.';
 
   @override
-  String get usingCachedPrayerTimes =>
-      'استخدام أوقات الصلاة المخزنة (غير متصل)';
+  String get usingCachedPrayerTimes => 'استخدام أوقات الصلاة المخزنة (غير متصل)';
 
   @override
   String get refreshPrayerTimes => 'تحديث أوقات الصلاة';
@@ -95,4 +91,34 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get search => 'بحث';
+
+  @override
+  String get places => 'Places';
+
+  @override
+  String get prayerPlaces => 'Prayer Places';
+
+  @override
+  String get getDirections => 'Get Directions';
+
+  @override
+  String get openingHours => 'Opening Hours';
+
+  @override
+  String get tasbih => 'Tasbih';
+
+  @override
+  String get target => 'Target';
+
+  @override
+  String get voiceMode => 'Voice Mode';
+
+  @override
+  String get reset => 'Reset';
+
+  @override
+  String get setTarget => 'Set Target';
+
+  @override
+  String get listening => 'Listening...';
 }

@@ -66,24 +66,19 @@ class AppLocalizationsNl extends AppLocalizations {
   String get amoledTheme => 'AMOLED Donker Thema';
 
   @override
-  String get amoledThemeSubtitle =>
-      'Gebruik echte zwarte achtergrond om batterij te besparen';
+  String get amoledThemeSubtitle => 'Gebruik echte zwarte achtergrond om batterij te besparen';
 
   @override
-  String get locationServicesDisabled =>
-      'Locatieservices zijn uitgeschakeld. Schakel locatieservices in.';
+  String get locationServicesDisabled => 'Locatieservices zijn uitgeschakeld. Schakel locatieservices in.';
 
   @override
-  String get locationPermissionDenied =>
-      'Locatietoegang is geweigerd. Geef toegang tot locatie.';
+  String get locationPermissionDenied => 'Locatietoegang is geweigerd. Geef toegang tot locatie.';
 
   @override
-  String get locationPermissionPermanentlyDenied =>
-      'Locatietoegang is permanent geweigerd. Schakel locatie in via apparaatinstellingen.';
+  String get locationPermissionPermanentlyDenied => 'Locatietoegang is permanent geweigerd. Schakel locatie in via apparaatinstellingen.';
 
   @override
-  String get usingCachedPrayerTimes =>
-      'Opgeslagen gebedsuren gebruiken (offline)';
+  String get usingCachedPrayerTimes => 'Opgeslagen gebedsuren gebruiken (offline)';
 
   @override
   String get refreshPrayerTimes => 'Gebedsuren vernieuwen';
@@ -95,5 +90,35 @@ class AppLocalizationsNl extends AppLocalizations {
   String get loading => 'Laden...';
 
   @override
-  String get search => 'Zoeken';
+  String get search => 'Search';
+
+  @override
+  String get places => 'Places';
+
+  @override
+  String get prayerPlaces => 'Prayer Places';
+
+  @override
+  String get getDirections => 'Get Directions';
+
+  @override
+  String get openingHours => 'Opening Hours';
+
+  @override
+  String get tasbih => 'Tasbih';
+
+  @override
+  String get target => 'Target';
+
+  @override
+  String get voiceMode => 'Voice Mode';
+
+  @override
+  String get reset => 'Reset';
+
+  @override
+  String get setTarget => 'Set Target';
+
+  @override
+  String get listening => 'Listening...';
 }
