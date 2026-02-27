@@ -66,24 +66,19 @@ class AppLocalizationsEs extends AppLocalizations {
   String get amoledTheme => 'Tema Oscuro AMOLED';
 
   @override
-  String get amoledThemeSubtitle =>
-      'Usar fondo negro verdadero para ahorrar batería';
+  String get amoledThemeSubtitle => 'Usar fondo negro verdadero para ahorrar batería';
 
   @override
-  String get locationServicesDisabled =>
-      'Los servicios de ubicación están deshabilitados. Por favor habilite los servicios de ubicación.';
+  String get locationServicesDisabled => 'Los servicios de ubicación están deshabilitados. Por favor habilite los servicios de ubicación.';
 
   @override
-  String get locationPermissionDenied =>
-      'Los permisos de ubicación están denegados. Por favor otorgue acceso a la ubicación.';
+  String get locationPermissionDenied => 'Los permisos de ubicación están denegados. Por favor otorgue acceso a la ubicación.';
 
   @override
-  String get locationPermissionPermanentlyDenied =>
-      'Los permisos de ubicación están denegados permanentemente. Por favor habilite la ubicación en la configuración de su dispositivo.';
+  String get locationPermissionPermanentlyDenied => 'Los permisos de ubicación están denegados permanentemente. Por favor habilite la ubicación en la configuración de su dispositivo.';
 
   @override
-  String get usingCachedPrayerTimes =>
-      'Usando horarios de oración en caché (sin conexión)';
+  String get usingCachedPrayerTimes => 'Usando horarios de oración en caché (sin conexión)';
 
   @override
   String get refreshPrayerTimes => 'Actualizar horarios de oración';
@@ -96,4 +91,34 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get search => 'Search';
+
+  @override
+  String get places => 'Places';
+
+  @override
+  String get prayerPlaces => 'Prayer Places';
+
+  @override
+  String get getDirections => 'Get Directions';
+
+  @override
+  String get openingHours => 'Opening Hours';
+
+  @override
+  String get tasbih => 'Tasbih';
+
+  @override
+  String get target => 'Target';
+
+  @override
+  String get voiceMode => 'Voice Mode';
+
+  @override
+  String get reset => 'Reset';
+
+  @override
+  String get setTarget => 'Set Target';
+
+  @override
+  String get listening => 'Listening...';
 }

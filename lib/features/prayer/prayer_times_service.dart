@@ -4,6 +4,9 @@ import 'dart:async';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
+typedef PrayerTimesServiceFactory = PrayerTimesService Function(
+    double lat, double lon, int method, int madhab);
+
 class PrayerTimesService {
   // Replace with user's actual location and calculation params
   final double latitude;

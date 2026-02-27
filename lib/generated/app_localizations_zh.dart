@@ -90,5 +90,35 @@ class AppLocalizationsZh extends AppLocalizations {
   String get loading => '加载中...';
 
   @override
-  String get search => '搜索';
+  String get search => 'Search';
+
+  @override
+  String get places => 'Places';
+
+  @override
+  String get prayerPlaces => 'Prayer Places';
+
+  @override
+  String get getDirections => 'Get Directions';
+
+  @override
+  String get openingHours => 'Opening Hours';
+
+  @override
+  String get tasbih => 'Tasbih';
+
+  @override
+  String get target => 'Target';
+
+  @override
+  String get voiceMode => 'Voice Mode';
+
+  @override
+  String get reset => 'Reset';
+
+  @override
+  String get setTarget => 'Set Target';
+
+  @override
+  String get listening => 'Listening...';
 }

@@ -11,9 +11,6 @@ import '../quotes/quote_picker_service.dart';
 import '../duas/contextual_dua_service.dart';
 import '../../di/service_locator.dart';
 
-typedef PrayerTimesServiceFactory = PrayerTimesService Function(
-    double latitude, double longitude, int method, int madhab);
-
 abstract class NotificationPort {
   Future<void> schedulePrayerNotifications(Map<String, DateTime> prayerTimes);
 }
