@@ -146,8 +146,8 @@ class JuzOfTheDayService {
   List<JuzRange> _surahBasedRanges(int juzNumber) {
     const totalSurahs = 114;
     const totalGroups = 30;
-    final baseSize = totalSurahs ~/ totalGroups; // 3
-    final remainder = totalSurahs % totalGroups; // 24
+    const baseSize = totalSurahs ~/ totalGroups; // 3
+    const remainder = totalSurahs % totalGroups; // 24
 
     // First `remainder` groups get baseSize+1, the rest get baseSize.
     int startSurah = 1;

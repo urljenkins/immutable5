@@ -1,10 +1,10 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:immutable5/features/home/home_controller.dart';
-import 'package:immutable5/features/quotes/quote_picker_service.dart';
-import 'package:immutable5/features/prayer/prayer_times_service.dart';
+import 'package:hijri/hijri_calendar.dart';
 import 'package:immutable5/features/duas/contextual_dua_service.dart';
 import 'package:immutable5/features/duas/models/dua_model.dart';
-import 'package:hijri/hijri_calendar.dart';
+import 'package:immutable5/features/home/home_controller.dart';
+import 'package:immutable5/features/prayer/prayer_times_service.dart';
+import 'package:immutable5/features/quotes/quote_picker_service.dart';
 
 class FakeQuoteService extends QuotePickerService {
   @override

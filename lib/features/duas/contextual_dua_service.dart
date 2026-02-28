@@ -92,18 +92,18 @@ class ContextualDuaService {
     HijriCalendar hijriDate,
   ) {
     if (dua.id == 'walking_to_masjid_001' && now.weekday == DateTime.friday) {
-      return "Jummah Mubarak. As you prepare to head to the masjid, remember the dua for walking.";
+      return 'Jummah Mubarak. As you prepare to head to the masjid, remember the dua for walking.';
     }
 
     final activeHijriPeriod = _determineActiveHijriPeriod(hijriDate);
     if ((dua.id == 'ramadan_iftar_001' || dua.id == 'ramadan_iftar_002') &&
         activeHijriPeriod == 'ramadan') {
-      return "The time for breaking your fast is approaching. The Prophet (PBUH) used to say this dua.";
+      return 'The time for breaking your fast is approaching. The Prophet (PBUH) used to say this dua.';
     }
 
     // Default or empty for generic contexts
     if (dua.occasion.isNotEmpty) {
-      return "For ${dua.occasion.toLowerCase()}";
+      return 'For ${dua.occasion.toLowerCase()}';
     }
 
     return null;

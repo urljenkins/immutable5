@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_map/flutter_map.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:latlong2/latlong.dart';
+
+import '../../di/service_locator.dart';
 import '../../shared/app_colors.dart';
 import 'models/submission_model.dart';
 import 'services/places_service.dart';
-import '../../di/service_locator.dart';
 
 class AddPlacePage extends StatefulWidget {
   final LatLng initialLocation;
@@ -167,10 +168,8 @@ class _AddPlacePageState extends State<AddPlacePage> {
             initialCenter: _selectedLocation,
             initialZoom: 15.0,
             onPositionChanged: (pos, hasGesture) {
-              if (pos.center != null) {
-                _selectedLocation = pos.center!;
-              }
-            },
+              _selectedLocation = pos.center;
+                        },
           ),
           children: [
             TileLayer(
@@ -263,19 +262,29 @@ class _AddPlacePageState extends State<AddPlacePage> {
           SwitchListTile(
             value: _wuduAvailable,
             onChanged: (val) => setState(() => _wuduAvailable = val),
+<<<<<<< fix-security-audit-findings-13073000296492036689
             title: Text('Wudu Area Available',
                 style:
                     GoogleFonts.plusJakartaSans(color: AppColors.textPrimary)),
             activeColor: AppColors.accent,
+=======
+            title: Text('Wudu Area Available', style: GoogleFonts.plusJakartaSans(color: AppColors.textPrimary)),
+            activeThumbColor: AppColors.accent,
+>>>>>>> develop
             contentPadding: EdgeInsets.zero,
           ),
           SwitchListTile(
             value: _womenSpaceAvailable,
             onChanged: (val) => setState(() => _womenSpaceAvailable = val),
+<<<<<<< fix-security-audit-findings-13073000296492036689
             title: Text('Women\'s Space Available',
                 style:
                     GoogleFonts.plusJakartaSans(color: AppColors.textPrimary)),
             activeColor: AppColors.accent,
+=======
+            title: Text('Women\'s Space Available', style: GoogleFonts.plusJakartaSans(color: AppColors.textPrimary)),
+            activeThumbColor: AppColors.accent,
+>>>>>>> develop
             contentPadding: EdgeInsets.zero,
           ),
         ],
@@ -375,8 +384,8 @@ class _AddPlacePageState extends State<AddPlacePage> {
 
     if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: const Text('Spot submitted for verification!'),
+        const SnackBar(
+          content: Text('Spot submitted for verification!'),
           backgroundColor: AppColors.success,
         ),
       );

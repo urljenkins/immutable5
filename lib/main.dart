@@ -1,5 +1,7 @@
-import 'package:flutter/material.dart';
 import 'dart:ui';
+
+import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'features/prayer_tracking/prayer_stats_page.dart';
 import 'features/notifications/notification_service.dart';
@@ -8,16 +10,23 @@ import 'package:immutable5/services/secure_storage_provider.dart';
 import 'features/settings/settings_page.dart';
 import 'features/quran/quran_page.dart';
 import 'features/qibla/qibla_page.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+import 'di/service_locator.dart';
 import 'features/calendar/calendar_page.dart';
-import 'features/hajj/hajj_page.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
-import 'l10n/app_localizations.dart';
 import 'features/common_words/common_words_page.dart';
 import 'features/duas/duas_page.dart';
+import 'features/hajj/hajj_page.dart';
 import 'features/home/home_page.dart';
+import 'features/notifications/notification_service.dart';
 import 'features/places/places_page.dart';
+import 'features/prayer_tracking/prayer_stats_page.dart';
+import 'features/qibla/qibla_page.dart';
+import 'features/quran/quran_page.dart';
+import 'features/settings/settings_page.dart';
 import 'features/tasbih/tasbih_page.dart';
-import 'di/service_locator.dart';
+import 'features/widget/prayer_widget_service.dart';
+import 'l10n/app_localizations.dart';
 import 'shared/app_colors.dart';
 
 final ValueNotifier<ThemeMode> themeNotifier = ValueNotifier(ThemeMode.dark);
@@ -240,9 +249,9 @@ class _AppScaffoldState extends State<AppScaffold> {
 
     if (visibility.showTrack) {
       items.add(
-        _NavItem(
-          page: const PrayerStatsPage(),
-          item: const BottomNavigationBarItem(
+        const _NavItem(
+          page: PrayerStatsPage(),
+          item: BottomNavigationBarItem(
             icon: Icon(Icons.check_circle),
             label: 'Track',
           ),
@@ -264,9 +273,9 @@ class _AppScaffoldState extends State<AppScaffold> {
 
     if (visibility.showQibla) {
       items.add(
-        _NavItem(
-          page: const QiblaPage(),
-          item: const BottomNavigationBarItem(
+        const _NavItem(
+          page: QiblaPage(),
+          item: BottomNavigationBarItem(
             icon: Icon(Icons.explore),
             label: 'Qibla',
           ),
@@ -324,9 +333,9 @@ class _AppScaffoldState extends State<AppScaffold> {
 
     if (visibility.showDuas) {
       items.add(
-        _NavItem(
-          page: const DuasPage(),
-          item: const BottomNavigationBarItem(
+        const _NavItem(
+          page: DuasPage(),
+          item: BottomNavigationBarItem(
             icon: Icon(Icons.menu_book),
             label: 'Duas',
           ),

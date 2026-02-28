@@ -1,11 +1,12 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:developer' as developer;
-import 'dart:async';
+
 import 'package:http/http.dart' as http;
 import 'package:immutable5/services/secure_storage_provider.dart';
 
 typedef PrayerTimesServiceFactory = PrayerTimesService Function(
-    double lat, double lon, int method, int madhab);
+    double lat, double lon, int method, int madhab,);
 
 class PrayerTimesService {
   // Replace with user's actual location and calculation params
@@ -32,7 +33,7 @@ class PrayerTimesService {
   DateTime _parseTimeString(String timeStr, DateTime date) {
     // Remove any timezone info like "(PKT)" that might be in the string
     final cleanTime = timeStr.replaceAll(RegExp(r'\s*\([^)]*\)'), '').trim();
-    final timeParts = cleanTime.split(":");
+    final timeParts = cleanTime.split(':');
 
     if (timeParts.length < 2) {
       throw FormatException('Invalid time format: $timeStr');

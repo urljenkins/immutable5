@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import 'quran_text_service.dart';
-import 'juz_mapping.dart';
 import '../../shared/app_colors.dart';
 import '../../shared/glass_container.dart';
+import 'juz_mapping.dart';
+import 'quran_text_service.dart';
 
 /// Displays the chapters and verses that belong to a single Juz.
 class JuzPage extends StatefulWidget {

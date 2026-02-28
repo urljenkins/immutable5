@@ -1,15 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+<<<<<<< fix-security-audit-findings-13073000296492036689
 import 'package:immutable5/services/secure_storage_provider.dart';
+=======
+import 'package:shared_preferences/shared_preferences.dart';
+
+>>>>>>> develop
 import '../../l10n/app_localizations.dart';
 import '../../main.dart';
+import '../../services/battery_optimizer.dart';
+import '../../services/cache_manager.dart';
+import '../../shared/app_colors.dart';
 import '../notifications/notification_service.dart';
 import '../quran/juz_of_the_day_service.dart';
 import '../quran/quran_context_menu_settings.dart';
 import '../widget/widget_settings_page.dart';
-import '../../services/battery_optimizer.dart';
-import '../../services/cache_manager.dart';
-import '../../shared/app_colors.dart';
 
 class SettingsPage extends StatefulWidget {
   const SettingsPage({super.key});

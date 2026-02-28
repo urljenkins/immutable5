@@ -1,18 +1,25 @@
+import 'dart:ui';
+
+import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:share_plus/share_plus.dart';
+<<<<<<< fix-security-audit-findings-13073000296492036689
 import 'package:immutable5/services/secure_storage_provider.dart';
 import 'dart:ui';
 import 'package:audioplayers/audioplayers.dart';
+=======
+import 'package:shared_preferences/shared_preferences.dart';
+>>>>>>> develop
 
+import '../../shared/app_colors.dart';
+import '../../shared/glass_container.dart';
 import 'juz_of_the_day_service.dart';
+import 'quran_audio_service.dart';
 import 'quran_bookmark_service.dart';
 import 'quran_context_menu_settings.dart';
 import 'quran_text_service.dart';
-import 'quran_audio_service.dart';
-import '../../shared/app_colors.dart';
-import '../../shared/glass_container.dart';
 
 /// A structured Qur'an reader with chapter navigation, bookmarking,
 /// and a customisable long-press context menu per verse.

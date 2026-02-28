@@ -1,17 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
-import 'package:latlong2/latlong.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:latlong2/latlong.dart';
 import 'package:url_launcher/url_launcher.dart';
+
 import '../../di/service_locator.dart';
-import 'services/places_service.dart';
+import '../../generated/app_localizations.dart';
+import '../../shared/app_colors.dart';
+import '../prayer/prayer_times_service.dart';
+import 'add_place_page.dart';
 import 'models/place_model.dart';
 import 'models/submission_model.dart';
-import 'add_place_page.dart';
-import '../../shared/app_colors.dart';
-import 'package:google_fonts/google_fonts.dart';
-import '../../generated/app_localizations.dart';
-import '../prayer/prayer_times_service.dart';
+import 'services/places_service.dart';
 
 class PlacesPage extends StatefulWidget {
   const PlacesPage({super.key});
@@ -103,7 +104,7 @@ class _PlacesPageState extends State<PlacesPage> {
     setState(() => _loading = true);
     try {
       final places = await _placesService.getNearbyPlaces(
-          _center.latitude, _center.longitude);
+          _center.latitude, _center.longitude,);
       final pending = await _placesService.getPendingPlaces();
 
       if (mounted) {
@@ -120,7 +121,7 @@ class _PlacesPageState extends State<PlacesPage> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('Failed to load places. Please try again.',
-                style: GoogleFonts.plusJakartaSans(color: Colors.white)),
+                style: GoogleFonts.plusJakartaSans(color: Colors.white),),
             backgroundColor: AppColors.error,
           ),
         );
@@ -224,13 +225,13 @@ class _PlacesPageState extends State<PlacesPage> {
               if (place.details?['opening_hours'] != null) ...[
                 Row(
                   children: [
-                    Icon(Icons.access_time,
-                        color: AppColors.textSecondary, size: 16),
+                    const Icon(Icons.access_time,
+                        color: AppColors.textSecondary, size: 16,),
                     const SizedBox(width: 8),
                     Text(
                       place.details!['opening_hours'],
                       style: GoogleFonts.plusJakartaSans(
-                          color: AppColors.textSecondary),
+                          color: AppColors.textSecondary,),
                     ),
                   ],
                 ),
@@ -253,7 +254,7 @@ class _PlacesPageState extends State<PlacesPage> {
                   label: Text(
                     AppLocalizations.of(context)!.getDirections,
                     style: GoogleFonts.plusJakartaSans(
-                        fontWeight: FontWeight.bold),
+                        fontWeight: FontWeight.bold,),
                   ),
                 ),
               ),
@@ -274,7 +275,7 @@ class _PlacesPageState extends State<PlacesPage> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('Could not launch maps.',
-                style: GoogleFonts.plusJakartaSans(color: Colors.white)),
+                style: GoogleFonts.plusJakartaSans(color: Colors.white),),
             backgroundColor: AppColors.error,
           ),
         );
@@ -364,7 +365,7 @@ class _PlacesPageState extends State<PlacesPage> {
                       point: _routeDestination!,
                       width: 40,
                       height: 40,
-                      child: Icon(Icons.flag, color: Colors.red, size: 40),
+                      child: const Icon(Icons.flag, color: Colors.red, size: 40),
                     ),
                   // User location marker
                   if (_locationPermissionGranted)
@@ -404,19 +405,19 @@ class _PlacesPageState extends State<PlacesPage> {
                             size: 40,
                           ),
                         ),
-                      )),
+                      ),),
 
                   // Pending markers
                   ..._pendingPlaces.map((place) => Marker(
                         point: LatLng(place.lat, place.lng),
                         width: 40,
                         height: 40,
-                        child: Icon(
+                        child: const Icon(
                           Icons.location_on,
                           color: Colors.orange, // Orange for pending
                           size: 40,
                         ),
-                      )),
+                      ),),
                 ],
               ),
             ],
@@ -540,7 +541,7 @@ class _PlacesPageState extends State<PlacesPage> {
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Icon(Icons.access_time, size: 16, color: Colors.black),
+                        const Icon(Icons.access_time, size: 16, color: Colors.black),
                         const SizedBox(width: 8),
                         Text(
                           'Next: $_nextPrayerName at $_nextPrayerTime',
@@ -571,13 +572,14 @@ class _PlacesPageState extends State<PlacesPage> {
                   child: Icon(Icons.directions,
                       color: _isRouteMode ? Colors.white : AppColors.accent),
                   onPressed: _toggleRouteMode,
+                  child: Icon(Icons.directions, color: _isRouteMode ? Colors.white : AppColors.accent),
                 ),
                 const SizedBox(height: 16),
                 FloatingActionButton(
                   heroTag: 'my_location',
                   backgroundColor: AppColors.cardSurface,
-                  child: Icon(Icons.my_location, color: AppColors.accent),
                   onPressed: _initLocation,
+                  child: Icon(Icons.my_location, color: AppColors.accent),
                 ),
               ],
             ),
