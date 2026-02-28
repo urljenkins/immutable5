@@ -66,19 +66,24 @@ class AppLocalizationsFr extends AppLocalizations {
   String get amoledTheme => 'Thème Sombre AMOLED';
 
   @override
-  String get amoledThemeSubtitle => 'Utiliser un fond noir véritable pour économiser la batterie';
+  String get amoledThemeSubtitle =>
+      'Utiliser un fond noir véritable pour économiser la batterie';
 
   @override
-  String get locationServicesDisabled => 'Les services de localisation sont désactivés. Veuillez activer les services de localisation.';
+  String get locationServicesDisabled =>
+      'Les services de localisation sont désactivés. Veuillez activer les services de localisation.';
 
   @override
-  String get locationPermissionDenied => 'Les autorisations de localisation sont refusées. Veuillez accorder l\'accès à la localisation.';
+  String get locationPermissionDenied =>
+      'Les autorisations de localisation sont refusées. Veuillez accorder l\'accès à la localisation.';
 
   @override
-  String get locationPermissionPermanentlyDenied => 'Les autorisations de localisation sont définitivement refusées. Veuillez activer la localisation dans les paramètres de votre appareil.';
+  String get locationPermissionPermanentlyDenied =>
+      'Les autorisations de localisation sont définitivement refusées. Veuillez activer la localisation dans les paramètres de votre appareil.';
 
   @override
-  String get usingCachedPrayerTimes => 'Utilisation des horaires de prière en cache (hors ligne)';
+  String get usingCachedPrayerTimes =>
+      'Utilisation des horaires de prière en cache (hors ligne)';
 
   @override
   String get refreshPrayerTimes => 'Actualiser les horaires de prière';

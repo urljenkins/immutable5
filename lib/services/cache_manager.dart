@@ -1,3 +1,7 @@
+<<<<<<< fix-security-audit-findings-13073000296492036689
+import 'package:immutable5/services/secure_storage_provider.dart';
+=======
+>>>>>>> develop
 import 'dart:convert';
 
 import 'package:shared_preferences/shared_preferences.dart';
@@ -15,7 +19,7 @@ class CacheManager {
 
   /// Store data in cache with optional TTL
   Future<void> set(String key, String value, {int? ttlMs}) async {
-    final prefs = await SharedPreferences.getInstance();
+    final prefs = SecureStorageProvider();
     final now = DateTime.now().millisecondsSinceEpoch;
     final expiry = now + (ttlMs ?? _defaultTTL);
 
@@ -37,7 +41,7 @@ class CacheManager {
 
   /// Get data from cache if not expired
   Future<String?> get(String key) async {
-    final prefs = await SharedPreferences.getInstance();
+    final prefs = SecureStorageProvider();
     final metadata = await _getMetadata();
 
     if (!metadata.containsKey(key)) {
@@ -58,12 +62,12 @@ class CacheManager {
     metadata[key] = meta;
     await _saveMetadata(metadata);
 
-    return prefs.getString(key);
+    return await prefs.getString(key);
   }
 
   /// Remove item from cache
   Future<void> remove(String key) async {
-    final prefs = await SharedPreferences.getInstance();
+    final prefs = SecureStorageProvider();
     await prefs.remove(key);
 
     final metadata = await _getMetadata();
@@ -73,7 +77,7 @@ class CacheManager {
 
   /// Clear all cache
   Future<void> clearAll() async {
-    final prefs = await SharedPreferences.getInstance();
+    final prefs = SecureStorageProvider();
     final metadata = await _getMetadata();
 
     for (final key in metadata.keys) {
@@ -110,7 +114,7 @@ class CacheManager {
   Future<void> cleanExpired() async {
     final metadata = await _getMetadata();
     final now = DateTime.now().millisecondsSinceEpoch;
-    final prefs = await SharedPreferences.getInstance();
+    final prefs = SecureStorageProvider();
 
     final keysToRemove = <String>[];
 
@@ -131,8 +135,8 @@ class CacheManager {
   // Private methods
 
   Future<Map<String, dynamic>> _getMetadata() async {
-    final prefs = await SharedPreferences.getInstance();
-    final metaJson = prefs.getString(_cacheMetaKey);
+    final prefs = SecureStorageProvider();
+    final metaJson = await prefs.getString(_cacheMetaKey);
 
     if (metaJson == null) {
       return {};
@@ -149,7 +153,7 @@ class CacheManager {
   }
 
   Future<void> _saveMetadata(Map<String, dynamic> metadata) async {
-    final prefs = await SharedPreferences.getInstance();
+    final prefs = SecureStorageProvider();
     await prefs.setString(_cacheMetaKey, json.encode(metadata));
   }
 
@@ -175,7 +179,7 @@ class CacheManager {
       return aTime.compareTo(bTime);
     });
 
-    final prefs = await SharedPreferences.getInstance();
+    final prefs = SecureStorageProvider();
     int totalSize = metadata.values.fold(
       0,
       (sum, meta) => sum + (meta['size'] as int),

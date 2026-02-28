@@ -81,17 +81,19 @@ class _PlacesPageState extends State<PlacesPage> {
 
   Future<void> _updatePrayerTimes() async {
     try {
-       // Using the factory from DI - we need to resolve it properly.
-       // Since `getIt` is available, we can grab the factory.
-       final factory = getIt<PrayerTimesServiceFactory>();
-       final service = factory(_center.latitude, _center.longitude, 2, 0); // Default method/madhab
-       final next = await service.getNextPrayer();
-       if (mounted) {
-         setState(() {
-           _nextPrayerName = next.key;
-           _nextPrayerTime = "${next.value.hour}:${next.value.minute.toString().padLeft(2, '0')}";
-         });
-       }
+      // Using the factory from DI - we need to resolve it properly.
+      // Since `getIt` is available, we can grab the factory.
+      final factory = getIt<PrayerTimesServiceFactory>();
+      final service = factory(
+          _center.latitude, _center.longitude, 2, 0); // Default method/madhab
+      final next = await service.getNextPrayer();
+      if (mounted) {
+        setState(() {
+          _nextPrayerName = next.key;
+          _nextPrayerTime =
+              "${next.value.hour}:${next.value.minute.toString().padLeft(2, '0')}";
+        });
+      }
     } catch (e) {
       // Ignore prayer time errors for map view
     }
@@ -132,7 +134,8 @@ class _PlacesPageState extends State<PlacesPage> {
       _filteredPlaces = List.from(_places);
     } else {
       _filteredPlaces = _places.where((p) {
-        if (_selectedFilter == 'mosque') return p.type == 'mosque' || p.type == 'formal';
+        if (_selectedFilter == 'mosque')
+          return p.type == 'mosque' || p.type == 'formal';
         if (_selectedFilter == 'quiet_room') return p.type == 'informal';
         if (_selectedFilter == 'outdoor') return p.type == 'outdoor';
         return true;
@@ -171,7 +174,8 @@ class _PlacesPageState extends State<PlacesPage> {
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Tap on map to set destination', style: GoogleFonts.plusJakartaSans(color: Colors.white)),
+            content: Text('Tap on map to set destination',
+                style: GoogleFonts.plusJakartaSans(color: Colors.white)),
             backgroundColor: AppColors.accent,
             duration: const Duration(seconds: 2),
           ),
@@ -286,10 +290,13 @@ class _PlacesPageState extends State<PlacesPage> {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         decoration: BoxDecoration(
-          color: isSelected ? AppColors.accent : AppColors.cardSurface.withOpacity(0.9),
+          color: isSelected
+              ? AppColors.accent
+              : AppColors.cardSurface.withOpacity(0.9),
           borderRadius: BorderRadius.circular(20),
           border: Border.all(
-            color: isSelected ? AppColors.accent : Colors.white.withOpacity(0.2),
+            color:
+                isSelected ? AppColors.accent : Colors.white.withOpacity(0.2),
           ),
         ),
         child: Text(
@@ -433,7 +440,8 @@ class _PlacesPageState extends State<PlacesPage> {
                 final result = await Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => AddPlacePage(initialLocation: _center),
+                    builder: (context) =>
+                        AddPlacePage(initialLocation: _center),
                   ),
                 );
                 if (result == true) {
@@ -517,7 +525,8 @@ class _PlacesPageState extends State<PlacesPage> {
                 if (_nextPrayerName != null)
                   Container(
                     margin: const EdgeInsets.only(top: 12),
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                     decoration: BoxDecoration(
                       color: AppColors.accent.withOpacity(0.9),
                       borderRadius: BorderRadius.circular(20),
@@ -558,7 +567,10 @@ class _PlacesPageState extends State<PlacesPage> {
               children: [
                 FloatingActionButton(
                   heroTag: 'route_toggle',
-                  backgroundColor: _isRouteMode ? Colors.blue : AppColors.cardSurface,
+                  backgroundColor:
+                      _isRouteMode ? Colors.blue : AppColors.cardSurface,
+                  child: Icon(Icons.directions,
+                      color: _isRouteMode ? Colors.white : AppColors.accent),
                   onPressed: _toggleRouteMode,
                   child: Icon(Icons.directions, color: _isRouteMode ? Colors.white : AppColors.accent),
                 ),

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:immutable5/services/secure_storage_provider.dart';
 
 /// A page presenting the Hajj guide with steps, checkboxes, and progress.
 class HajjPage extends StatefulWidget {
@@ -78,16 +78,16 @@ class _HajjPageState extends State<HajjPage> {
   }
 
   Future<void> _loadCompletionState() async {
-    final prefs = await SharedPreferences.getInstance();
+    final prefs = SecureStorageProvider();
     for (int i = 0; i < _stepsData.length; i++) {
-      _completed[i] = prefs.getBool('hajjStep_$i') ?? false;
+      _completed[i] = await prefs.getBool('hajjStep_$i') ?? false;
     }
     setState(() {});
   }
 
   Future<void> _toggleStep(int index, bool? value) async {
     if (value == null) return;
-    final prefs = await SharedPreferences.getInstance();
+    final prefs = SecureStorageProvider();
     setState(() => _completed[index] = value);
     await prefs.setBool('hajjStep_$index', value);
   }

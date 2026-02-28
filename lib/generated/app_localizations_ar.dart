@@ -69,16 +69,20 @@ class AppLocalizationsAr extends AppLocalizations {
   String get amoledThemeSubtitle => 'استخدم خلفية سوداء حقيقية لتوفير البطارية';
 
   @override
-  String get locationServicesDisabled => 'خدمات الموقع معطلة. يرجى تفعيل خدمات الموقع.';
+  String get locationServicesDisabled =>
+      'خدمات الموقع معطلة. يرجى تفعيل خدمات الموقع.';
 
   @override
-  String get locationPermissionDenied => 'تم رفض أذونات الموقع. يرجى منح الوصول إلى الموقع.';
+  String get locationPermissionDenied =>
+      'تم رفض أذونات الموقع. يرجى منح الوصول إلى الموقع.';
 
   @override
-  String get locationPermissionPermanentlyDenied => 'تم رفض أذونات الموقع بشكل دائم. يرجى تفعيل الموقع في إعدادات جهازك.';
+  String get locationPermissionPermanentlyDenied =>
+      'تم رفض أذونات الموقع بشكل دائم. يرجى تفعيل الموقع في إعدادات جهازك.';
 
   @override
-  String get usingCachedPrayerTimes => 'استخدام أوقات الصلاة المخزنة (غير متصل)';
+  String get usingCachedPrayerTimes =>
+      'استخدام أوقات الصلاة المخزنة (غير متصل)';
 
   @override
   String get refreshPrayerTimes => 'تحديث أوقات الصلاة';

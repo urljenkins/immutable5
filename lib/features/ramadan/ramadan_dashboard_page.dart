@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hijri/hijri_calendar.dart';
+import 'package:immutable5/services/secure_storage_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../di/service_locator.dart';
@@ -53,11 +54,11 @@ class _RamadanDashboardPageState extends State<RamadanDashboardPage> {
 
   Future<void> _initServiceAndLoadData() async {
     try {
-      final prefs = await SharedPreferences.getInstance();
-      final latitude = prefs.getDouble('location_latitude') ?? 21.3891;
-      final longitude = prefs.getDouble('location_longitude') ?? 39.8579;
-      final method = prefs.getInt('calculation_method') ?? 2;
-      final madhab = prefs.getInt('madhab') ?? 0;
+      final prefs = SecureStorageProvider();
+      final latitude = await prefs.getDouble('location_latitude') ?? 21.3891;
+      final longitude = await prefs.getDouble('location_longitude') ?? 39.8579;
+      final method = await prefs.getInt('calculation_method') ?? 2;
+      final madhab = await prefs.getInt('madhab') ?? 0;
 
       final factory = getIt<PrayerTimesServiceFactory>();
       _prayerTimesService = factory(latitude, longitude, method, madhab);

@@ -17,9 +17,11 @@ void setupLocator() {
   getIt.registerLazySingleton<NotificationService>(() => NotificationService());
   getIt.registerLazySingleton<QuotePickerService>(() => QuotePickerService());
   getIt.registerLazySingleton<DuaRepository>(() => DuaRepository());
-  getIt.registerLazySingleton<ContextualDuaService>(() => ContextualDuaService());
+  getIt.registerLazySingleton<ContextualDuaService>(
+      () => ContextualDuaService());
   getIt.registerLazySingleton<PlacesService>(() => PlacesService());
-  getIt.registerLazySingleton<PrayerTrackingService>(() => PrayerTrackingService());
+  getIt.registerLazySingleton<PrayerTrackingService>(
+      () => PrayerTrackingService());
 
   // Adapters/ports
   getIt.registerLazySingleton<NotificationPort>(

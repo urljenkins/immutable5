@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'dart:developer' as developer;
 
 import 'package:http/http.dart' as http;
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:immutable5/services/secure_storage_provider.dart';
 
 typedef PrayerTimesServiceFactory = PrayerTimesService Function(
     double lat, double lon, int method, int madhab,);
@@ -64,8 +64,8 @@ class PrayerTimesService {
 
     // Check cache first unless force refresh
     if (!forceRefresh) {
-      final prefs = await SharedPreferences.getInstance();
-      final cachedData = prefs.getString(cacheKey);
+      final prefs = SecureStorageProvider();
+      final cachedData = await prefs.getString(cacheKey);
       if (cachedData != null) {
         try {
           final Map<String, dynamic> cached = json.decode(cachedData);
@@ -118,7 +118,7 @@ class PrayerTimesService {
         });
 
         // Cache the result
-        final prefs = await SharedPreferences.getInstance();
+        final prefs = SecureStorageProvider();
         await prefs.setString(cacheKey, json.encode(cacheData));
 
         return result;
@@ -163,8 +163,8 @@ class PrayerTimesService {
       final tomorrowCacheKey = _getCacheKey(tomorrow);
 
       // Check tomorrow's cache first
-      final prefs = await SharedPreferences.getInstance();
-      final cachedTomorrowData = prefs.getString(tomorrowCacheKey);
+      final prefs = SecureStorageProvider();
+      final cachedTomorrowData = await prefs.getString(tomorrowCacheKey);
       if (cachedTomorrowData != null) {
         try {
           final Map<String, dynamic> cached = json.decode(cachedTomorrowData);
@@ -256,8 +256,8 @@ class PrayerTimesService {
   }
 
   Future<void> clearCache() async {
-    final prefs = await SharedPreferences.getInstance();
-    final keys = prefs.getKeys();
+    final prefs = SecureStorageProvider();
+    final keys = await prefs.getKeys();
     for (final key in keys) {
       if (key.startsWith('prayer_times_')) {
         await prefs.remove(key);

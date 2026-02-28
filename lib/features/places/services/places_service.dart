@@ -6,10 +6,17 @@ import 'package:latlong2/latlong.dart';
 
 import '../models/place_model.dart';
 import '../models/submission_model.dart';
+<<<<<<< fix-security-audit-findings-13073000296492036689
+import 'package:latlong2/latlong.dart';
+import 'dart:developer' as developer;
+import 'package:flutter/foundation.dart';
+=======
+>>>>>>> develop
 
 class PlacesService {
   static const String _overpassUrl = 'https://overpass-api.de/api/interpreter';
-  static const String _osrmUrl = 'http://router.project-osrm.org/route/v1/driving';
+  static const String _osrmUrl =
+      'https://router.project-osrm.org/route/v1/driving';
 
   // Local cache for pending submissions (simulating backend)
   final List<SubmissionModel> _pendingSubmissions = [];
@@ -37,12 +44,16 @@ class PlacesService {
           final geometry = data['routes'][0]['geometry'];
           final coordinates = geometry['coordinates'] as List;
 
-          return coordinates.map((c) => LatLng(c[1].toDouble(), c[0].toDouble())).toList();
+          return coordinates
+              .map((c) => LatLng(c[1].toDouble(), c[0].toDouble()))
+              .toList();
         }
       }
       return [];
     } catch (e) {
-      developer.log('Error fetching route: $e');
+      if (kDebugMode) {
+        developer.log('Error fetching route: $e');
+      }
       return [];
     }
   }
@@ -81,11 +92,15 @@ class PlacesService {
           return PlaceModel.fromJson(e);
         }).toList();
       } else {
-        developer.log('Failed to fetch places: ${response.statusCode}');
+        if (kDebugMode) {
+          developer.log('Failed to fetch places: ${response.statusCode}');
+        }
         return [];
       }
     } catch (e) {
-      developer.log('Error fetching places: $e');
+      if (kDebugMode) {
+        developer.log('Error fetching places: $e');
+      }
       return [];
     }
   }

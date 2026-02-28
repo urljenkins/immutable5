@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:hijri/hijri_calendar.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:immutable5/services/secure_storage_provider.dart';
 
 import '../../di/service_locator.dart';
 import '../duas/contextual_dua_service.dart';
@@ -131,7 +131,7 @@ class HomeController extends ChangeNotifier {
         desiredAccuracy: LocationAccuracy.high,
         timeLimit: const Duration(seconds: 10),
       );
-      final prefs = await SharedPreferences.getInstance();
+      final prefs = SecureStorageProvider();
       await _configurePrayerService(
         latitude: position.latitude,
         longitude: position.longitude,
@@ -157,16 +157,16 @@ class HomeController extends ChangeNotifier {
   Future<void> _configurePrayerService({
     required double latitude,
     required double longitude,
-    SharedPreferences? prefs,
+    SecureStorageProvider? prefs,
     bool clearNotice = false,
   }) async {
-    final prefsInstance = prefs ?? await SharedPreferences.getInstance();
-    final calcMethodRaw = prefsInstance.get('calculationMethod') ??
+    final prefsInstance = prefs ?? SecureStorageProvider();
+    final calcMethodRaw = await prefsInstance.get('calculationMethod') ??
         'Method 2 (University of Islamic Sciences)';
     final calcMethodString = calcMethodRaw.toString();
     final method = calcMethodString.contains('4') ? 4 : 2;
 
-    final madhabRaw = prefsInstance.get('madhab') ?? 'Shafi';
+    final madhabRaw = await prefsInstance.get('madhab') ?? 'Shafi';
     final madhabString = madhabRaw.toString();
     const madhabList = ['Shafi', 'Hanafi', 'Maliki', 'Hanbali'];
     var madhab = madhabList.indexOf(madhabString);
@@ -201,9 +201,9 @@ class HomeController extends ChangeNotifier {
     bool permissionIssue = false,
   }) async {
     try {
-      final prefs = await SharedPreferences.getInstance();
-      final savedLat = prefs.getDouble('location_latitude');
-      final savedLon = prefs.getDouble('location_longitude');
+      final prefs = SecureStorageProvider();
+      final savedLat = await prefs.getDouble('location_latitude');
+      final savedLon = await prefs.getDouble('location_longitude');
       final latitude = savedLat ?? defaultLatitude;
       final longitude = savedLon ?? defaultLongitude;
 

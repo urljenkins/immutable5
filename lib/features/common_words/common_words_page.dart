@@ -9,6 +9,10 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../l10n/app_localizations.dart';
 import '../../shared/app_colors.dart';
+<<<<<<< fix-security-audit-findings-13073000296492036689
+import 'package:immutable5/services/secure_storage_provider.dart';
+=======
+>>>>>>> develop
 
 class CommonWordsPage extends StatefulWidget {
   const CommonWordsPage({super.key});
@@ -69,16 +73,16 @@ class _CommonWordsPageState extends State<CommonWordsPage> {
   }
 
   Future<void> _loadMemorized() async {
-    final prefs = await SharedPreferences.getInstance();
+    final prefs = SecureStorageProvider();
     final mem = <int>{};
     for (int i = 0; i < _rows.length; i++) {
-      if (prefs.getBool('mem_word_${i + 1}') == true) mem.add(i);
+      if (await prefs.getBool('mem_word_${i + 1}') == true) mem.add(i);
     }
     _memorized = mem;
   }
 
   Future<void> _toggleMemorized(int index) async {
-    final prefs = await SharedPreferences.getInstance();
+    final prefs = SecureStorageProvider();
     if (_memorized.contains(index)) {
       _memorized.remove(index);
       await prefs.remove('mem_word_${index + 1}');

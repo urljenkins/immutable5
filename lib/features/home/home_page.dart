@@ -1,7 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hijri/hijri_calendar.dart';
+<<<<<<< fix-security-audit-findings-13073000296492036689
+import 'package:immutable5/services/secure_storage_provider.dart';
+import '../../l10n/app_localizations.dart';
+import '../../di/service_locator.dart';
+import '../prayer/prayer_times_service.dart';
+import '../home/home_controller.dart';
+import '../quotes/quote_picker_service.dart';
+=======
 import 'package:shared_preferences/shared_preferences.dart';
+>>>>>>> develop
 
 import '../../di/service_locator.dart';
 import '../../l10n/app_localizations.dart';
@@ -347,10 +356,11 @@ class _HijriDateBannerState extends State<_HijriDateBanner> {
   }
 
   Future<void> _loadOffset() async {
-    final prefs = await SharedPreferences.getInstance();
+    final prefs = SecureStorageProvider();
     if (!mounted) return;
+    final offset = await prefs.getInt(_keyHijriDayOffset) ?? 0;
     setState(() {
-      _offset = prefs.getInt(_keyHijriDayOffset) ?? 0;
+      _offset = offset;
       _loaded = true;
     });
   }

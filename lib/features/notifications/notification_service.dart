@@ -3,6 +3,8 @@ import 'dart:developer' as developer;
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:immutable5/services/secure_storage_provider.dart';
+import 'package:timezone/timezone.dart' as tz;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:timezone/data/latest.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
@@ -65,8 +67,9 @@ class NotificationService {
   ) async {
     if (!_initialized) await initialize();
 
-    final prefs = await SharedPreferences.getInstance();
-    final notificationsEnabled = prefs.getBool('notificationsEnabled') ?? false;
+    final prefs = SecureStorageProvider();
+    final notificationsEnabled =
+        await prefs.getBool('notificationsEnabled') ?? false;
 
     if (!notificationsEnabled) {
       await cancelAllNotifications();
@@ -79,8 +82,9 @@ class NotificationService {
     final now = DateTime.now();
     int notificationId = 0;
 
-    final jummahRemindersEnabled = prefs.getBool('jummahReminders') ?? true;
-    final iftarRemindersEnabled = prefs.getBool('iftarReminders') ?? true;
+    final jummahRemindersEnabled =
+        await prefs.getBool('jummahReminders') ?? true;
+    final iftarRemindersEnabled = await prefs.getBool('iftarReminders') ?? true;
 
     for (final entry in prayerTimes.entries) {
       final prayerName = entry.key;

@@ -1,3 +1,7 @@
+<<<<<<< fix-security-audit-findings-13073000296492036689
+import 'package:immutable5/services/secure_storage_provider.dart';
+=======
+>>>>>>> develop
 import 'dart:async';
 
 import 'package:shared_preferences/shared_preferences.dart';
@@ -21,10 +25,10 @@ class BatteryOptimizer {
 
   /// Initialize battery optimizer
   Future<void> initialize() async {
-    final prefs = await SharedPreferences.getInstance();
-    _batteryMode = prefs.getBool(_keyBatteryMode) ?? false;
+    final prefs = SecureStorageProvider();
+    _batteryMode = await prefs.getBool(_keyBatteryMode) ?? false;
 
-    final lastCheck = prefs.getInt(_keyLastNetworkCheck);
+    final lastCheck = await prefs.getInt(_keyLastNetworkCheck);
     if (lastCheck != null) {
       _lastNetworkRequest = DateTime.fromMillisecondsSinceEpoch(lastCheck);
     }
@@ -33,7 +37,7 @@ class BatteryOptimizer {
   /// Enable/disable battery saver mode
   Future<void> setBatterySaverMode(bool enabled) async {
     _batteryMode = enabled;
-    final prefs = await SharedPreferences.getInstance();
+    final prefs = SecureStorageProvider();
     await prefs.setBool(_keyBatteryMode, enabled);
   }
 
@@ -64,7 +68,7 @@ class BatteryOptimizer {
   /// Record a network request
   Future<void> recordNetworkRequest() async {
     _lastNetworkRequest = DateTime.now();
-    final prefs = await SharedPreferences.getInstance();
+    final prefs = SecureStorageProvider();
     await prefs.setInt(
       _keyLastNetworkCheck,
       _lastNetworkRequest!.millisecondsSinceEpoch,
