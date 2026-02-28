@@ -558,15 +558,15 @@ class _PlacesPageState extends State<PlacesPage> {
                 FloatingActionButton(
                   heroTag: 'route_toggle',
                   backgroundColor: _isRouteMode ? Colors.blue : AppColors.cardSurface,
-                  child: Icon(Icons.directions, color: _isRouteMode ? Colors.white : AppColors.accent),
                   onPressed: _toggleRouteMode,
+                  child: Icon(Icons.directions, color: _isRouteMode ? Colors.white : AppColors.accent),
                 ),
                 const SizedBox(height: 16),
                 FloatingActionButton(
                   heroTag: 'my_location',
                   backgroundColor: AppColors.cardSurface,
-                  child: Icon(Icons.my_location, color: AppColors.accent),
                   onPressed: _initLocation,
+                  child: Icon(Icons.my_location, color: AppColors.accent),
                 ),
               ],
             ),

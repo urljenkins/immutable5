@@ -165,10 +165,8 @@ class _AddPlacePageState extends State<AddPlacePage> {
             initialCenter: _selectedLocation,
             initialZoom: 15.0,
             onPositionChanged: (pos, hasGesture) {
-              if (pos.center != null) {
-                _selectedLocation = pos.center!;
-              }
-            },
+              _selectedLocation = pos.center;
+                        },
           ),
           children: [
             TileLayer(
@@ -262,14 +260,14 @@ class _AddPlacePageState extends State<AddPlacePage> {
             value: _wuduAvailable,
             onChanged: (val) => setState(() => _wuduAvailable = val),
             title: Text('Wudu Area Available', style: GoogleFonts.plusJakartaSans(color: AppColors.textPrimary)),
-            activeColor: AppColors.accent,
+            activeThumbColor: AppColors.accent,
             contentPadding: EdgeInsets.zero,
           ),
           SwitchListTile(
             value: _womenSpaceAvailable,
             onChanged: (val) => setState(() => _womenSpaceAvailable = val),
             title: Text('Women\'s Space Available', style: GoogleFonts.plusJakartaSans(color: AppColors.textPrimary)),
-            activeColor: AppColors.accent,
+            activeThumbColor: AppColors.accent,
             contentPadding: EdgeInsets.zero,
           ),
         ],
