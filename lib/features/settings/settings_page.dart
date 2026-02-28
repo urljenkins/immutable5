@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:immutable5/services/secure_storage_provider.dart';
 import '../../l10n/app_localizations.dart';
 import '../../main.dart';
 import '../notifications/notification_service.dart';
@@ -88,7 +88,7 @@ class _SettingsPageState extends State<SettingsPage> {
     bool? showDuas,
     bool? showQuran,
   }) async {
-    final prefs = await SharedPreferences.getInstance();
+    final prefs = SecureStorageProvider();
     final updated = bottomNavVisibilityNotifier.value.copyWith(
       showTrack: showTrack,
       showQibla: showQibla,
@@ -115,29 +115,40 @@ class _SettingsPageState extends State<SettingsPage> {
   }
 
   Future<void> _loadPrefs() async {
-    final prefs = await SharedPreferences.getInstance();
+    final prefs = SecureStorageProvider();
     final batteryOptimizer = BatteryOptimizer();
     await batteryOptimizer.initialize();
 
     if (!mounted) return;
 
-    final navVisibility = BottomNavVisibility.fromPrefs(prefs);
+    final navVisibility = await BottomNavVisibility.fromPrefs(prefs);
     bottomNavVisibilityNotifier.value = navVisibility;
 
+    final calculationMethod =
+        await prefs.getString(_keyCalculationMethod) ?? _calculationMethod;
+    final madhab = await prefs.getString(_keyMadhab) ?? _madhab;
+    final notificationsEnabled =
+        await prefs.getBool(_keyNotificationsEnabled) ?? _notificationsEnabled;
+    final useAmoledTheme =
+        await prefs.getBool(_keyUseAmoledTheme) ?? _useAmoledTheme;
+    final jummahReminders =
+        await prefs.getBool(_keyJummahReminders) ?? _jummahReminders;
+    final iftarReminders =
+        await prefs.getBool(_keyIftarReminders) ?? _iftarReminders;
+    final savedJuzMode = await prefs.getString(_keyJuzMode);
+    final ctxMenuSettings = await QuranContextMenuSettings.fromPrefs(prefs);
+
     setState(() {
-      _calculationMethod =
-          prefs.getString(_keyCalculationMethod) ?? _calculationMethod;
-      _madhab = prefs.getString(_keyMadhab) ?? _madhab;
-      _notificationsEnabled =
-          prefs.getBool(_keyNotificationsEnabled) ?? _notificationsEnabled;
-      _useAmoledTheme = prefs.getBool(_keyUseAmoledTheme) ?? _useAmoledTheme;
-      _jummahReminders = prefs.getBool(_keyJummahReminders) ?? _jummahReminders;
-      _iftarReminders = prefs.getBool(_keyIftarReminders) ?? _iftarReminders;
+      _calculationMethod = calculationMethod;
+      _madhab = madhab;
+      _notificationsEnabled = notificationsEnabled;
+      _useAmoledTheme = useAmoledTheme;
+      _jummahReminders = jummahReminders;
+      _iftarReminders = iftarReminders;
       _batterySaverMode = batteryOptimizer.isBatterySaverEnabled();
-      final savedJuzMode = prefs.getString(_keyJuzMode);
       _juzMode =
           savedJuzMode == 'surahBased' ? JuzMode.surahBased : JuzMode.standard;
-      _ctxMenuSettings = QuranContextMenuSettings.fromPrefs(prefs);
+      _ctxMenuSettings = ctxMenuSettings;
       _showTrack = navVisibility.showTrack;
       _showQibla = navVisibility.showQibla;
       _showCalendar = navVisibility.showCalendar;
@@ -216,7 +227,7 @@ class _SettingsPageState extends State<SettingsPage> {
                   ),
                 );
                 if (choice != null) {
-                  final prefs = await SharedPreferences.getInstance();
+                  final prefs = SecureStorageProvider();
                   if (!mounted) return;
                   setState(() => _calculationMethod = choice);
                   prefs.setString(_keyCalculationMethod, choice);
@@ -253,7 +264,7 @@ class _SettingsPageState extends State<SettingsPage> {
                   ),
                 );
                 if (choice != null) {
-                  final prefs = await SharedPreferences.getInstance();
+                  final prefs = SecureStorageProvider();
                   if (!mounted) return;
                   setState(() => _madhab = choice);
                   prefs.setString(_keyMadhab, choice);
@@ -288,7 +299,7 @@ class _SettingsPageState extends State<SettingsPage> {
                   }
                 }
 
-                final prefs = await SharedPreferences.getInstance();
+                final prefs = SecureStorageProvider();
                 setState(() => _notificationsEnabled = value);
                 await prefs.setBool(_keyNotificationsEnabled, value);
 
@@ -308,7 +319,7 @@ class _SettingsPageState extends State<SettingsPage> {
                 activeThumbColor: AppColors.accent,
                 contentPadding: const EdgeInsets.symmetric(horizontal: 40),
                 onChanged: (value) async {
-                  final prefs = await SharedPreferences.getInstance();
+                  final prefs = SecureStorageProvider();
                   setState(() => _jummahReminders = value);
                   await prefs.setBool(_keyJummahReminders, value);
                 },
@@ -322,7 +333,7 @@ class _SettingsPageState extends State<SettingsPage> {
                 activeThumbColor: AppColors.accent,
                 contentPadding: const EdgeInsets.symmetric(horizontal: 40),
                 onChanged: (value) async {
-                  final prefs = await SharedPreferences.getInstance();
+                  final prefs = SecureStorageProvider();
                   setState(() => _iftarReminders = value);
                   await prefs.setBool(_keyIftarReminders, value);
                 },
@@ -335,7 +346,7 @@ class _SettingsPageState extends State<SettingsPage> {
               activeThumbColor: AppColors.accent,
               contentPadding: const EdgeInsets.symmetric(horizontal: 24),
               onChanged: (value) async {
-                final prefs = await SharedPreferences.getInstance();
+                final prefs = SecureStorageProvider();
                 setState(() => _useAmoledTheme = value);
                 await prefs.setBool(_keyUseAmoledTheme, value);
                 // Update the global theme notifier
@@ -402,7 +413,7 @@ class _SettingsPageState extends State<SettingsPage> {
                   ),
                 );
                 if (choice != null) {
-                  final prefs = await SharedPreferences.getInstance();
+                  final prefs = SecureStorageProvider();
                   if (!mounted) return;
                   setState(() => _juzMode = choice);
                   prefs.setString(
@@ -433,7 +444,7 @@ class _SettingsPageState extends State<SettingsPage> {
               activeThumbColor: AppColors.accent,
               contentPadding: const EdgeInsets.symmetric(horizontal: 40),
               onChanged: (v) async {
-                final prefs = await SharedPreferences.getInstance();
+                final prefs = SecureStorageProvider();
                 final updated = _ctxMenuSettings.copyWith(showCopy: v);
                 await updated.save(prefs);
                 if (!mounted) return;
@@ -447,7 +458,7 @@ class _SettingsPageState extends State<SettingsPage> {
               activeThumbColor: AppColors.accent,
               contentPadding: const EdgeInsets.symmetric(horizontal: 40),
               onChanged: (v) async {
-                final prefs = await SharedPreferences.getInstance();
+                final prefs = SecureStorageProvider();
                 final updated = _ctxMenuSettings.copyWith(showBookmark: v);
                 await updated.save(prefs);
                 if (!mounted) return;
@@ -461,7 +472,7 @@ class _SettingsPageState extends State<SettingsPage> {
               activeThumbColor: AppColors.accent,
               contentPadding: const EdgeInsets.symmetric(horizontal: 40),
               onChanged: (v) async {
-                final prefs = await SharedPreferences.getInstance();
+                final prefs = SecureStorageProvider();
                 final updated = _ctxMenuSettings.copyWith(showShare: v);
                 await updated.save(prefs);
                 if (!mounted) return;
@@ -475,7 +486,7 @@ class _SettingsPageState extends State<SettingsPage> {
               activeThumbColor: AppColors.accent,
               contentPadding: const EdgeInsets.symmetric(horizontal: 40),
               onChanged: (v) async {
-                final prefs = await SharedPreferences.getInstance();
+                final prefs = SecureStorageProvider();
                 final updated = _ctxMenuSettings.copyWith(showAyahInfo: v);
                 await updated.save(prefs);
                 if (!mounted) return;
@@ -684,7 +695,7 @@ class _SettingsPageState extends State<SettingsPage> {
             final isSelected = color.toARGB32() == AppColors.accent.toARGB32();
             return GestureDetector(
               onTap: () async {
-                final prefs = await SharedPreferences.getInstance();
+                final prefs = SecureStorageProvider();
                 setState(() {
                   AppColors.accent = color;
                 });

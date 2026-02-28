@@ -112,7 +112,8 @@ class _AddPlacePageState extends State<AddPlacePage> {
                 final category = _categories[index];
                 final isSelected = _selectedCategory == category['id'];
                 return GestureDetector(
-                  onTap: () => setState(() => _selectedCategory = category['id']),
+                  onTap: () =>
+                      setState(() => _selectedCategory = category['id']),
                   child: Container(
                     decoration: BoxDecoration(
                       color: isSelected
@@ -120,7 +121,8 @@ class _AddPlacePageState extends State<AddPlacePage> {
                           : AppColors.cardSurface,
                       borderRadius: BorderRadius.circular(16),
                       border: Border.all(
-                        color: isSelected ? AppColors.accent : Colors.transparent,
+                        color:
+                            isSelected ? AppColors.accent : Colors.transparent,
                         width: 2,
                       ),
                     ),
@@ -261,14 +263,18 @@ class _AddPlacePageState extends State<AddPlacePage> {
           SwitchListTile(
             value: _wuduAvailable,
             onChanged: (val) => setState(() => _wuduAvailable = val),
-            title: Text('Wudu Area Available', style: GoogleFonts.plusJakartaSans(color: AppColors.textPrimary)),
+            title: Text('Wudu Area Available',
+                style:
+                    GoogleFonts.plusJakartaSans(color: AppColors.textPrimary)),
             activeColor: AppColors.accent,
             contentPadding: EdgeInsets.zero,
           ),
           SwitchListTile(
             value: _womenSpaceAvailable,
             onChanged: (val) => setState(() => _womenSpaceAvailable = val),
-            title: Text('Women\'s Space Available', style: GoogleFonts.plusJakartaSans(color: AppColors.textPrimary)),
+            title: Text('Women\'s Space Available',
+                style:
+                    GoogleFonts.plusJakartaSans(color: AppColors.textPrimary)),
             activeColor: AppColors.accent,
             contentPadding: EdgeInsets.zero,
           ),
@@ -289,10 +295,12 @@ class _AddPlacePageState extends State<AddPlacePage> {
         children: [
           if (_currentStep > 0)
             TextButton(
-              onPressed: _submitting ? null : () => setState(() => _currentStep--),
+              onPressed:
+                  _submitting ? null : () => setState(() => _currentStep--),
               child: Text(
                 'Back',
-                style: GoogleFonts.plusJakartaSans(color: AppColors.textSecondary),
+                style:
+                    GoogleFonts.plusJakartaSans(color: AppColors.textSecondary),
               ),
             )
           else
@@ -315,7 +323,8 @@ class _AddPlacePageState extends State<AddPlacePage> {
                   )
                 : Text(
                     _currentStep == 2 ? 'Submit' : 'Next',
-                    style: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.bold),
+                    style: GoogleFonts.plusJakartaSans(
+                        fontWeight: FontWeight.bold),
                   ),
           ),
         ],

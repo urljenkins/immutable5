@@ -4,7 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'features/prayer_tracking/prayer_stats_page.dart';
 import 'features/notifications/notification_service.dart';
 import 'features/widget/prayer_widget_service.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:immutable5/services/secure_storage_provider.dart';
 import 'features/settings/settings_page.dart';
 import 'features/quran/quran_page.dart';
 import 'features/qibla/qibla_page.dart';
@@ -39,17 +39,18 @@ void main() async {
   // Initialize widget service
   await PrayerWidgetService.initialize();
 
-  final prefs = await SharedPreferences.getInstance();
-  final useDark = prefs.getBool('useAmoledTheme') ?? true;
+  final prefs = SecureStorageProvider();
+  final useDark = await prefs.getBool('useAmoledTheme') ?? true;
   themeNotifier.value = useDark ? ThemeMode.dark : ThemeMode.light;
 
-  final accentValue = prefs.getInt(_keyAccentColor);
+  final accentValue = await prefs.getInt(_keyAccentColor);
   if (accentValue != null) {
     AppColors.accent = Color(accentValue);
     accentColorNotifier.value = AppColors.accent;
   }
 
-  bottomNavVisibilityNotifier.value = BottomNavVisibility.fromPrefs(prefs);
+  bottomNavVisibilityNotifier.value =
+      await BottomNavVisibility.fromPrefs(prefs);
   runApp(const MyApp());
 }
 
@@ -398,17 +399,18 @@ class BottomNavVisibility {
   static const _keyDuas = 'nav_show_duas';
   static const _keyQuran = 'nav_show_quran';
 
-  factory BottomNavVisibility.fromPrefs(SharedPreferences prefs) {
+  static Future<BottomNavVisibility> fromPrefs(
+      SecureStorageProvider prefs) async {
     return BottomNavVisibility(
-      showTrack: prefs.getBool(_keyTrack) ?? true,
-      showQibla: prefs.getBool(_keyQibla) ?? true,
-      showPlaces: prefs.getBool(_keyPlaces) ?? true,
-      showCalendar: prefs.getBool(_keyCalendar) ?? true,
-      showHajj: prefs.getBool(_keyHajj) ?? true,
-      showCommonWords: prefs.getBool(_keyCommonWords) ?? true,
-      showTasbih: prefs.getBool(_keyTasbih) ?? true,
-      showDuas: prefs.getBool(_keyDuas) ?? true,
-      showQuran: prefs.getBool(_keyQuran) ?? true,
+      showTrack: await prefs.getBool(_keyTrack) ?? true,
+      showQibla: await prefs.getBool(_keyQibla) ?? true,
+      showPlaces: await prefs.getBool(_keyPlaces) ?? true,
+      showCalendar: await prefs.getBool(_keyCalendar) ?? true,
+      showHajj: await prefs.getBool(_keyHajj) ?? true,
+      showCommonWords: await prefs.getBool(_keyCommonWords) ?? true,
+      showTasbih: await prefs.getBool(_keyTasbih) ?? true,
+      showDuas: await prefs.getBool(_keyDuas) ?? true,
+      showQuran: await prefs.getBool(_keyQuran) ?? true,
     );
   }
 
@@ -436,7 +438,7 @@ class BottomNavVisibility {
     );
   }
 
-  Future<void> save(SharedPreferences prefs) async {
+  Future<void> save(SecureStorageProvider prefs) async {
     await prefs.setBool(_keyTrack, showTrack);
     await prefs.setBool(_keyQibla, showQibla);
     await prefs.setBool(_keyPlaces, showPlaces);

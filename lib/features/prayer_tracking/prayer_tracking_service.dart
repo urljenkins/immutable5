@@ -1,4 +1,4 @@
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:immutable5/services/secure_storage_provider.dart';
 
 class PrayerTrackingService {
   static final PrayerTrackingService _instance =
@@ -10,7 +10,7 @@ class PrayerTrackingService {
 
   /// Mark a prayer as completed for a specific date
   Future<void> markPrayerCompleted(String prayerName, DateTime date) async {
-    final prefs = await SharedPreferences.getInstance();
+    final prefs = SecureStorageProvider();
     final key = _getPrayerKey(prayerName, date);
     await prefs.setBool(key, true);
     await prefs.setInt(
@@ -21,9 +21,9 @@ class PrayerTrackingService {
 
   /// Check if a prayer is completed for a specific date
   Future<bool> isPrayerCompleted(String prayerName, DateTime date) async {
-    final prefs = await SharedPreferences.getInstance();
+    final prefs = SecureStorageProvider();
     final key = _getPrayerKey(prayerName, date);
-    return prefs.getBool(key) ?? false;
+    return await prefs.getBool(key) ?? false;
   }
 
   /// Get all completed prayers for a specific date
@@ -67,31 +67,32 @@ class PrayerTrackingService {
 
   /// Get longest streak ever
   Future<int> getLongestStreak() async {
-    final prefs = await SharedPreferences.getInstance();
-    return prefs.getInt('longest_streak') ?? 0;
+    final prefs = SecureStorageProvider();
+    return await prefs.getInt('longest_streak') ?? 0;
   }
 
   /// Update longest streak if current is higher
   Future<void> updateLongestStreak(int currentStreak) async {
     final longest = await getLongestStreak();
     if (currentStreak > longest) {
-      final prefs = await SharedPreferences.getInstance();
+      final prefs = SecureStorageProvider();
       await prefs.setInt('longest_streak', currentStreak);
     }
   }
 
   /// Get total prayers completed
   Future<int> getTotalPrayersCompleted() async {
-    final prefs = await SharedPreferences.getInstance();
-    final keys = prefs.getKeys();
-    return keys
-        .where(
-          (k) =>
-              k.startsWith('prayer_') &&
-              k.endsWith('_completed') &&
-              prefs.getBool(k) == true,
-        )
-        .length;
+    final prefs = SecureStorageProvider();
+    final keys = await prefs.getKeys();
+    int count = 0;
+    for (final k in keys) {
+      if (k.startsWith('prayer_') && k.endsWith('_completed')) {
+        if (await prefs.getBool(k) == true) {
+          count++;
+        }
+      }
+    }
+    return count;
   }
 
   /// Get prayers completed in last 30 days
@@ -132,7 +133,7 @@ class PrayerTrackingService {
 
     if (isCompleted) {
       // Unmark
-      final prefs = await SharedPreferences.getInstance();
+      final prefs = SecureStorageProvider();
       final key = _getPrayerKey(prayerName, date);
       await prefs.remove(key);
       await prefs.remove('${key}_timestamp');

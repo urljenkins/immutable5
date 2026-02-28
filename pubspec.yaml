@@ -58,6 +58,7 @@ dependencies:
   latlong2: ^0.9.1
   url_launcher: ^6.3.1
   speech_to_text: ^7.3.0
+  flutter_secure_storage: ^10.0.0
 
 dev_dependencies:
   flutter_test:

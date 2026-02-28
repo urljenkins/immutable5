@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hijri/hijri_calendar.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:immutable5/services/secure_storage_provider.dart';
 import 'package:table_calendar/table_calendar.dart';
 
 /// A page displaying a combined Gregorian and Hijri calendar.
@@ -27,14 +27,15 @@ class _CalendarPageState extends State<CalendarPage> {
   }
 
   Future<void> _loadPreference() async {
-    final prefs = await SharedPreferences.getInstance();
+    final prefs = SecureStorageProvider();
+    final val = await prefs.getBool('calendar_hijri_primary') ?? false;
     setState(() {
-      _hijriPrimary = prefs.getBool('calendar_hijri_primary') ?? false;
+      _hijriPrimary = val;
     });
   }
 
   Future<void> _setHijriPrimary(bool value) async {
-    final prefs = await SharedPreferences.getInstance();
+    final prefs = SecureStorageProvider();
     await prefs.setBool('calendar_hijri_primary', value);
     setState(() {
       _hijriPrimary = value;

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:share_plus/share_plus.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:immutable5/services/secure_storage_provider.dart';
 import 'dart:ui';
 import 'package:audioplayers/audioplayers.dart';
 
@@ -56,13 +56,13 @@ class _QuranPageState extends State<QuranPage> {
 
   Future<void> _load() async {
     final chapters = await _service.getChapters();
-    final prefs = await SharedPreferences.getInstance();
-    final savedMode = prefs.getString('juzMode');
-    final savedReciter = prefs.getString('quran_reciter_id');
+    final prefs = SecureStorageProvider();
+    final savedMode = await prefs.getString('juzMode');
+    final savedReciter = await prefs.getString('quran_reciter_id');
     final mode =
         savedMode == 'surahBased' ? JuzMode.surahBased : JuzMode.standard;
     final todayJuz = _juzService.getJuzForToday(mode);
-    final ctxSettings = QuranContextMenuSettings.fromPrefs(prefs);
+    final ctxSettings = await QuranContextMenuSettings.fromPrefs(prefs);
     await _bookmarks.load();
     if (!mounted) return;
     setState(() {
@@ -105,7 +105,7 @@ class _QuranPageState extends State<QuranPage> {
       _audioUrls = []; // Clear cached URLs as reciter changed
     });
 
-    final prefs = await SharedPreferences.getInstance();
+    final prefs = SecureStorageProvider();
     await prefs.setString('quran_reciter_id', reciterId);
   }
 

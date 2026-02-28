@@ -1,5 +1,5 @@
 import 'package:home_widget/home_widget.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:immutable5/services/secure_storage_provider.dart';
 import 'package:intl/intl.dart';
 import 'package:hijri/hijri_calendar.dart';
 import 'package:http/http.dart' as http;
@@ -142,10 +142,10 @@ class PrayerWidgetService {
   ) async {
     try {
       // Try to get cached location name first
-      final prefs = await SharedPreferences.getInstance();
-      final cachedLat = prefs.getDouble('cached_location_lat');
-      final cachedLon = prefs.getDouble('cached_location_lon');
-      final cachedName = prefs.getString('cached_location_name');
+      final prefs = SecureStorageProvider();
+      final cachedLat = await prefs.getDouble('cached_location_lat');
+      final cachedLon = await prefs.getDouble('cached_location_lon');
+      final cachedName = await prefs.getString('cached_location_name');
 
       // If coordinates match cached values, return cached name
       if (cachedName != null &&
@@ -191,8 +191,9 @@ class PrayerWidgetService {
       }
     } catch (e) {
       // Fallback to cached name or default
-      final prefs = await SharedPreferences.getInstance();
-      return prefs.getString('cached_location_name') ?? 'Current Location';
+      final prefs = SecureStorageProvider();
+      return await prefs.getString('cached_location_name') ??
+          'Current Location';
     }
     return 'Current Location';
   }
@@ -226,12 +227,12 @@ class PrayerWidgetService {
 
   /// Get stored location and settings from SharedPreferences
   static Future<Map<String, dynamic>> getStoredSettings() async {
-    final prefs = await SharedPreferences.getInstance();
+    final prefs = SecureStorageProvider();
     return {
-      'latitude': prefs.getDouble('location_latitude') ?? 51.5074,
-      'longitude': prefs.getDouble('location_longitude') ?? -0.1278,
-      'method': prefs.getInt('calculation_method') ?? 2,
-      'madhab': prefs.getInt('madhab') ?? 0,
+      'latitude': await prefs.getDouble('location_latitude') ?? 51.5074,
+      'longitude': await prefs.getDouble('location_longitude') ?? -0.1278,
+      'method': await prefs.getInt('calculation_method') ?? 2,
+      'madhab': await prefs.getInt('madhab') ?? 0,
     };
   }
 

@@ -1,6 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:immutable5/services/secure_storage_provider.dart';
 
 /// A single bookmarked verse.
 class QuranBookmark {
@@ -58,8 +58,8 @@ class QuranBookmarkService {
 
   /// Call once at app / page startup.
   Future<void> load() async {
-    final prefs = await SharedPreferences.getInstance();
-    final raw = prefs.getString(_prefsKey);
+    final prefs = SecureStorageProvider();
+    final raw = await prefs.getString(_prefsKey);
     if (raw == null) return;
     try {
       final list = (jsonDecode(raw) as List)
@@ -112,7 +112,7 @@ class QuranBookmarkService {
   }
 
   Future<void> _persist() async {
-    final prefs = await SharedPreferences.getInstance();
+    final prefs = SecureStorageProvider();
     final encoded = jsonEncode(bookmarks.value.map((b) => b.toJson()).toList());
     await prefs.setString(_prefsKey, encoded);
   }

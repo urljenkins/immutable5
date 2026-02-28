@@ -1,4 +1,4 @@
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:immutable5/services/secure_storage_provider.dart';
 
 enum WidgetTheme {
   nightSky, // Default - Dark navy background, gold accent
@@ -17,8 +17,8 @@ class WidgetPreferences {
   static const String _keyShowHijriDate = 'widget_show_hijri_date';
 
   static Future<WidgetTheme> getTheme() async {
-    final prefs = await SharedPreferences.getInstance();
-    final themeIndex = prefs.getInt(_keyTheme) ?? 0;
+    final prefs = SecureStorageProvider();
+    final themeIndex = await prefs.getInt(_keyTheme) ?? 0;
     if (themeIndex >= 0 && themeIndex < WidgetTheme.values.length) {
       return WidgetTheme.values[themeIndex];
     }
@@ -26,38 +26,39 @@ class WidgetPreferences {
   }
 
   static Future<void> setTheme(WidgetTheme theme) async {
-    final prefs = await SharedPreferences.getInstance();
+    final prefs = SecureStorageProvider();
     await prefs.setInt(_keyTheme, theme.index);
   }
 
   static Future<WidgetLayout> getLayout() async {
-    final prefs = await SharedPreferences.getInstance();
-    final layoutIndex = prefs.getInt(_keyLayout) ?? 1; // Default to detailed
+    final prefs = SecureStorageProvider();
+    final layoutIndex =
+        await prefs.getInt(_keyLayout) ?? 1; // Default to detailed
     return WidgetLayout.values[layoutIndex];
   }
 
   static Future<void> setLayout(WidgetLayout layout) async {
-    final prefs = await SharedPreferences.getInstance();
+    final prefs = SecureStorageProvider();
     await prefs.setInt(_keyLayout, layout.index);
   }
 
   static Future<bool> getShowNextPrayerOnly() async {
-    final prefs = await SharedPreferences.getInstance();
-    return prefs.getBool(_keyShowNextPrayerOnly) ?? false;
+    final prefs = SecureStorageProvider();
+    return await prefs.getBool(_keyShowNextPrayerOnly) ?? false;
   }
 
   static Future<void> setShowNextPrayerOnly(bool value) async {
-    final prefs = await SharedPreferences.getInstance();
+    final prefs = SecureStorageProvider();
     await prefs.setBool(_keyShowNextPrayerOnly, value);
   }
 
   static Future<bool> getShowHijriDate() async {
-    final prefs = await SharedPreferences.getInstance();
-    return prefs.getBool(_keyShowHijriDate) ?? true;
+    final prefs = SecureStorageProvider();
+    return await prefs.getBool(_keyShowHijriDate) ?? true;
   }
 
   static Future<void> setShowHijriDate(bool value) async {
-    final prefs = await SharedPreferences.getInstance();
+    final prefs = SecureStorageProvider();
     await prefs.setBool(_keyShowHijriDate, value);
   }
 

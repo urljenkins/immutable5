@@ -1,4 +1,4 @@
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:immutable5/services/secure_storage_provider.dart';
 
 /// Which actions to show in the Quran long-press context menu.
 class QuranContextMenuSettings {
@@ -14,21 +14,23 @@ class QuranContextMenuSettings {
   final bool showShare;
   final bool showAyahInfo;
 
-  // ── SharedPreferences keys ────────────────────────────────────────────────
+  // ── SecureStorageProvider keys ────────────────────────────────────────────────
   static const _kCopy = 'quranCtxMenu_copy';
   static const _kBookmark = 'quranCtxMenu_bookmark';
   static const _kShare = 'quranCtxMenu_share';
   static const _kAyahInfo = 'quranCtxMenu_ayahInfo';
 
-  factory QuranContextMenuSettings.fromPrefs(SharedPreferences prefs) =>
-      QuranContextMenuSettings(
-        showCopy: prefs.getBool(_kCopy) ?? true,
-        showBookmark: prefs.getBool(_kBookmark) ?? true,
-        showShare: prefs.getBool(_kShare) ?? true,
-        showAyahInfo: prefs.getBool(_kAyahInfo) ?? true,
-      );
+  static Future<QuranContextMenuSettings> fromPrefs(
+      SecureStorageProvider prefs) async {
+    return QuranContextMenuSettings(
+      showCopy: await prefs.getBool(_kCopy) ?? true,
+      showBookmark: await prefs.getBool(_kBookmark) ?? true,
+      showShare: await prefs.getBool(_kShare) ?? true,
+      showAyahInfo: await prefs.getBool(_kAyahInfo) ?? true,
+    );
+  }
 
-  Future<void> save(SharedPreferences prefs) async {
+  Future<void> save(SecureStorageProvider prefs) async {
     await prefs.setBool(_kCopy, showCopy);
     await prefs.setBool(_kBookmark, showBookmark);
     await prefs.setBool(_kShare, showShare);
