@@ -560,7 +560,7 @@ class _QuranPageState extends State<QuranPage> {
                                     ),
                                   ),
                                   trailing: IconButton(
-                                    icon: const Icon(
+                                    icon: Icon(
                                       Icons.delete_outline,
                                       color: AppColors.textSecondary,
                                       size: 20,
@@ -751,7 +751,7 @@ class _QuranPageState extends State<QuranPage> {
                           final isSelected = reciter.id == _currentReciterId;
                           return ListTile(
                             leading: isSelected
-                                ? const Icon(
+                                ? Icon(
                                     Icons.check,
                                     color: AppColors.accent,
                                   )
@@ -1027,7 +1027,7 @@ class _QuranPageState extends State<QuranPage> {
             ),
 
           IconButton(
-            icon: const Icon(Icons.stop_rounded, color: AppColors.error),
+            icon: Icon(Icons.stop_rounded, color: AppColors.error),
             onPressed: _stopAudio,
           ),
         ],
@@ -1051,7 +1051,7 @@ class _QuranPageState extends State<QuranPage> {
         actions: [
           // Reciter button
           IconButton(
-            icon: const Icon(
+            icon: Icon(
               Icons.record_voice_over_outlined,
               color: AppColors.textSecondary,
             ),
@@ -1104,7 +1104,7 @@ class _QuranPageState extends State<QuranPage> {
             },
           ),
           IconButton(
-            icon: const Icon(
+            icon: Icon(
               Icons.menu_book_outlined,
               color: AppColors.textSecondary,
             ),

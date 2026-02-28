@@ -103,7 +103,7 @@ abstract class AppLocalizations {
     Locale('es'),
     Locale('fr'),
     Locale('nl'),
-    Locale('zh'),
+    Locale('zh')
   ];
 
   /// No description provided for @appTitle.
@@ -273,6 +273,42 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Search'**
   String get search;
+
+  /// No description provided for @tasbih.
+  ///
+  /// In en, this message translates to:
+  /// **'Tasbih'**
+  String get tasbih;
+
+  /// No description provided for @target.
+  ///
+  /// In en, this message translates to:
+  /// **'Target'**
+  String get target;
+
+  /// No description provided for @voiceMode.
+  ///
+  /// In en, this message translates to:
+  /// **'Voice Mode'**
+  String get voiceMode;
+
+  /// No description provided for @reset.
+  ///
+  /// In en, this message translates to:
+  /// **'Reset'**
+  String get reset;
+
+  /// No description provided for @setTarget.
+  ///
+  /// In en, this message translates to:
+  /// **'Set Target'**
+  String get setTarget;
+
+  /// No description provided for @listening.
+  ///
+  /// In en, this message translates to:
+  /// **'Listening...'**
+  String get listening;
 }
 
 class _AppLocalizationsDelegate
@@ -291,7 +327,7 @@ class _AppLocalizationsDelegate
         'es',
         'fr',
         'nl',
-        'zh',
+        'zh'
       ].contains(locale.languageCode);
 
   @override
@@ -316,9 +352,8 @@ AppLocalizations lookupAppLocalizations(Locale locale) {
   }
 
   throw FlutterError(
-    'AppLocalizations.delegate failed to load unsupported locale "$locale". This is likely '
-    'an issue with the localizations generation tool. Please file an issue '
-    'on GitHub with a reproducible sample app and the gen-l10n configuration '
-    'that was used.',
-  );
+      'AppLocalizations.delegate failed to load unsupported locale "$locale". This is likely '
+      'an issue with the localizations generation tool. Please file an issue '
+      'on GitHub with a reproducible sample app and the gen-l10n configuration '
+      'that was used.');
 }

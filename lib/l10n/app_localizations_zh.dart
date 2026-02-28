@@ -91,4 +91,22 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get search => 'Search';
+
+  @override
+  String get tasbih => 'Tasbih';
+
+  @override
+  String get target => 'Target';
+
+  @override
+  String get voiceMode => 'Voice Mode';
+
+  @override
+  String get reset => 'Reset';
+
+  @override
+  String get setTarget => 'Set Target';
+
+  @override
+  String get listening => 'Listening...';
 }

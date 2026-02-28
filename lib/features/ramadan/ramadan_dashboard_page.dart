@@ -5,6 +5,7 @@ import 'package:hijri/hijri_calendar.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../di/service_locator.dart';
 import '../prayer/prayer_times_service.dart';
+import '../home/home_controller.dart';
 import '../prayer_tracking/prayer_tracking_service.dart';
 import '../../shared/app_colors.dart';
 import '../../shared/glass_container.dart';
