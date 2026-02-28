@@ -1,14 +1,16 @@
 import 'package:get_it/get_it.dart';
 
-import '../features/duas/contextual_dua_service.dart';
-import '../features/duas/dua_repository.dart';
-import '../features/home/home_controller.dart';
 import '../features/notifications/notification_service.dart';
-import '../features/places/services/places_service.dart';
 import '../features/prayer/prayer_times_service.dart';
-import '../features/prayer_tracking/prayer_tracking_service.dart';
 import '../features/quotes/quote_picker_service.dart';
 import '../features/widget/prayer_widget_service.dart';
+import '../features/home/home_controller.dart';
+import '../features/prayer_tracking/prayer_tracking_service.dart';
+
+import '../features/duas/dua_repository.dart';
+
+import '../features/duas/contextual_dua_service.dart';
+import '../features/places/services/places_service.dart';
 
 final getIt = GetIt.instance;
 

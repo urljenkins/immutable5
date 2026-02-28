@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:immutable5/services/api_client.dart';
 
 class QuranReciter {
   final String id;
@@ -30,7 +31,7 @@ class QuranAudioService {
     );
 
     try {
-      final response = await http.get(url);
+      final response = await ApiClient().get(url);
 
       if (response.statusCode == 200) {
         final Map<String, dynamic> data = json.decode(response.body);

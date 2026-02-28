@@ -1,12 +1,13 @@
-import 'dart:async';
 import 'dart:convert';
 import 'dart:developer' as developer;
-
+import 'dart:async';
+import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
+import 'package:immutable5/services/api_client.dart';
 import 'package:immutable5/services/secure_storage_provider.dart';
 
 typedef PrayerTimesServiceFactory = PrayerTimesService Function(
-    double lat, double lon, int method, int madhab,);
+    double lat, double lon, int method, int madhab);
 
 class PrayerTimesService {
   // Replace with user's actual location and calculation params
@@ -33,7 +34,7 @@ class PrayerTimesService {
   DateTime _parseTimeString(String timeStr, DateTime date) {
     // Remove any timezone info like "(PKT)" that might be in the string
     final cleanTime = timeStr.replaceAll(RegExp(r'\s*\([^)]*\)'), '').trim();
-    final timeParts = cleanTime.split(':');
+    final timeParts = cleanTime.split(":");
 
     if (timeParts.length < 2) {
       throw FormatException('Invalid time format: $timeStr');
@@ -88,7 +89,7 @@ class PrayerTimesService {
     );
 
     try {
-      final response = await http.get(url).timeout(
+      final response = await ApiClient().get(url).timeout(
         const Duration(seconds: 10),
         onTimeout: () {
           throw TimeoutException(
@@ -110,10 +111,12 @@ class PrayerTimesService {
             cacheData[name] = dateTime.millisecondsSinceEpoch;
           } catch (e) {
             // Skip invalid prayer times
-            developer.log(
-              'Warning: Could not parse prayer time for $name: $timeStr - $e',
-              name: 'PrayerTimesService',
-            );
+            if (kDebugMode) {
+              developer.log(
+                'Warning: Could not parse prayer time for $name: $timeStr - $e',
+                name: 'PrayerTimesService',
+              );
+            }
           }
         });
 
@@ -188,7 +191,7 @@ class PrayerTimesService {
       );
 
       try {
-        final response = await http.get(url).timeout(
+        final response = await ApiClient().get(url).timeout(
           const Duration(seconds: 10),
           onTimeout: () {
             throw TimeoutException(
@@ -208,10 +211,12 @@ class PrayerTimesService {
               final dateTime = _parseTimeString(timeStr as String, tomorrow);
               tomorrowCacheData[name] = dateTime.millisecondsSinceEpoch;
             } catch (e) {
-              developer.log(
-                'Warning: Could not parse tomorrow\'s prayer time for $name: $timeStr - $e',
-                name: 'PrayerTimesService',
-              );
+              if (kDebugMode) {
+                developer.log(
+                  'Warning: Could not parse tomorrow\'s prayer time for $name: $timeStr - $e',
+                  name: 'PrayerTimesService',
+                );
+              }
             }
           });
           await prefs.setString(

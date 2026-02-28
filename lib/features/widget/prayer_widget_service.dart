@@ -1,17 +1,10 @@
-<<<<<<< fix-security-audit-findings-13073000296492036689
 import 'package:home_widget/home_widget.dart';
 import 'package:immutable5/services/secure_storage_provider.dart';
 import 'package:intl/intl.dart';
-=======
-import 'dart:convert';
-
->>>>>>> develop
 import 'package:hijri/hijri_calendar.dart';
-import 'package:home_widget/home_widget.dart';
 import 'package:http/http.dart' as http;
-import 'package:intl/intl.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-
+import 'package:immutable5/services/api_client.dart';
+import 'dart:convert';
 import '../prayer/prayer_times_service.dart';
 import 'widget_preferences.dart';
 
@@ -169,9 +162,9 @@ class PrayerWidgetService {
         'https://nominatim.openstreetmap.org/reverse?format=json&lat=$latitude&lon=$longitude&zoom=10',
       );
 
-      final response = await http.get(url, headers: {
-        'User-Agent': 'Immutable5PrayerApp/1.0',
-      },).timeout(const Duration(seconds: 5));
+      final response = await ApiClient().get(url, headers: {
+        'User-Agent': 'Immutable5PrayerApp/1.0'
+      }).timeout(const Duration(seconds: 5));
 
       if (response.statusCode == 200) {
         final data = json.decode(response.body);

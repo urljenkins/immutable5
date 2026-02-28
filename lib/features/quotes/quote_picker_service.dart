@@ -1,10 +1,8 @@
 // Handles logic for selecting a context-sensitive quote.
 
 import 'dart:math';
-
-import 'package:csv/csv.dart';
 import 'package:flutter/services.dart';
-
+import 'package:csv/csv.dart';
 import 'quote.dart';
 
 /// Loads quotes from assets/quotes.csv and picks a random one.

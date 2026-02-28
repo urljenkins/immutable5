@@ -1,4 +1,5 @@
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class SecureStorageProvider {
   static final SecureStorageProvider _instance =
@@ -8,6 +9,23 @@ class SecureStorageProvider {
   SecureStorageProvider._internal();
 
   final FlutterSecureStorage _storage = const FlutterSecureStorage();
+
+  Future<void> initMigration() async {
+    final migrated = await _storage.read(key: 'has_migrated_from_prefs');
+    if (migrated == 'true') return;
+
+    final oldPrefs = await SharedPreferences.getInstance();
+    final keys = oldPrefs.getKeys();
+
+    for (final key in keys) {
+      final val = oldPrefs.get(key);
+      if (val != null) {
+        await _storage.write(key: key, value: val.toString());
+      }
+    }
+    await _storage.write(key: 'has_migrated_from_prefs', value: 'true');
+    await oldPrefs.clear();
+  }
 
   Future<String?> getString(String key) async {
     return await _storage.read(key: key);
@@ -62,5 +80,9 @@ class SecureStorageProvider {
 
   Future<dynamic> get(String key) async {
     return await _storage.read(key: key);
+  }
+
+  Future<Map<String, String>> readAll() async {
+    return await _storage.readAll();
   }
 }

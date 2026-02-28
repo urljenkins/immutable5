@@ -1,10 +1,5 @@
-<<<<<<< fix-security-audit-findings-13073000296492036689
 import 'package:immutable5/services/secure_storage_provider.dart';
-=======
->>>>>>> develop
 import 'dart:async';
-
-import 'package:shared_preferences/shared_preferences.dart';
 
 /// Battery optimization service to reduce power consumption
 class BatteryOptimizer {

@@ -49,9 +49,18 @@ class PrayerTrackingService {
       const Duration(days: 1),
     ); // Start from yesterday
 
+    final prefs = SecureStorageProvider();
+    final allData = await prefs.readAll();
+
     while (true) {
-      final completions = await getCompletedPrayersForDate(date);
-      final allCompleted = completions.values.every((v) => v);
+      bool allCompleted = true;
+      for (final prayer in mainPrayers) {
+        final key = _getPrayerKey(prayer, date);
+        if (allData[key] != 'true') {
+          allCompleted = false;
+          break;
+        }
+      }
 
       if (!allCompleted) break;
 
@@ -83,11 +92,12 @@ class PrayerTrackingService {
   /// Get total prayers completed
   Future<int> getTotalPrayersCompleted() async {
     final prefs = SecureStorageProvider();
-    final keys = await prefs.getKeys();
+    final allData = await prefs.readAll();
     int count = 0;
-    for (final k in keys) {
+
+    for (final k in allData.keys) {
       if (k.startsWith('prayer_') && k.endsWith('_completed')) {
-        if (await prefs.getBool(k) == true) {
+        if (allData[k] == 'true') {
           count++;
         }
       }
@@ -100,9 +110,19 @@ class PrayerTrackingService {
     final Map<DateTime, Map<String, bool>> history = {};
     final now = DateTime.now();
 
+    final prefs = SecureStorageProvider();
+    final allData = await prefs.readAll();
+
     for (int i = 0; i < 30; i++) {
       final date = now.subtract(Duration(days: i));
-      history[date] = await getCompletedPrayersForDate(date);
+      final Map<String, bool> dayData = {};
+
+      for (final prayer in mainPrayers) {
+        final key = _getPrayerKey(prayer, date);
+        dayData[prayer] = (allData[key] == 'true');
+      }
+
+      history[date] = dayData;
     }
 
     return history;

@@ -1,20 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-<<<<<<< fix-security-audit-findings-13073000296492036689
 import 'package:immutable5/services/secure_storage_provider.dart';
-=======
-import 'package:shared_preferences/shared_preferences.dart';
-
->>>>>>> develop
 import '../../l10n/app_localizations.dart';
 import '../../main.dart';
-import '../../services/battery_optimizer.dart';
-import '../../services/cache_manager.dart';
-import '../../shared/app_colors.dart';
 import '../notifications/notification_service.dart';
 import '../quran/juz_of_the_day_service.dart';
 import '../quran/quran_context_menu_settings.dart';
 import '../widget/widget_settings_page.dart';
+import '../../services/battery_optimizer.dart';
+import '../../services/cache_manager.dart';
+import '../../shared/app_colors.dart';
 
 class SettingsPage extends StatefulWidget {
   const SettingsPage({super.key});
@@ -143,6 +138,8 @@ class _SettingsPageState extends State<SettingsPage> {
     final savedJuzMode = await prefs.getString(_keyJuzMode);
     final ctxMenuSettings = await QuranContextMenuSettings.fromPrefs(prefs);
 
+    if (!mounted) return;
+
     setState(() {
       _calculationMethod = calculationMethod;
       _madhab = madhab;
@@ -213,20 +210,18 @@ class _SettingsPageState extends State<SettingsPage> {
                       ),
                     ),
                     children: [
-                      RadioGroup<String>(
-                        groupValue: _calculationMethod,
-                        onChanged: (v) => Navigator.pop(context, v),
-                        child: Column(
-                          children: _methods
-                              .map(
-                                (m) => RadioListTile(
-                                  title: Text(m),
-                                  value: m,
-                                  activeColor: AppColors.accent,
-                                ),
-                              )
-                              .toList(),
-                        ),
+                      Column(
+                        children: _methods
+                            .map(
+                              (m) => RadioListTile<String>(
+                                groupValue: _calculationMethod,
+                                onChanged: (v) => Navigator.pop(context, v),
+                                title: Text(m),
+                                value: m,
+                                activeColor: AppColors.accent,
+                              ),
+                            )
+                            .toList(),
                       ),
                     ],
                   ),
@@ -250,20 +245,18 @@ class _SettingsPageState extends State<SettingsPage> {
                     backgroundColor: AppColors.cardSurface,
                     title: Text(AppLocalizations.of(context)!.selectMadhab),
                     children: [
-                      RadioGroup<String>(
-                        groupValue: _madhab,
-                        onChanged: (v) => Navigator.pop(context, v),
-                        child: Column(
-                          children: _madhabs
-                              .map(
-                                (m) => RadioListTile(
-                                  title: Text(m),
-                                  value: m,
-                                  activeColor: AppColors.accent,
-                                ),
-                              )
-                              .toList(),
-                        ),
+                      Column(
+                        children: _madhabs
+                            .map(
+                              (m) => RadioListTile<String>(
+                                groupValue: _madhab,
+                                onChanged: (v) => Navigator.pop(context, v),
+                                title: Text(m),
+                                value: m,
+                                activeColor: AppColors.accent,
+                              ),
+                            )
+                            .toList(),
                       ),
                     ],
                   ),
