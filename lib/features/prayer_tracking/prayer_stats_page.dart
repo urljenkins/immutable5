@@ -1,6 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:table_calendar/table_calendar.dart';
 
+import '../../di/service_locator.dart';
+import '../../shared/app_colors.dart';
+import '../../shared/glass_container.dart';
+import '../prayer/prayer_times_service.dart';
 import 'prayer_tracking_service.dart';
 
 class PrayerStatsPage extends StatefulWidget {
@@ -12,8 +17,10 @@ class PrayerStatsPage extends StatefulWidget {
 
 class _PrayerStatsPageState extends State<PrayerStatsPage> {
   final PrayerTrackingService _trackingService = PrayerTrackingService();
+  late final PrayerTimesService _prayerTimesService;
   Map<String, dynamic>? _stats;
   Map<DateTime, Map<String, bool>> _history = {};
+  Map<String, DateTime> _todayPrayerTimes = {};
   DateTime _focusedDay = DateTime.now();
   DateTime _selectedDay = DateTime.now();
   bool _loading = true;
@@ -21,6 +28,12 @@ class _PrayerStatsPageState extends State<PrayerStatsPage> {
   @override
   void initState() {
     super.initState();
+    _prayerTimesService = getIt<PrayerTimesServiceFactory>()(
+      51.5074, // Default lat, ideally from user location
+      -0.1278, // Default lon
+      2, // Default method
+      0, // Default madhab
+    );
     _loadData();
   }
 
@@ -28,35 +41,97 @@ class _PrayerStatsPageState extends State<PrayerStatsPage> {
     final stats = await _trackingService.getStatistics();
     final history = await _trackingService.getLast30DaysHistory();
 
-    setState(() {
-      _stats = stats;
-      _history = history;
-      _loading = false;
-    });
+    Map<String, DateTime> times = {};
+    try {
+      times = await _prayerTimesService.getPrayerTimesForDate(_selectedDay);
+    } catch (e) {
+      debugPrint('Failed to load prayer times: $e');
+    }
+
+    if (mounted) {
+      setState(() {
+        _stats = stats;
+        _history = history;
+        _todayPrayerTimes = times;
+        _loading = false;
+      });
+    }
+  }
+
+  String _formatTime(DateTime? time) {
+    if (time == null) return '--:--';
+    final hour =
+        time.hour > 12 ? time.hour - 12 : (time.hour == 0 ? 12 : time.hour);
+    final minute = time.minute.toString().padLeft(2, '0');
+    final amPm = time.hour >= 12 ? 'PM' : 'AM';
+    return '$hour:$minute $amPm';
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: AppColors.background,
+      extendBodyBehindAppBar: true,
       appBar: AppBar(
-        title: const Text('Prayer Statistics'),
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+        title: Text(
+          'Prayer Tracker',
+          style: GoogleFonts.plusJakartaSans(
+            fontWeight: FontWeight.w600,
+            color: AppColors.textPrimary,
+          ),
+        ),
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        iconTheme: const IconThemeData(color: AppColors.textPrimary),
       ),
-      body: _loading
-          ? const Center(child: CircularProgressIndicator())
-          : SingleChildScrollView(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  _buildStatisticsCards(),
-                  const SizedBox(height: 24),
-                  _buildTodayPrayers(),
-                  const SizedBox(height: 24),
-                  _buildCalendarView(),
+      body: Stack(
+        children: [
+          // Atmospheric Background Element
+          Positioned(
+            top: -100,
+            right: -100,
+            child: Container(
+              height: 300,
+              width: 300,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: AppColors.accent.withValues(alpha: 0.15),
+                boxShadow: [
+                  BoxShadow(
+                    blurRadius: 100,
+                    color: AppColors.accent.withValues(alpha: 0.2),
+                    spreadRadius: 20,
+                  ),
                 ],
               ),
             ),
+          ),
+
+          SafeArea(
+            child: _loading
+                ? Center(
+                    child: CircularProgressIndicator(color: AppColors.accent),
+                  )
+                : SingleChildScrollView(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 24.0,
+                      vertical: 16.0,
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        _buildTodayPrayers(),
+                        const SizedBox(height: 24),
+                        _buildStatisticsCards(),
+                        const SizedBox(height: 24),
+                        _buildCalendarView(),
+                        const SizedBox(height: 40),
+                      ],
+                    ),
+                  ),
+          ),
+        ],
+      ),
     );
   }
 
@@ -67,43 +142,52 @@ class _PrayerStatsPageState extends State<PrayerStatsPage> {
           children: [
             Expanded(
               child: _buildStatCard(
-                'Current Streak',
-                '${_stats!['currentStreak']} days',
-                Icons.local_fire_department,
-                Colors.orange,
+                'Today',
+                '${(_stats!['todayCompletion'] * 100).toInt()}%',
+                Icons.today,
+                AppColors.success,
               ),
             ),
-            const SizedBox(width: 12),
+            const SizedBox(width: 16),
             Expanded(
               child: _buildStatCard(
-                'Longest Streak',
-                '${_stats!['longestStreak']} days',
-                Icons.emoji_events,
-                Colors.amber,
+                'Total Prayers',
+                '${_stats!['totalPrayers']}',
+                Icons.check_circle,
+                AppColors.success,
               ),
             ),
           ],
         ),
         const SizedBox(height: 12),
         Row(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Expanded(
-              child: _buildStatCard(
-                'Today',
-                '${(_stats!['todayCompletion'] * 100).toInt()}%',
-                Icons.today,
-                Colors.blue,
+            Text(
+              'Current streak: ${_stats!['currentStreak']}d',
+              style: GoogleFonts.plusJakartaSans(
+                fontSize: 12,
+                color: AppColors.textSecondary,
               ),
             ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: _buildStatCard(
-                'Total Prayers',
-                '${_stats!['totalPrayers']}',
-                Icons.check_circle,
-                Colors.green,
+            if (_stats!['longestStreak'] > 0) ...[
+              const SizedBox(width: 8),
+              Text(
+                '•',
+                style: GoogleFonts.plusJakartaSans(
+                  fontSize: 12,
+                  color: AppColors.textSecondary.withValues(alpha: 0.5),
+                ),
               ),
-            ),
+              const SizedBox(width: 8),
+              Text(
+                'Best: ${_stats!['longestStreak']}d',
+                style: GoogleFonts.plusJakartaSans(
+                  fontSize: 12,
+                  color: AppColors.textSecondary,
+                ),
+              ),
+            ],
           ],
         ),
       ],
@@ -116,120 +200,261 @@ class _PrayerStatsPageState extends State<PrayerStatsPage> {
     IconData icon,
     Color color,
   ) {
-    return Card(
-      elevation: 2,
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            Icon(icon, size: 32, color: color),
-            const SizedBox(height: 8),
-            Text(
-              value,
-              style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+    return GlassContainer(
+      padding: const EdgeInsets.all(16.0),
+      borderRadius: 20,
+      gradientColors: [
+        AppColors.cardSurface.withValues(alpha: 0.5),
+        AppColors.cardSurface.withValues(alpha: 0.2),
+      ],
+      borderColor: Colors.white.withValues(alpha: 0.05),
+      child: Column(
+        children: [
+          Icon(icon, size: 28, color: color),
+          const SizedBox(height: 12),
+          Text(
+            value,
+            style: GoogleFonts.plusJakartaSans(
+              fontSize: 28,
+              fontWeight: FontWeight.bold,
+              color: AppColors.textPrimary,
             ),
-            const SizedBox(height: 4),
-            Text(
-              label,
-              style: const TextStyle(fontSize: 12, color: Colors.grey),
-              textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: 4),
+          Text(
+            label,
+            style: GoogleFonts.plusJakartaSans(
+              fontSize: 12,
+              fontWeight: FontWeight.w500,
+              color: AppColors.textSecondary,
             ),
-          ],
-        ),
+            textAlign: TextAlign.center,
+          ),
+        ],
       ),
     );
   }
 
   Widget _buildTodayPrayers() {
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text(
-              'Today\'s Prayers',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+    return GlassContainer(
+      padding: const EdgeInsets.all(12.0),
+      borderRadius: 24,
+      gradientColors: [
+        AppColors.cardSurface.withValues(alpha: 0.5),
+        AppColors.cardSurface.withValues(alpha: 0.2),
+      ],
+      borderColor: Colors.white.withValues(alpha: 0.05),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.fromLTRB(8, 8, 8, 4),
+            child: Text(
+              'Upcoming Prayers',
+              style: GoogleFonts.plusJakartaSans(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                color: AppColors.textPrimary,
+              ),
             ),
-            const SizedBox(height: 12),
-            FutureBuilder<Map<String, bool>>(
-              future: _trackingService.getCompletedPrayersForDate(_selectedDay),
-              builder: (context, snapshot) {
-                if (!snapshot.hasData) {
-                  return const CircularProgressIndicator();
-                }
+          ),
+          const SizedBox(height: 12),
+          FutureBuilder<Map<String, bool>>(
+            future: _trackingService.getCompletedPrayersForDate(_selectedDay),
+            builder: (context, snapshot) {
+              if (!snapshot.hasData) {
+                return const Center(child: CircularProgressIndicator());
+              }
 
-                final completions = snapshot.data!;
-                return Column(
-                  children: _trackingService.mainPrayers.map((prayer) {
-                    final isCompleted = completions[prayer] ?? false;
-                    return CheckboxListTile(
-                      title: Text(prayer),
-                      value: isCompleted,
-                      onChanged: (value) async {
-                        await _trackingService.togglePrayerCompletion(
-                          prayer,
-                          _selectedDay,
-                        );
-                        setState(() {
-                          _loadData();
-                        });
-                      },
-                      secondary: Icon(
-                        isCompleted
-                            ? Icons.check_circle
-                            : Icons.circle_outlined,
-                        color: isCompleted ? Colors.green : Colors.grey,
+              final completions = snapshot.data!;
+              final now = DateTime.now();
+              final isToday = isSameDay(_selectedDay, now);
+
+              // Hide prayers that have passed today
+              final upcomingPrayers =
+                  _trackingService.mainPrayers.where((prayer) {
+                if (!isToday || !_todayPrayerTimes.containsKey(prayer)) {
+                  return true;
+                }
+                final time = _todayPrayerTimes[prayer]!;
+                // Show only if the current time is BEFORE the prayer time (it hasn't passed)
+                return now.isBefore(time.subtract(const Duration(minutes: 5)));
+              }).toList();
+
+              if (upcomingPrayers.isEmpty) {
+                return const Padding(
+                  padding: EdgeInsets.symmetric(vertical: 24.0),
+                  child: Center(
+                    child: Text(
+                      'All prayers have passed for today.',
+                      style: TextStyle(
+                        color: Colors.grey,
+                        fontStyle: FontStyle.italic,
                       ),
-                    );
-                  }).toList(),
+                    ),
+                  ),
                 );
-              },
-            ),
-          ],
-        ),
+              }
+
+              return SizedBox(
+                height: 200,
+                child: ListWheelScrollView.useDelegate(
+                  itemExtent: 65,
+                  physics: const FixedExtentScrollPhysics(),
+                  perspective: 0.005,
+                  diameterRatio: 1.5,
+                  childDelegate: ListWheelChildBuilderDelegate(
+                    childCount: upcomingPrayers.length,
+                    builder: (context, index) {
+                      final prayer = upcomingPrayers[index];
+                      final isCompleted = completions[prayer] ?? false;
+                      final prayerTime = _todayPrayerTimes[prayer];
+
+                      return Container(
+                        margin: const EdgeInsets.symmetric(
+                          horizontal: 8,
+                          vertical: 4,
+                        ),
+                        decoration: BoxDecoration(
+                          color: isCompleted
+                              ? AppColors.success.withValues(alpha: 0.1)
+                              : Colors.transparent,
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(
+                            color: isCompleted
+                                ? AppColors.success.withValues(alpha: 0.3)
+                                : Colors.white.withValues(alpha: 0.05),
+                          ),
+                        ),
+                        child: CheckboxListTile(
+                          title: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                prayer,
+                                style: GoogleFonts.plusJakartaSans(
+                                  fontWeight: isCompleted
+                                      ? FontWeight.bold
+                                      : FontWeight.normal,
+                                  color: isCompleted
+                                      ? AppColors.success
+                                      : AppColors.textPrimary,
+                                ),
+                              ),
+                              if (prayerTime != null)
+                                Text(
+                                  _formatTime(prayerTime),
+                                  style: GoogleFonts.plusJakartaSans(
+                                    fontSize: 12,
+                                    color: isCompleted
+                                        ? AppColors.success
+                                        : AppColors.textSecondary,
+                                    fontWeight: isCompleted
+                                        ? FontWeight.bold
+                                        : FontWeight.normal,
+                                  ),
+                                ),
+                            ],
+                          ),
+                          value: isCompleted,
+                          onChanged: (value) async {
+                            await _trackingService.togglePrayerCompletion(
+                              prayer,
+                              _selectedDay,
+                            );
+                            setState(() {
+                              _loading = true;
+                            });
+                            _loadData();
+                          },
+                          secondary: Icon(
+                            isCompleted
+                                ? Icons.check_circle
+                                : Icons.circle_outlined,
+                            color: isCompleted
+                                ? AppColors.success
+                                : AppColors.textSecondary,
+                          ),
+                          checkboxShape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(4),
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                ),
+              );
+            },
+          ),
+        ],
       ),
     );
   }
 
   Widget _buildCalendarView() {
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text(
-              'Last 30 Days',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+    return GlassContainer(
+      padding: const EdgeInsets.all(20.0),
+      borderRadius: 24,
+      gradientColors: [
+        AppColors.cardSurface.withValues(alpha: 0.5),
+        AppColors.cardSurface.withValues(alpha: 0.2),
+      ],
+      borderColor: Colors.white.withValues(alpha: 0.05),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'Last 30 Days',
+            style: GoogleFonts.plusJakartaSans(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+              color: AppColors.textPrimary,
             ),
-            const SizedBox(height: 12),
-            TableCalendar(
-              firstDay: DateTime.now().subtract(const Duration(days: 60)),
-              lastDay: DateTime.now(),
-              focusedDay: _focusedDay,
-              headerStyle: const HeaderStyle(formatButtonVisible: false),
-              selectedDayPredicate: (day) => isSameDay(_selectedDay, day),
-              onDaySelected: (selectedDay, focusedDay) {
-                setState(() {
-                  _selectedDay = selectedDay;
-                  _focusedDay = focusedDay;
-                });
-              },
-              calendarBuilders: CalendarBuilders(
-                defaultBuilder: (context, date, _) {
-                  return _buildCalendarDay(date);
-                },
-                selectedBuilder: (context, date, _) {
-                  return _buildCalendarDay(date, isSelected: true);
-                },
-                todayBuilder: (context, date, _) {
-                  return _buildCalendarDay(date, isToday: true);
-                },
+          ),
+          const SizedBox(height: 16),
+          TableCalendar(
+            firstDay: DateTime.now().subtract(const Duration(days: 60)),
+            lastDay: DateTime.now(),
+            focusedDay: _focusedDay,
+            headerStyle: HeaderStyle(
+              formatButtonVisible: false,
+              titleCentered: true,
+              titleTextStyle: GoogleFonts.plusJakartaSans(
+                color: AppColors.textPrimary,
+                fontSize: 16,
+                fontWeight: FontWeight.w600,
               ),
+              leftChevronIcon:
+                  const Icon(Icons.chevron_left, color: AppColors.textPrimary),
+              rightChevronIcon:
+                  const Icon(Icons.chevron_right, color: AppColors.textPrimary),
             ),
-          ],
-        ),
+            daysOfWeekStyle: DaysOfWeekStyle(
+              weekdayStyle:
+                  GoogleFonts.plusJakartaSans(color: AppColors.textSecondary),
+              weekendStyle:
+                  GoogleFonts.plusJakartaSans(color: AppColors.textSecondary),
+            ),
+            selectedDayPredicate: (day) => isSameDay(_selectedDay, day),
+            onDaySelected: (selectedDay, focusedDay) {
+              setState(() {
+                _selectedDay = selectedDay;
+                _focusedDay = focusedDay;
+              });
+            },
+            calendarBuilders: CalendarBuilders(
+              defaultBuilder: (context, date, _) {
+                return _buildCalendarDay(date);
+              },
+              selectedBuilder: (context, date, _) {
+                return _buildCalendarDay(date, isSelected: true);
+              },
+              todayBuilder: (context, date, _) {
+                return _buildCalendarDay(date, isToday: true);
+              },
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -248,30 +473,60 @@ class _PrayerStatsPageState extends State<PrayerStatsPage> {
     final total = _trackingService.mainPrayers.length;
 
     Color? backgroundColor;
+    Color? borderColor;
+    Color textColor = AppColors.textPrimary;
+
     if (completedCount == total && completedCount > 0) {
-      backgroundColor = Colors.green.withValues(alpha: 0.3);
+      backgroundColor = AppColors.success.withValues(alpha: 0.2);
+      borderColor = AppColors.success.withValues(alpha: 0.5);
+      textColor = AppColors.success;
     } else if (completedCount > 0) {
-      backgroundColor = Colors.orange.withValues(alpha: 0.3);
+      backgroundColor = AppColors.accent.withValues(alpha: 0.15);
+      borderColor = AppColors.accent.withValues(alpha: 0.3);
+      textColor = AppColors.accent;
+    } else {
+      backgroundColor = Colors.transparent;
+      borderColor = Colors.transparent;
     }
 
     if (isSelected) {
-      backgroundColor = Colors.blue.withValues(alpha: 0.5);
-    } else if (isToday) {
-      backgroundColor = Colors.purple.withValues(alpha: 0.3);
+      backgroundColor = Colors.white.withValues(alpha: 0.1);
+      borderColor = Colors.white.withValues(alpha: 0.3);
+      textColor = AppColors.textPrimary;
+    } else if (isToday && completedCount == 0) {
+      backgroundColor = Colors.white.withValues(alpha: 0.05);
+      borderColor = Colors.white.withValues(alpha: 0.2);
     }
 
     return Container(
       margin: const EdgeInsets.all(4),
-      decoration: BoxDecoration(color: backgroundColor, shape: BoxShape.circle),
+      decoration: BoxDecoration(
+        color: backgroundColor,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: borderColor, width: 1),
+      ),
       child: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text('${date.day}', style: const TextStyle(fontSize: 14)),
-            if (completedCount > 0)
-              Text(
-                '$completedCount/$total',
-                style: const TextStyle(fontSize: 8),
+            Text(
+              '${date.day}',
+              style: GoogleFonts.plusJakartaSans(
+                fontSize: 14,
+                fontWeight:
+                    isSelected || isToday ? FontWeight.bold : FontWeight.normal,
+                color: textColor,
+              ),
+            ),
+            if (completedCount > 0 && completedCount < total)
+              Container(
+                margin: const EdgeInsets.only(top: 2),
+                height: 4,
+                width: 4,
+                decoration: BoxDecoration(
+                  color: AppColors.accent,
+                  shape: BoxShape.circle,
+                ),
               ),
           ],
         ),

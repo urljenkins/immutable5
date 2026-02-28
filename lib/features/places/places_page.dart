@@ -355,109 +355,111 @@ class _PlacesPageState extends State<PlacesPage> {
     return Scaffold(
       body: Stack(
         children: [
-          FlutterMap(
-            mapController: _mapController,
-            options: MapOptions(
-              initialCenter: _center,
-              initialZoom: 13.0,
-              onMapReady: () {
-                _mapReady = true;
-                if (_pendingCenter != null) {
-                  _mapController.move(_pendingCenter!, 13.0);
-                  _pendingCenter = null;
-                }
-              },
-              onTap: (tapPos, point) {
-                if (_isRouteMode) {
-                  _planRoute(point);
-                }
-              },
-            ),
-            children: [
-              TileLayer(
-                urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
-                userAgentPackageName: 'com.immutable.five',
-                // Dark mode filter could be added here if supported by tile provider
+          Positioned.fill(
+            child: FlutterMap(
+              mapController: _mapController,
+              options: MapOptions(
+                initialCenter: _center,
+                initialZoom: 13.0,
+                onMapReady: () {
+                  _mapReady = true;
+                  if (_pendingCenter != null) {
+                    _mapController.move(_pendingCenter!, 13.0);
+                    _pendingCenter = null;
+                  }
+                },
+                onTap: (tapPos, point) {
+                  if (_isRouteMode) {
+                    _planRoute(point);
+                  }
+                },
               ),
-              if (_routePoints.isNotEmpty)
-                PolylineLayer(
-                  polylines: [
-                    Polyline(
-                      points: _routePoints,
-                      strokeWidth: 4.0,
-                      color: Colors.blue,
-                    ),
-                  ],
+              children: [
+                TileLayer(
+                  urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+                  userAgentPackageName: 'com.immutable.five',
+                  // Dark mode filter could be added here if supported by tile provider
                 ),
-              MarkerLayer(
-                markers: [
-                  // Destination marker
-                  if (_routeDestination != null)
-                    Marker(
-                      point: _routeDestination!,
-                      width: 40,
-                      height: 40,
-                      child:
-                          const Icon(Icons.flag, color: Colors.red, size: 40),
-                    ),
-                  // User location marker
-                  if (_locationPermissionGranted)
-                    Marker(
-                      point: _center,
-                      width: 60,
-                      height: 60,
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: AppColors.accent.withValues(alpha: 0.3),
-                          shape: BoxShape.circle,
-                          border: Border.all(color: Colors.white, width: 2),
-                        ),
-                        child: Center(
-                          child: Container(
-                            width: 12,
-                            height: 12,
-                            decoration: BoxDecoration(
-                              color: AppColors.accent,
-                              shape: BoxShape.circle,
+                if (_routePoints.isNotEmpty)
+                  PolylineLayer(
+                    polylines: [
+                      Polyline(
+                        points: _routePoints,
+                        strokeWidth: 4.0,
+                        color: Colors.blue,
+                      ),
+                    ],
+                  ),
+                MarkerLayer(
+                  markers: [
+                    // Destination marker
+                    if (_routeDestination != null)
+                      Marker(
+                        point: _routeDestination!,
+                        width: 40,
+                        height: 40,
+                        child:
+                            const Icon(Icons.flag, color: Colors.red, size: 40),
+                      ),
+                    // User location marker
+                    if (_locationPermissionGranted)
+                      Marker(
+                        point: _center,
+                        width: 60,
+                        height: 60,
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: AppColors.accent.withValues(alpha: 0.3),
+                            shape: BoxShape.circle,
+                            border: Border.all(color: Colors.white, width: 2),
+                          ),
+                          child: Center(
+                            child: Container(
+                              width: 12,
+                              height: 12,
+                              decoration: BoxDecoration(
+                                color: AppColors.accent,
+                                shape: BoxShape.circle,
+                              ),
                             ),
+                          ),
+                        ),
+                      ),
+
+                    // Places markers
+                    ..._filteredPlaces.map(
+                      (place) => Marker(
+                        point: LatLng(place.lat, place.lng),
+                        width: 40,
+                        height: 40,
+                        child: GestureDetector(
+                          onTap: () => _showPlaceDetails(place),
+                          child: Icon(
+                            Icons.location_on,
+                            color: _getMarkerColor(place),
+                            size: 40,
                           ),
                         ),
                       ),
                     ),
 
-                  // Places markers
-                  ..._filteredPlaces.map(
-                    (place) => Marker(
-                      point: LatLng(place.lat, place.lng),
-                      width: 40,
-                      height: 40,
-                      child: GestureDetector(
-                        onTap: () => _showPlaceDetails(place),
-                        child: Icon(
+                    // Pending markers
+                    ..._pendingPlaces.map(
+                      (place) => Marker(
+                        point: LatLng(place.lat, place.lng),
+                        width: 40,
+                        height: 40,
+                        child: const Icon(
                           Icons.location_on,
-                          color: _getMarkerColor(place),
+                          color: Colors.orange, // Orange for pending
                           size: 40,
                         ),
                       ),
                     ),
-                  ),
-
-                  // Pending markers
-                  ..._pendingPlaces.map(
-                    (place) => Marker(
-                      point: LatLng(place.lat, place.lng),
-                      width: 40,
-                      height: 40,
-                      child: const Icon(
-                        Icons.location_on,
-                        color: Colors.orange, // Orange for pending
-                        size: 40,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ],
+                  ],
+                ),
+              ],
+            ),
           ),
 
           // Add Place FAB
