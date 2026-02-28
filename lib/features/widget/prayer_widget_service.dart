@@ -162,9 +162,12 @@ class PrayerWidgetService {
         'https://nominatim.openstreetmap.org/reverse?format=json&lat=$latitude&lon=$longitude&zoom=10',
       );
 
-      final response = await http.get(url, headers: {
-        'User-Agent': 'Immutable5PrayerApp/1.0',
-      },).timeout(const Duration(seconds: 5));
+      final response = await http.get(
+        url,
+        headers: {
+          'User-Agent': 'Immutable5PrayerApp/1.0',
+        },
+      ).timeout(const Duration(seconds: 5));
 
       if (response.statusCode == 200) {
         final data = json.decode(response.body);

@@ -169,7 +169,7 @@ class _AddPlacePageState extends State<AddPlacePage> {
             initialZoom: 15.0,
             onPositionChanged: (pos, hasGesture) {
               _selectedLocation = pos.center;
-                        },
+            },
           ),
           children: [
             TileLayer(

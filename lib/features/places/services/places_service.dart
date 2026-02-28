@@ -29,7 +29,8 @@ class PlacesService {
   Future<List<LatLng>> getRoute(LatLng start, LatLng end) async {
     try {
       final url = Uri.parse(
-          '$_osrmUrl/${start.longitude},${start.latitude};${end.longitude},${end.latitude}?overview=full&geometries=geojson',);
+        '$_osrmUrl/${start.longitude},${start.latitude};${end.longitude},${end.latitude}?overview=full&geometries=geojson',
+      );
 
       final response = await http.get(url);
 
@@ -53,8 +54,11 @@ class PlacesService {
     }
   }
 
-  Future<List<PlaceModel>> getNearbyPlaces(double lat, double lng,
-      {double radius = 5000,}) async {
+  Future<List<PlaceModel>> getNearbyPlaces(
+    double lat,
+    double lng, {
+    double radius = 5000,
+  }) async {
     // Overpass QL query: find nodes/ways with amenity=place_of_worship and religion=muslim within radius
     final query = '''
       [out:json][timeout:25];

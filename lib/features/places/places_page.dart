@@ -104,7 +104,9 @@ class _PlacesPageState extends State<PlacesPage> {
     setState(() => _loading = true);
     try {
       final places = await _placesService.getNearbyPlaces(
-          _center.latitude, _center.longitude,);
+        _center.latitude,
+        _center.longitude,
+      );
       final pending = await _placesService.getPendingPlaces();
 
       if (mounted) {
@@ -120,8 +122,10 @@ class _PlacesPageState extends State<PlacesPage> {
         setState(() => _loading = false);
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Failed to load places. Please try again.',
-                style: GoogleFonts.plusJakartaSans(color: Colors.white),),
+            content: Text(
+              'Failed to load places. Please try again.',
+              style: GoogleFonts.plusJakartaSans(color: Colors.white),
+            ),
             backgroundColor: AppColors.error,
           ),
         );
@@ -225,13 +229,17 @@ class _PlacesPageState extends State<PlacesPage> {
               if (place.details?['opening_hours'] != null) ...[
                 Row(
                   children: [
-                    const Icon(Icons.access_time,
-                        color: AppColors.textSecondary, size: 16,),
+                    const Icon(
+                      Icons.access_time,
+                      color: AppColors.textSecondary,
+                      size: 16,
+                    ),
                     const SizedBox(width: 8),
                     Text(
                       place.details!['opening_hours'],
                       style: GoogleFonts.plusJakartaSans(
-                          color: AppColors.textSecondary,),
+                        color: AppColors.textSecondary,
+                      ),
                     ),
                   ],
                 ),
@@ -254,7 +262,8 @@ class _PlacesPageState extends State<PlacesPage> {
                   label: Text(
                     AppLocalizations.of(context)!.getDirections,
                     style: GoogleFonts.plusJakartaSans(
-                        fontWeight: FontWeight.bold,),
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
               ),
@@ -274,8 +283,10 @@ class _PlacesPageState extends State<PlacesPage> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Could not launch maps.',
-                style: GoogleFonts.plusJakartaSans(color: Colors.white),),
+            content: Text(
+              'Could not launch maps.',
+              style: GoogleFonts.plusJakartaSans(color: Colors.white),
+            ),
             backgroundColor: AppColors.error,
           ),
         );
@@ -365,7 +376,8 @@ class _PlacesPageState extends State<PlacesPage> {
                       point: _routeDestination!,
                       width: 40,
                       height: 40,
-                      child: const Icon(Icons.flag, color: Colors.red, size: 40),
+                      child:
+                          const Icon(Icons.flag, color: Colors.red, size: 40),
                     ),
                   // User location marker
                   if (_locationPermissionGranted)
@@ -393,31 +405,35 @@ class _PlacesPageState extends State<PlacesPage> {
                     ),
 
                   // Places markers
-                  ..._filteredPlaces.map((place) => Marker(
-                        point: LatLng(place.lat, place.lng),
-                        width: 40,
-                        height: 40,
-                        child: GestureDetector(
-                          onTap: () => _showPlaceDetails(place),
-                          child: Icon(
-                            Icons.location_on,
-                            color: _getMarkerColor(place),
-                            size: 40,
-                          ),
-                        ),
-                      ),),
-
-                  // Pending markers
-                  ..._pendingPlaces.map((place) => Marker(
-                        point: LatLng(place.lat, place.lng),
-                        width: 40,
-                        height: 40,
-                        child: const Icon(
+                  ..._filteredPlaces.map(
+                    (place) => Marker(
+                      point: LatLng(place.lat, place.lng),
+                      width: 40,
+                      height: 40,
+                      child: GestureDetector(
+                        onTap: () => _showPlaceDetails(place),
+                        child: Icon(
                           Icons.location_on,
-                          color: Colors.orange, // Orange for pending
+                          color: _getMarkerColor(place),
                           size: 40,
                         ),
-                      ),),
+                      ),
+                    ),
+                  ),
+
+                  // Pending markers
+                  ..._pendingPlaces.map(
+                    (place) => Marker(
+                      point: LatLng(place.lat, place.lng),
+                      width: 40,
+                      height: 40,
+                      child: const Icon(
+                        Icons.location_on,
+                        color: Colors.orange, // Orange for pending
+                        size: 40,
+                      ),
+                    ),
+                  ),
                 ],
               ),
             ],
@@ -541,7 +557,8 @@ class _PlacesPageState extends State<PlacesPage> {
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        const Icon(Icons.access_time, size: 16, color: Colors.black),
+                        const Icon(Icons.access_time,
+                            size: 16, color: Colors.black),
                         const SizedBox(width: 8),
                         Text(
                           'Next: $_nextPrayerName at $_nextPrayerTime',
