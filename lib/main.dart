@@ -1,16 +1,10 @@
+import 'dart:convert';
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'features/prayer_tracking/prayer_stats_page.dart';
-import 'features/notifications/notification_service.dart';
-import 'features/widget/prayer_widget_service.dart';
 import 'package:immutable5/services/secure_storage_provider.dart';
-import 'features/settings/settings_page.dart';
-import 'features/quran/quran_page.dart';
-import 'features/qibla/qibla_page.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 import 'di/service_locator.dart';
 import 'features/calendar/calendar_page.dart';
@@ -33,8 +27,8 @@ final ValueNotifier<ThemeMode> themeNotifier = ValueNotifier(ThemeMode.dark);
 final ValueNotifier<Color> accentColorNotifier = ValueNotifier(
   AppColors.accent,
 );
-final ValueNotifier<BottomNavVisibility> bottomNavVisibilityNotifier =
-    ValueNotifier(const BottomNavVisibility());
+final ValueNotifier<NavBarConfig> navBarConfigNotifier =
+    ValueNotifier(NavBarConfig.defaultConfig());
 const String _keyAccentColor = 'accent_color';
 
 void main() async {
@@ -58,8 +52,7 @@ void main() async {
     accentColorNotifier.value = AppColors.accent;
   }
 
-  bottomNavVisibilityNotifier.value =
-      await BottomNavVisibility.fromPrefs(prefs);
+  navBarConfigNotifier.value = await NavBarConfig.fromPrefs(prefs);
   runApp(const MyApp());
 }
 
@@ -143,21 +136,52 @@ class AppScaffold extends StatefulWidget {
 class _AppScaffoldState extends State<AppScaffold> {
   int _currentIndex = 0;
 
+  /// When a user selects an overflow item we store its id so the body
+  /// shows that page even though it doesn't have an icon in the bar.
+  String? _overflowSelectedId;
+
   @override
   Widget build(BuildContext context) {
     return ValueListenableBuilder<Color>(
       valueListenable: accentColorNotifier,
       builder: (_, accentColor, __) {
-        return ValueListenableBuilder<BottomNavVisibility>(
-          valueListenable: bottomNavVisibilityNotifier,
-          builder: (_, visibility, __) {
-            final navItems = _buildNavItems(context, visibility);
-            final currentIndex =
-                _currentIndex >= navItems.length ? 0 : _currentIndex;
+        return ValueListenableBuilder<NavBarConfig>(
+          valueListenable: navBarConfigNotifier,
+          builder: (_, config, __) {
+            final allItems = _buildAllNavItems(context);
+
+            // Ordered visible items based on config
+            final visibleIds = config.visibleTabIds;
+            final visibleItems = <_NavItem>[];
+            for (final id in visibleIds) {
+              final match = allItems.where((i) => i.id == id);
+              if (match.isNotEmpty) visibleItems.add(match.first);
+            }
+
+            // Split into bar items and overflow items
+            final maxVisible = config.maxVisibleTabs;
+            final barItems = visibleItems.length <= maxVisible
+                ? visibleItems
+                : visibleItems.sublist(0, maxVisible);
+            final overflowItems = visibleItems.length > maxVisible
+                ? visibleItems.sublist(maxVisible)
+                : <_NavItem>[];
+
+            // Determine the currently shown page
+            Widget currentPage;
+            if (_overflowSelectedId != null) {
+              final match = allItems.where((i) => i.id == _overflowSelectedId);
+              currentPage =
+                  match.isNotEmpty ? match.first.page : barItems[0].page;
+            } else {
+              final safeIndex =
+                  _currentIndex >= barItems.length ? 0 : _currentIndex;
+              currentPage = barItems[safeIndex].page;
+            }
 
             return Scaffold(
-              extendBody: true, // Allows body to go behind the nav bar
-              body: navItems[currentIndex].page,
+              extendBody: true,
+              body: currentPage,
               bottomNavigationBar: SafeArea(
                 bottom: true,
                 child: Container(
@@ -191,35 +215,66 @@ class _AppScaffoldState extends State<AppScaffold> {
                         ),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: navItems.map((item) {
-                            final index = navItems.indexOf(item);
-                            final isSelected = index == _currentIndex;
+                          children: [
+                            // Bar items
+                            ...barItems.map((item) {
+                              final index = barItems.indexOf(item);
+                              final isSelected = _overflowSelectedId == null &&
+                                  index == _currentIndex;
 
-                            return GestureDetector(
-                              onTap: () {
-                                setState(() => _currentIndex = index);
-                              },
-                              child: AnimatedContainer(
-                                duration: const Duration(milliseconds: 200),
-                                padding: const EdgeInsets.all(12),
-                                decoration: BoxDecoration(
-                                  color: isSelected
-                                      ? accentColor.withValues(alpha: 0.2)
-                                      : Colors.transparent,
-                                  borderRadius: BorderRadius.circular(20),
+                              return GestureDetector(
+                                onTap: () {
+                                  setState(() {
+                                    _currentIndex = index;
+                                    _overflowSelectedId = null;
+                                  });
+                                },
+                                child: AnimatedContainer(
+                                  duration: const Duration(milliseconds: 200),
+                                  padding: const EdgeInsets.all(12),
+                                  decoration: BoxDecoration(
+                                    color: isSelected
+                                        ? accentColor.withValues(alpha: 0.2)
+                                        : Colors.transparent,
+                                    borderRadius: BorderRadius.circular(20),
+                                  ),
+                                  child: Icon(
+                                    item.icon,
+                                    color: isSelected
+                                        ? accentColor
+                                        : AppColors.textSecondary,
+                                    size: 24,
+                                  ),
                                 ),
-                                child: Icon(
-                                  item.item.icon is Icon
-                                      ? (item.item.icon as Icon).icon
-                                      : Icons.circle,
-                                  color: isSelected
-                                      ? accentColor
-                                      : AppColors.textSecondary,
-                                  size: 24,
+                              );
+                            }),
+                            // Overflow "More" button
+                            if (overflowItems.isNotEmpty)
+                              GestureDetector(
+                                onTap: () => _showOverflowSheet(
+                                  context,
+                                  overflowItems,
+                                  accentColor,
+                                ),
+                                child: AnimatedContainer(
+                                  duration: const Duration(milliseconds: 200),
+                                  padding: const EdgeInsets.all(12),
+                                  decoration: BoxDecoration(
+                                    color: _overflowSelectedId != null
+                                        ? accentColor.withValues(alpha: 0.2)
+                                        : Colors.transparent,
+                                    borderRadius: BorderRadius.circular(20),
+                                  ),
+                                  child: Icon(
+                                    Icons.more_horiz,
+                                    color: _overflowSelectedId != null
+                                        ? accentColor
+                                        : AppColors.textSecondary,
+                                    size: 24,
+                                  ),
                                 ),
                               ),
-                            );
-                          }).toList(),
+                          ],
                         ),
                       ),
                     ),
@@ -233,229 +288,262 @@ class _AppScaffoldState extends State<AppScaffold> {
     );
   }
 
-  List<_NavItem> _buildNavItems(
+  void _showOverflowSheet(
     BuildContext context,
-    BottomNavVisibility visibility,
+    List<_NavItem> overflowItems,
+    Color accentColor,
   ) {
-    final items = <_NavItem>[
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: AppColors.cardSurface,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+      ),
+      builder: (ctx) {
+        return SafeArea(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const SizedBox(height: 12),
+              Container(
+                width: 40,
+                height: 4,
+                decoration: BoxDecoration(
+                  color: AppColors.textSecondary.withValues(alpha: 0.4),
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+              const SizedBox(height: 16),
+              ...overflowItems.map((item) {
+                final isSelected = _overflowSelectedId == item.id;
+                return ListTile(
+                  leading: Icon(
+                    item.icon,
+                    color: isSelected ? accentColor : AppColors.textSecondary,
+                  ),
+                  title: Text(
+                    item.label,
+                    style: TextStyle(
+                      color: isSelected ? accentColor : AppColors.textPrimary,
+                      fontWeight:
+                          isSelected ? FontWeight.bold : FontWeight.normal,
+                    ),
+                  ),
+                  onTap: () {
+                    Navigator.pop(ctx);
+                    setState(() {
+                      _overflowSelectedId = item.id;
+                    });
+                  },
+                );
+              }),
+              const SizedBox(height: 8),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  /// Returns ALL possible nav items in a canonical order.
+  /// The NavBarConfig determines which are visible and in what order.
+  List<_NavItem> _buildAllNavItems(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    return [
       _NavItem(
+        id: 'home',
         page: const MyHomePage(title: 'Immutable5'),
-        item: BottomNavigationBarItem(
-          icon: const Icon(Icons.home),
-          label: AppLocalizations.of(context)!.home,
-        ),
+        icon: Icons.home,
+        label: l10n.home,
+      ),
+      _NavItem(
+        id: 'track',
+        page: const PrayerStatsPage(),
+        icon: Icons.check_circle,
+        label: 'Track',
+      ),
+      _NavItem(
+        id: 'places',
+        page: const PlacesPage(),
+        icon: Icons.map,
+        label: l10n.places,
+      ),
+      _NavItem(
+        id: 'qibla',
+        page: const QiblaPage(),
+        icon: Icons.explore,
+        label: 'Qibla',
+      ),
+      _NavItem(
+        id: 'calendar',
+        page: const CalendarPage(),
+        icon: Icons.calendar_today,
+        label: l10n.calendar,
+      ),
+      _NavItem(
+        id: 'hajj',
+        page: const HajjPage(),
+        icon: Icons.directions_walk,
+        label: l10n.hajj,
+      ),
+      _NavItem(
+        id: 'common_words',
+        page: const CommonWordsPage(),
+        icon: Icons.translate,
+        label: l10n.commonWords,
+      ),
+      _NavItem(
+        id: 'tasbih',
+        page: const TasbihPage(),
+        icon: Icons.fingerprint,
+        label: l10n.tasbih,
+      ),
+      _NavItem(
+        id: 'duas',
+        page: const DuasPage(),
+        icon: Icons.menu_book,
+        label: 'Duas',
+      ),
+      _NavItem(
+        id: 'quran',
+        page: const QuranPage(),
+        icon: Icons.book,
+        label: l10n.quran,
+      ),
+      _NavItem(
+        id: 'settings',
+        page: const SettingsPage(),
+        icon: Icons.settings,
+        label: l10n.settings,
       ),
     ];
-
-    if (visibility.showTrack) {
-      items.add(
-        const _NavItem(
-          page: PrayerStatsPage(),
-          item: BottomNavigationBarItem(
-            icon: Icon(Icons.check_circle),
-            label: 'Track',
-          ),
-        ),
-      );
-    }
-
-    if (visibility.showPlaces) {
-      items.add(
-        _NavItem(
-          page: const PlacesPage(),
-          item: BottomNavigationBarItem(
-            icon: const Icon(Icons.map),
-            label: AppLocalizations.of(context)!.places,
-          ),
-        ),
-      );
-    }
-
-    if (visibility.showQibla) {
-      items.add(
-        const _NavItem(
-          page: QiblaPage(),
-          item: BottomNavigationBarItem(
-            icon: Icon(Icons.explore),
-            label: 'Qibla',
-          ),
-        ),
-      );
-    }
-
-    if (visibility.showCalendar) {
-      items.add(
-        _NavItem(
-          page: const CalendarPage(),
-          item: BottomNavigationBarItem(
-            icon: const Icon(Icons.calendar_today),
-            label: AppLocalizations.of(context)!.calendar,
-          ),
-        ),
-      );
-    }
-
-    if (visibility.showHajj) {
-      items.add(
-        _NavItem(
-          page: const HajjPage(),
-          item: BottomNavigationBarItem(
-            icon: const Icon(Icons.directions_walk),
-            label: AppLocalizations.of(context)!.hajj,
-          ),
-        ),
-      );
-    }
-
-    if (visibility.showCommonWords) {
-      items.add(
-        _NavItem(
-          page: const CommonWordsPage(),
-          item: BottomNavigationBarItem(
-            icon: const Icon(Icons.translate),
-            label: AppLocalizations.of(context)!.commonWords,
-          ),
-        ),
-      );
-    }
-
-    if (visibility.showTasbih) {
-      items.add(
-        _NavItem(
-          page: const TasbihPage(),
-          item: BottomNavigationBarItem(
-            icon: const Icon(Icons.fingerprint),
-            label: AppLocalizations.of(context)!.tasbih,
-          ),
-        ),
-      );
-    }
-
-    if (visibility.showDuas) {
-      items.add(
-        const _NavItem(
-          page: DuasPage(),
-          item: BottomNavigationBarItem(
-            icon: Icon(Icons.menu_book),
-            label: 'Duas',
-          ),
-        ),
-      );
-    }
-
-    if (visibility.showQuran) {
-      items.add(
-        _NavItem(
-          page: const QuranPage(),
-          item: BottomNavigationBarItem(
-            icon: const Icon(Icons.book),
-            label: AppLocalizations.of(context)!.quran,
-          ),
-        ),
-      );
-    }
-
-    items.add(
-      _NavItem(
-        page: const SettingsPage(),
-        item: BottomNavigationBarItem(
-          icon: const Icon(Icons.settings),
-          label: AppLocalizations.of(context)!.settings,
-        ),
-      ),
-    );
-
-    return items;
   }
 }
 
 class _NavItem {
+  final String id;
   final Widget page;
-  final BottomNavigationBarItem item;
-  const _NavItem({required this.page, required this.item});
+  final IconData icon;
+  final String label;
+  const _NavItem({
+    required this.id,
+    required this.page,
+    required this.icon,
+    required this.label,
+  });
 }
 
-class BottomNavVisibility {
-  final bool showTrack;
-  final bool showQibla;
-  final bool showPlaces;
-  final bool showCalendar;
-  final bool showHajj;
-  final bool showCommonWords;
-  final bool showTasbih;
-  final bool showDuas;
-  final bool showQuran;
+// ─── Navigation Bar Configuration ────────────────────────────────────────────
 
-  const BottomNavVisibility({
-    this.showTrack = true,
-    this.showQibla = true,
-    this.showPlaces = true,
-    this.showCalendar = true,
-    this.showHajj = true,
-    this.showCommonWords = true,
-    this.showTasbih = true,
-    this.showDuas = true,
-    this.showQuran = true,
-  });
+/// Represents a single tab entry in the navigation bar configuration.
+class NavTabEntry {
+  final String id;
+  final bool visible;
 
-  static const _keyTrack = 'nav_show_track';
-  static const _keyQibla = 'nav_show_qibla';
-  static const _keyPlaces = 'nav_show_places';
-  static const _keyCalendar = 'nav_show_calendar';
-  static const _keyHajj = 'nav_show_hajj';
-  static const _keyCommonWords = 'nav_show_common_words';
-  static const _keyTasbih = 'nav_show_tasbih';
-  static const _keyDuas = 'nav_show_duas';
-  static const _keyQuran = 'nav_show_quran';
+  const NavTabEntry({required this.id, this.visible = true});
 
-  static Future<BottomNavVisibility> fromPrefs(
-      SecureStorageProvider prefs) async {
-    return BottomNavVisibility(
-      showTrack: await prefs.getBool(_keyTrack) ?? true,
-      showQibla: await prefs.getBool(_keyQibla) ?? true,
-      showPlaces: await prefs.getBool(_keyPlaces) ?? true,
-      showCalendar: await prefs.getBool(_keyCalendar) ?? true,
-      showHajj: await prefs.getBool(_keyHajj) ?? true,
-      showCommonWords: await prefs.getBool(_keyCommonWords) ?? true,
-      showTasbih: await prefs.getBool(_keyTasbih) ?? true,
-      showDuas: await prefs.getBool(_keyDuas) ?? true,
-      showQuran: await prefs.getBool(_keyQuran) ?? true,
+  Map<String, dynamic> toJson() => {'id': id, 'visible': visible};
+
+  factory NavTabEntry.fromJson(Map<String, dynamic> json) => NavTabEntry(
+        id: json['id'] as String,
+        visible: json['visible'] as bool? ?? true,
+      );
+
+  NavTabEntry copyWith({bool? visible}) =>
+      NavTabEntry(id: id, visible: visible ?? this.visible);
+}
+
+/// Full configuration for the bottom navigation bar: ordered tabs,
+/// visibility flags, and a maximum number of icons to show in the bar.
+class NavBarConfig {
+  final List<NavTabEntry> tabs;
+  final int maxVisibleTabs;
+
+  static const String _storageKey = 'nav_bar_config';
+
+  /// All known tab IDs in their default order.
+  static const List<String> allTabIds = [
+    'home',
+    'track',
+    'places',
+    'qibla',
+    'calendar',
+    'hajj',
+    'common_words',
+    'tasbih',
+    'duas',
+    'quran',
+    'settings',
+  ];
+
+  /// IDs that cannot be hidden or reordered away.
+  static const Set<String> pinnedIds = {'home', 'settings'};
+
+  const NavBarConfig({required this.tabs, this.maxVisibleTabs = 5});
+
+  /// Default config with all tabs visible in canonical order.
+  factory NavBarConfig.defaultConfig() => NavBarConfig(
+        tabs: allTabIds.map((id) => NavTabEntry(id: id)).toList(),
+      );
+
+  /// Ordered list of visible tab IDs.
+  List<String> get visibleTabIds =>
+      tabs.where((t) => t.visible).map((t) => t.id).toList();
+
+  /// Tabs that show as icons in the bar.
+  List<String> get barTabIds {
+    final vis = visibleTabIds;
+    return vis.length <= maxVisibleTabs ? vis : vis.sublist(0, maxVisibleTabs);
+  }
+
+  /// Tabs that go into the overflow menu.
+  List<String> get overflowTabIds {
+    final vis = visibleTabIds;
+    return vis.length > maxVisibleTabs ? vis.sublist(maxVisibleTabs) : [];
+  }
+
+  // ── Persistence ────────────────────────────────────────────────────────────
+
+  Map<String, dynamic> toJson() => {
+        'tabs': tabs.map((t) => t.toJson()).toList(),
+        'maxVisibleTabs': maxVisibleTabs,
+      };
+
+  factory NavBarConfig.fromJson(Map<String, dynamic> json) {
+    final tabsList = (json['tabs'] as List)
+        .map((e) => NavTabEntry.fromJson(e as Map<String, dynamic>))
+        .toList();
+    // Ensure any new tabs that may have been added in an update are present.
+    for (final id in allTabIds) {
+      if (!tabsList.any((t) => t.id == id)) {
+        tabsList.add(NavTabEntry(id: id));
+      }
+    }
+    return NavBarConfig(
+      tabs: tabsList,
+      maxVisibleTabs: json['maxVisibleTabs'] as int? ?? 5,
     );
   }
 
-  BottomNavVisibility copyWith({
-    bool? showTrack,
-    bool? showQibla,
-    bool? showPlaces,
-    bool? showCalendar,
-    bool? showHajj,
-    bool? showCommonWords,
-    bool? showTasbih,
-    bool? showDuas,
-    bool? showQuran,
-  }) {
-    return BottomNavVisibility(
-      showTrack: showTrack ?? this.showTrack,
-      showQibla: showQibla ?? this.showQibla,
-      showPlaces: showPlaces ?? this.showPlaces,
-      showCalendar: showCalendar ?? this.showCalendar,
-      showHajj: showHajj ?? this.showHajj,
-      showCommonWords: showCommonWords ?? this.showCommonWords,
-      showTasbih: showTasbih ?? this.showTasbih,
-      showDuas: showDuas ?? this.showDuas,
-      showQuran: showQuran ?? this.showQuran,
-    );
+  static Future<NavBarConfig> fromPrefs(SecureStorageProvider prefs) async {
+    final raw = await prefs.getString(_storageKey);
+    if (raw != null && raw.isNotEmpty) {
+      try {
+        return NavBarConfig.fromJson(jsonDecode(raw) as Map<String, dynamic>);
+      } catch (_) {
+        // Corrupt data — fall through to default.
+      }
+    }
+    return NavBarConfig.defaultConfig();
   }
 
   Future<void> save(SecureStorageProvider prefs) async {
-    await prefs.setBool(_keyTrack, showTrack);
-    await prefs.setBool(_keyQibla, showQibla);
-    await prefs.setBool(_keyPlaces, showPlaces);
-    await prefs.setBool(_keyCalendar, showCalendar);
-    await prefs.setBool(_keyHajj, showHajj);
-    await prefs.setBool(_keyCommonWords, showCommonWords);
-    await prefs.setBool(_keyTasbih, showTasbih);
-    await prefs.setBool(_keyDuas, showDuas);
-    await prefs.setBool(_keyQuran, showQuran);
+    await prefs.setString(_storageKey, jsonEncode(toJson()));
   }
+
+  NavBarConfig copyWith({List<NavTabEntry>? tabs, int? maxVisibleTabs}) =>
+      NavBarConfig(
+        tabs: tabs ?? this.tabs,
+        maxVisibleTabs: maxVisibleTabs ?? this.maxVisibleTabs,
+      );
 }

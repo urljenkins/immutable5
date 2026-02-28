@@ -24,6 +24,8 @@ class PlacesPage extends StatefulWidget {
 class _PlacesPageState extends State<PlacesPage> {
   final MapController _mapController = MapController();
   final PlacesService _placesService = getIt<PlacesService>();
+  bool _mapReady = false;
+  LatLng? _pendingCenter;
 
   LatLng _center = const LatLng(21.3891, 39.8579); // Default to Mecca
   List<PlaceModel> _places = [];
@@ -52,31 +54,43 @@ class _PlacesPageState extends State<PlacesPage> {
     if (!mounted) return;
     setState(() => _loading = true);
 
-    // Check permissions
-    LocationPermission permission = await Geolocator.checkPermission();
-    if (permission == LocationPermission.denied) {
-      permission = await Geolocator.requestPermission();
-    }
-
-    if (permission == LocationPermission.whileInUse ||
-        permission == LocationPermission.always) {
-      if (!mounted) return;
-      setState(() => _locationPermissionGranted = true);
-      try {
-        final position = await Geolocator.getCurrentPosition();
-        if (!mounted) return;
-        setState(() {
-          _center = LatLng(position.latitude, position.longitude);
-        });
-        _mapController.move(_center, 13.0);
-        _updatePrayerTimes();
-        await _fetchPlaces();
-      } catch (e) {
-        // Fallback to default
+    try {
+      // Check permissions
+      LocationPermission permission = await Geolocator.checkPermission();
+      if (permission == LocationPermission.denied) {
+        permission = await Geolocator.requestPermission();
       }
+
+      if (permission == LocationPermission.whileInUse ||
+          permission == LocationPermission.always) {
+        if (!mounted) return;
+        setState(() => _locationPermissionGranted = true);
+        try {
+          final position = await Geolocator.getCurrentPosition();
+          if (!mounted) return;
+          setState(() {
+            _center = LatLng(position.latitude, position.longitude);
+          });
+          _moveMapToCenter();
+          _updatePrayerTimes();
+          await _fetchPlaces();
+        } catch (e) {
+          // Fallback to default
+        }
+      }
+    } catch (e) {
+      // Location services unavailable – fall back to default center
     }
 
     if (mounted) setState(() => _loading = false);
+  }
+
+  void _moveMapToCenter() {
+    if (_mapReady) {
+      _mapController.move(_center, 13.0);
+    } else {
+      _pendingCenter = _center;
+    }
   }
 
   Future<void> _updatePrayerTimes() async {
@@ -346,6 +360,13 @@ class _PlacesPageState extends State<PlacesPage> {
             options: MapOptions(
               initialCenter: _center,
               initialZoom: 13.0,
+              onMapReady: () {
+                _mapReady = true;
+                if (_pendingCenter != null) {
+                  _mapController.move(_pendingCenter!, 13.0);
+                  _pendingCenter = null;
+                }
+              },
               onTap: (tapPos, point) {
                 if (_isRouteMode) {
                   _planRoute(point);

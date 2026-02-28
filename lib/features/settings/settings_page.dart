@@ -10,6 +10,7 @@ import '../notifications/notification_service.dart';
 import '../quran/juz_of_the_day_service.dart';
 import '../quran/quran_context_menu_settings.dart';
 import '../widget/widget_settings_page.dart';
+import 'nav_bar_customization_page.dart';
 
 class SettingsPage extends StatefulWidget {
   const SettingsPage({super.key});
@@ -41,77 +42,11 @@ class _SettingsPageState extends State<SettingsPage> {
   bool _batterySaverMode = false;
   JuzMode _juzMode = JuzMode.standard;
   QuranContextMenuSettings _ctxMenuSettings = const QuranContextMenuSettings();
-  bool _showTrack = true;
-  bool _showQibla = true;
-  bool _showCalendar = true;
-  bool _showHajj = true;
-  bool _showCommonWords = true;
-  bool _showTasbih = true;
-  bool _showDuas = true;
-  bool _showQuran = true;
 
   @override
   void initState() {
     super.initState();
-    bottomNavVisibilityNotifier.addListener(_syncNavVisibility);
     _loadPrefs();
-  }
-
-  @override
-  void dispose() {
-    bottomNavVisibilityNotifier.removeListener(_syncNavVisibility);
-    super.dispose();
-  }
-
-  void _syncNavVisibility() {
-    final navVisibility = bottomNavVisibilityNotifier.value;
-    if (!mounted) return;
-    setState(() {
-      _showTrack = navVisibility.showTrack;
-      _showQibla = navVisibility.showQibla;
-      _showCalendar = navVisibility.showCalendar;
-      _showHajj = navVisibility.showHajj;
-      _showCommonWords = navVisibility.showCommonWords;
-      _showTasbih = navVisibility.showTasbih;
-      _showDuas = navVisibility.showDuas;
-      _showQuran = navVisibility.showQuran;
-    });
-  }
-
-  Future<void> _updateNavVisibility({
-    bool? showTrack,
-    bool? showQibla,
-    bool? showCalendar,
-    bool? showHajj,
-    bool? showCommonWords,
-    bool? showTasbih,
-    bool? showDuas,
-    bool? showQuran,
-  }) async {
-    final prefs = SecureStorageProvider();
-    final updated = bottomNavVisibilityNotifier.value.copyWith(
-      showTrack: showTrack,
-      showQibla: showQibla,
-      showCalendar: showCalendar,
-      showHajj: showHajj,
-      showCommonWords: showCommonWords,
-      showTasbih: showTasbih,
-      showDuas: showDuas,
-      showQuran: showQuran,
-    );
-    bottomNavVisibilityNotifier.value = updated;
-    await updated.save(prefs);
-    if (!mounted) return;
-    setState(() {
-      _showTrack = updated.showTrack;
-      _showQibla = updated.showQibla;
-      _showCalendar = updated.showCalendar;
-      _showHajj = updated.showHajj;
-      _showCommonWords = updated.showCommonWords;
-      _showTasbih = updated.showTasbih;
-      _showDuas = updated.showDuas;
-      _showQuran = updated.showQuran;
-    });
   }
 
   Future<void> _loadPrefs() async {
@@ -120,9 +55,6 @@ class _SettingsPageState extends State<SettingsPage> {
     await batteryOptimizer.initialize();
 
     if (!mounted) return;
-
-    final navVisibility = await BottomNavVisibility.fromPrefs(prefs);
-    bottomNavVisibilityNotifier.value = navVisibility;
 
     final calculationMethod =
         await prefs.getString(_keyCalculationMethod) ?? _calculationMethod;
@@ -149,14 +81,6 @@ class _SettingsPageState extends State<SettingsPage> {
       _juzMode =
           savedJuzMode == 'surahBased' ? JuzMode.surahBased : JuzMode.standard;
       _ctxMenuSettings = ctxMenuSettings;
-      _showTrack = navVisibility.showTrack;
-      _showQibla = navVisibility.showQibla;
-      _showCalendar = navVisibility.showCalendar;
-      _showHajj = navVisibility.showHajj;
-      _showCommonWords = navVisibility.showCommonWords;
-      _showTasbih = navVisibility.showTasbih;
-      _showDuas = navVisibility.showDuas;
-      _showQuran = navVisibility.showQuran;
     });
   }
 
@@ -494,63 +418,28 @@ class _SettingsPageState extends State<SettingsPage> {
               },
             ),
             const Divider(),
-            _buildSectionHeader(context, 'Bottom bar shortcuts'),
-            SwitchListTile(
-              title: const Text('Track tab'),
-              value: _showTrack,
-              activeThumbColor: AppColors.accent,
+            _buildSectionHeader(context, 'Bottom bar'),
+            ListTile(
+              leading: const Icon(
+                Icons.dashboard_customize,
+                color: AppColors.textSecondary,
+              ),
+              title: const Text('Customize Bottom Bar'),
+              subtitle: const Text('Reorder, show/hide tabs & set max icons'),
               contentPadding: const EdgeInsets.symmetric(horizontal: 24),
-              onChanged: (value) => _updateNavVisibility(showTrack: value),
-            ),
-            SwitchListTile(
-              title: const Text('Qibla tab'),
-              value: _showQibla,
-              activeThumbColor: AppColors.accent,
-              contentPadding: const EdgeInsets.symmetric(horizontal: 24),
-              onChanged: (value) => _updateNavVisibility(showQibla: value),
-            ),
-            SwitchListTile(
-              title: Text(AppLocalizations.of(context)!.calendar),
-              value: _showCalendar,
-              activeThumbColor: AppColors.accent,
-              contentPadding: const EdgeInsets.symmetric(horizontal: 24),
-              onChanged: (value) => _updateNavVisibility(showCalendar: value),
-            ),
-            SwitchListTile(
-              title: Text(AppLocalizations.of(context)!.hajj),
-              value: _showHajj,
-              activeThumbColor: AppColors.accent,
-              contentPadding: const EdgeInsets.symmetric(horizontal: 24),
-              onChanged: (value) => _updateNavVisibility(showHajj: value),
-            ),
-            SwitchListTile(
-              title: Text(AppLocalizations.of(context)!.commonWords),
-              value: _showCommonWords,
-              activeThumbColor: AppColors.accent,
-              contentPadding: const EdgeInsets.symmetric(horizontal: 24),
-              onChanged: (value) =>
-                  _updateNavVisibility(showCommonWords: value),
-            ),
-            SwitchListTile(
-              title: Text(AppLocalizations.of(context)!.tasbih),
-              value: _showTasbih,
-              activeThumbColor: AppColors.accent,
-              contentPadding: const EdgeInsets.symmetric(horizontal: 24),
-              onChanged: (value) => _updateNavVisibility(showTasbih: value),
-            ),
-            SwitchListTile(
-              title: const Text('Duas'),
-              value: _showDuas,
-              activeThumbColor: AppColors.accent,
-              contentPadding: const EdgeInsets.symmetric(horizontal: 24),
-              onChanged: (value) => _updateNavVisibility(showDuas: value),
-            ),
-            SwitchListTile(
-              title: Text(AppLocalizations.of(context)!.quran),
-              value: _showQuran,
-              activeThumbColor: AppColors.accent,
-              contentPadding: const EdgeInsets.symmetric(horizontal: 24),
-              onChanged: (value) => _updateNavVisibility(showQuran: value),
+              trailing: const Icon(
+                Icons.arrow_forward_ios,
+                size: 16,
+                color: AppColors.textSecondary,
+              ),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const NavBarCustomizationPage(),
+                  ),
+                );
+              },
             ),
             const Divider(),
             _buildSectionHeader(context, 'Power & Data'),
