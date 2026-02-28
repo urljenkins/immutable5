@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:immutable5/services/secure_storage_provider.dart';
+
 /// Advanced cache manager with TTL, size limits, and automatic cleanup
 class CacheManager {
   static final CacheManager _instance = CacheManager._internal();

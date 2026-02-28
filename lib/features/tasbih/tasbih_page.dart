@@ -19,6 +19,7 @@ class _TasbihPageState extends State<TasbihPage>
   int _target = 33;
   bool _isVoiceEnabled = false;
   bool _isListening = false;
+  int _lastRecognizedWords = 0;
   late stt.SpeechToText _speech;
   late AnimationController _pulseController;
   late Animation<double> _pulseAnimation;
@@ -73,6 +74,15 @@ class _TasbihPageState extends State<TasbihPage>
         onStatus: (status) {
           if (mounted) {
             setState(() => _isListening = status == 'listening');
+            if ((status == 'done' || status == 'notListening') &&
+                _isVoiceEnabled) {
+              // Restart listening automatically to keep it continuous
+              Future.delayed(const Duration(milliseconds: 50), () {
+                if (mounted && _isVoiceEnabled && !_isListening) {
+                  _startListening();
+                }
+              });
+            }
           }
         },
         onError: (errorNotification) {
@@ -81,6 +91,13 @@ class _TasbihPageState extends State<TasbihPage>
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(content: Text('Error: ${errorNotification.errorMsg}')),
             );
+            if (_isVoiceEnabled) {
+              Future.delayed(const Duration(milliseconds: 1000), () {
+                if (mounted && _isVoiceEnabled && !_isListening) {
+                  _startListening();
+                }
+              });
+            }
           }
         },
       );
@@ -105,32 +122,38 @@ class _TasbihPageState extends State<TasbihPage>
   }
 
   void _startListening() {
+    _lastRecognizedWords = 0;
     _speech.listen(
       onResult: (result) {
-        // Simple logic: if we detect a pause or a new segment, we count
-        // For better accuracy, we might analyze the words, but for a simple counter,
-        // detecting speech segments is a start.
-        // However, standard STT returns a stream of text.
-        // A simple approach for "counting" via voice is harder without specific keywords.
-        // Let's assume ANY significant speech input counts as 1 for now,
-        // or we look for specific words if needed.
-        // A better approach for "Tasbih" might be to just listen for *any* utterance.
+        if (!mounted || !_isVoiceEnabled) return;
 
-        // This is a naive implementation where any result updates count.
-        // To prevent rapid firing, we might need a debounce or only count on 'final' results.
-        if (result.finalResult) {
-          _incrementCount();
-          // Restart listening for the next phrase
-          if (_isVoiceEnabled && mounted) {
-            Future.delayed(const Duration(milliseconds: 100), () {
-              if (mounted && _isVoiceEnabled) _startListening();
-            });
+        final recognizedText = result.recognizedWords.trim();
+        if (recognizedText.isEmpty) return;
+
+        final words = recognizedText
+            .split(RegExp(r'\s+'))
+            .where((w) => w.isNotEmpty)
+            .toList();
+
+        if (words.length > _lastRecognizedWords) {
+          int diff = words.length - _lastRecognizedWords;
+          for (int i = 0; i < diff; i++) {
+            _incrementCount();
           }
+          _lastRecognizedWords = words.length;
+        }
+
+        if (result.finalResult) {
+          // The current listening session ended natively;
+          // the onStatus callback handles restarting it.
         }
       },
-      listenFor: const Duration(seconds: 30),
-      pauseFor: const Duration(seconds: 2),
-      partialResults: false,
+      listenFor: const Duration(seconds: 60),
+      pauseFor: const Duration(seconds: 5),
+      listenOptions: stt.SpeechListenOptions(
+        partialResults: true,
+        cancelOnError: false,
+      ),
     );
   }
 

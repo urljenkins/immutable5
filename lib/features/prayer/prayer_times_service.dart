@@ -6,7 +6,11 @@ import 'package:http/http.dart' as http;
 import 'package:immutable5/services/secure_storage_provider.dart';
 
 typedef PrayerTimesServiceFactory = PrayerTimesService Function(
-    double lat, double lon, int method, int madhab,);
+  double lat,
+  double lon,
+  int method,
+  int madhab,
+);
 
 class PrayerTimesService {
   // Replace with user's actual location and calculation params

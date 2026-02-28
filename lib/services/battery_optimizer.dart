@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:immutable5/services/secure_storage_provider.dart';
+
 /// Battery optimization service to reduce power consumption
 class BatteryOptimizer {
   static final BatteryOptimizer _instance = BatteryOptimizer._internal();
