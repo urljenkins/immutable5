@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'widget_preferences.dart';
+
 import 'prayer_widget_service.dart';
+import 'widget_preferences.dart';
 
 class WidgetSettingsPage extends StatefulWidget {
   const WidgetSettingsPage({super.key});

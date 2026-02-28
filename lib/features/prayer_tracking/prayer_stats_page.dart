@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'prayer_tracking_service.dart';
 import 'package:table_calendar/table_calendar.dart';
+
+import 'prayer_tracking_service.dart';
 
 class PrayerStatsPage extends StatefulWidget {
   const PrayerStatsPage({super.key});

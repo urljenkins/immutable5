@@ -1,13 +1,15 @@
 import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hijri/hijri_calendar.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
 import '../../di/service_locator.dart';
-import '../prayer/prayer_times_service.dart';
-import '../prayer_tracking/prayer_tracking_service.dart';
 import '../../shared/app_colors.dart';
 import '../../shared/glass_container.dart';
+import '../prayer/prayer_times_service.dart';
+import '../prayer_tracking/prayer_tracking_service.dart';
 
 class RamadanDashboardPage extends StatefulWidget {
   const RamadanDashboardPage({super.key});
@@ -163,13 +165,13 @@ class _RamadanDashboardPageState extends State<RamadanDashboardPage> {
     final h = twoDigits(d.inHours);
     final m = twoDigits(d.inMinutes.remainder(60));
     final s = twoDigits(d.inSeconds.remainder(60));
-    return "$h:$m:$s";
+    return '$h:$m:$s';
   }
 
   String _formatHoursMinutes(Duration d) {
     final h = d.inHours;
     final m = d.inMinutes.remainder(60);
-    return "${h}h ${m}m";
+    return '${h}h ${m}m';
   }
 
   Future<void> _toggleTaraweeh() async {
@@ -239,7 +241,7 @@ class _RamadanDashboardPageState extends State<RamadanDashboardPage> {
                     ? Center(
                         child: Text(
                           _error,
-                          style: TextStyle(color: AppColors.error),
+                          style: const TextStyle(color: AppColors.error),
                         ),
                       )
                     : SingleChildScrollView(

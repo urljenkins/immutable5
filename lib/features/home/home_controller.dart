@@ -5,11 +5,11 @@ import 'package:geolocator/geolocator.dart';
 import 'package:hijri/hijri_calendar.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'home_state.dart';
+import '../../di/service_locator.dart';
+import '../duas/contextual_dua_service.dart';
 import '../prayer/prayer_times_service.dart';
 import '../quotes/quote_picker_service.dart';
-import '../duas/contextual_dua_service.dart';
-import '../../di/service_locator.dart';
+import 'home_state.dart';
 
 abstract class NotificationPort {
   Future<void> schedulePrayerNotifications(Map<String, DateTime> prayerTimes);

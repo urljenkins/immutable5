@@ -1,13 +1,14 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'dart:ui';
 
-import 'models/dua_model.dart';
-import 'dua_repository.dart';
 import '../../di/service_locator.dart';
 import '../../shared/app_colors.dart';
 import '../../shared/glass_container.dart';
+import 'dua_repository.dart';
+import 'models/dua_model.dart';
 
 class DuasPage extends StatefulWidget {
   const DuasPage({super.key});
@@ -423,7 +424,7 @@ class _DuasPageState extends State<DuasPage> {
                   onPressed: () {
                     Clipboard.setData(
                       ClipboardData(
-                        text: "${dua.arabic}\n\n${dua.translationEn}",
+                        text: '${dua.arabic}\n\n${dua.translationEn}',
                       ),
                     );
                     ScaffoldMessenger.of(context).showSnackBar(

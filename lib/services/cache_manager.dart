@@ -1,5 +1,6 @@
-import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
+
+import 'package:shared_preferences/shared_preferences.dart';
 
 /// Advanced cache manager with TTL, size limits, and automatic cleanup
 class CacheManager {

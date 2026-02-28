@@ -1,8 +1,9 @@
 import 'dart:convert';
+import 'dart:developer' as developer;
+
 import 'package:flutter/services.dart';
 
 import 'models/dua_model.dart';
-import 'dart:developer' as developer;
 
 class DuaRepository {
   static final DuaRepository _instance = DuaRepository._internal();

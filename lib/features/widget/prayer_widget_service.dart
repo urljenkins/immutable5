@@ -1,9 +1,11 @@
-import 'package:home_widget/home_widget.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:intl/intl.dart';
-import 'package:hijri/hijri_calendar.dart';
-import 'package:http/http.dart' as http;
 import 'dart:convert';
+
+import 'package:hijri/hijri_calendar.dart';
+import 'package:home_widget/home_widget.dart';
+import 'package:http/http.dart' as http;
+import 'package:intl/intl.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
 import '../prayer/prayer_times_service.dart';
 import 'widget_preferences.dart';
 
@@ -162,8 +164,8 @@ class PrayerWidgetService {
       );
 
       final response = await http.get(url, headers: {
-        'User-Agent': 'Immutable5PrayerApp/1.0'
-      }).timeout(const Duration(seconds: 5));
+        'User-Agent': 'Immutable5PrayerApp/1.0',
+      },).timeout(const Duration(seconds: 5));
 
       if (response.statusCode == 200) {
         final data = json.decode(response.body);

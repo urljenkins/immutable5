@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_map/flutter_map.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:latlong2/latlong.dart';
+
+import '../../di/service_locator.dart';
 import '../../shared/app_colors.dart';
 import 'models/submission_model.dart';
 import 'services/places_service.dart';
-import '../../di/service_locator.dart';
 
 class AddPlacePage extends StatefulWidget {
   final LatLng initialLocation;
@@ -364,8 +365,8 @@ class _AddPlacePageState extends State<AddPlacePage> {
 
     if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: const Text('Spot submitted for verification!'),
+        const SnackBar(
+          content: Text('Spot submitted for verification!'),
           backgroundColor: AppColors.success,
         ),
       );

@@ -2,15 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hijri/hijri_calendar.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../../l10n/app_localizations.dart';
-import '../../di/service_locator.dart';
-import '../prayer/prayer_times_service.dart';
-import '../home/home_controller.dart';
-import '../quotes/quote_picker_service.dart';
 
-import '../duas/models/dua_model.dart';
+import '../../di/service_locator.dart';
+import '../../l10n/app_localizations.dart';
 import '../../shared/app_colors.dart';
 import '../../shared/glass_container.dart';
+import '../duas/models/dua_model.dart';
+import '../home/home_controller.dart';
+import '../prayer/prayer_times_service.dart';
+import '../quotes/quote_picker_service.dart';
 import '../ramadan/ramadan_dashboard_page.dart';
 
 class MyHomePage extends StatefulWidget {
@@ -48,7 +48,7 @@ class _MyHomePageState extends State<MyHomePage> {
     final h = twoDigits(d.inHours);
     final m = twoDigits(d.inMinutes.remainder(60));
     final s = twoDigits(d.inSeconds.remainder(60));
-    return "$h:$m:$s";
+    return '$h:$m:$s';
   }
 
   @override
@@ -73,7 +73,7 @@ class _MyHomePageState extends State<MyHomePage> {
                               color: AppColors.accent,
                             ),
                           )
-                        : Icon(Icons.refresh, color: AppColors.textSecondary),
+                        : const Icon(Icons.refresh, color: AppColors.textSecondary),
                     onPressed: state.refreshing ? null : _controller.refresh,
                     tooltip: AppLocalizations.of(context)!.refreshPrayerTimes,
                   )

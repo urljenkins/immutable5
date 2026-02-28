@@ -1,5 +1,6 @@
-import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:async';
+
+import 'package:shared_preferences/shared_preferences.dart';
 
 /// Battery optimization service to reduce power consumption
 class BatteryOptimizer {

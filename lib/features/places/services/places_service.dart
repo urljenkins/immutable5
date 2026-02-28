@@ -1,9 +1,11 @@
 import 'dart:convert';
+import 'dart:developer' as developer;
+
 import 'package:http/http.dart' as http;
+import 'package:latlong2/latlong.dart';
+
 import '../models/place_model.dart';
 import '../models/submission_model.dart';
-import 'package:latlong2/latlong.dart';
-import 'dart:developer' as developer;
 
 class PlacesService {
   static const String _overpassUrl = 'https://overpass-api.de/api/interpreter';
@@ -25,7 +27,7 @@ class PlacesService {
   Future<List<LatLng>> getRoute(LatLng start, LatLng end) async {
     try {
       final url = Uri.parse(
-          '$_osrmUrl/${start.longitude},${start.latitude};${end.longitude},${end.latitude}?overview=full&geometries=geojson');
+          '$_osrmUrl/${start.longitude},${start.latitude};${end.longitude},${end.latitude}?overview=full&geometries=geojson',);
 
       final response = await http.get(url);
 
@@ -46,7 +48,7 @@ class PlacesService {
   }
 
   Future<List<PlaceModel>> getNearbyPlaces(double lat, double lng,
-      {double radius = 5000}) async {
+      {double radius = 5000,}) async {
     // Overpass QL query: find nodes/ways with amenity=place_of_worship and religion=muslim within radius
     final query = '''
       [out:json][timeout:25];
