@@ -1,11 +1,6 @@
-<<<<<<< fix-security-audit-findings-13073000296492036689
-import 'package:immutable5/services/secure_storage_provider.dart';
-=======
->>>>>>> develop
 import 'dart:convert';
 
-import 'package:shared_preferences/shared_preferences.dart';
-
+import 'package:immutable5/services/secure_storage_provider.dart';
 /// Advanced cache manager with TTL, size limits, and automatic cleanup
 class CacheManager {
   static final CacheManager _instance = CacheManager._internal();

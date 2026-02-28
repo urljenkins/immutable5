@@ -572,7 +572,6 @@ class _PlacesPageState extends State<PlacesPage> {
                   child: Icon(Icons.directions,
                       color: _isRouteMode ? Colors.white : AppColors.accent),
                   onPressed: _toggleRouteMode,
-                  child: Icon(Icons.directions, color: _isRouteMode ? Colors.white : AppColors.accent),
                 ),
                 const SizedBox(height: 16),
                 FloatingActionButton(

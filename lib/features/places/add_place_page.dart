@@ -262,29 +262,21 @@ class _AddPlacePageState extends State<AddPlacePage> {
           SwitchListTile(
             value: _wuduAvailable,
             onChanged: (val) => setState(() => _wuduAvailable = val),
-<<<<<<< fix-security-audit-findings-13073000296492036689
-            title: Text('Wudu Area Available',
-                style:
-                    GoogleFonts.plusJakartaSans(color: AppColors.textPrimary)),
+            title: Text(
+              'Wudu Area Available',
+              style: GoogleFonts.plusJakartaSans(color: AppColors.textPrimary),
+            ),
             activeColor: AppColors.accent,
-=======
-            title: Text('Wudu Area Available', style: GoogleFonts.plusJakartaSans(color: AppColors.textPrimary)),
-            activeThumbColor: AppColors.accent,
->>>>>>> develop
             contentPadding: EdgeInsets.zero,
           ),
           SwitchListTile(
             value: _womenSpaceAvailable,
             onChanged: (val) => setState(() => _womenSpaceAvailable = val),
-<<<<<<< fix-security-audit-findings-13073000296492036689
-            title: Text('Women\'s Space Available',
-                style:
-                    GoogleFonts.plusJakartaSans(color: AppColors.textPrimary)),
+            title: Text(
+              'Women\'s Space Available',
+              style: GoogleFonts.plusJakartaSans(color: AppColors.textPrimary),
+            ),
             activeColor: AppColors.accent,
-=======
-            title: Text('Women\'s Space Available', style: GoogleFonts.plusJakartaSans(color: AppColors.textPrimary)),
-            activeThumbColor: AppColors.accent,
->>>>>>> develop
             contentPadding: EdgeInsets.zero,
           ),
         ],

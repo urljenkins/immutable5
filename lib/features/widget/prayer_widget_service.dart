@@ -1,16 +1,9 @@
-<<<<<<< fix-security-audit-findings-13073000296492036689
-import 'package:home_widget/home_widget.dart';
-import 'package:immutable5/services/secure_storage_provider.dart';
-import 'package:intl/intl.dart';
-=======
 import 'dart:convert';
-
->>>>>>> develop
+import 'package:immutable5/services/secure_storage_provider.dart';
 import 'package:hijri/hijri_calendar.dart';
 import 'package:home_widget/home_widget.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 import '../prayer/prayer_times_service.dart';
 import 'widget_preferences.dart';

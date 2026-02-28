@@ -1,17 +1,12 @@
 import 'dart:convert';
 import 'dart:developer' as developer;
 
+import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:latlong2/latlong.dart';
 
 import '../models/place_model.dart';
 import '../models/submission_model.dart';
-<<<<<<< fix-security-audit-findings-13073000296492036689
-import 'package:latlong2/latlong.dart';
-import 'dart:developer' as developer;
-import 'package:flutter/foundation.dart';
-=======
->>>>>>> develop
 
 class PlacesService {
   static const String _overpassUrl = 'https://overpass-api.de/api/interpreter';
