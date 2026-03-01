@@ -6,7 +6,7 @@ import 'package:latlong2/latlong.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../di/service_locator.dart';
-import '../../generated/app_localizations.dart';
+import '../../l10n/app_localizations.dart';
 import '../../shared/app_colors.dart';
 import '../prayer/prayer_times_service.dart';
 import 'add_place_page.dart';

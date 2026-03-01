@@ -249,6 +249,39 @@ class PrayerTimesService {
     }
   }
 
+  Future<MapEntry<String, DateTime>> getPastPrayer({
+    bool forceRefresh = false,
+  }) async {
+    final now = DateTime.now();
+
+    final times = await getTodayPrayerTimes();
+    final past = times.entries.where((e) => e.value.isBefore(now)).toList();
+    past.sort((a, b) => b.value.compareTo(a.value)); // Descending order
+    if (past.isNotEmpty) {
+      return past.first;
+    } else {
+      // If no prayers today have passed (e.g. before Fajr), it must be Isha from yesterday
+      final yesterday = now.subtract(const Duration(days: 1));
+      final yesterdayTimes = await getPrayerTimesForDate(yesterday);
+      if (yesterdayTimes.containsKey('Isha')) {
+        return MapEntry('Isha', yesterdayTimes['Isha']!);
+      } else {
+        // Fallback if missing
+        return MapEntry('Isha', DateTime.fromMillisecondsSinceEpoch(0));
+      }
+    }
+  }
+
+  Future<DateTime> getPastPrayerTime() async {
+    final entry = await getPastPrayer();
+    return entry.value;
+  }
+
+  Future<String> getPastPrayerName() async {
+    final entry = await getPastPrayer();
+    return entry.key;
+  }
+
   Future<DateTime> getNextPrayerTime() async {
     final entry = await getNextPrayer();
     return entry.value;

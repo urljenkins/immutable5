@@ -179,53 +179,61 @@ class _MyHomePageState extends State<MyHomePage> {
                               padding: const EdgeInsets.symmetric(
                                 horizontal: 24.0,
                               ),
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  _HijriDateBanner(),
-                                  const SizedBox(height: 40),
-                                  Text(
-                                    state.nextPrayerName ??
-                                        (state.locationError != null &&
-                                                !state.usingCache
-                                            ? 'Offline'
-                                            : AppLocalizations.of(
-                                                context,
-                                              )!
-                                                .loading),
-                                    style: GoogleFonts.plusJakartaSans(
-                                      fontSize: 32,
-                                      fontWeight: FontWeight.w300,
-                                      color: AppColors.textPrimary,
+                              child: InkWell(
+                                onTap: () => _controller.togglePrayerDisplayOption(),
+                                borderRadius: BorderRadius.circular(16),
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    _HijriDateBanner(),
+                                    const SizedBox(height: 40),
+                                    Text(
+                                      state.showPastPrayer
+                                          ? (state.pastPrayerName ?? '...')
+                                          : (state.nextPrayerName ??
+                                              (state.locationError != null &&
+                                                      !state.usingCache
+                                                  ? 'Offline'
+                                                  : AppLocalizations.of(
+                                                      context,
+                                                    )!
+                                                      .loading)),
+                                      style: GoogleFonts.plusJakartaSans(
+                                        fontSize: 32,
+                                        fontWeight: FontWeight.w300,
+                                        color: AppColors.textPrimary,
+                                      ),
                                     ),
-                                  ),
-                                  const SizedBox(height: 8),
-                                  Text(
-                                    state.nextPrayerTime != null
-                                        ? _formatDuration(state.countdown)
-                                        : '--:--:--',
-                                    style: GoogleFonts.plusJakartaSans(
-                                      fontSize: 64,
-                                      fontWeight: FontWeight.bold,
-                                      color: AppColors.accent,
-                                      height: 1.0,
+                                    const SizedBox(height: 8),
+                                    Text(
+                                      state.nextPrayerTime != null
+                                          ? _formatDuration(state.countdown)
+                                          : '--:--:--',
+                                      style: GoogleFonts.plusJakartaSans(
+                                        fontSize: 64,
+                                        fontWeight: FontWeight.bold,
+                                        color: AppColors.accent,
+                                        height: 1.0,
+                                      ),
                                     ),
-                                  ),
-                                  const SizedBox(height: 16),
-                                  Text(
-                                    AppLocalizations.of(
-                                      context,
-                                    )!
-                                        .nextPrayer
-                                        .toUpperCase(),
-                                    style: GoogleFonts.plusJakartaSans(
-                                      fontSize: 12,
-                                      letterSpacing: 2.0,
-                                      color: AppColors.textSecondary,
-                                      fontWeight: FontWeight.w600,
+                                    const SizedBox(height: 16),
+                                    Text(
+                                      state.showPastPrayer
+                                          ? "TIME REMAINING"
+                                          : AppLocalizations.of(
+                                              context,
+                                            )!
+                                              .nextPrayer
+                                              .toUpperCase(),
+                                      style: GoogleFonts.plusJakartaSans(
+                                        fontSize: 12,
+                                        letterSpacing: 2.0,
+                                        color: AppColors.textSecondary,
+                                        fontWeight: FontWeight.w600,
+                                      ),
                                     ),
-                                  ),
-                                ],
+                                  ],
+                                ),
                               ),
                             ),
                           ),

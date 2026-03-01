@@ -74,7 +74,7 @@ class _PrayerStatsPageState extends State<PrayerStatsPage> {
       extendBodyBehindAppBar: true,
       appBar: AppBar(
         title: Text(
-          'Prayer Tracker',
+          'Salah',
           style: GoogleFonts.plusJakartaSans(
             fontWeight: FontWeight.w600,
             color: AppColors.textPrimary,
@@ -122,113 +122,11 @@ class _PrayerStatsPageState extends State<PrayerStatsPage> {
                       children: [
                         _buildTodayPrayers(),
                         const SizedBox(height: 24),
-                        _buildStatisticsCards(),
-                        const SizedBox(height: 24),
                         _buildCalendarView(),
                         const SizedBox(height: 40),
                       ],
                     ),
                   ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildStatisticsCards() {
-    return Column(
-      children: [
-        Row(
-          children: [
-            Expanded(
-              child: _buildStatCard(
-                'Today',
-                '${(_stats!['todayCompletion'] * 100).toInt()}%',
-                Icons.today,
-                AppColors.success,
-              ),
-            ),
-            const SizedBox(width: 16),
-            Expanded(
-              child: _buildStatCard(
-                'Total Prayers',
-                '${_stats!['totalPrayers']}',
-                Icons.check_circle,
-                AppColors.success,
-              ),
-            ),
-          ],
-        ),
-        const SizedBox(height: 12),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(
-              'Current streak: ${_stats!['currentStreak']}d',
-              style: GoogleFonts.plusJakartaSans(
-                fontSize: 12,
-                color: AppColors.textSecondary,
-              ),
-            ),
-            if (_stats!['longestStreak'] > 0) ...[
-              const SizedBox(width: 8),
-              Text(
-                '•',
-                style: GoogleFonts.plusJakartaSans(
-                  fontSize: 12,
-                  color: AppColors.textSecondary.withValues(alpha: 0.5),
-                ),
-              ),
-              const SizedBox(width: 8),
-              Text(
-                'Best: ${_stats!['longestStreak']}d',
-                style: GoogleFonts.plusJakartaSans(
-                  fontSize: 12,
-                  color: AppColors.textSecondary,
-                ),
-              ),
-            ],
-          ],
-        ),
-      ],
-    );
-  }
-
-  Widget _buildStatCard(
-    String label,
-    String value,
-    IconData icon,
-    Color color,
-  ) {
-    return GlassContainer(
-      padding: const EdgeInsets.all(16.0),
-      borderRadius: 20,
-      gradientColors: [
-        AppColors.cardSurface.withValues(alpha: 0.5),
-        AppColors.cardSurface.withValues(alpha: 0.2),
-      ],
-      borderColor: Colors.white.withValues(alpha: 0.05),
-      child: Column(
-        children: [
-          Icon(icon, size: 28, color: color),
-          const SizedBox(height: 12),
-          Text(
-            value,
-            style: GoogleFonts.plusJakartaSans(
-              fontSize: 28,
-              fontWeight: FontWeight.bold,
-              color: AppColors.textPrimary,
-            ),
-          ),
-          const SizedBox(height: 4),
-          Text(
-            label,
-            style: GoogleFonts.plusJakartaSans(
-              fontSize: 12,
-              fontWeight: FontWeight.w500,
-              color: AppColors.textSecondary,
-            ),
-            textAlign: TextAlign.center,
           ),
         ],
       ),
@@ -250,7 +148,7 @@ class _PrayerStatsPageState extends State<PrayerStatsPage> {
           Padding(
             padding: const EdgeInsets.fromLTRB(8, 8, 8, 4),
             child: Text(
-              'Upcoming Prayers',
+              'Prayers',
               style: GoogleFonts.plusJakartaSans(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
@@ -267,26 +165,15 @@ class _PrayerStatsPageState extends State<PrayerStatsPage> {
               }
 
               final completions = snapshot.data!;
-              final now = DateTime.now();
-              final isToday = isSameDay(_selectedDay, now);
+              
+              final displayPrayers = _trackingService.mainPrayers;
 
-              // Hide prayers that have passed today
-              final upcomingPrayers =
-                  _trackingService.mainPrayers.where((prayer) {
-                if (!isToday || !_todayPrayerTimes.containsKey(prayer)) {
-                  return true;
-                }
-                final time = _todayPrayerTimes[prayer]!;
-                // Show only if the current time is BEFORE the prayer time (it hasn't passed)
-                return now.isBefore(time.subtract(const Duration(minutes: 5)));
-              }).toList();
-
-              if (upcomingPrayers.isEmpty) {
+              if (displayPrayers.isEmpty) {
                 return const Padding(
                   padding: EdgeInsets.symmetric(vertical: 24.0),
                   child: Center(
                     child: Text(
-                      'All prayers have passed for today.',
+                      'No prayers available.',
                       style: TextStyle(
                         color: Colors.grey,
                         fontStyle: FontStyle.italic,
@@ -300,13 +187,13 @@ class _PrayerStatsPageState extends State<PrayerStatsPage> {
                 height: 200,
                 child: ListWheelScrollView.useDelegate(
                   itemExtent: 65,
-                  physics: const FixedExtentScrollPhysics(),
+                  physics: const BouncingScrollPhysics(),
                   perspective: 0.005,
                   diameterRatio: 1.5,
                   childDelegate: ListWheelChildBuilderDelegate(
-                    childCount: upcomingPrayers.length,
+                    childCount: displayPrayers.length,
                     builder: (context, index) {
-                      final prayer = upcomingPrayers[index];
+                      final prayer = displayPrayers[index];
                       final isCompleted = completions[prayer] ?? false;
                       final prayerTime = _todayPrayerTimes[prayer];
 

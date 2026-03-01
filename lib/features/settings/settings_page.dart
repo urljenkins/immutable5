@@ -37,9 +37,9 @@ class _SettingsPageState extends State<SettingsPage> {
   String _madhab = 'Shafi';
   bool _notificationsEnabled = true;
   bool _useAmoledTheme = true;
-  bool _jummahReminders = true;
   bool _iftarReminders = true;
   bool _batterySaverMode = false;
+  bool _showPastPrayer = false;
   JuzMode _juzMode = JuzMode.standard;
   QuranContextMenuSettings _ctxMenuSettings = const QuranContextMenuSettings();
 
@@ -75,9 +75,9 @@ class _SettingsPageState extends State<SettingsPage> {
       _madhab = madhab;
       _notificationsEnabled = notificationsEnabled;
       _useAmoledTheme = useAmoledTheme;
-      _jummahReminders = jummahReminders;
       _iftarReminders = iftarReminders;
       _batterySaverMode = batteryOptimizer.isBatterySaverEnabled();
+      _showPastPrayer = await prefs.getBool('show_past_prayer') ?? false;
       _juzMode =
           savedJuzMode == 'surahBased' ? JuzMode.surahBased : JuzMode.standard;
       _ctxMenuSettings = ctxMenuSettings;
@@ -227,10 +227,22 @@ class _SettingsPageState extends State<SettingsPage> {
                 setState(() => _notificationsEnabled = value);
                 await prefs.setBool(_keyNotificationsEnabled, value);
 
-                // Cancel all notifications if disabled
                 if (!value) {
                   await NotificationService().cancelAllNotifications();
                 }
+              },
+            ),
+            SwitchListTile(
+              title: const Text('Show Past Prayer Time'),
+              subtitle: const Text('Display time remaining for current/past prayer instead of next prayer'),
+              value: _showPastPrayer,
+              activeThumbColor: AppColors.accent,
+              contentPadding: const EdgeInsets.symmetric(horizontal: 24),
+              onChanged: (value) async {
+                final prefs = SecureStorageProvider();
+                setState(() => _showPastPrayer = value);
+                await prefs.setBool('show_past_prayer', value);
+                // The HomeController will pick this up on its next load or when touched
               },
             ),
             if (_notificationsEnabled) ...[

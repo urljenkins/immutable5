@@ -187,10 +187,16 @@ class _AppScaffoldState extends State<AppScaffold> {
               currentPage = barItems[safeIndex].page;
             }
 
-            return Scaffold(
-              extendBody: true,
-              body: currentPage,
-              bottomNavigationBar: SafeArea(
+            return ColoredBox(
+              color: Theme.of(context).scaffoldBackgroundColor,
+              child: Center(
+                child: ConstrainedBox(
+                  constraints: const BoxConstraints(maxWidth: 800),
+                  child: Scaffold(
+                    extendBody: true,
+                    backgroundColor: Colors.transparent,
+                    body: currentPage,
+                    bottomNavigationBar: SafeArea(
                 bottom: true,
                 child: Container(
                   margin: const EdgeInsets.fromLTRB(20, 0, 20, 20),
@@ -289,7 +295,10 @@ class _AppScaffoldState extends State<AppScaffold> {
                   ),
                 ),
               ),
-            );
+            ),
+          ),
+        ),
+      );
           },
         );
       },

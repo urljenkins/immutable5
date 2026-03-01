@@ -1,9 +1,12 @@
 import 'dart:async';
+import 'dart:convert';
+import 'dart:io' show Platform;
 
-import 'package:flutter/foundation.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:hijri/hijri_calendar.dart';
+import 'package:http/http.dart' as http;
 import 'package:immutable5/services/secure_storage_provider.dart';
 
 import '../../di/service_locator.dart';
@@ -52,6 +55,7 @@ class HomeController extends ChangeNotifier {
 
   DateTime? _cachedNextPrayerTime;
   String? _cachedNextPrayerName;
+  String? _cachedPastPrayerName;
   DateTime? _cachedDataTimestamp;
   String? _cachedQuote;
   DateTime? _cachedQuoteTimestamp;
@@ -78,6 +82,11 @@ class HomeController extends ChangeNotifier {
 
   Future<void> _initLocationAndLoadData() async {
     try {
+      bool serviceEnabled = true;
+      if (!(kIsWeb || Platform.isLinux || Platform.isWindows || Platform.isMacOS)) {
+        serviceEnabled = await Geolocator.isLocationServiceEnabled();
+      }
+
       if (kIsWeb) {
         // Simple fallback or basic browser geolocation for web
         final handled = await _useFallbackLocation(
@@ -110,48 +119,84 @@ class HomeController extends ChangeNotifier {
         }
         return;
       }
-      LocationPermission permission = await Geolocator.checkPermission();
-      if (permission == LocationPermission.denied) {
-        permission = await Geolocator.requestPermission();
+      LocationPermission permission = LocationPermission.always;
+      if (!(kIsWeb || Platform.isLinux || Platform.isWindows || Platform.isMacOS)) {
+        permission = await Geolocator.checkPermission();
         if (permission == LocationPermission.denied) {
+          permission = await Geolocator.requestPermission();
+          if (permission == LocationPermission.denied) {
+            final handled = await _useFallbackLocation(
+              notice: 'Location permission denied. Using saved or default.',
+              permissionIssue: true,
+            );
+            if (!handled) {
+              _update(
+                _state.copyWith(
+                  loading: false,
+                  locationError: 'Location permission denied.',
+                ),
+              );
+            }
+            return;
+          }
+        }
+        if (permission == LocationPermission.deniedForever) {
           final handled = await _useFallbackLocation(
-            notice: 'Location permission denied. Using saved or default.',
+            notice: 'Location permanently denied. Using saved or default.',
             permissionIssue: true,
           );
           if (!handled) {
             _update(
               _state.copyWith(
                 loading: false,
-                locationError: 'Location permission denied.',
+                locationError: 'Location permanently denied.',
               ),
             );
           }
           return;
         }
       }
-      if (permission == LocationPermission.deniedForever) {
-        final handled = await _useFallbackLocation(
-          notice: 'Location permanently denied. Using saved or default.',
-          permissionIssue: true,
+
+      Position? position;
+      if (!(kIsWeb || Platform.isLinux || Platform.isWindows || Platform.isMacOS)) {
+        position = await Geolocator.getCurrentPosition(
+          desiredAccuracy: LocationAccuracy.high,
+          timeLimit: const Duration(seconds: 10),
         );
-        if (!handled) {
-          _update(
-            _state.copyWith(
-              loading: false,
-              locationError: 'Location permanently denied.',
-            ),
-          );
+      } else {
+        // Fallback to IP-based location for desktop/web
+        try {
+          final response = await http.get(Uri.parse('http://ip-api.com/json/'))
+              .timeout(const Duration(seconds: 5));
+          if (response.statusCode == 200) {
+            final data = jsonDecode(response.body);
+            if (data['status'] == 'success' && data['lat'] != null && data['lon'] != null) {
+              position = Position(
+                latitude: (data['lat'] as num).toDouble(),
+                longitude: (data['lon'] as num).toDouble(),
+                timestamp: DateTime.now(),
+                accuracy: 0.0,
+                altitude: 0.0,
+                heading: 0.0,
+                speed: 0.0,
+                speedAccuracy: 0.0,
+                headingAccuracy: 0.0,
+                altitudeAccuracy: 0.0,
+              );
+            }
+          }
+        } catch (_) {
+          // Fall back to default location
         }
-        return;
       }
-      Position position = await Geolocator.getCurrentPosition(
-        desiredAccuracy: LocationAccuracy.high,
-        timeLimit: const Duration(seconds: 10),
-      );
+
+      final latitude = position?.latitude ?? defaultLatitude;
+      final longitude = position?.longitude ?? defaultLongitude;
+
       final prefs = SecureStorageProvider();
       await _configurePrayerService(
-        latitude: position.latitude,
-        longitude: position.longitude,
+        latitude: latitude,
+        longitude: longitude,
         prefs: prefs,
         clearNotice: true,
       );
@@ -254,13 +299,18 @@ class HomeController extends ChangeNotifier {
         _cachedNextPrayerTime!.isAfter(now);
 
     if (!forceRefresh && cacheFresh) {
+      final prefs = SecureStorageProvider();
+      final showPastPrayer = await prefs.getBool('show_past_prayer') ?? false;
+
       _update(
         _state.copyWith(
           loading: false,
           locationError: null,
           usingCache: true,
+          showPastPrayer: showPastPrayer,
           nextPrayerTime: _cachedNextPrayerTime,
           nextPrayerName: _cachedNextPrayerName,
+          pastPrayerName: _cachedPastPrayerName,
           quote: _cachedQuote,
           countdown: _cachedNextPrayerTime!.difference(DateTime.now()),
         ),
@@ -277,6 +327,8 @@ class HomeController extends ChangeNotifier {
       );
       final nextPrayerTime = nextPrayer.value;
       final nextPrayerName = nextPrayer.key;
+
+      final pastPrayerName = await _prayerTimesService!.getPastPrayerName();
 
       String? quote = _cachedQuote;
       final quoteFresh = _cachedQuoteTimestamp != null &&
@@ -299,7 +351,11 @@ class HomeController extends ChangeNotifier {
 
       _cachedNextPrayerTime = nextPrayerTime;
       _cachedNextPrayerName = nextPrayerName;
+      _cachedPastPrayerName = pastPrayerName;
       _cachedDataTimestamp = DateTime.now();
+
+      final prefs = SecureStorageProvider();
+      final showPastPrayer = await prefs.getBool('show_past_prayer') ?? false;
 
       // Check for Contextual Dua
       final hijriDate = HijriCalendar.now();
@@ -324,8 +380,10 @@ class HomeController extends ChangeNotifier {
           loading: false,
           usingCache: false,
           locationError: null,
+          showPastPrayer: showPastPrayer,
           nextPrayerTime: nextPrayerTime,
           nextPrayerName: nextPrayerName,
+          pastPrayerName: pastPrayerName,
           quote: quote,
           countdown: nextPrayerTime.difference(DateTime.now()),
           contextualDua: contextualDua,
@@ -360,12 +418,18 @@ class HomeController extends ChangeNotifier {
             );
           }
 
+          final pastPrayerName = await _prayerTimesService!.getPastPrayerName();
+          final prefs = SecureStorageProvider();
+          final showPastPrayer = await prefs.getBool('show_past_prayer') ?? false;
+
           _update(
             _state.copyWith(
               loading: false,
               usingCache: true,
+              showPastPrayer: showPastPrayer,
               nextPrayerTime: nextPrayer.value,
               nextPrayerName: nextPrayer.key,
+              pastPrayerName: pastPrayerName,
               countdown: nextPrayer.value.difference(now),
               locationError: 'Using cached prayer times',
               contextualDua: contextualDua,
@@ -413,5 +477,14 @@ class HomeController extends ChangeNotifier {
         _update(_state.copyWith(countdown: diff));
       }
     });
+  }
+
+  Future<void> togglePrayerDisplayOption() async {
+    final prefs = SecureStorageProvider();
+    final newValue = !_state.showPastPrayer;
+    await prefs.setBool('show_past_prayer', newValue);
+    // Since this simply changes what we display, and the data is already in state,
+    // we can just update the state directly without a full load.
+    _update(_state.copyWith(showPastPrayer: newValue));
   }
 }

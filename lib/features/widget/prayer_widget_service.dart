@@ -228,6 +228,11 @@ class PrayerWidgetService {
 
   /// Initialize the widget with app group (iOS requirement)
   static Future<void> initialize() async {
+    try {
+      await HomeWidget.setAppGroupId(_appGroupId);
+    } catch (e) {
+      // Widget not supported on all platforms (e.g. Linux)
+    }
     if (kIsWeb) return;
     await HomeWidget.setAppGroupId(_appGroupId);
   }
