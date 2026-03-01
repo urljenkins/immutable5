@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:flutter/foundation.dart';
 import 'package:immutable5/services/secure_storage_provider.dart';
 import 'package:hijri/hijri_calendar.dart';
 import 'package:home_widget/home_widget.dart';
@@ -27,6 +28,7 @@ class PrayerWidgetService {
     required int method,
     required int madhab,
   }) async {
+    if (kIsWeb) return;
     try {
       final service = PrayerTimesService(
         latitude: latitude,
@@ -226,6 +228,7 @@ class PrayerWidgetService {
 
   /// Initialize the widget with app group (iOS requirement)
   static Future<void> initialize() async {
+    if (kIsWeb) return;
     await HomeWidget.setAppGroupId(_appGroupId);
   }
 
@@ -242,6 +245,7 @@ class PrayerWidgetService {
 
   /// Update widget with stored settings
   static Future<void> updateWidgetWithStoredSettings() async {
+    if (kIsWeb) return;
     final settings = await getStoredSettings();
     await updateWidget(
       latitude: settings['latitude'],
@@ -253,12 +257,14 @@ class PrayerWidgetService {
 
   /// Register background callback for periodic updates
   static Future<void> registerBackgroundCallback() async {
+    if (kIsWeb) return;
     await HomeWidget.registerInteractivityCallback(backgroundCallback);
   }
 
   /// Background callback for widget updates
   @pragma('vm:entry-point')
   static Future<void> backgroundCallback(Uri? uri) async {
+    if (kIsWeb) return;
     if (uri?.host == 'updatewidget') {
       await updateWidgetWithStoredSettings();
     }

@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:hijri/hijri_calendar.dart';
@@ -77,6 +78,22 @@ class HomeController extends ChangeNotifier {
 
   Future<void> _initLocationAndLoadData() async {
     try {
+      if (kIsWeb) {
+        // Simple fallback or basic browser geolocation for web
+        final handled = await _useFallbackLocation(
+          notice: 'Location on web. Using saved or default.',
+        );
+        if (!handled) {
+          _update(
+            _state.copyWith(
+              loading: false,
+              locationError: 'Failed to initialize location on web.',
+            ),
+          );
+        }
+        return;
+      }
+
       bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
       if (!serviceEnabled) {
         final handled = await _useFallbackLocation(
@@ -274,8 +291,11 @@ class HomeController extends ChangeNotifier {
       final prayerTimes = await _prayerTimesService!.getTodayPrayerTimes(
         forceRefresh: forceRefresh,
       );
-      await notificationPort.schedulePrayerNotifications(prayerTimes);
-      await widgetPort.updateWidgetWithStoredSettings();
+
+      if (!kIsWeb) {
+        await notificationPort.schedulePrayerNotifications(prayerTimes);
+        await widgetPort.updateWidgetWithStoredSettings();
+      }
 
       _cachedNextPrayerTime = nextPrayerTime;
       _cachedNextPrayerName = nextPrayerName;

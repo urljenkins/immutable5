@@ -1,5 +1,6 @@
 import 'dart:math' as math;
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_qiblah/flutter_qiblah.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -25,6 +26,13 @@ class _QiblaPageState extends State<QiblaPage> {
   }
 
   Future<void> _checkDeviceSupport() async {
+    if (kIsWeb) {
+      setState(() {
+        _deviceSupported = false;
+        _loading = false;
+      });
+      return;
+    }
     final supported = await FlutterQiblah.androidDeviceSensorSupport();
     setState(() {
       _deviceSupported = supported ?? false;
