@@ -8,8 +8,10 @@ class HomeState {
   final bool locationPermissionIssue;
   final String? locationError;
   final String? locationNotice;
+  final bool showPastPrayer;
   final DateTime? nextPrayerTime;
   final String? nextPrayerName;
+  final String? pastPrayerName;
   final Duration countdown;
   final String? quote;
   final Dua? contextualDua;
@@ -23,8 +25,10 @@ class HomeState {
     this.locationPermissionIssue = false,
     this.locationError,
     this.locationNotice,
+    this.showPastPrayer = false,
     this.nextPrayerTime,
     this.nextPrayerName,
+    this.pastPrayerName,
     this.countdown = Duration.zero,
     this.quote,
     this.contextualDua,
@@ -39,8 +43,10 @@ class HomeState {
     bool? locationPermissionIssue,
     String? locationError,
     String? locationNotice,
+    bool? showPastPrayer,
     DateTime? nextPrayerTime,
     String? nextPrayerName,
+    String? pastPrayerName,
     Duration? countdown,
     String? quote,
     Dua? contextualDua,
@@ -55,8 +61,10 @@ class HomeState {
           locationPermissionIssue ?? this.locationPermissionIssue,
       locationError: locationError,
       locationNotice: locationNotice,
+      showPastPrayer: showPastPrayer ?? this.showPastPrayer,
       nextPrayerTime: nextPrayerTime ?? this.nextPrayerTime,
       nextPrayerName: nextPrayerName ?? this.nextPrayerName,
+      pastPrayerName: pastPrayerName ?? this.pastPrayerName,
       countdown: countdown ?? this.countdown,
       quote: quote ?? this.quote,
       contextualDua: contextualDua ?? this.contextualDua,

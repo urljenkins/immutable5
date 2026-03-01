@@ -1,5 +1,8 @@
 import 'dart:math' as math;
 
+import 'dart:io' show Platform;
+
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter_qiblah/flutter_qiblah.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -25,11 +28,26 @@ class _QiblaPageState extends State<QiblaPage> {
   }
 
   Future<void> _checkDeviceSupport() async {
-    final supported = await FlutterQiblah.androidDeviceSensorSupport();
-    setState(() {
-      _deviceSupported = supported ?? false;
-      _loading = false;
-    });
+    if (kIsWeb || Platform.isLinux || Platform.isWindows || Platform.isMacOS) {
+      setState(() {
+        _deviceSupported = false;
+        _loading = false;
+      });
+      return;
+    }
+
+    try {
+      final supported = await FlutterQiblah.androidDeviceSensorSupport();
+      setState(() {
+        _deviceSupported = supported ?? false;
+        _loading = false;
+      });
+    } catch (e) {
+      setState(() {
+        _deviceSupported = false;
+        _loading = false;
+      });
+    }
   }
 
   @override
@@ -51,7 +69,9 @@ class _QiblaPageState extends State<QiblaPage> {
                   child: Padding(
                     padding: const EdgeInsets.all(24.0),
                     child: Text(
-                      'Your device does not support the compass sensor required for Qibla direction',
+                      (kIsWeb || Platform.isLinux || Platform.isWindows || Platform.isMacOS)
+                          ? 'The Qibla Compass is only available on mobile devices.'
+                          : 'Your device does not support the compass sensor required for Qibla direction',
                       textAlign: TextAlign.center,
                       style: GoogleFonts.plusJakartaSans(
                         fontSize: 16,

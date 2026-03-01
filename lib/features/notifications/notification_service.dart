@@ -33,9 +33,14 @@ class NotificationService {
       requestSoundPermission: false,
     );
 
+    const linuxSettings = LinuxInitializationSettings(
+      defaultActionName: 'Open notification',
+    );
+
     const initSettings = InitializationSettings(
       android: androidSettings,
       iOS: iosSettings,
+      linux: linuxSettings,
     );
 
     await _notifications.initialize(
@@ -162,9 +167,12 @@ class NotificationService {
       presentSound: true,
     );
 
+    const linuxDetails = LinuxNotificationDetails();
+
     const details = NotificationDetails(
       android: androidDetails,
       iOS: iosDetails,
+      linux: linuxDetails,
     );
 
     final tzScheduledTime = tz.TZDateTime.from(scheduledTime, tz.local);
@@ -208,9 +216,12 @@ class NotificationService {
       presentSound: true,
     );
 
+    const linuxDetails = LinuxNotificationDetails();
+
     const details = NotificationDetails(
       android: androidDetails,
       iOS: iosDetails,
+      linux: linuxDetails,
     );
 
     final tzScheduledTime = tz.TZDateTime.from(scheduledTime, tz.local);

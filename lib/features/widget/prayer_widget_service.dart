@@ -226,7 +226,11 @@ class PrayerWidgetService {
 
   /// Initialize the widget with app group (iOS requirement)
   static Future<void> initialize() async {
-    await HomeWidget.setAppGroupId(_appGroupId);
+    try {
+      await HomeWidget.setAppGroupId(_appGroupId);
+    } catch (e) {
+      // Widget not supported on all platforms (e.g. Linux)
+    }
   }
 
   /// Get stored location and settings from SharedPreferences
