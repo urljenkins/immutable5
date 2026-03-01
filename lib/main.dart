@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:ui';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -32,28 +33,35 @@ final ValueNotifier<NavBarConfig> navBarConfigNotifier =
 const String _keyAccentColor = 'accent_color';
 
 void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
+  try {
+    WidgetsFlutterBinding.ensureInitialized();
 
-  setupLocator();
+    setupLocator();
 
-  // Initialize notification service
-  await NotificationService().initialize();
+    if (!kIsWeb) {
+      // Initialize notification service - only on mobile
+      await NotificationService().initialize();
 
-  // Initialize widget service
-  await PrayerWidgetService.initialize();
+      // Initialize widget service - only on mobile
+      await PrayerWidgetService.initialize();
+    }
 
-  final prefs = SecureStorageProvider();
-  final useDark = await prefs.getBool('useAmoledTheme') ?? true;
-  themeNotifier.value = useDark ? ThemeMode.dark : ThemeMode.light;
+    final prefs = SecureStorageProvider();
+    final useDark = await prefs.getBool('useAmoledTheme') ?? true;
+    themeNotifier.value = useDark ? ThemeMode.dark : ThemeMode.light;
 
-  final accentValue = await prefs.getInt(_keyAccentColor);
-  if (accentValue != null) {
-    AppColors.accent = Color(accentValue);
-    accentColorNotifier.value = AppColors.accent;
+    final accentValue = await prefs.getInt(_keyAccentColor);
+    if (accentValue != null) {
+      AppColors.accent = Color(accentValue);
+      accentColorNotifier.value = AppColors.accent;
+    }
+
+    navBarConfigNotifier.value = await NavBarConfig.fromPrefs(prefs);
+  } catch (e) {
+    debugPrint('Error during initialization: $e');
+  } finally {
+    runApp(const MyApp());
   }
-
-  navBarConfigNotifier.value = await NavBarConfig.fromPrefs(prefs);
-  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {

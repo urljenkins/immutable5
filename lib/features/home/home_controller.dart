@@ -87,6 +87,23 @@ class HomeController extends ChangeNotifier {
         serviceEnabled = await Geolocator.isLocationServiceEnabled();
       }
 
+      if (kIsWeb) {
+        // Simple fallback or basic browser geolocation for web
+        final handled = await _useFallbackLocation(
+          notice: 'Location on web. Using saved or default.',
+        );
+        if (!handled) {
+          _update(
+            _state.copyWith(
+              loading: false,
+              locationError: 'Failed to initialize location on web.',
+            ),
+          );
+        }
+        return;
+      }
+
+      bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
       if (!serviceEnabled) {
         final handled = await _useFallbackLocation(
           notice: 'Location services disabled. Using saved or default.',
@@ -326,8 +343,11 @@ class HomeController extends ChangeNotifier {
       final prayerTimes = await _prayerTimesService!.getTodayPrayerTimes(
         forceRefresh: forceRefresh,
       );
-      await notificationPort.schedulePrayerNotifications(prayerTimes);
-      await widgetPort.updateWidgetWithStoredSettings();
+
+      if (!kIsWeb) {
+        await notificationPort.schedulePrayerNotifications(prayerTimes);
+        await widgetPort.updateWidgetWithStoredSettings();
+      }
 
       _cachedNextPrayerTime = nextPrayerTime;
       _cachedNextPrayerName = nextPrayerName;

@@ -29,6 +29,7 @@ class _QiblaPageState extends State<QiblaPage> {
 
   Future<void> _checkDeviceSupport() async {
     if (kIsWeb || Platform.isLinux || Platform.isWindows || Platform.isMacOS) {
+    if (kIsWeb) {
       setState(() {
         _deviceSupported = false;
         _loading = false;
