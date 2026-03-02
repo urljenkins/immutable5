@@ -7,7 +7,6 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:immutable5/services/secure_storage_provider.dart';
 import 'package:timezone/data/latest.dart' as tz_data;
 import 'package:timezone/timezone.dart' as tz;
-import 'package:shared_preferences/shared_preferences.dart';
 
 class NotificationService {
   static final NotificationService _instance = NotificationService._internal();

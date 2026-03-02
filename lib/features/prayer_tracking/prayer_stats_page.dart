@@ -18,7 +18,7 @@ class PrayerStatsPage extends StatefulWidget {
 class _PrayerStatsPageState extends State<PrayerStatsPage> {
   final PrayerTrackingService _trackingService = PrayerTrackingService();
   late final PrayerTimesService _prayerTimesService;
-  Map<String, dynamic>? _stats;
+
   Map<DateTime, Map<String, bool>> _history = {};
   Map<String, DateTime> _todayPrayerTimes = {};
   DateTime _focusedDay = DateTime.now();
@@ -38,7 +38,7 @@ class _PrayerStatsPageState extends State<PrayerStatsPage> {
   }
 
   Future<void> _loadData() async {
-    final stats = await _trackingService.getStatistics();
+    await _trackingService.getStatistics();
     final history = await _trackingService.getLast30DaysHistory();
 
     Map<String, DateTime> times = {};
@@ -50,7 +50,6 @@ class _PrayerStatsPageState extends State<PrayerStatsPage> {
 
     if (mounted) {
       setState(() {
-        _stats = stats;
         _history = history;
         _todayPrayerTimes = times;
         _loading = false;

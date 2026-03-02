@@ -64,9 +64,9 @@ class _SettingsPageState extends State<SettingsPage> {
         await prefs.getBool(_keyNotificationsEnabled) ?? _notificationsEnabled;
     final useAmoledTheme =
         await prefs.getBool(_keyUseAmoledTheme) ?? _useAmoledTheme;
-    final jummahReminders =
+    _jummahReminders =
         await prefs.getBool(_keyJummahReminders) ?? _jummahReminders;
-    final iftarReminders =
+    _iftarReminders =
         await prefs.getBool(_keyIftarReminders) ?? _iftarReminders;
     final savedJuzMode = await prefs.getString(_keyJuzMode);
     final ctxMenuSettings = await QuranContextMenuSettings.fromPrefs(prefs);
@@ -77,7 +77,7 @@ class _SettingsPageState extends State<SettingsPage> {
       _madhab = madhab;
       _notificationsEnabled = notificationsEnabled;
       _useAmoledTheme = useAmoledTheme;
-      _iftarReminders = iftarReminders;
+
       _batterySaverMode = batteryOptimizer.isBatterySaverEnabled();
       _showPastPrayer = showPastPrayer;
       _juzMode =
