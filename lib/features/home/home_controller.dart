@@ -83,7 +83,10 @@ class HomeController extends ChangeNotifier {
   Future<void> _initLocationAndLoadData() async {
     try {
       bool serviceEnabled = true;
-      if (!(kIsWeb || Platform.isLinux || Platform.isWindows || Platform.isMacOS)) {
+      if (!(kIsWeb ||
+          Platform.isLinux ||
+          Platform.isWindows ||
+          Platform.isMacOS)) {
         serviceEnabled = await Geolocator.isLocationServiceEnabled();
       }
 
@@ -120,7 +123,10 @@ class HomeController extends ChangeNotifier {
         return;
       }
       LocationPermission permission = LocationPermission.always;
-      if (!(kIsWeb || Platform.isLinux || Platform.isWindows || Platform.isMacOS)) {
+      if (!(kIsWeb ||
+          Platform.isLinux ||
+          Platform.isWindows ||
+          Platform.isMacOS)) {
         permission = await Geolocator.checkPermission();
         if (permission == LocationPermission.denied) {
           permission = await Geolocator.requestPermission();
@@ -158,7 +164,10 @@ class HomeController extends ChangeNotifier {
       }
 
       Position? position;
-      if (!(kIsWeb || Platform.isLinux || Platform.isWindows || Platform.isMacOS)) {
+      if (!(kIsWeb ||
+          Platform.isLinux ||
+          Platform.isWindows ||
+          Platform.isMacOS)) {
         position = await Geolocator.getCurrentPosition(
           desiredAccuracy: LocationAccuracy.high,
           timeLimit: const Duration(seconds: 10),
@@ -166,11 +175,14 @@ class HomeController extends ChangeNotifier {
       } else {
         // Fallback to IP-based location for desktop/web
         try {
-          final response = await http.get(Uri.parse('http://ip-api.com/json/'))
+          final response = await http
+              .get(Uri.parse('http://ip-api.com/json/'))
               .timeout(const Duration(seconds: 5));
           if (response.statusCode == 200) {
             final data = jsonDecode(response.body);
-            if (data['status'] == 'success' && data['lat'] != null && data['lon'] != null) {
+            if (data['status'] == 'success' &&
+                data['lat'] != null &&
+                data['lon'] != null) {
               position = Position(
                 latitude: (data['lat'] as num).toDouble(),
                 longitude: (data['lon'] as num).toDouble(),
@@ -420,7 +432,8 @@ class HomeController extends ChangeNotifier {
 
           final pastPrayerName = await _prayerTimesService!.getPastPrayerName();
           final prefs = SecureStorageProvider();
-          final showPastPrayer = await prefs.getBool('show_past_prayer') ?? false;
+          final showPastPrayer =
+              await prefs.getBool('show_past_prayer') ?? false;
 
           _update(
             _state.copyWith(

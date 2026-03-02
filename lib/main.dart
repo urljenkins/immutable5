@@ -197,108 +197,117 @@ class _AppScaffoldState extends State<AppScaffold> {
                     backgroundColor: Colors.transparent,
                     body: currentPage,
                     bottomNavigationBar: SafeArea(
-                bottom: true,
-                child: Container(
-                  margin: const EdgeInsets.fromLTRB(20, 0, 20, 20),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(30),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withValues(alpha: 0.2),
-                        blurRadius: 20,
-                        offset: const Offset(0, 10),
-                      ),
-                    ],
-                  ),
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(30),
-                    child: BackdropFilter(
-                      filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+                      bottom: true,
                       child: Container(
-                        padding: const EdgeInsets.symmetric(
-                          vertical: 12,
-                          horizontal: 8,
-                        ),
+                        margin: const EdgeInsets.fromLTRB(20, 0, 20, 20),
                         decoration: BoxDecoration(
-                          color: AppColors.cardSurface.withValues(alpha: 0.8),
                           borderRadius: BorderRadius.circular(30),
-                          border: Border.all(
-                            color: Colors.white.withValues(alpha: 0.1),
-                            width: 1,
-                          ),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withValues(alpha: 0.2),
+                              blurRadius: 20,
+                              offset: const Offset(0, 10),
+                            ),
+                          ],
                         ),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: [
-                            // Bar items
-                            ...barItems.map((item) {
-                              final index = barItems.indexOf(item);
-                              final isSelected = _overflowSelectedId == null &&
-                                  index == _currentIndex;
-
-                              return GestureDetector(
-                                onTap: () {
-                                  setState(() {
-                                    _currentIndex = index;
-                                    _overflowSelectedId = null;
-                                  });
-                                },
-                                child: AnimatedContainer(
-                                  duration: const Duration(milliseconds: 200),
-                                  padding: const EdgeInsets.all(12),
-                                  decoration: BoxDecoration(
-                                    color: isSelected
-                                        ? accentColor.withValues(alpha: 0.2)
-                                        : Colors.transparent,
-                                    borderRadius: BorderRadius.circular(20),
-                                  ),
-                                  child: Icon(
-                                    item.icon,
-                                    color: isSelected
-                                        ? accentColor
-                                        : AppColors.textSecondary,
-                                    size: 24,
-                                  ),
-                                ),
-                              );
-                            }),
-                            // Overflow "More" button
-                            if (overflowItems.isNotEmpty)
-                              GestureDetector(
-                                onTap: () => _showOverflowSheet(
-                                  context,
-                                  overflowItems,
-                                  accentColor,
-                                ),
-                                child: AnimatedContainer(
-                                  duration: const Duration(milliseconds: 200),
-                                  padding: const EdgeInsets.all(12),
-                                  decoration: BoxDecoration(
-                                    color: _overflowSelectedId != null
-                                        ? accentColor.withValues(alpha: 0.2)
-                                        : Colors.transparent,
-                                    borderRadius: BorderRadius.circular(20),
-                                  ),
-                                  child: Icon(
-                                    Icons.more_horiz,
-                                    color: _overflowSelectedId != null
-                                        ? accentColor
-                                        : AppColors.textSecondary,
-                                    size: 24,
-                                  ),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(30),
+                          child: BackdropFilter(
+                            filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(
+                                vertical: 12,
+                                horizontal: 8,
+                              ),
+                              decoration: BoxDecoration(
+                                color: AppColors.cardSurface
+                                    .withValues(alpha: 0.8),
+                                borderRadius: BorderRadius.circular(30),
+                                border: Border.all(
+                                  color: Colors.white.withValues(alpha: 0.1),
+                                  width: 1,
                                 ),
                               ),
-                          ],
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceEvenly,
+                                children: [
+                                  // Bar items
+                                  ...barItems.map((item) {
+                                    final index = barItems.indexOf(item);
+                                    final isSelected =
+                                        _overflowSelectedId == null &&
+                                            index == _currentIndex;
+
+                                    return GestureDetector(
+                                      onTap: () {
+                                        setState(() {
+                                          _currentIndex = index;
+                                          _overflowSelectedId = null;
+                                        });
+                                      },
+                                      child: AnimatedContainer(
+                                        duration:
+                                            const Duration(milliseconds: 200),
+                                        padding: const EdgeInsets.all(12),
+                                        decoration: BoxDecoration(
+                                          color: isSelected
+                                              ? accentColor.withValues(
+                                                  alpha: 0.2)
+                                              : Colors.transparent,
+                                          borderRadius:
+                                              BorderRadius.circular(20),
+                                        ),
+                                        child: Icon(
+                                          item.icon,
+                                          color: isSelected
+                                              ? accentColor
+                                              : AppColors.textSecondary,
+                                          size: 24,
+                                        ),
+                                      ),
+                                    );
+                                  }),
+                                  // Overflow "More" button
+                                  if (overflowItems.isNotEmpty)
+                                    GestureDetector(
+                                      onTap: () => _showOverflowSheet(
+                                        context,
+                                        overflowItems,
+                                        accentColor,
+                                      ),
+                                      child: AnimatedContainer(
+                                        duration:
+                                            const Duration(milliseconds: 200),
+                                        padding: const EdgeInsets.all(12),
+                                        decoration: BoxDecoration(
+                                          color: _overflowSelectedId != null
+                                              ? accentColor.withValues(
+                                                  alpha: 0.2)
+                                              : Colors.transparent,
+                                          borderRadius:
+                                              BorderRadius.circular(20),
+                                        ),
+                                        child: Icon(
+                                          Icons.more_horiz,
+                                          color: _overflowSelectedId != null
+                                              ? accentColor
+                                              : AppColors.textSecondary,
+                                          size: 24,
+                                        ),
+                                      ),
+                                    ),
+                                ],
+                              ),
+                            ),
+                          ),
                         ),
                       ),
                     ),
                   ),
                 ),
               ),
-            ),
-          ),
-        ),
-      );
+            );
           },
         );
       },

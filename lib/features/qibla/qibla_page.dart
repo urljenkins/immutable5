@@ -29,7 +29,6 @@ class _QiblaPageState extends State<QiblaPage> {
 
   Future<void> _checkDeviceSupport() async {
     if (kIsWeb || Platform.isLinux || Platform.isWindows || Platform.isMacOS) {
-    if (kIsWeb) {
       setState(() {
         _deviceSupported = false;
         _loading = false;
@@ -70,7 +69,10 @@ class _QiblaPageState extends State<QiblaPage> {
                   child: Padding(
                     padding: const EdgeInsets.all(24.0),
                     child: Text(
-                      (kIsWeb || Platform.isLinux || Platform.isWindows || Platform.isMacOS)
+                      (kIsWeb ||
+                              Platform.isLinux ||
+                              Platform.isWindows ||
+                              Platform.isMacOS)
                           ? 'The Qibla Compass is only available on mobile devices.'
                           : 'Your device does not support the compass sensor required for Qibla direction',
                       textAlign: TextAlign.center,

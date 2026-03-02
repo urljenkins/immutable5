@@ -165,7 +165,7 @@ class _PrayerStatsPageState extends State<PrayerStatsPage> {
               }
 
               final completions = snapshot.data!;
-              
+
               final displayPrayers = _trackingService.mainPrayers;
 
               if (displayPrayers.isEmpty) {

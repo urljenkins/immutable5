@@ -19,7 +19,7 @@ void main() {
     ));
     await tester.pumpAndSettle();
     expect(find.byType(PlacesPage), findsOneWidget);
-    
+
     if (tester.takeException() != null) {
       print('CAUGHT EXCEPTION: ${tester.takeException()}');
     }

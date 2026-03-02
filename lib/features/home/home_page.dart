@@ -180,7 +180,8 @@ class _MyHomePageState extends State<MyHomePage> {
                                 horizontal: 24.0,
                               ),
                               child: InkWell(
-                                onTap: () => _controller.togglePrayerDisplayOption(),
+                                onTap: () =>
+                                    _controller.togglePrayerDisplayOption(),
                                 borderRadius: BorderRadius.circular(16),
                                 child: Column(
                                   mainAxisAlignment: MainAxisAlignment.center,
