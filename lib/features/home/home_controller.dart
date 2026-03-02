@@ -106,7 +106,7 @@ class HomeController extends ChangeNotifier {
         return;
       }
 
-      bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
+      serviceEnabled = await Geolocator.isLocationServiceEnabled();
       if (!serviceEnabled) {
         final handled = await _useFallbackLocation(
           notice: 'Location services disabled. Using saved or default.',

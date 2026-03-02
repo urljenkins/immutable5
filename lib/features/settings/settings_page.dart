@@ -37,6 +37,7 @@ class _SettingsPageState extends State<SettingsPage> {
   String _madhab = 'Shafi';
   bool _notificationsEnabled = true;
   bool _useAmoledTheme = true;
+  bool _jummahReminders = true;
   bool _iftarReminders = true;
   bool _batterySaverMode = false;
   bool _showPastPrayer = false;
@@ -69,6 +70,7 @@ class _SettingsPageState extends State<SettingsPage> {
         await prefs.getBool(_keyIftarReminders) ?? _iftarReminders;
     final savedJuzMode = await prefs.getString(_keyJuzMode);
     final ctxMenuSettings = await QuranContextMenuSettings.fromPrefs(prefs);
+    final showPastPrayer = await prefs.getBool('show_past_prayer') ?? false;
 
     setState(() {
       _calculationMethod = calculationMethod;
@@ -77,7 +79,7 @@ class _SettingsPageState extends State<SettingsPage> {
       _useAmoledTheme = useAmoledTheme;
       _iftarReminders = iftarReminders;
       _batterySaverMode = batteryOptimizer.isBatterySaverEnabled();
-      _showPastPrayer = await prefs.getBool('show_past_prayer') ?? false;
+      _showPastPrayer = showPastPrayer;
       _juzMode =
           savedJuzMode == 'surahBased' ? JuzMode.surahBased : JuzMode.standard;
       _ctxMenuSettings = ctxMenuSettings;
