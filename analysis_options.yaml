@@ -21,7 +21,6 @@ linter:
     cancel_subscriptions: true
     close_sinks: true
     directives_ordering: true
-    package_api_docs: true
     type_init_formals: true
 
 analyzer:

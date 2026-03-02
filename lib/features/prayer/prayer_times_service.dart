@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:developer' as developer;
 
+import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:immutable5/services/secure_storage_provider.dart';
 
@@ -114,10 +115,12 @@ class PrayerTimesService {
             cacheData[name] = dateTime.millisecondsSinceEpoch;
           } catch (e) {
             // Skip invalid prayer times
-            developer.log(
-              'Warning: Could not parse prayer time for $name: $timeStr - $e',
-              name: 'PrayerTimesService',
-            );
+            if (kDebugMode) {
+              developer.log(
+                'Warning: Could not parse prayer time for $name: $timeStr - $e',
+                name: 'PrayerTimesService',
+              );
+            }
           }
         });
 
@@ -212,10 +215,12 @@ class PrayerTimesService {
               final dateTime = _parseTimeString(timeStr as String, tomorrow);
               tomorrowCacheData[name] = dateTime.millisecondsSinceEpoch;
             } catch (e) {
-              developer.log(
-                'Warning: Could not parse tomorrow\'s prayer time for $name: $timeStr - $e',
-                name: 'PrayerTimesService',
-              );
+              if (kDebugMode) {
+                developer.log(
+                  'Warning: Could not parse tomorrow\'s prayer time for $name: $timeStr - $e',
+                  name: 'PrayerTimesService',
+                );
+              }
             }
           });
           await prefs.setString(
