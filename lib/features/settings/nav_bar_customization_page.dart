@@ -317,7 +317,7 @@ class _ReorderableTile extends StatelessWidget {
         children: [
           Switch(
             value: visible,
-            activeThumbColor: AppColors.accent,
+            activeColor: AppColors.accent,
             onChanged: onToggle,
           ),
           ReorderableDragStartListener(

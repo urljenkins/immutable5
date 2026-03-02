@@ -44,7 +44,6 @@ void main() async {
 
       // Initialize widget service - only on mobile
       await PrayerWidgetService.initialize();
-      await PrayerWidgetService.registerBackgroundCallback();
     }
 
     final prefs = SecureStorageProvider();

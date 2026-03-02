@@ -411,7 +411,7 @@ class _RamadanDashboardPageState extends State<RamadanDashboardPage> {
                                   Switch(
                                     value: _taraweehCompleted,
                                     onChanged: (val) => _toggleTaraweeh(),
-                                    activeThumbColor: AppColors.accent,
+                                    activeColor: AppColors.accent,
                                   ),
                                 ],
                               ),

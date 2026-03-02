@@ -4,9 +4,7 @@ import android.appwidget.AppWidgetManager
 import android.content.Context
 import android.content.SharedPreferences
 import android.graphics.Color
-import android.net.Uri
 import android.widget.RemoteViews
-import es.antonborri.home_widget.HomeWidgetBackgroundIntent
 import es.antonborri.home_widget.HomeWidgetProvider
 
 class PrayerTimesWidgetProvider : HomeWidgetProvider() {
@@ -133,12 +131,6 @@ class PrayerTimesWidgetProvider : HomeWidgetProvider() {
                 nextPrayerName == "Maghrib", colors)
             updatePrayerColumn(views, R.id.label_isha, R.id.prayer_isha, "Isha", isha,
                 nextPrayerName == "Isha", colors)
-
-            val backgroundIntent = HomeWidgetBackgroundIntent.getBroadcast(
-                context,
-                Uri.parse("updatewidget://update")
-            )
-            views.setOnClickPendingIntent(R.id.widget_container, backgroundIntent)
 
             // Instruct the widget manager to update the widget
             appWidgetManager.updateAppWidget(appWidgetId, views)
