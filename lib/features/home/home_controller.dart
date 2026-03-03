@@ -33,8 +33,10 @@ class HomeController extends ChangeNotifier {
     this.defaultLongitude = 39.8579,
     PrayerTimesService? initialPrayerService,
     ContextualDuaService? contextualDuaService,
-  }) : contextualDuaService =
-            contextualDuaService ?? getIt<ContextualDuaService>() {
+    SecureStorageProvider? prefs,
+  })  : contextualDuaService =
+            contextualDuaService ?? getIt<ContextualDuaService>(),
+        _prefs = prefs ?? getIt<SecureStorageProvider>() {
     if (initialPrayerService != null) {
       _prayerTimesService = initialPrayerService;
       _state = _state.copyWith(loading: false, locationLoaded: true);
@@ -46,6 +48,7 @@ class HomeController extends ChangeNotifier {
   final WidgetUpdatePort widgetPort;
   final PrayerTimesServiceFactory prayerFactory;
   final ContextualDuaService contextualDuaService;
+  final SecureStorageProvider _prefs;
 
   final double defaultLatitude;
   final double defaultLongitude;
@@ -205,7 +208,7 @@ class HomeController extends ChangeNotifier {
       final latitude = position?.latitude ?? defaultLatitude;
       final longitude = position?.longitude ?? defaultLongitude;
 
-      final prefs = SecureStorageProvider();
+      final prefs = _prefs;
       await _configurePrayerService(
         latitude: latitude,
         longitude: longitude,
@@ -275,7 +278,7 @@ class HomeController extends ChangeNotifier {
     bool permissionIssue = false,
   }) async {
     try {
-      final prefs = SecureStorageProvider();
+      final prefs = _prefs;
       final savedLat = await prefs.getDouble('location_latitude');
       final savedLon = await prefs.getDouble('location_longitude');
       final latitude = savedLat ?? defaultLatitude;
@@ -311,7 +314,7 @@ class HomeController extends ChangeNotifier {
         _cachedNextPrayerTime!.isAfter(now);
 
     if (!forceRefresh && cacheFresh) {
-      final prefs = SecureStorageProvider();
+      final prefs = _prefs;
       final showPastPrayer = await prefs.getBool('show_past_prayer') ?? false;
 
       _update(
@@ -366,7 +369,7 @@ class HomeController extends ChangeNotifier {
       _cachedPastPrayerName = pastPrayerName;
       _cachedDataTimestamp = DateTime.now();
 
-      final prefs = SecureStorageProvider();
+      final prefs = _prefs;
       final showPastPrayer = await prefs.getBool('show_past_prayer') ?? false;
 
       // Check for Contextual Dua
@@ -431,7 +434,7 @@ class HomeController extends ChangeNotifier {
           }
 
           final pastPrayerName = await _prayerTimesService!.getPastPrayerName();
-          final prefs = SecureStorageProvider();
+          final prefs = _prefs;
           final showPastPrayer =
               await prefs.getBool('show_past_prayer') ?? false;
 
@@ -493,7 +496,7 @@ class HomeController extends ChangeNotifier {
   }
 
   Future<void> togglePrayerDisplayOption() async {
-    final prefs = SecureStorageProvider();
+    final prefs = _prefs;
     final newValue = !_state.showPastPrayer;
     await prefs.setBool('show_past_prayer', newValue);
     // Since this simply changes what we display, and the data is already in state,

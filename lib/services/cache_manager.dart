@@ -1,12 +1,13 @@
 import 'dart:convert';
-
+import 'package:immutable5/di/service_locator.dart';
 import 'package:immutable5/services/secure_storage_provider.dart';
 
 /// Advanced cache manager with TTL, size limits, and automatic cleanup
 class CacheManager {
-  static final CacheManager _instance = CacheManager._internal();
-  factory CacheManager() => _instance;
-  CacheManager._internal();
+  final SecureStorageProvider _prefs;
+
+  CacheManager({SecureStorageProvider? prefs})
+      : _prefs = prefs ?? getIt<SecureStorageProvider>();
 
   static const String _cacheMetaKey = 'cache_metadata';
   static const int _maxCacheSize = 5 * 1024 * 1024; // 5MB
@@ -15,7 +16,7 @@ class CacheManager {
 
   /// Store data in cache with optional TTL
   Future<void> set(String key, String value, {int? ttlMs}) async {
-    final prefs = SecureStorageProvider();
+    final prefs = _prefs;
     final now = DateTime.now().millisecondsSinceEpoch;
     final expiry = now + (ttlMs ?? _defaultTTL);
 
@@ -37,7 +38,7 @@ class CacheManager {
 
   /// Get data from cache if not expired
   Future<String?> get(String key) async {
-    final prefs = SecureStorageProvider();
+    final prefs = _prefs;
     final metadata = await _getMetadata();
 
     if (!metadata.containsKey(key)) {
@@ -63,7 +64,7 @@ class CacheManager {
 
   /// Remove item from cache
   Future<void> remove(String key) async {
-    final prefs = SecureStorageProvider();
+    final prefs = _prefs;
     await prefs.remove(key);
 
     final metadata = await _getMetadata();
@@ -73,7 +74,7 @@ class CacheManager {
 
   /// Clear all cache
   Future<void> clearAll() async {
-    final prefs = SecureStorageProvider();
+    final prefs = _prefs;
     final metadata = await _getMetadata();
 
     for (final key in metadata.keys) {
@@ -110,7 +111,7 @@ class CacheManager {
   Future<void> cleanExpired() async {
     final metadata = await _getMetadata();
     final now = DateTime.now().millisecondsSinceEpoch;
-    final prefs = SecureStorageProvider();
+    final prefs = _prefs;
 
     final keysToRemove = <String>[];
 
@@ -131,7 +132,7 @@ class CacheManager {
   // Private methods
 
   Future<Map<String, dynamic>> _getMetadata() async {
-    final prefs = SecureStorageProvider();
+    final prefs = _prefs;
     final metaJson = await prefs.getString(_cacheMetaKey);
 
     if (metaJson == null) {
@@ -149,7 +150,7 @@ class CacheManager {
   }
 
   Future<void> _saveMetadata(Map<String, dynamic> metadata) async {
-    final prefs = SecureStorageProvider();
+    final prefs = _prefs;
     await prefs.setString(_cacheMetaKey, json.encode(metadata));
   }
 
@@ -175,7 +176,7 @@ class CacheManager {
       return aTime.compareTo(bTime);
     });
 
-    final prefs = SecureStorageProvider();
+    final prefs = _prefs;
     int totalSize = metadata.values.fold(
       0,
       (sum, meta) => sum + (meta['size'] as int),

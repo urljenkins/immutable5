@@ -249,9 +249,15 @@ class _SettingsPageState extends State<SettingsPage> {
               },
             ),
             SwitchListTile(
-              title: const Text('Show Past Prayer Time'),
-              subtitle: const Text(
-                'Display time remaining for current/past prayer instead of next prayer',
+              title: Text(
+                _showPastPrayer
+                    ? 'Showing Past Prayer Time'
+                    : 'Show Past Prayer Time',
+              ),
+              subtitle: Text(
+                _showPastPrayer
+                    ? 'Currently displaying time elapsed since the current/past prayer'
+                    : 'Display time elapsed for current/past prayer instead of time to next prayer',
               ),
               value: _showPastPrayer,
               activeThumbColor: AppColors.accent,

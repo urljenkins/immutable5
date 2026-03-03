@@ -5,11 +5,15 @@
   "description": "Schema for authentic hadith entries.",
   "type": "object",
   "required": [
+    "schema_version",
     "hadith_id",
+    "source",
+    "license",
     "collection",
     "book",
     "hadith_number",
     "arabic",
+    "transliteration",
     "translation_en",
     "grade",
     "topics",
@@ -19,9 +23,23 @@
     "priority"
   ],
   "properties": {
+    "schema_version": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$",
+      "description": "Semantic version of the schema this entry conforms to."
+    },
     "hadith_id": {
       "type": "string",
-      "description": "Unique identifier (e.g., 'bukhari_001')."
+      "pattern": "^[a-z0-9_]+$",
+      "description": "Globally unique identifier, lowercase alphanumeric with underscores (e.g., 'nawawi_001')."
+    },
+    "source": {
+      "type": "string",
+      "description": "Primary content source or compilation origin."
+    },
+    "license": {
+      "type": "string",
+      "description": "License governing the original text."
     },
     "collection": {
       "type": "string",
@@ -47,6 +65,10 @@
       "type": "string",
       "description": "Full Arabic text with diacritical marks."
     },
+    "transliteration": {
+      "type": "string",
+      "description": "Romanized pronunciation guide."
+    },
     "translation_en": {
       "type": "string",
       "description": "English translation (clear and reliable)."
@@ -66,10 +88,12 @@
     },
     "topics": {
       "type": "array",
-      "items": { "type": "string" },
-      "minItems": 3,
+      "items": {
+        "type": "string"
+      },
+      "minItems": 1,
       "maxItems": 8,
-      "description": "Array of topic tags (3-8 tags per hadith)."
+      "description": "Array of topic tags per hadith."
     },
     "summary_en": {
       "type": "string",
@@ -77,19 +101,34 @@
     },
     "key_lessons": {
       "type": "array",
-      "items": { "type": "string" },
+      "items": {
+        "type": "string"
+      },
       "minItems": 2,
       "maxItems": 5,
       "description": "Array of 2-5 practical lessons/benefits derived."
     },
     "related_dua_ids": {
       "type": "array",
-      "items": { "type": "string" },
+      "items": {
+        "type": "string"
+      },
       "description": "Array of dua IDs from existing collection that relate to this hadith."
+    },
+    "related_hadith_ids": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Array of related hadith IDs for cross-referencing."
     },
     "length": {
       "type": "string",
-      "enum": ["short", "medium", "long"],
+      "enum": [
+        "short",
+        "medium",
+        "long"
+      ],
       "description": "Length category."
     },
     "word_count_arabic": {
@@ -103,9 +142,117 @@
       "description": "1 = essential/frequently cited, 2 = important, 3 = supplementary."
     },
     "display_context": {
-       "type": "object",
-       "description": "Contextual relevance (e.g., Fridays, Ramadan).",
-        "additionalProperties": true
+      "type": "object",
+      "properties": {
+        "time_windows": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "fajr",
+              "sunrise",
+              "morning",
+              "dhuhr",
+              "asr",
+              "maghrib",
+              "isha",
+              "evening",
+              "night",
+              "last_third_night",
+              "pre_jummah",
+              "anytime"
+            ]
+          },
+          "description": "Prayer times or day segments when this hadith is contextually relevant."
+        },
+        "hijri_dates": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "month": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 12
+              },
+              "day": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 30
+              },
+              "recurring": {
+                "type": "boolean",
+                "default": true
+              }
+            }
+          },
+          "description": "Specific Islamic calendar dates."
+        },
+        "hijri_periods": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "ramadan",
+              "ramadan_last_ten",
+              "dhul_hijjah_first_ten",
+              "ashura",
+              "shaban",
+              "muharram"
+            ]
+          },
+          "description": "Named periods in the Islamic calendar."
+        },
+        "conditions": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Situational triggers (e.g., 'waking', 'travel', 'rain', 'illness')."
+        },
+        "days_of_week": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "monday",
+              "tuesday",
+              "wednesday",
+              "thursday",
+              "friday",
+              "saturday",
+              "sunday",
+              "any"
+            ]
+          },
+          "description": "Specific days when hadith has special merit."
+        }
+      },
+      "additionalProperties": false
+    },
+    "variants": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "arabic": {
+            "type": "string"
+          },
+          "transliteration": {
+            "type": "string"
+          },
+          "translation_en": {
+            "type": "string"
+          },
+          "source": {
+            "type": "string"
+          },
+          "note": {
+            "type": "string"
+          }
+        }
+      },
+      "description": "Alternate narrations or wording variations."
     }
   },
   "additionalProperties": false

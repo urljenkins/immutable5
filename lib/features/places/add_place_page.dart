@@ -289,7 +289,8 @@ class _AddPlacePageState extends State<AddPlacePage> {
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
         color: AppColors.cardSurface,
-        border: Border(top: BorderSide(color: Colors.white.withValues(alpha: 0.1))),
+        border:
+            Border(top: BorderSide(color: Colors.white.withValues(alpha: 0.1))),
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,

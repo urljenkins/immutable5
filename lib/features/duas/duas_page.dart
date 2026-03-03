@@ -185,7 +185,8 @@ class _DuasPageState extends State<DuasPage> {
                       title: Text(
                         'Favorites Only',
                         style: GoogleFonts.plusJakartaSans(
-                            color: AppColors.textPrimary),
+                          color: AppColors.textPrimary,
+                        ),
                       ),
                       value: _filterFavoritesOnly,
                       onChanged: (val) {
@@ -336,10 +337,10 @@ class _DuasPageState extends State<DuasPage> {
                                 labelStyle: GoogleFonts.plusJakartaSans(
                                   color: isSelected
                                       ? AppColors.background
-                                      : AppColors.textSecondary,
+                                      : AppColors.textPrimary,
                                   fontWeight: isSelected
                                       ? FontWeight.w600
-                                      : FontWeight.normal,
+                                      : FontWeight.w500,
                                 ),
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(20),
@@ -347,11 +348,12 @@ class _DuasPageState extends State<DuasPage> {
                                     color: isSelected
                                         ? Colors.transparent
                                         : AppColors.textSecondary.withValues(
-                                            alpha: 0.3,
+                                            alpha: 0.5,
                                           ),
                                   ),
                                 ),
-                                backgroundColor: Colors.transparent,
+                                backgroundColor: AppColors.cardSurface
+                                    .withValues(alpha: 0.5),
                               ),
                             );
                           },
@@ -417,16 +419,13 @@ class _DuasPageState extends State<DuasPage> {
                     vertical: 4,
                   ),
                   decoration: BoxDecoration(
-                    color: AppColors.accent.withValues(alpha: 0.2),
+                    color: AppColors.accent,
                     borderRadius: BorderRadius.circular(12),
-                    border: Border.all(
-                      color: AppColors.accent.withValues(alpha: 0.3),
-                    ),
                   ),
                   child: Text(
                     dua.category,
                     style: GoogleFonts.plusJakartaSans(
-                      color: AppColors.accent,
+                      color: AppColors.background,
                       fontSize: 10,
                       fontWeight: FontWeight.bold,
                       letterSpacing: 0.5,
@@ -644,8 +643,10 @@ class _DuaDetailSheet extends StatelessWidget {
                                 label: Text(prettyLabel(tag)),
                                 labelStyle: GoogleFonts.plusJakartaSans(
                                   fontSize: 12,
+                                  color: AppColors.background,
+                                  fontWeight: FontWeight.w600,
                                 ),
-                                backgroundColor: AppColors.background,
+                                backgroundColor: AppColors.accent,
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(8),
                                 ),
@@ -676,8 +677,10 @@ class _DuaDetailSheet extends StatelessWidget {
                                 label: Text(prettyLabel(window)),
                                 labelStyle: GoogleFonts.plusJakartaSans(
                                   fontSize: 12,
+                                  color: AppColors.background,
+                                  fontWeight: FontWeight.w600,
                                 ),
-                                backgroundColor: AppColors.background,
+                                backgroundColor: AppColors.accent,
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(8),
                                 ),
@@ -728,16 +731,13 @@ class _DuaDetailSheet extends StatelessWidget {
                           vertical: 6,
                         ),
                         decoration: BoxDecoration(
-                          color: AppColors.accent.withValues(alpha: 0.1),
+                          color: AppColors.accent,
                           borderRadius: BorderRadius.circular(8),
-                          border: Border.all(
-                            color: AppColors.accent.withValues(alpha: 0.2),
-                          ),
                         ),
                         child: Text(
                           prettyLabel(dua.authenticity!.grade!),
                           style: GoogleFonts.plusJakartaSans(
-                            color: AppColors.accent,
+                            color: AppColors.background,
                             fontWeight: FontWeight.bold,
                             fontSize: 12,
                           ),

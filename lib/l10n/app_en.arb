@@ -36,5 +36,6 @@
   "voiceMode": "Voice Mode",
   "reset": "Reset",
   "setTarget": "Set Target",
-  "listening": "Listening..."
+  "listening": "Listening...",
+  "glossary": "Glossary"
 }

@@ -8,6 +8,7 @@ import '../../l10n/app_localizations.dart';
 import '../../shared/app_colors.dart';
 import '../../shared/glass_container.dart';
 import '../duas/models/dua_model.dart';
+import '../glossary/glossary_page.dart';
 import '../home/home_controller.dart';
 import '../prayer/prayer_times_service.dart';
 import '../quotes/quote_picker_service.dart';
@@ -82,6 +83,19 @@ class _MyHomePageState extends State<MyHomePage> {
                   )
                 : null,
             actions: [
+              IconButton(
+                icon: const Icon(Icons.menu_book_outlined),
+                color: AppColors.textSecondary,
+                tooltip: 'Glossary',
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const GlossaryPage(),
+                    ),
+                  );
+                },
+              ),
               IconButton(
                 icon: const Icon(Icons.nights_stay_outlined),
                 color: AppColors.textSecondary,

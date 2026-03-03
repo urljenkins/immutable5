@@ -1,12 +1,13 @@
 import 'dart:async';
-
+import 'package:immutable5/di/service_locator.dart';
 import 'package:immutable5/services/secure_storage_provider.dart';
 
 /// Battery optimization service to reduce power consumption
 class BatteryOptimizer {
-  static final BatteryOptimizer _instance = BatteryOptimizer._internal();
-  factory BatteryOptimizer() => _instance;
-  BatteryOptimizer._internal();
+  final SecureStorageProvider _prefs;
+
+  BatteryOptimizer({SecureStorageProvider? prefs})
+      : _prefs = prefs ?? getIt<SecureStorageProvider>();
 
   static const String _keyBatteryMode = 'battery_saver_mode';
   static const String _keyLastNetworkCheck = 'last_network_check';
@@ -21,7 +22,7 @@ class BatteryOptimizer {
 
   /// Initialize battery optimizer
   Future<void> initialize() async {
-    final prefs = SecureStorageProvider();
+    final prefs = _prefs;
     _batteryMode = await prefs.getBool(_keyBatteryMode) ?? false;
 
     final lastCheck = await prefs.getInt(_keyLastNetworkCheck);
@@ -33,7 +34,7 @@ class BatteryOptimizer {
   /// Enable/disable battery saver mode
   Future<void> setBatterySaverMode(bool enabled) async {
     _batteryMode = enabled;
-    final prefs = SecureStorageProvider();
+    final prefs = _prefs;
     await prefs.setBool(_keyBatteryMode, enabled);
   }
 

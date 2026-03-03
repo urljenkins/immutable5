@@ -78,6 +78,8 @@ dev_dependencies:
 # following page: https://dart.dev/tools/pub/pubspec
 
 # The following section is specific to Flutter packages.
+  geolocator_platform_interface: any
+  plugin_platform_interface: any
 flutter:
 
   generate: true
@@ -93,6 +95,7 @@ flutter:
     - assets/duas.json
     - assets/dua_schema.json
     - assets/audio/words/
+    - assets/glossary.json
 
   # To add assets to your application, add an assets section, like this:
   # assets:

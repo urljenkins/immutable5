@@ -2,6 +2,8 @@ import 'package:get_it/get_it.dart';
 
 import '../features/duas/contextual_dua_service.dart';
 import '../features/duas/dua_repository.dart';
+import '../features/hadith/contextual_hadith_service.dart';
+import '../features/hadith/hadith_repository.dart';
 import '../features/home/home_controller.dart';
 import '../features/notifications/notification_service.dart';
 import '../features/places/services/places_service.dart';
@@ -9,6 +11,9 @@ import '../features/prayer/prayer_times_service.dart';
 import '../features/prayer_tracking/prayer_tracking_service.dart';
 import '../features/quotes/quote_picker_service.dart';
 import '../features/widget/prayer_widget_service.dart';
+import '../services/battery_optimizer.dart';
+import '../services/cache_manager.dart';
+import '../services/secure_storage_provider.dart';
 
 final getIt = GetIt.instance;
 
@@ -20,7 +25,16 @@ void setupLocator() {
   getIt.registerLazySingleton<ContextualDuaService>(
     () => ContextualDuaService(),
   );
+  getIt.registerLazySingleton<HadithRepository>(() => HadithRepository());
+  getIt.registerLazySingleton<ContextualHadithService>(
+    () => ContextualHadithService(getIt<HadithRepository>()),
+  );
   getIt.registerLazySingleton<PlacesService>(() => PlacesService());
+  getIt.registerLazySingleton<SecureStorageProvider>(
+    () => SecureStorageProvider(),
+  );
+  getIt.registerLazySingleton<BatteryOptimizer>(() => BatteryOptimizer());
+  getIt.registerLazySingleton<CacheManager>(() => CacheManager());
   getIt.registerLazySingleton<PrayerTrackingService>(
     () => PrayerTrackingService(),
   );

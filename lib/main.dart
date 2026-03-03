@@ -3,14 +3,15 @@ import 'dart:ui';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:immutable5/services/secure_storage_provider.dart';
 
 import 'di/service_locator.dart';
-
 import 'features/common_words/common_words_page.dart';
 import 'features/duas/duas_page.dart';
+import 'features/hadith/hadiths_page.dart';
 import 'features/hajj/hajj_page.dart';
 import 'features/home/home_page.dart';
 import 'features/notifications/notification_service.dart';
@@ -168,6 +169,10 @@ class _AppScaffoldState extends State<AppScaffold> {
   /// shows that page even though it doesn't have an icon in the bar.
   String? _overflowSelectedId;
 
+  /// Tracks the last time the back button was pressed while on the home tab,
+  /// so we can implement "press back again to exit".
+  DateTime? _lastBackPress;
+
   @override
   Widget build(BuildContext context) {
     return ValueListenableBuilder<Color>(
@@ -207,119 +212,208 @@ class _AppScaffoldState extends State<AppScaffold> {
               currentPage = barItems[safeIndex].page;
             }
 
-            return ColoredBox(
-              color: Theme.of(context).scaffoldBackgroundColor,
-              child: Center(
-                child: ConstrainedBox(
-                  constraints: const BoxConstraints(maxWidth: 800),
-                  child: Scaffold(
-                    extendBody: true,
-                    backgroundColor: Colors.transparent,
-                    body: currentPage,
-                    bottomNavigationBar: SafeArea(
-                      bottom: true,
-                      child: Container(
-                        margin: const EdgeInsets.fromLTRB(20, 0, 20, 20),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(30),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withValues(alpha: 0.2),
-                              blurRadius: 20,
-                              offset: const Offset(0, 10),
-                            ),
-                          ],
-                        ),
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(30),
-                          child: BackdropFilter(
-                            filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-                            child: Container(
-                              padding: const EdgeInsets.symmetric(
-                                vertical: 12,
-                                horizontal: 8,
-                              ),
-                              decoration: BoxDecoration(
-                                color: AppColors.cardSurface
-                                    .withValues(alpha: 0.8),
-                                borderRadius: BorderRadius.circular(30),
-                                border: Border.all(
-                                  color: Colors.white.withValues(alpha: 0.1),
-                                  width: 1,
-                                ),
-                              ),
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceEvenly,
-                                children: [
-                                  // Bar items
-                                  ...barItems.map((item) {
-                                    final index = barItems.indexOf(item);
-                                    final isSelected =
-                                        _overflowSelectedId == null &&
-                                            index == _currentIndex;
+            return PopScope(
+              canPop: false,
+              onPopInvokedWithResult: (didPop, _) {
+                if (didPop) return;
 
-                                    return GestureDetector(
-                                      onTap: () {
-                                        setState(() {
-                                          _currentIndex = index;
-                                          _overflowSelectedId = null;
-                                        });
-                                      },
-                                      child: AnimatedContainer(
-                                        duration:
-                                            const Duration(milliseconds: 200),
-                                        padding: const EdgeInsets.all(12),
-                                        decoration: BoxDecoration(
-                                          color: isSelected
-                                              ? accentColor.withValues(
-                                                  alpha: 0.2,
-                                                )
-                                              : Colors.transparent,
-                                          borderRadius:
-                                              BorderRadius.circular(20),
+                // If we're on an overflow page, go to home first.
+                if (_overflowSelectedId != null) {
+                  setState(() {
+                    _overflowSelectedId = null;
+                    _currentIndex = 0;
+                  });
+                  return;
+                }
+
+                // If we're not on the home tab, switch to home.
+                if (_currentIndex != 0) {
+                  setState(() {
+                    _currentIndex = 0;
+                  });
+                  return;
+                }
+
+                // We're on the home tab — check for double-press.
+                final now = DateTime.now();
+                if (_lastBackPress != null &&
+                    now.difference(_lastBackPress!) <
+                        const Duration(seconds: 2)) {
+                  SystemNavigator.pop();
+                  return;
+                }
+                _lastBackPress = now;
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text('Press back again to exit'),
+                    duration: Duration(seconds: 2),
+                  ),
+                );
+              },
+              child: ColoredBox(
+                color: Theme.of(context).scaffoldBackgroundColor,
+                child: Center(
+                  child: ConstrainedBox(
+                    constraints: const BoxConstraints(maxWidth: 800),
+                    child: Scaffold(
+                      extendBody: true,
+                      backgroundColor: Colors.transparent,
+                      body: currentPage,
+                      bottomNavigationBar: SafeArea(
+                        bottom: true,
+                        child: Container(
+                          margin: const EdgeInsets.fromLTRB(20, 0, 20, 20),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(30),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withValues(alpha: 0.2),
+                                blurRadius: 20,
+                                offset: const Offset(0, 10),
+                              ),
+                            ],
+                          ),
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(30),
+                            child: BackdropFilter(
+                              filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+                              child: Container(
+                                padding: const EdgeInsets.symmetric(
+                                  vertical: 12,
+                                  horizontal: 8,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: AppColors.cardSurface
+                                      .withValues(alpha: 0.8),
+                                  borderRadius: BorderRadius.circular(30),
+                                  border: Border.all(
+                                    color: Colors.white.withValues(alpha: 0.1),
+                                    width: 1,
+                                  ),
+                                ),
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceEvenly,
+                                  children: [
+                                    // Bar items
+                                    ...barItems.map((item) {
+                                      final index = barItems.indexOf(item);
+                                      final isSelected =
+                                          _overflowSelectedId == null &&
+                                              index == _currentIndex;
+
+                                      return GestureDetector(
+                                        onTap: () {
+                                          setState(() {
+                                            _currentIndex = index;
+                                            _overflowSelectedId = null;
+                                          });
+                                        },
+                                        child: AnimatedContainer(
+                                          duration:
+                                              const Duration(milliseconds: 200),
+                                          padding: const EdgeInsets.symmetric(
+                                            horizontal: 10,
+                                            vertical: 8,
+                                          ),
+                                          decoration: BoxDecoration(
+                                            color: isSelected
+                                                ? accentColor.withValues(
+                                                    alpha: 0.2,
+                                                  )
+                                                : Colors.transparent,
+                                            borderRadius:
+                                                BorderRadius.circular(20),
+                                          ),
+                                          child: Column(
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: [
+                                              Icon(
+                                                item.icon,
+                                                color: isSelected
+                                                    ? accentColor
+                                                    : AppColors.textSecondary,
+                                                size: 24,
+                                              ),
+                                              const SizedBox(height: 4),
+                                              Text(
+                                                item.label,
+                                                style: TextStyle(
+                                                  fontSize: 10,
+                                                  fontWeight: isSelected
+                                                      ? FontWeight.w600
+                                                      : FontWeight.normal,
+                                                  color: isSelected
+                                                      ? accentColor
+                                                      : AppColors.textSecondary,
+                                                ),
+                                                maxLines: 1,
+                                                overflow: TextOverflow.ellipsis,
+                                              ),
+                                            ],
+                                          ),
                                         ),
-                                        child: Icon(
-                                          item.icon,
-                                          color: isSelected
-                                              ? accentColor
-                                              : AppColors.textSecondary,
-                                          size: 24,
+                                      );
+                                    }),
+                                    // Overflow "More" button
+                                    if (overflowItems.isNotEmpty)
+                                      GestureDetector(
+                                        onTap: () => _showOverflowSheet(
+                                          context,
+                                          overflowItems,
+                                          accentColor,
+                                        ),
+                                        child: AnimatedContainer(
+                                          duration:
+                                              const Duration(milliseconds: 200),
+                                          padding: const EdgeInsets.symmetric(
+                                            horizontal: 10,
+                                            vertical: 8,
+                                          ),
+                                          decoration: BoxDecoration(
+                                            color: _overflowSelectedId != null
+                                                ? accentColor.withValues(
+                                                    alpha: 0.2,
+                                                  )
+                                                : Colors.transparent,
+                                            borderRadius:
+                                                BorderRadius.circular(20),
+                                          ),
+                                          child: Column(
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: [
+                                              Icon(
+                                                Icons.more_horiz,
+                                                color: _overflowSelectedId !=
+                                                        null
+                                                    ? accentColor
+                                                    : AppColors.textSecondary,
+                                                size: 24,
+                                              ),
+                                              const SizedBox(height: 4),
+                                              Text(
+                                                'More',
+                                                style: TextStyle(
+                                                  fontSize: 10,
+                                                  fontWeight:
+                                                      _overflowSelectedId !=
+                                                              null
+                                                          ? FontWeight.w600
+                                                          : FontWeight.normal,
+                                                  color: _overflowSelectedId !=
+                                                          null
+                                                      ? accentColor
+                                                      : AppColors.textSecondary,
+                                                ),
+                                                maxLines: 1,
+                                                overflow: TextOverflow.ellipsis,
+                                              ),
+                                            ],
+                                          ),
                                         ),
                                       ),
-                                    );
-                                  }),
-                                  // Overflow "More" button
-                                  if (overflowItems.isNotEmpty)
-                                    GestureDetector(
-                                      onTap: () => _showOverflowSheet(
-                                        context,
-                                        overflowItems,
-                                        accentColor,
-                                      ),
-                                      child: AnimatedContainer(
-                                        duration:
-                                            const Duration(milliseconds: 200),
-                                        padding: const EdgeInsets.all(12),
-                                        decoration: BoxDecoration(
-                                          color: _overflowSelectedId != null
-                                              ? accentColor.withValues(
-                                                  alpha: 0.2,
-                                                )
-                                              : Colors.transparent,
-                                          borderRadius:
-                                              BorderRadius.circular(20),
-                                        ),
-                                        child: Icon(
-                                          Icons.more_horiz,
-                                          color: _overflowSelectedId != null
-                                              ? accentColor
-                                              : AppColors.textSecondary,
-                                          size: 24,
-                                        ),
-                                      ),
-                                    ),
-                                ],
+                                  ],
+                                ),
                               ),
                             ),
                           ),
@@ -446,6 +540,12 @@ class _AppScaffoldState extends State<AppScaffold> {
         icon: Icons.menu_book,
         label: 'Duas',
       ),
+      const _NavItem(
+        id: 'hadiths',
+        page: HadithsPage(),
+        icon: Icons.library_books,
+        label: 'Hadiths',
+      ),
       _NavItem(
         id: 'quran',
         page: const QuranPage(),
@@ -513,6 +613,7 @@ class NavBarConfig {
     'common_words',
     'tasbih',
     'duas',
+    'hadiths',
     'quran',
     'settings',
   ];

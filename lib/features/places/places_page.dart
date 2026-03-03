@@ -327,8 +327,9 @@ class _PlacesPageState extends State<PlacesPage> {
               : AppColors.cardSurface.withValues(alpha: 0.9),
           borderRadius: BorderRadius.circular(20),
           border: Border.all(
-            color:
-                isSelected ? AppColors.accent : Colors.white.withValues(alpha: 0.2),
+            color: isSelected
+                ? AppColors.accent
+                : Colors.white.withValues(alpha: 0.2),
           ),
         ),
         child: Text(
@@ -518,12 +519,15 @@ class _PlacesPageState extends State<PlacesPage> {
                   ),
                   child: Row(
                     children: [
-                      Text(
-                        AppLocalizations.of(context)!.prayerPlaces,
-                        style: GoogleFonts.plusJakartaSans(
-                          fontSize: 24,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
+                      Expanded(
+                        child: Text(
+                          AppLocalizations.of(context)!.prayerPlaces,
+                          style: GoogleFonts.plusJakartaSans(
+                            fontSize: 24,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ),
+                          overflow: TextOverflow.ellipsis,
                         ),
                       ),
                       const Spacer(),
@@ -588,10 +592,10 @@ class _PlacesPageState extends State<PlacesPage> {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         const Icon(
-                        Icons.access_time,
-                        size: 16,
-                        color: Colors.black,
-                      ),
+                          Icons.access_time,
+                          size: 16,
+                          color: Colors.black,
+                        ),
                         const SizedBox(width: 8),
                         Text(
                           'Next: $_nextPrayerName at $_nextPrayerTime',

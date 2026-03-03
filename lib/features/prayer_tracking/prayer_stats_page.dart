@@ -22,13 +22,14 @@ class _PrayerStatsPageState extends State<PrayerStatsPage> {
   late final PrayerTimesService _prayerTimesService;
   Map<DateTime, Map<String, bool>> _history = {};
   Map<String, DateTime> _todayPrayerTimes = {};
+  Map<String, bool> _selectedDayCompletions = {};
+  FixedExtentScrollController? _scrollController;
   DateTime _focusedDay = DateTime.now();
   DateTime _selectedDay = DateTime.now();
   bool _loading = true;
   String? _highlightPrayerName;
 
-  // ── Hijri / fasting state ──────────────────────────────────────────────────
-  bool _hijriPrimary = false;
+  // ── Fasting state ─────────────────────────────────────────────────────────
 
   Color get _mandatoryFastColor => Colors.redAccent.withValues(alpha: 0.30);
   Color get _optionalFastColor => Colors.orangeAccent.withValues(alpha: 0.25);
@@ -43,24 +44,13 @@ class _PrayerStatsPageState extends State<PrayerStatsPage> {
       2, // Default method
       0, // Default madhab
     );
-    _loadHijriPreference();
     _loadData();
   }
 
-  // ── Hijri preference helpers ───────────────────────────────────────────────
-
-  Future<void> _loadHijriPreference() async {
-    final prefs = SecureStorageProvider();
-    final val = await prefs.getBool('calendar_hijri_primary') ?? false;
-    if (mounted) {
-      setState(() => _hijriPrimary = val);
-    }
-  }
-
-  Future<void> _setHijriPrimary(bool value) async {
-    final prefs = SecureStorageProvider();
-    await prefs.setBool('calendar_hijri_primary', value);
-    setState(() => _hijriPrimary = value);
+  @override
+  void dispose() {
+    _scrollController?.dispose();
+    super.dispose();
   }
 
   String _gregorianMonthYear(DateTime day) {
@@ -85,8 +75,13 @@ class _PrayerStatsPageState extends State<PrayerStatsPage> {
 
   Future<void> _loadData() async {
     await _trackingService.getStatistics();
-    final now = DateTime.now();
-    final history = await _trackingService.getHistoryForRange(now, now);
+
+    final start = DateTime(_focusedDay.year, _focusedDay.month - 1, 1);
+    final end = DateTime(_focusedDay.year, _focusedDay.month + 2, 0);
+    final history = await _trackingService.getHistoryForRange(start, end);
+
+    final completions =
+        await _trackingService.getCompletedPrayersForDate(_selectedDay);
 
     Map<String, DateTime> times = {};
     String? highlightPrayer;
@@ -115,7 +110,43 @@ class _PrayerStatsPageState extends State<PrayerStatsPage> {
         _history = history;
         _todayPrayerTimes = times;
         _highlightPrayerName = highlightPrayer;
+        _selectedDayCompletions = completions;
+
+        final displayPrayers = _trackingService.mainPrayers;
+        final highlightIndex =
+            displayPrayers.indexOf(_highlightPrayerName ?? '');
+
+        if (_scrollController != null) {
+          _scrollController!.dispose();
+        }
+        _scrollController = FixedExtentScrollController(
+          initialItem: highlightIndex >= 0 ? highlightIndex : 0,
+        );
+
         _loading = false;
+      });
+    }
+  }
+
+  Future<void> _togglePrayer(String prayer) async {
+    final wasCompleted = _selectedDayCompletions[prayer] ?? false;
+    setState(() {
+      _selectedDayCompletions[prayer] = !wasCompleted;
+    });
+
+    await _trackingService.togglePrayerCompletion(prayer, _selectedDay);
+
+    final newCompletions =
+        await _trackingService.getCompletedPrayersForDate(_selectedDay);
+
+    if (mounted) {
+      setState(() {
+        _selectedDayCompletions = newCompletions;
+        final dateKey = _history.keys.firstWhere(
+          (d) => isSameDay(d, _selectedDay),
+          orElse: () => _selectedDay,
+        );
+        _history[dateKey] = newCompletions;
       });
     }
   }
@@ -222,18 +253,8 @@ class _PrayerStatsPageState extends State<PrayerStatsPage> {
           ),
           const SizedBox(height: 12),
           Expanded(
-            child: FutureBuilder<Map<String, bool>>(
-              future: _trackingService.getCompletedPrayersForDate(_selectedDay),
-              builder: (context, snapshot) {
-                if (!snapshot.hasData) {
-                  return const Center(child: CircularProgressIndicator());
-                }
-
-                final completions = snapshot.data!;
-                final displayPrayers = _trackingService.mainPrayers;
-
-                if (displayPrayers.isEmpty) {
-                  return const Padding(
+            child: _trackingService.mainPrayers.isEmpty
+                ? const Padding(
                     padding: EdgeInsets.symmetric(vertical: 24.0),
                     child: Center(
                       child: Text(
@@ -244,95 +265,87 @@ class _PrayerStatsPageState extends State<PrayerStatsPage> {
                         ),
                       ),
                     ),
-                  );
-                }
+                  )
+                : ListWheelScrollView.useDelegate(
+                    controller: _scrollController,
+                    itemExtent: 65,
+                    physics: const BouncingScrollPhysics(),
+                    perspective: 0.005,
+                    diameterRatio: 2.5,
+                    childDelegate: ListWheelChildBuilderDelegate(
+                      childCount: _trackingService.mainPrayers.length,
+                      builder: (context, index) {
+                        final prayer = _trackingService.mainPrayers[index];
+                        final isCompleted =
+                            _selectedDayCompletions[prayer] ?? false;
+                        final prayerTime = _todayPrayerTimes[prayer];
+                        final isHighlighted = prayer == _highlightPrayerName;
 
-                return ListWheelScrollView.useDelegate(
-                  itemExtent: 65,
-                  physics: const BouncingScrollPhysics(),
-                  perspective: 0.005,
-                  diameterRatio: 2.5,
-                  childDelegate: ListWheelChildBuilderDelegate(
-                    childCount: displayPrayers.length,
-                    builder: (context, index) {
-                      final prayer = displayPrayers[index];
-                      final isCompleted = completions[prayer] ?? false;
-                      final prayerTime = _todayPrayerTimes[prayer];
-                      final isHighlighted = prayer == _highlightPrayerName;
+                        Color bgColor = Colors.transparent;
+                        Color borderColor =
+                            Colors.white.withValues(alpha: 0.05);
+                        Color titleColor = AppColors.textPrimary;
+                        Color timeColor = AppColors.textSecondary;
+                        FontWeight titleWeight = FontWeight.normal;
 
-                      Color bgColor = Colors.transparent;
-                      Color borderColor = Colors.white.withValues(alpha: 0.05);
-                      Color titleColor = AppColors.textPrimary;
-                      Color timeColor = AppColors.textSecondary;
-                      FontWeight titleWeight = FontWeight.normal;
+                        if (isHighlighted) {
+                          bgColor = AppColors.accent.withValues(alpha: 0.15);
+                          borderColor = AppColors.accent.withValues(alpha: 0.5);
+                          titleColor = AppColors.accent;
+                          timeColor = AppColors.accent;
+                          titleWeight = FontWeight.bold;
+                        }
 
-                      if (isHighlighted) {
-                        bgColor = AppColors.accent.withValues(alpha: 0.15);
-                        borderColor = AppColors.accent.withValues(alpha: 0.5);
-                        titleColor = AppColors.accent;
-                        timeColor = AppColors.accent;
-                        titleWeight = FontWeight.bold;
-                      }
-
-                      return Container(
-                        margin: const EdgeInsets.symmetric(
-                          horizontal: 8,
-                          vertical: 4,
-                        ),
-                        decoration: BoxDecoration(
-                          color: bgColor,
-                          borderRadius: BorderRadius.circular(12),
-                          border: Border.all(color: borderColor),
-                        ),
-                        child: Opacity(
-                          opacity: isCompleted ? 0.5 : 1.0,
-                          child: InkWell(
-                            onTap: () async {
-                              await _trackingService.togglePrayerCompletion(
-                                prayer,
-                                _selectedDay,
-                              );
-                              setState(() => _loading = true);
-                              _loadData();
-                            },
+                        return Container(
+                          margin: const EdgeInsets.symmetric(
+                            horizontal: 8,
+                            vertical: 4,
+                          ),
+                          decoration: BoxDecoration(
+                            color: bgColor,
                             borderRadius: BorderRadius.circular(12),
-                            child: Padding(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 16.0,
-                                vertical: 12.0,
-                              ),
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Text(
-                                    prayer,
-                                    style: GoogleFonts.plusJakartaSans(
-                                      fontWeight: titleWeight,
-                                      color: titleColor,
-                                      fontSize: 16,
-                                    ),
-                                  ),
-                                  if (prayerTime != null)
+                            border: Border.all(color: borderColor),
+                          ),
+                          child: Opacity(
+                            opacity: isCompleted ? 0.5 : 1.0,
+                            child: InkWell(
+                              onTap: () => _togglePrayer(prayer),
+                              borderRadius: BorderRadius.circular(12),
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 16.0,
+                                  vertical: 12.0,
+                                ),
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
                                     Text(
-                                      _formatTime(prayerTime),
+                                      prayer,
                                       style: GoogleFonts.plusJakartaSans(
-                                        fontSize: 14,
-                                        color: timeColor,
                                         fontWeight: titleWeight,
+                                        color: titleColor,
+                                        fontSize: 16,
                                       ),
                                     ),
-                                ],
+                                    if (prayerTime != null)
+                                      Text(
+                                        _formatTime(prayerTime),
+                                        style: GoogleFonts.plusJakartaSans(
+                                          fontSize: 14,
+                                          color: timeColor,
+                                          fontWeight: titleWeight,
+                                        ),
+                                      ),
+                                  ],
+                                ),
                               ),
                             ),
                           ),
-                        ),
-                      );
-                    },
+                        );
+                      },
+                    ),
                   ),
-                );
-              },
-            ),
           ),
         ],
       ),
@@ -353,27 +366,6 @@ class _PrayerStatsPageState extends State<PrayerStatsPage> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // ── Hijri toggle ─────────────────────────────────────────────────
-          Row(
-            children: [
-              Expanded(
-                child: Text(
-                  'Show Islamic date',
-                  style: GoogleFonts.plusJakartaSans(
-                    fontSize: 13,
-                    color: AppColors.textSecondary,
-                  ),
-                ),
-              ),
-              Switch(
-                value: _hijriPrimary,
-                activeThumbColor: AppColors.accent,
-                onChanged: _setHijriPrimary,
-              ),
-            ],
-          ),
-          const SizedBox(height: 4),
-
           // ── Table calendar ────────────────────────────────────────────────
           TableCalendar(
             firstDay: DateTime.now().subtract(const Duration(days: 365)),
@@ -410,18 +402,12 @@ class _PrayerStatsPageState extends State<PrayerStatsPage> {
             calendarBuilders: CalendarBuilders(
               headerTitleBuilder: (context, day) {
                 final hijri = HijriCalendar.fromDate(day);
-                final primary = _hijriPrimary
-                    ? '${hijri.longMonthName} ${hijri.hYear}'
-                    : _gregorianMonthYear(day);
-                final secondary = _hijriPrimary
-                    ? _gregorianMonthYear(day)
-                    : '${hijri.longMonthName} ${hijri.hYear}';
                 return Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
-                      primary,
+                      _gregorianMonthYear(day),
                       style: GoogleFonts.plusJakartaSans(
                         fontSize: 15,
                         fontWeight: FontWeight.w700,
@@ -429,7 +415,7 @@ class _PrayerStatsPageState extends State<PrayerStatsPage> {
                       ),
                     ),
                     Text(
-                      secondary,
+                      '${hijri.longMonthName} ${hijri.hYear}',
                       style: GoogleFonts.plusJakartaSans(
                         fontSize: 11,
                         color: AppColors.textSecondary,
@@ -506,11 +492,6 @@ class _PrayerStatsPageState extends State<PrayerStatsPage> {
       borderColor = Colors.white.withValues(alpha: 0.20);
     }
 
-    // ── Dual date display ──────────────────────────────────────────────────
-    final primaryDate = _hijriPrimary ? hijri.hDay : date.day;
-    final secondaryDate = _hijriPrimary ? date.day : hijri.hDay;
-    final secondaryLabel = _hijriPrimary ? 'G' : 'H';
-
     final secondaryTextColor =
         isSelected ? Colors.white70 : AppColors.textSecondary;
 
@@ -518,14 +499,14 @@ class _PrayerStatsPageState extends State<PrayerStatsPage> {
       margin: const EdgeInsets.all(3),
       decoration: BoxDecoration(
         color: bgColor,
-        borderRadius: BorderRadius.circular(8),
+        shape: BoxShape.circle,
         border: Border.all(color: borderColor, width: 1),
       ),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Text(
-            '$primaryDate',
+            '${date.day}',
             style: GoogleFonts.plusJakartaSans(
               fontSize: 13,
               fontWeight:
@@ -533,34 +514,13 @@ class _PrayerStatsPageState extends State<PrayerStatsPage> {
               color: isSelected ? Colors.white : primaryTextColor,
             ),
           ),
-          Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                '$secondaryLabel:',
-                style: TextStyle(
-                  fontSize: 7,
-                  color: secondaryTextColor,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-              Text(
-                '$secondaryDate',
-                style: TextStyle(fontSize: 8, color: secondaryTextColor),
-              ),
-            ],
-          ),
-          // Partial completion dot indicator
-          if (completedCount > 0 && completedCount < total)
-            Container(
-              margin: const EdgeInsets.only(top: 1),
-              height: 3,
-              width: 3,
-              decoration: BoxDecoration(
-                color: AppColors.accent,
-                shape: BoxShape.circle,
-              ),
+          Text(
+            '${hijri.hDay}',
+            style: GoogleFonts.plusJakartaSans(
+              fontSize: 9,
+              color: secondaryTextColor,
             ),
+          ),
         ],
       ),
     );
