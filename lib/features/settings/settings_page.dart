@@ -76,7 +76,7 @@ class _SettingsPageState extends State<SettingsPage> {
     }
     final jummahReminders =
         await prefs.getBool(_keyJummahReminders) ?? _jummahReminders;
-    final iftarReminders =
+    _iftarReminders =
         await prefs.getBool(_keyIftarReminders) ?? _iftarReminders;
     final savedJuzMode = await prefs.getString(_keyJuzMode);
     final ctxMenuSettings = await QuranContextMenuSettings.fromPrefs(prefs);
