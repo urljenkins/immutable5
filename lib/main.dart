@@ -23,8 +23,10 @@ import 'features/tasbih/tasbih_page.dart';
 import 'features/widget/prayer_widget_service.dart';
 import 'l10n/app_localizations.dart';
 import 'shared/app_colors.dart';
+import 'shared/app_theme_mode.dart';
 
-final ValueNotifier<ThemeMode> themeNotifier = ValueNotifier(ThemeMode.dark);
+final ValueNotifier<AppThemeMode> themeNotifier =
+    ValueNotifier(AppThemeMode.dark);
 final ValueNotifier<Color> accentColorNotifier = ValueNotifier(
   AppColors.accent,
 );
@@ -47,8 +49,20 @@ void main() async {
     }
 
     final prefs = SecureStorageProvider();
-    final useDark = await prefs.getBool('useAmoledTheme') ?? true;
-    themeNotifier.value = useDark ? ThemeMode.dark : ThemeMode.light;
+
+    final themeModeStr = await prefs.getString('appThemeMode');
+    AppThemeMode initialMode = AppThemeMode.dark;
+    if (themeModeStr != null) {
+      initialMode = AppThemeMode.values.firstWhere(
+        (e) => e.name == themeModeStr,
+        orElse: () => AppThemeMode.dark,
+      );
+    } else {
+      // Fallback for previous users
+      final useDark = await prefs.getBool('useAmoledTheme') ?? true;
+      initialMode = useDark ? AppThemeMode.dark : AppThemeMode.light;
+    }
+    themeNotifier.value = initialMode;
 
     final accentValue = await prefs.getInt(_keyAccentColor);
     if (accentValue != null) {
@@ -69,9 +83,9 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ValueListenableBuilder<ThemeMode>(
+    return ValueListenableBuilder<AppThemeMode>(
       valueListenable: themeNotifier,
-      builder: (_, mode, __) {
+      builder: (_, appMode, __) {
         return ValueListenableBuilder<Color>(
           valueListenable: accentColorNotifier,
           builder: (_, accentColor, __) {
@@ -103,11 +117,15 @@ class MyApp extends StatelessWidget {
                 ),
               ),
               darkTheme: ThemeData.dark().copyWith(
-                scaffoldBackgroundColor: AppColors.background,
+                scaffoldBackgroundColor: appMode == AppThemeMode.amoled
+                    ? Colors.black
+                    : AppColors.background,
                 colorScheme: ColorScheme.dark(
                   primary: accentColor,
-                  surface: AppColors
-                      .background, // Using background color for main surface
+                  surface: appMode == AppThemeMode.amoled
+                      ? Colors.black
+                      : AppColors
+                          .background, // Using background color for main surface
                   onSurface: AppColors.textPrimary,
                 ),
                 textTheme: baseTextTheme.apply(
@@ -124,7 +142,9 @@ class MyApp extends StatelessWidget {
                   color: AppColors.textPrimary.withValues(alpha: 0.1),
                 ),
               ),
-              themeMode: mode,
+              themeMode: appMode == AppThemeMode.light
+                  ? ThemeMode.light
+                  : ThemeMode.dark,
               home: const AppScaffold(),
             );
           },

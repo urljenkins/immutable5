@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:developer' as developer;
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 
 import 'models/dua_model.dart';
@@ -32,16 +33,20 @@ class DuaRepository {
 
       _duas = jsonList.map((json) => Dua.fromJson(json)).toList();
       _initialized = true;
-      developer.log(
-        'Successfully loaded ${_duas.length} duas',
-        name: 'DuaRepository',
-      );
+      if (kDebugMode) {
+        developer.log(
+          'Successfully loaded ${_duas.length} duas',
+          name: 'DuaRepository',
+        );
+      }
     } catch (e) {
-      developer.log(
-        'Error loading duas.json: $e',
-        name: 'DuaRepository',
-        error: e,
-      );
+      if (kDebugMode) {
+        developer.log(
+          'Error loading duas.json: $e',
+          name: 'DuaRepository',
+          error: e,
+        );
+      }
       _duas = [];
     }
   }

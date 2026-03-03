@@ -10,6 +10,7 @@ import '../notifications/notification_service.dart';
 import '../quran/juz_of_the_day_service.dart';
 import '../quran/quran_context_menu_settings.dart';
 import '../widget/widget_settings_page.dart';
+import '../../shared/app_theme_mode.dart';
 import 'nav_bar_customization_page.dart';
 
 class SettingsPage extends StatefulWidget {
@@ -23,7 +24,7 @@ class _SettingsPageState extends State<SettingsPage> {
   static const _keyCalculationMethod = 'calculationMethod';
   static const _keyMadhab = 'madhab';
   static const _keyNotificationsEnabled = 'notificationsEnabled';
-  static const _keyUseAmoledTheme = 'useAmoledTheme';
+  static const _keyAppThemeMode = 'appThemeMode';
   static const _keyAccentColor = 'accent_color';
   static const _keyJummahReminders = 'jummahReminders';
   static const _keyIftarReminders = 'iftarReminders';
@@ -36,7 +37,7 @@ class _SettingsPageState extends State<SettingsPage> {
   String _calculationMethod = _methods[0];
   String _madhab = 'Shafi';
   bool _notificationsEnabled = true;
-  bool _useAmoledTheme = true;
+  AppThemeMode _appThemeMode = AppThemeMode.dark;
   bool _jummahReminders = true;
   bool _iftarReminders = true;
   bool _batterySaverMode = false;
@@ -62,8 +63,17 @@ class _SettingsPageState extends State<SettingsPage> {
     final madhab = await prefs.getString(_keyMadhab) ?? _madhab;
     final notificationsEnabled =
         await prefs.getBool(_keyNotificationsEnabled) ?? _notificationsEnabled;
-    final useAmoledTheme =
-        await prefs.getBool(_keyUseAmoledTheme) ?? _useAmoledTheme;
+    final themeModeStr = await prefs.getString(_keyAppThemeMode);
+    AppThemeMode initialMode = AppThemeMode.dark;
+    if (themeModeStr != null) {
+      initialMode = AppThemeMode.values.firstWhere(
+        (e) => e.name == themeModeStr,
+        orElse: () => AppThemeMode.dark,
+      );
+    } else {
+      final useDark = await prefs.getBool('useAmoledTheme') ?? true;
+      initialMode = useDark ? AppThemeMode.dark : AppThemeMode.light;
+    }
     final jummahReminders =
         await prefs.getBool(_keyJummahReminders) ?? _jummahReminders;
     final iftarReminders =
@@ -76,7 +86,8 @@ class _SettingsPageState extends State<SettingsPage> {
       _calculationMethod = calculationMethod;
       _madhab = madhab;
       _notificationsEnabled = notificationsEnabled;
-      _useAmoledTheme = useAmoledTheme;
+      _appThemeMode = initialMode;
+      _jummahReminders = jummahReminders;
       _iftarReminders = iftarReminders;
       _batterySaverMode = batteryOptimizer.isBatterySaverEnabled();
       _showPastPrayer = showPastPrayer;
@@ -133,23 +144,17 @@ class _SettingsPageState extends State<SettingsPage> {
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    children: [
-                      RadioGroup<String>(
-                        groupValue: _calculationMethod,
-                        onChanged: (v) => Navigator.pop(context, v),
-                        child: Column(
-                          children: _methods
-                              .map(
-                                (m) => RadioListTile(
-                                  title: Text(m),
-                                  value: m,
-                                  activeColor: AppColors.accent,
-                                ),
-                              )
-                              .toList(),
-                        ),
-                      ),
-                    ],
+                    children: _methods
+                        .map(
+                          (m) => RadioListTile<String>(
+                            title: Text(m),
+                            value: m,
+                            groupValue: _calculationMethod,
+                            activeColor: AppColors.accent,
+                            onChanged: (v) => Navigator.pop(context, v),
+                          ),
+                        )
+                        .toList(),
                   ),
                 );
                 if (choice != null) {
@@ -170,23 +175,17 @@ class _SettingsPageState extends State<SettingsPage> {
                   builder: (_) => SimpleDialog(
                     backgroundColor: AppColors.cardSurface,
                     title: Text(AppLocalizations.of(context)!.selectMadhab),
-                    children: [
-                      RadioGroup<String>(
-                        groupValue: _madhab,
-                        onChanged: (v) => Navigator.pop(context, v),
-                        child: Column(
-                          children: _madhabs
-                              .map(
-                                (m) => RadioListTile(
-                                  title: Text(m),
-                                  value: m,
-                                  activeColor: AppColors.accent,
-                                ),
-                              )
-                              .toList(),
-                        ),
-                      ),
-                    ],
+                    children: _madhabs
+                        .map(
+                          (m) => RadioListTile<String>(
+                            title: Text(m),
+                            value: m,
+                            groupValue: _madhab,
+                            activeColor: AppColors.accent,
+                            onChanged: (v) => Navigator.pop(context, v),
+                          ),
+                        )
+                        .toList(),
                   ),
                 );
                 if (choice != null) {
@@ -203,7 +202,7 @@ class _SettingsPageState extends State<SettingsPage> {
               title: Text(AppLocalizations.of(context)!.notifications),
               subtitle: const Text('Get notified for each prayer time'),
               value: _notificationsEnabled,
-              activeThumbColor: AppColors.accent,
+              activeColor: AppColors.accent,
               contentPadding: const EdgeInsets.symmetric(horizontal: 24),
               onChanged: (value) async {
                 if (value) {
@@ -239,7 +238,7 @@ class _SettingsPageState extends State<SettingsPage> {
               subtitle: const Text(
                   'Display time remaining for current/past prayer instead of next prayer'),
               value: _showPastPrayer,
-              activeThumbColor: AppColors.accent,
+              activeColor: AppColors.accent,
               contentPadding: const EdgeInsets.symmetric(horizontal: 24),
               onChanged: (value) async {
                 final prefs = SecureStorageProvider();
@@ -255,7 +254,7 @@ class _SettingsPageState extends State<SettingsPage> {
                   'Remind me 1 hour before Friday Dhuhr (Jummah) to prepare.',
                 ),
                 value: _jummahReminders,
-                activeThumbColor: AppColors.accent,
+                activeColor: AppColors.accent,
                 contentPadding: const EdgeInsets.symmetric(horizontal: 40),
                 onChanged: (value) async {
                   final prefs = SecureStorageProvider();
@@ -269,7 +268,7 @@ class _SettingsPageState extends State<SettingsPage> {
                   'Remind me 15 minutes before Maghrib during Ramadan.',
                 ),
                 value: _iftarReminders,
-                activeThumbColor: AppColors.accent,
+                activeColor: AppColors.accent,
                 contentPadding: const EdgeInsets.symmetric(horizontal: 40),
                 onChanged: (value) async {
                   final prefs = SecureStorageProvider();
@@ -278,18 +277,41 @@ class _SettingsPageState extends State<SettingsPage> {
                 },
               ),
             ],
-            SwitchListTile(
-              title: Text(AppLocalizations.of(context)!.amoledTheme),
-              subtitle: Text(AppLocalizations.of(context)!.amoledThemeSubtitle),
-              value: _useAmoledTheme,
-              activeThumbColor: AppColors.accent,
+            ListTile(
+              title: const Text('App Theme'),
+              subtitle: Text(_appThemeMode.displayName),
               contentPadding: const EdgeInsets.symmetric(horizontal: 24),
-              onChanged: (value) async {
-                final prefs = SecureStorageProvider();
-                setState(() => _useAmoledTheme = value);
-                await prefs.setBool(_keyUseAmoledTheme, value);
-                // Update the global theme notifier
-                themeNotifier.value = value ? ThemeMode.dark : ThemeMode.light;
+              onTap: () async {
+                final choice = await showDialog<AppThemeMode>(
+                  context: context,
+                  builder: (_) => SimpleDialog(
+                    backgroundColor: AppColors.cardSurface,
+                    title: Text(
+                      'Select App Theme',
+                      style: GoogleFonts.plusJakartaSans(
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    children: AppThemeMode.values
+                        .map(
+                          (m) => RadioListTile<AppThemeMode>(
+                            title: Text(m.displayName),
+                            value: m,
+                            groupValue: _appThemeMode,
+                            activeColor: AppColors.accent,
+                            onChanged: (v) => Navigator.pop(context, v),
+                          ),
+                        )
+                        .toList(),
+                  ),
+                );
+                if (choice != null) {
+                  final prefs = SecureStorageProvider();
+                  if (!mounted) return;
+                  setState(() => _appThemeMode = choice);
+                  prefs.setString(_keyAppThemeMode, choice.name);
+                  themeNotifier.value = choice;
+                }
               },
             ),
             ListTile(
@@ -324,29 +346,25 @@ class _SettingsPageState extends State<SettingsPage> {
                       ),
                     ),
                     children: [
-                      RadioGroup<JuzMode>(
-                        groupValue: _juzMode,
-                        onChanged: (v) => Navigator.pop(context, v),
-                        child: Column(
-                          children: [
-                            RadioListTile(
-                              title: const Text('Standard (30 equal parts)'),
-                              subtitle: const Text(
-                                'Traditional division — a juz may split a surah',
-                              ),
-                              value: JuzMode.standard,
-                              activeColor: AppColors.accent,
-                            ),
-                            RadioListTile(
-                              title: const Text('Surah-based (whole surahs)'),
-                              subtitle: const Text(
-                                'Groups of whole surahs — no surah is split',
-                              ),
-                              value: JuzMode.surahBased,
-                              activeColor: AppColors.accent,
-                            ),
-                          ],
+                      RadioListTile<JuzMode>(
+                        title: const Text('Standard (30 equal parts)'),
+                        subtitle: const Text(
+                          'Traditional division — a juz may split a surah',
                         ),
+                        value: JuzMode.standard,
+                        groupValue: _juzMode,
+                        activeColor: AppColors.accent,
+                        onChanged: (v) => Navigator.pop(context, v),
+                      ),
+                      RadioListTile<JuzMode>(
+                        title: const Text('Surah-based (whole surahs)'),
+                        subtitle: const Text(
+                          'Groups of whole surahs — no surah is split',
+                        ),
+                        value: JuzMode.surahBased,
+                        groupValue: _juzMode,
+                        activeColor: AppColors.accent,
+                        onChanged: (v) => Navigator.pop(context, v),
                       ),
                     ],
                   ),
@@ -380,7 +398,7 @@ class _SettingsPageState extends State<SettingsPage> {
               title: const Text('Copy verse'),
               subtitle: const Text('Copy Arabic text to clipboard'),
               value: _ctxMenuSettings.showCopy,
-              activeThumbColor: AppColors.accent,
+              activeColor: AppColors.accent,
               contentPadding: const EdgeInsets.symmetric(horizontal: 40),
               onChanged: (v) async {
                 final prefs = SecureStorageProvider();
@@ -394,7 +412,7 @@ class _SettingsPageState extends State<SettingsPage> {
               title: const Text('Bookmark verse'),
               subtitle: const Text('Save verse to your bookmarks'),
               value: _ctxMenuSettings.showBookmark,
-              activeThumbColor: AppColors.accent,
+              activeColor: AppColors.accent,
               contentPadding: const EdgeInsets.symmetric(horizontal: 40),
               onChanged: (v) async {
                 final prefs = SecureStorageProvider();
@@ -408,7 +426,7 @@ class _SettingsPageState extends State<SettingsPage> {
               title: const Text('Share verse'),
               subtitle: const Text('Share verse via system share sheet'),
               value: _ctxMenuSettings.showShare,
-              activeThumbColor: AppColors.accent,
+              activeColor: AppColors.accent,
               contentPadding: const EdgeInsets.symmetric(horizontal: 40),
               onChanged: (v) async {
                 final prefs = SecureStorageProvider();
@@ -422,7 +440,7 @@ class _SettingsPageState extends State<SettingsPage> {
               title: const Text('Ayah info'),
               subtitle: const Text('Show surah & verse number'),
               value: _ctxMenuSettings.showAyahInfo,
-              activeThumbColor: AppColors.accent,
+              activeColor: AppColors.accent,
               contentPadding: const EdgeInsets.symmetric(horizontal: 40),
               onChanged: (v) async {
                 final prefs = SecureStorageProvider();
@@ -464,7 +482,7 @@ class _SettingsPageState extends State<SettingsPage> {
                 'Reduce battery usage by limiting background updates',
               ),
               value: _batterySaverMode,
-              activeThumbColor: AppColors.accent,
+              activeColor: AppColors.accent,
               contentPadding: const EdgeInsets.symmetric(horizontal: 24),
               secondary: const Icon(
                 Icons.battery_saver,

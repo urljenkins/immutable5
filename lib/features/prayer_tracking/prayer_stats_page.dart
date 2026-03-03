@@ -7,6 +7,7 @@ import '../../shared/app_colors.dart';
 import '../../shared/glass_container.dart';
 import '../prayer/prayer_times_service.dart';
 import 'prayer_tracking_service.dart';
+import '../../services/secure_storage_provider.dart';
 
 class PrayerStatsPage extends StatefulWidget {
   const PrayerStatsPage({super.key});
@@ -18,12 +19,12 @@ class PrayerStatsPage extends StatefulWidget {
 class _PrayerStatsPageState extends State<PrayerStatsPage> {
   final PrayerTrackingService _trackingService = PrayerTrackingService();
   late final PrayerTimesService _prayerTimesService;
-  Map<String, dynamic>? _stats;
   Map<DateTime, Map<String, bool>> _history = {};
   Map<String, DateTime> _todayPrayerTimes = {};
   DateTime _focusedDay = DateTime.now();
   DateTime _selectedDay = DateTime.now();
   bool _loading = true;
+  String? _highlightPrayerName;
 
   @override
   void initState() {
@@ -38,21 +39,36 @@ class _PrayerStatsPageState extends State<PrayerStatsPage> {
   }
 
   Future<void> _loadData() async {
-    final stats = await _trackingService.getStatistics();
+    await _trackingService.getStatistics();
     final history = await _trackingService.getLast30DaysHistory();
 
     Map<String, DateTime> times = {};
+    String? highlightPrayer;
+
     try {
       times = await _prayerTimesService.getPrayerTimesForDate(_selectedDay);
+
+      if (isSameDay(_selectedDay, DateTime.now())) {
+        final prefs = SecureStorageProvider();
+        final showPastPrayer = await prefs.getBool('show_past_prayer') ?? false;
+
+        if (showPastPrayer) {
+          final past = await _prayerTimesService.getPastPrayer();
+          highlightPrayer = past.key;
+        } else {
+          final next = await _prayerTimesService.getNextPrayer();
+          highlightPrayer = next.key;
+        }
+      }
     } catch (e) {
       debugPrint('Failed to load prayer times: $e');
     }
 
     if (mounted) {
       setState(() {
-        _stats = stats;
         _history = history;
         _todayPrayerTimes = times;
+        _highlightPrayerName = highlightPrayer;
         _loading = false;
       });
     }
@@ -112,7 +128,7 @@ class _PrayerStatsPageState extends State<PrayerStatsPage> {
                 ? Center(
                     child: CircularProgressIndicator(color: AppColors.accent),
                   )
-                : SingleChildScrollView(
+                : Padding(
                     padding: const EdgeInsets.symmetric(
                       horizontal: 24.0,
                       vertical: 16.0,
@@ -120,7 +136,7 @@ class _PrayerStatsPageState extends State<PrayerStatsPage> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
-                        _buildTodayPrayers(),
+                        Expanded(child: _buildTodayPrayers()),
                         const SizedBox(height: 24),
                         _buildCalendarView(),
                         const SizedBox(height: 40),
@@ -148,7 +164,7 @@ class _PrayerStatsPageState extends State<PrayerStatsPage> {
           Padding(
             padding: const EdgeInsets.fromLTRB(8, 8, 8, 4),
             child: Text(
-              'Prayers',
+              'Timing',
               style: GoogleFonts.plusJakartaSans(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
@@ -157,45 +173,59 @@ class _PrayerStatsPageState extends State<PrayerStatsPage> {
             ),
           ),
           const SizedBox(height: 12),
-          FutureBuilder<Map<String, bool>>(
-            future: _trackingService.getCompletedPrayersForDate(_selectedDay),
-            builder: (context, snapshot) {
-              if (!snapshot.hasData) {
-                return const Center(child: CircularProgressIndicator());
-              }
+          Expanded(
+            child: FutureBuilder<Map<String, bool>>(
+              future: _trackingService.getCompletedPrayersForDate(_selectedDay),
+              builder: (context, snapshot) {
+                if (!snapshot.hasData) {
+                  return const Center(child: CircularProgressIndicator());
+                }
 
-              final completions = snapshot.data!;
+                final completions = snapshot.data!;
 
-              final displayPrayers = _trackingService.mainPrayers;
+                final displayPrayers = _trackingService.mainPrayers;
 
-              if (displayPrayers.isEmpty) {
-                return const Padding(
-                  padding: EdgeInsets.symmetric(vertical: 24.0),
-                  child: Center(
-                    child: Text(
-                      'No prayers available.',
-                      style: TextStyle(
-                        color: Colors.grey,
-                        fontStyle: FontStyle.italic,
+                if (displayPrayers.isEmpty) {
+                  return const Padding(
+                    padding: EdgeInsets.symmetric(vertical: 24.0),
+                    child: Center(
+                      child: Text(
+                        'No prayers available.',
+                        style: TextStyle(
+                          color: Colors.grey,
+                          fontStyle: FontStyle.italic,
+                        ),
                       ),
                     ),
-                  ),
-                );
-              }
+                  );
+                }
 
-              return SizedBox(
-                height: 200,
-                child: ListWheelScrollView.useDelegate(
+                return ListWheelScrollView.useDelegate(
                   itemExtent: 65,
                   physics: const BouncingScrollPhysics(),
                   perspective: 0.005,
-                  diameterRatio: 1.5,
+                  diameterRatio: 2.5,
                   childDelegate: ListWheelChildBuilderDelegate(
                     childCount: displayPrayers.length,
                     builder: (context, index) {
                       final prayer = displayPrayers[index];
                       final isCompleted = completions[prayer] ?? false;
                       final prayerTime = _todayPrayerTimes[prayer];
+                      final isHighlighted = prayer == _highlightPrayerName;
+
+                      Color bgColor = Colors.transparent;
+                      Color borderColor = Colors.white.withValues(alpha: 0.05);
+                      Color titleColor = AppColors.textPrimary;
+                      Color timeColor = AppColors.textSecondary;
+                      FontWeight titleWeight = FontWeight.normal;
+
+                      if (isHighlighted) {
+                        bgColor = AppColors.accent.withValues(alpha: 0.15);
+                        borderColor = AppColors.accent.withValues(alpha: 0.5);
+                        titleColor = AppColors.accent;
+                        timeColor = AppColors.accent;
+                        titleWeight = FontWeight.bold;
+                      }
 
                       return Container(
                         margin: const EdgeInsets.symmetric(
@@ -203,75 +233,61 @@ class _PrayerStatsPageState extends State<PrayerStatsPage> {
                           vertical: 4,
                         ),
                         decoration: BoxDecoration(
-                          color: isCompleted
-                              ? AppColors.success.withValues(alpha: 0.1)
-                              : Colors.transparent,
+                          color: bgColor,
                           borderRadius: BorderRadius.circular(12),
-                          border: Border.all(
-                            color: isCompleted
-                                ? AppColors.success.withValues(alpha: 0.3)
-                                : Colors.white.withValues(alpha: 0.05),
-                          ),
+                          border: Border.all(color: borderColor),
                         ),
-                        child: CheckboxListTile(
-                          title: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(
+                        child: Opacity(
+                          opacity: isCompleted ? 0.5 : 1.0,
+                          child: InkWell(
+                            onTap: () async {
+                              await _trackingService.togglePrayerCompletion(
                                 prayer,
-                                style: GoogleFonts.plusJakartaSans(
-                                  fontWeight: isCompleted
-                                      ? FontWeight.bold
-                                      : FontWeight.normal,
-                                  color: isCompleted
-                                      ? AppColors.success
-                                      : AppColors.textPrimary,
-                                ),
+                                _selectedDay,
+                              );
+                              setState(() {
+                                _loading = true;
+                              });
+                              _loadData();
+                            },
+                            borderRadius: BorderRadius.circular(12),
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 16.0,
+                                vertical: 12.0,
                               ),
-                              if (prayerTime != null)
-                                Text(
-                                  _formatTime(prayerTime),
-                                  style: GoogleFonts.plusJakartaSans(
-                                    fontSize: 12,
-                                    color: isCompleted
-                                        ? AppColors.success
-                                        : AppColors.textSecondary,
-                                    fontWeight: isCompleted
-                                        ? FontWeight.bold
-                                        : FontWeight.normal,
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    prayer,
+                                    style: GoogleFonts.plusJakartaSans(
+                                      fontWeight: titleWeight,
+                                      color: titleColor,
+                                      fontSize: 16,
+                                    ),
                                   ),
-                                ),
-                            ],
-                          ),
-                          value: isCompleted,
-                          onChanged: (value) async {
-                            await _trackingService.togglePrayerCompletion(
-                              prayer,
-                              _selectedDay,
-                            );
-                            setState(() {
-                              _loading = true;
-                            });
-                            _loadData();
-                          },
-                          secondary: Icon(
-                            isCompleted
-                                ? Icons.check_circle
-                                : Icons.circle_outlined,
-                            color: isCompleted
-                                ? AppColors.success
-                                : AppColors.textSecondary,
-                          ),
-                          checkboxShape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(4),
+                                  if (prayerTime != null)
+                                    Text(
+                                      _formatTime(prayerTime),
+                                      style: GoogleFonts.plusJakartaSans(
+                                        fontSize: 14,
+                                        color: timeColor,
+                                        fontWeight: titleWeight,
+                                      ),
+                                    ),
+                                ],
+                              ),
+                            ),
                           ),
                         ),
                       );
                     },
                   ),
-                ),
-              );
-            },
+                );
+              },
+            ),
           ),
         ],
       ),
@@ -290,14 +306,14 @@ class _PrayerStatsPageState extends State<PrayerStatsPage> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            'Last 30 Days',
-            style: GoogleFonts.plusJakartaSans(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-              color: AppColors.textPrimary,
-            ),
-          ),
+          // Text(
+          //   'Last 30 Days',
+          //   style: GoogleFonts.plusJakartaSans(
+          //     fontSize: 18,
+          //     fontWeight: FontWeight.bold,
+          //     color: AppColors.textPrimary,
+          //   ),
+          // ),
           const SizedBox(height: 16),
           TableCalendar(
             firstDay: DateTime.now().subtract(const Duration(days: 60)),
