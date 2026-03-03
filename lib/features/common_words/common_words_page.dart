@@ -330,7 +330,7 @@ class _CommonWordsPageState extends State<CommonWordsPage> {
                   setState(() => _showMemorized = value);
                   _applyFilters();
                 },
-                activeColor: Colors.greenAccent,
+                activeTrackColor: Colors.greenAccent,
               ),
             ],
           ],

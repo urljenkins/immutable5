@@ -52,10 +52,12 @@ class NotificationService {
 
   void _onNotificationTapped(NotificationResponse response) {
     // Handle notification tap - could navigate to prayer times page
-    developer.log(
-      'Notification tapped: ${response.payload}',
-      name: 'NotificationService',
-    );
+    if (kDebugMode) {
+      developer.log(
+        'Notification tapped: ${response.payload}',
+        name: 'NotificationService',
+      );
+    }
   }
 
   Future<bool> requestPermissions() async {
