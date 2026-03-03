@@ -118,7 +118,7 @@ class _AddPlacePageState extends State<AddPlacePage> {
                   child: Container(
                     decoration: BoxDecoration(
                       color: isSelected
-                          ? AppColors.accent.withOpacity(0.2)
+                          ? AppColors.accent.withValues(alpha: 0.2)
                           : AppColors.cardSurface,
                       borderRadius: BorderRadius.circular(16),
                       border: Border.all(
@@ -192,7 +192,7 @@ class _AddPlacePageState extends State<AddPlacePage> {
           child: Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: Colors.black.withOpacity(0.7),
+              color: Colors.black.withValues(alpha: 0.7),
               borderRadius: BorderRadius.circular(12),
             ),
             child: Text(
@@ -266,7 +266,7 @@ class _AddPlacePageState extends State<AddPlacePage> {
               'Wudu Area Available',
               style: GoogleFonts.plusJakartaSans(color: AppColors.textPrimary),
             ),
-            activeColor: AppColors.accent,
+            activeThumbColor: AppColors.accent,
             contentPadding: EdgeInsets.zero,
           ),
           SwitchListTile(
@@ -276,7 +276,7 @@ class _AddPlacePageState extends State<AddPlacePage> {
               'Women\'s Space Available',
               style: GoogleFonts.plusJakartaSans(color: AppColors.textPrimary),
             ),
-            activeColor: AppColors.accent,
+            activeThumbColor: AppColors.accent,
             contentPadding: EdgeInsets.zero,
           ),
         ],
@@ -289,7 +289,7 @@ class _AddPlacePageState extends State<AddPlacePage> {
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
         color: AppColors.cardSurface,
-        border: Border(top: BorderSide(color: Colors.white.withOpacity(0.1))),
+        border: Border(top: BorderSide(color: Colors.white.withValues(alpha: 0.1))),
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -325,7 +325,8 @@ class _AddPlacePageState extends State<AddPlacePage> {
                 : Text(
                     _currentStep == 2 ? 'Submit' : 'Next',
                     style: GoogleFonts.plusJakartaSans(
-                        fontWeight: FontWeight.bold),
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
           ),
         ],

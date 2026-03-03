@@ -15,9 +15,6 @@ class AppLocalizationsAr extends AppLocalizations {
   String get home => 'الرئيسية';
 
   @override
-  String get calendar => 'التقويم';
-
-  @override
   String get hajj => 'الحج';
 
   @override

@@ -270,7 +270,7 @@ class _TasbihPageState extends State<TasbihPage>
                     Switch(
                       value: _isVoiceEnabled,
                       onChanged: _toggleVoiceMode,
-                      activeColor: AppColors.accent,
+                      activeThumbColor: AppColors.accent,
                     ),
                   ],
                 ),

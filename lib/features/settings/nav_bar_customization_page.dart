@@ -26,7 +26,6 @@ class _NavBarCustomizationPageState extends State<NavBarCustomizationPage> {
     'track': _TabMeta(Icons.check_circle, 'Track'),
     'places': _TabMeta(Icons.map, 'Places'),
     'qibla': _TabMeta(Icons.explore, 'Qibla'),
-    'calendar': _TabMeta(Icons.calendar_today, 'Calendar'),
     'hajj': _TabMeta(Icons.directions_walk, 'Hajj'),
     'common_words': _TabMeta(Icons.translate, 'Common Words'),
     'tasbih': _TabMeta(Icons.fingerprint, 'Tasbih'),
@@ -317,7 +316,7 @@ class _ReorderableTile extends StatelessWidget {
         children: [
           Switch(
             value: visible,
-            activeColor: AppColors.accent,
+            activeThumbColor: AppColors.accent,
             onChanged: onToggle,
           ),
           ReorderableDragStartListener(

@@ -99,7 +99,11 @@ class _PlacesPageState extends State<PlacesPage> {
       // Since `getIt` is available, we can grab the factory.
       final factory = getIt<PrayerTimesServiceFactory>();
       final service = factory(
-          _center.latitude, _center.longitude, 2, 0); // Default method/madhab
+        _center.latitude,
+        _center.longitude,
+        2,
+        0,
+      ); // Default method/madhab
       final next = await service.getNextPrayer();
       if (mounted) {
         setState(() {
@@ -152,8 +156,9 @@ class _PlacesPageState extends State<PlacesPage> {
       _filteredPlaces = List.from(_places);
     } else {
       _filteredPlaces = _places.where((p) {
-        if (_selectedFilter == 'mosque')
+        if (_selectedFilter == 'mosque') {
           return p.type == 'mosque' || p.type == 'formal';
+        }
         if (_selectedFilter == 'quiet_room') return p.type == 'informal';
         if (_selectedFilter == 'outdoor') return p.type == 'outdoor';
         return true;
@@ -192,8 +197,10 @@ class _PlacesPageState extends State<PlacesPage> {
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Tap on map to set destination',
-                style: GoogleFonts.plusJakartaSans(color: Colors.white)),
+            content: Text(
+              'Tap on map to set destination',
+              style: GoogleFonts.plusJakartaSans(color: Colors.white),
+            ),
             backgroundColor: AppColors.accent,
             duration: const Duration(seconds: 2),
           ),
@@ -317,11 +324,11 @@ class _PlacesPageState extends State<PlacesPage> {
         decoration: BoxDecoration(
           color: isSelected
               ? AppColors.accent
-              : AppColors.cardSurface.withOpacity(0.9),
+              : AppColors.cardSurface.withValues(alpha: 0.9),
           borderRadius: BorderRadius.circular(20),
           border: Border.all(
             color:
-                isSelected ? AppColors.accent : Colors.white.withOpacity(0.2),
+                isSelected ? AppColors.accent : Colors.white.withValues(alpha: 0.2),
           ),
         ),
         child: Text(
@@ -567,11 +574,11 @@ class _PlacesPageState extends State<PlacesPage> {
                     padding:
                         const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                     decoration: BoxDecoration(
-                      color: AppColors.accent.withOpacity(0.9),
+                      color: AppColors.accent.withValues(alpha: 0.9),
                       borderRadius: BorderRadius.circular(20),
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.black.withOpacity(0.2),
+                          color: Colors.black.withValues(alpha: 0.2),
                           blurRadius: 4,
                           offset: const Offset(0, 2),
                         ),
@@ -580,8 +587,11 @@ class _PlacesPageState extends State<PlacesPage> {
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        const Icon(Icons.access_time,
-                            size: 16, color: Colors.black),
+                        const Icon(
+                        Icons.access_time,
+                        size: 16,
+                        color: Colors.black,
+                      ),
                         const SizedBox(width: 8),
                         Text(
                           'Next: $_nextPrayerName at $_nextPrayerTime',
@@ -609,9 +619,11 @@ class _PlacesPageState extends State<PlacesPage> {
                   heroTag: 'route_toggle',
                   backgroundColor:
                       _isRouteMode ? Colors.blue : AppColors.cardSurface,
-                  child: Icon(Icons.directions,
-                      color: _isRouteMode ? Colors.white : AppColors.accent),
                   onPressed: _toggleRouteMode,
+                  child: Icon(
+                    Icons.directions,
+                    color: _isRouteMode ? Colors.white : AppColors.accent,
+                  ),
                 ),
                 const SizedBox(height: 16),
                 FloatingActionButton(

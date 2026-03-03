@@ -118,12 +118,6 @@ abstract class AppLocalizations {
   /// **'Home'**
   String get home;
 
-  /// No description provided for @calendar.
-  ///
-  /// In en, this message translates to:
-  /// **'Calendar'**
-  String get calendar;
-
   /// No description provided for @hajj.
   ///
   /// In en, this message translates to:

@@ -6,6 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:immutable5/services/secure_storage_provider.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 
 import '../../shared/app_colors.dart';
 import '../../shared/glass_container.dart';
@@ -29,7 +30,7 @@ class _QuranPageState extends State<QuranPage> {
   final JuzOfTheDayService _juzService = JuzOfTheDayService();
   final QuranAudioService _audioService = QuranAudioService();
   final _bookmarks = QuranBookmarkService.instance;
-  final ScrollController _scrollController = ScrollController();
+  final ItemScrollController _itemScrollController = ItemScrollController();
   final Map<int, GlobalKey> _chapterKeys = {};
   // Per-verse keys: key = surahNumber * 10000 + verseIndex
   final Map<int, GlobalKey> _verseKeys = {};
@@ -88,7 +89,6 @@ class _QuranPageState extends State<QuranPage> {
 
   @override
   void dispose() {
-    _scrollController.dispose();
     _audioPlayer.dispose();
     super.dispose();
   }
@@ -164,6 +164,7 @@ class _QuranPageState extends State<QuranPage> {
       });
       _scrollToVerse(surah, verse);
     } catch (e) {
+      if (!mounted) return;
       ScaffoldMessenger.of(
         context,
       ).showSnackBar(SnackBar(content: Text('Error playing audio: $e')));
@@ -791,39 +792,10 @@ class _QuranPageState extends State<QuranPage> {
   Future<void> _scrollToChapter(QuranChapter chapter) async {
     final index = _chapters.indexWhere((c) => c.number == chapter.number);
     if (index == -1) return;
-    final key = _chapterKeys[chapter.number];
 
-    if (key?.currentContext != null) {
-      await Scrollable.ensureVisible(
-        key!.currentContext!,
-        duration: const Duration(milliseconds: 400),
-        curve: Curves.easeInOut,
-        alignment: 0.05,
-      );
-      return;
-    }
-
-    if (!_scrollController.hasClients) return;
-
-    double estimatedOffset = 0;
-    for (int i = 0; i < index; i++) {
-      estimatedOffset += 100 + _chapters[i].verses.length * 180.0;
-    }
-
-    _scrollController.jumpTo(
-      estimatedOffset.clamp(0.0, _scrollController.position.maxScrollExtent),
-    );
-    await Future.delayed(const Duration(milliseconds: 100));
-
-    for (int attempt = 0;
-        attempt < 30 && key?.currentContext == null;
-        attempt++) {
-      await Future.delayed(const Duration(milliseconds: 50));
-    }
-
-    if (key?.currentContext != null) {
-      await Scrollable.ensureVisible(
-        key!.currentContext!,
+    if (_itemScrollController.isAttached) {
+      await _itemScrollController.scrollTo(
+        index: index,
         duration: const Duration(milliseconds: 400),
         curve: Curves.easeInOut,
         alignment: 0.05,
@@ -1125,34 +1097,30 @@ class _QuranPageState extends State<QuranPage> {
                       _buildJuzBanner(),
                       _buildQuickJump(),
                       Expanded(
-                        child: Scrollbar(
-                          controller: _scrollController,
-                          child: ListView.builder(
-                            controller: _scrollController,
-                            padding: const EdgeInsets.fromLTRB(16, 0, 16, 100),
-                            cacheExtent: 5000,
-                            itemCount: _chapters.length,
-                            itemBuilder: (context, index) {
-                              final chapter = _chapters[index];
-                              return _ChapterCard(
-                                key: _chapterKeys[chapter.number],
+                        child: ScrollablePositionedList.builder(
+                          itemScrollController: _itemScrollController,
+                          padding: const EdgeInsets.fromLTRB(16, 0, 16, 100),
+                          itemCount: _chapters.length,
+                          itemBuilder: (context, index) {
+                            final chapter = _chapters[index];
+                            return _ChapterCard(
+                              key: _chapterKeys[chapter.number],
+                              chapter: chapter,
+                              verseKeys: _verseKeys,
+                              bookmarkService: _bookmarks,
+                              contextMenuSettings: _ctxSettings,
+                              onLongPressVerse: (verseIndex) =>
+                                  _showVerseContextMenu(
+                                context,
                                 chapter: chapter,
-                                verseKeys: _verseKeys,
-                                bookmarkService: _bookmarks,
-                                contextMenuSettings: _ctxSettings,
-                                onLongPressVerse: (verseIndex) =>
-                                    _showVerseContextMenu(
-                                  context,
-                                  chapter: chapter,
-                                  verseIndex: verseIndex,
-                                ),
-                                playingSurah: _playingSurah,
-                                playingVerse: _playingVerse,
-                                isPlaying: _isPlaying,
-                                onPlayTap: () => _togglePlay(chapter.number),
-                              );
-                            },
-                          ),
+                                verseIndex: verseIndex,
+                              ),
+                              playingSurah: _playingSurah,
+                              playingVerse: _playingVerse,
+                              isPlaying: _isPlaying,
+                              onPlayTap: () => _togglePlay(chapter.number),
+                            );
+                          },
                         ),
                       ),
                     ],

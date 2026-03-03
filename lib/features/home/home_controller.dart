@@ -176,7 +176,7 @@ class HomeController extends ChangeNotifier {
         // Fallback to IP-based location for desktop/web
         try {
           final response = await http
-              .get(Uri.parse('http://ip-api.com/json/'))
+              .get(Uri.parse('https://ip-api.com/json/'))
               .timeout(const Duration(seconds: 5));
           if (response.statusCode == 200) {
             final data = jsonDecode(response.body);

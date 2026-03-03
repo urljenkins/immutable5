@@ -60,6 +60,7 @@ dependencies:
   url_launcher: ^6.3.1
   speech_to_text: ^7.3.0
   flutter_secure_storage: ^10.0.0
+  scrollable_positioned_list: ^0.3.8
 
 dev_dependencies:
   flutter_test:

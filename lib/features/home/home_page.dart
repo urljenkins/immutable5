@@ -73,8 +73,10 @@ class _MyHomePageState extends State<MyHomePage> {
                               color: AppColors.accent,
                             ),
                           )
-                        : const Icon(Icons.refresh,
-                            color: AppColors.textSecondary),
+                        : const Icon(
+                            Icons.refresh,
+                            color: AppColors.textSecondary,
+                          ),
                     onPressed: state.refreshing ? null : _controller.refresh,
                     tooltip: AppLocalizations.of(context)!.refreshPrayerTimes,
                   )
@@ -220,7 +222,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                     const SizedBox(height: 16),
                                     Text(
                                       state.showPastPrayer
-                                          ? "TIME REMAINING"
+                                          ? 'TIME REMAINING'
                                           : AppLocalizations.of(
                                               context,
                                             )!

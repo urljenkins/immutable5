@@ -97,14 +97,24 @@ class PrayerTrackingService {
 
   /// Get prayers completed in last 30 days
   Future<Map<DateTime, Map<String, bool>>> getLast30DaysHistory() async {
+    return getHistoryForRange(
+      DateTime.now().subtract(const Duration(days: 29)),
+      DateTime.now(),
+    );
+  }
+
+  /// Get prayer completion history for an arbitrary date range [start, end] inclusive.
+  Future<Map<DateTime, Map<String, bool>>> getHistoryForRange(
+    DateTime start,
+    DateTime end,
+  ) async {
     final Map<DateTime, Map<String, bool>> history = {};
-    final now = DateTime.now();
-
-    for (int i = 0; i < 30; i++) {
-      final date = now.subtract(Duration(days: i));
-      history[date] = await getCompletedPrayersForDate(date);
+    DateTime cursor = DateTime(start.year, start.month, start.day);
+    final last = DateTime(end.year, end.month, end.day);
+    while (!cursor.isAfter(last)) {
+      history[cursor] = await getCompletedPrayersForDate(cursor);
+      cursor = cursor.add(const Duration(days: 1));
     }
-
     return history;
   }
 

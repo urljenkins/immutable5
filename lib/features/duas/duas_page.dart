@@ -4,9 +4,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import 'package:hijri/hijri_calendar.dart';
+
 import '../../di/service_locator.dart';
 import '../../shared/app_colors.dart';
 import '../../shared/glass_container.dart';
+import 'contextual_dua_service.dart';
 import 'dua_repository.dart';
 import 'models/dua_model.dart';
 
@@ -19,8 +22,12 @@ class DuasPage extends StatefulWidget {
 
 class _DuasPageState extends State<DuasPage> {
   final DuaRepository _duaRepository = getIt<DuaRepository>();
+  final ContextualDuaService _contextualDuaService =
+      getIt<ContextualDuaService>();
   List<Dua> _duas = [];
   List<Dua> _filteredDuas = [];
+  List<Dua> _recommendedDuas = [];
+  bool _hasRecommendations = false;
   List<String> _categories = ['All'];
   String _selectedCategory = 'All';
   String _searchQuery = '';
@@ -28,6 +35,7 @@ class _DuasPageState extends State<DuasPage> {
   bool _loading = true;
   final Set<String> _favorites = {};
   Dua? _selectedDua;
+  bool _filterFavoritesOnly = false;
 
   @override
   void dispose() {
@@ -44,6 +52,14 @@ class _DuasPageState extends State<DuasPage> {
   Future<void> _loadDuas() async {
     try {
       final duas = await _duaRepository.getAllDuas();
+
+      final now = DateTime.now();
+      final hijriDate = HijriCalendar.now();
+      final recommended = await _contextualDuaService.getContextualDuas(
+        now: now,
+        hijriDate: hijriDate,
+      );
+
       final sortedDuas = List<Dua>.from(duas)
         ..sort((a, b) {
           final categoryComparison = a.category.compareTo(b.category);
@@ -64,8 +80,15 @@ class _DuasPageState extends State<DuasPage> {
 
       setState(() {
         _duas = sortedDuas;
+        _recommendedDuas = recommended;
+        _hasRecommendations = recommended.isNotEmpty;
         _filteredDuas = sortedDuas;
-        _categories = ['All', ...categories];
+
+        final baseCategories = ['All'];
+        if (_hasRecommendations) {
+          baseCategories.add('Recommended');
+        }
+        _categories = [...baseCategories, ...categories];
         _loading = false;
       });
     } catch (e) {
@@ -79,19 +102,29 @@ class _DuasPageState extends State<DuasPage> {
     setState(() {
       var filtered = _duas;
 
-      if (_selectedCategory != 'All') {
+      if (_selectedCategory == 'Recommended') {
+        filtered = _recommendedDuas;
+      } else if (_selectedCategory != 'All') {
         filtered =
             filtered.where((dua) => dua.category == _selectedCategory).toList();
+      }
+
+      if (_filterFavoritesOnly) {
+        filtered =
+            filtered.where((dua) => _favorites.contains(dua.id)).toList();
       }
 
       if (_searchQuery.isNotEmpty) {
         final query = _searchQuery.toLowerCase();
         filtered = filtered.where((dua) {
+          final matchesTags =
+              dua.tags.any((tag) => tag.toLowerCase().contains(query));
           return dua.translationEn.toLowerCase().contains(query) ||
               dua.transliteration.toLowerCase().contains(query) ||
               dua.arabic.contains(query) ||
               dua.occasion.toLowerCase().contains(query) ||
-              dua.category.toLowerCase().contains(query);
+              dua.category.toLowerCase().contains(query) ||
+              matchesTags;
         }).toList();
       }
 
@@ -116,7 +149,61 @@ class _DuasPageState extends State<DuasPage> {
       } else {
         _favorites.add(id);
       }
+      if (_filterFavoritesOnly) {
+        _applyFilters();
+      }
     });
+  }
+
+  void _showFilterSheet() {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: AppColors.cardSurface,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+      ),
+      builder: (context) {
+        return StatefulBuilder(
+          builder: (context, setSheetState) {
+            return SafeArea(
+              child: Padding(
+                padding: const EdgeInsets.all(24.0),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Filters',
+                      style: GoogleFonts.plusJakartaSans(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        color: AppColors.textPrimary,
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    SwitchListTile(
+                      title: Text(
+                        'Favorites Only',
+                        style: GoogleFonts.plusJakartaSans(
+                            color: AppColors.textPrimary),
+                      ),
+                      value: _filterFavoritesOnly,
+                      onChanged: (val) {
+                        setSheetState(() => _filterFavoritesOnly = val);
+                        setState(() => _filterFavoritesOnly = val);
+                        _applyFilters();
+                      },
+                      activeThumbColor: AppColors.background,
+                      activeTrackColor: AppColors.accent,
+                    ),
+                  ],
+                ),
+              ),
+            );
+          },
+        );
+      },
+    );
   }
 
   @override
@@ -159,8 +246,11 @@ class _DuasPageState extends State<DuasPage> {
                               Icons.search,
                               color: AppColors.textSecondary,
                             ),
-                            suffixIcon: _searchQuery.isNotEmpty
-                                ? IconButton(
+                            suffixIcon: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                if (_searchQuery.isNotEmpty)
+                                  IconButton(
                                     icon: const Icon(
                                       Icons.clear,
                                       color: AppColors.textSecondary,
@@ -171,8 +261,20 @@ class _DuasPageState extends State<DuasPage> {
                                     },
                                     padding: EdgeInsets.zero,
                                     constraints: const BoxConstraints(),
-                                  )
-                                : null,
+                                  ),
+                                IconButton(
+                                  icon: Icon(
+                                    Icons.filter_list,
+                                    color: _filterFavoritesOnly
+                                        ? AppColors.accent
+                                        : AppColors.textSecondary,
+                                  ),
+                                  onPressed: _showFilterSheet,
+                                  padding: const EdgeInsets.only(right: 8),
+                                  constraints: const BoxConstraints(),
+                                ),
+                              ],
+                            ),
                             filled: true,
                             fillColor: AppColors.cardSurface.withValues(
                               alpha: 0.5,

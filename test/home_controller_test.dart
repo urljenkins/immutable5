@@ -22,6 +22,15 @@ class FakeContextualDuaService implements ContextualDuaService {
   }
 
   @override
+  Future<List<Dua>> getContextualDuas({
+    required DateTime now,
+    required HijriCalendar hijriDate,
+    Map<String, DateTime>? todayPrayerTimes,
+  }) async {
+    return [];
+  }
+
+  @override
   String? getContextualMessage(
     Dua dua,
     DateTime now,

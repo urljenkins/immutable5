@@ -8,7 +8,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:immutable5/services/secure_storage_provider.dart';
 
 import 'di/service_locator.dart';
-import 'features/calendar/calendar_page.dart';
+
 import 'features/common_words/common_words_page.dart';
 import 'features/duas/duas_page.dart';
 import 'features/hajj/hajj_page.dart';
@@ -273,7 +273,8 @@ class _AppScaffoldState extends State<AppScaffold> {
                                         decoration: BoxDecoration(
                                           color: isSelected
                                               ? accentColor.withValues(
-                                                  alpha: 0.2)
+                                                  alpha: 0.2,
+                                                )
                                               : Colors.transparent,
                                           borderRadius:
                                               BorderRadius.circular(20),
@@ -303,7 +304,8 @@ class _AppScaffoldState extends State<AppScaffold> {
                                         decoration: BoxDecoration(
                                           color: _overflowSelectedId != null
                                               ? accentColor.withValues(
-                                                  alpha: 0.2)
+                                                  alpha: 0.2,
+                                                )
                                               : Colors.transparent,
                                           borderRadius:
                                               BorderRadius.circular(20),
@@ -402,9 +404,9 @@ class _AppScaffoldState extends State<AppScaffold> {
         icon: Icons.home,
         label: l10n.home,
       ),
-      _NavItem(
+      const _NavItem(
         id: 'track',
-        page: const PrayerStatsPage(),
+        page: PrayerStatsPage(),
         icon: Icons.check_circle,
         label: 'Track',
       ),
@@ -414,17 +416,11 @@ class _AppScaffoldState extends State<AppScaffold> {
         icon: Icons.map,
         label: l10n.places,
       ),
-      _NavItem(
+      const _NavItem(
         id: 'qibla',
-        page: const QiblaPage(),
+        page: QiblaPage(),
         icon: Icons.explore,
         label: 'Qibla',
-      ),
-      _NavItem(
-        id: 'calendar',
-        page: const CalendarPage(),
-        icon: Icons.calendar_today,
-        label: l10n.calendar,
       ),
       _NavItem(
         id: 'hajj',
@@ -444,9 +440,9 @@ class _AppScaffoldState extends State<AppScaffold> {
         icon: Icons.fingerprint,
         label: l10n.tasbih,
       ),
-      _NavItem(
+      const _NavItem(
         id: 'duas',
-        page: const DuasPage(),
+        page: DuasPage(),
         icon: Icons.menu_book,
         label: 'Duas',
       ),
@@ -513,7 +509,6 @@ class NavBarConfig {
     'track',
     'places',
     'qibla',
-    'calendar',
     'hajj',
     'common_words',
     'tasbih',
@@ -565,6 +560,8 @@ class NavBarConfig {
         tabsList.add(NavTabEntry(id: id));
       }
     }
+    // Remove stale tabs that no longer exist (e.g. 'calendar' removed in this update).
+    tabsList.removeWhere((t) => !allTabIds.contains(t.id));
     return NavBarConfig(
       tabs: tabsList,
       maxVisibleTabs: json['maxVisibleTabs'] as int? ?? 5,

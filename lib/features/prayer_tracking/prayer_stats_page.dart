@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:hijri/hijri_calendar.dart';
 import 'package:table_calendar/table_calendar.dart';
 
 import '../../di/service_locator.dart';
+import '../../services/secure_storage_provider.dart';
 import '../../shared/app_colors.dart';
 import '../../shared/glass_container.dart';
 import '../prayer/prayer_times_service.dart';
 import 'prayer_tracking_service.dart';
-import '../../services/secure_storage_provider.dart';
 
 class PrayerStatsPage extends StatefulWidget {
   const PrayerStatsPage({super.key});
@@ -26,6 +27,13 @@ class _PrayerStatsPageState extends State<PrayerStatsPage> {
   bool _loading = true;
   String? _highlightPrayerName;
 
+  // ── Hijri / fasting state ──────────────────────────────────────────────────
+  bool _hijriPrimary = false;
+
+  Color get _mandatoryFastColor => Colors.redAccent.withValues(alpha: 0.30);
+  Color get _optionalFastColor => Colors.orangeAccent.withValues(alpha: 0.25);
+  List<int> get _whiteDays => const [13, 14, 15];
+
   @override
   void initState() {
     super.initState();
@@ -35,12 +43,50 @@ class _PrayerStatsPageState extends State<PrayerStatsPage> {
       2, // Default method
       0, // Default madhab
     );
+    _loadHijriPreference();
     _loadData();
   }
 
+  // ── Hijri preference helpers ───────────────────────────────────────────────
+
+  Future<void> _loadHijriPreference() async {
+    final prefs = SecureStorageProvider();
+    final val = await prefs.getBool('calendar_hijri_primary') ?? false;
+    if (mounted) {
+      setState(() => _hijriPrimary = val);
+    }
+  }
+
+  Future<void> _setHijriPrimary(bool value) async {
+    final prefs = SecureStorageProvider();
+    await prefs.setBool('calendar_hijri_primary', value);
+    setState(() => _hijriPrimary = value);
+  }
+
+  String _gregorianMonthYear(DateTime day) {
+    const months = [
+      'January',
+      'February',
+      'March',
+      'April',
+      'May',
+      'June',
+      'July',
+      'August',
+      'September',
+      'October',
+      'November',
+      'December',
+    ];
+    return '${months[day.month - 1]} ${day.year}';
+  }
+
+  // ── Data loading ───────────────────────────────────────────────────────────
+
   Future<void> _loadData() async {
     await _trackingService.getStatistics();
-    final history = await _trackingService.getLast30DaysHistory();
+    final now = DateTime.now();
+    final history = await _trackingService.getHistoryForRange(now, now);
 
     Map<String, DateTime> times = {};
     String? highlightPrayer;
@@ -149,6 +195,8 @@ class _PrayerStatsPageState extends State<PrayerStatsPage> {
     );
   }
 
+  // ── Timing wheel ───────────────────────────────────────────────────────────
+
   Widget _buildTodayPrayers() {
     return GlassContainer(
       padding: const EdgeInsets.all(12.0),
@@ -182,7 +230,6 @@ class _PrayerStatsPageState extends State<PrayerStatsPage> {
                 }
 
                 final completions = snapshot.data!;
-
                 final displayPrayers = _trackingService.mainPrayers;
 
                 if (displayPrayers.isEmpty) {
@@ -245,9 +292,7 @@ class _PrayerStatsPageState extends State<PrayerStatsPage> {
                                 prayer,
                                 _selectedDay,
                               );
-                              setState(() {
-                                _loading = true;
-                              });
+                              setState(() => _loading = true);
                               _loadData();
                             },
                             borderRadius: BorderRadius.circular(12),
@@ -294,9 +339,11 @@ class _PrayerStatsPageState extends State<PrayerStatsPage> {
     );
   }
 
+  // ── Calendar view ──────────────────────────────────────────────────────────
+
   Widget _buildCalendarView() {
     return GlassContainer(
-      padding: const EdgeInsets.all(20.0),
+      padding: const EdgeInsets.all(16.0),
       borderRadius: 24,
       gradientColors: [
         AppColors.cardSurface.withValues(alpha: 0.5),
@@ -306,31 +353,44 @@ class _PrayerStatsPageState extends State<PrayerStatsPage> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Text(
-          //   'Last 30 Days',
-          //   style: GoogleFonts.plusJakartaSans(
-          //     fontSize: 18,
-          //     fontWeight: FontWeight.bold,
-          //     color: AppColors.textPrimary,
-          //   ),
-          // ),
-          const SizedBox(height: 16),
-          TableCalendar(
-            firstDay: DateTime.now().subtract(const Duration(days: 60)),
-            lastDay: DateTime.now(),
-            focusedDay: _focusedDay,
-            headerStyle: HeaderStyle(
-              formatButtonVisible: false,
-              titleCentered: true,
-              titleTextStyle: GoogleFonts.plusJakartaSans(
-                color: AppColors.textPrimary,
-                fontSize: 16,
-                fontWeight: FontWeight.w600,
+          // ── Hijri toggle ─────────────────────────────────────────────────
+          Row(
+            children: [
+              Expanded(
+                child: Text(
+                  'Show Islamic date',
+                  style: GoogleFonts.plusJakartaSans(
+                    fontSize: 13,
+                    color: AppColors.textSecondary,
+                  ),
+                ),
               ),
-              leftChevronIcon:
-                  const Icon(Icons.chevron_left, color: AppColors.textPrimary),
-              rightChevronIcon:
-                  const Icon(Icons.chevron_right, color: AppColors.textPrimary),
+              Switch(
+                value: _hijriPrimary,
+                activeThumbColor: AppColors.accent,
+                onChanged: _setHijriPrimary,
+              ),
+            ],
+          ),
+          const SizedBox(height: 4),
+
+          // ── Table calendar ────────────────────────────────────────────────
+          TableCalendar(
+            firstDay: DateTime.now().subtract(const Duration(days: 365)),
+            lastDay: DateTime.now().add(const Duration(days: 365)),
+            focusedDay: _focusedDay,
+            headerStyle: const HeaderStyle(
+              formatButtonVisible: false,
+              titleCentered: false,
+              headerPadding: EdgeInsets.only(bottom: 4),
+              leftChevronIcon: Icon(
+                Icons.chevron_left,
+                color: AppColors.textPrimary,
+              ),
+              rightChevronIcon: Icon(
+                Icons.chevron_right,
+                color: AppColors.textPrimary,
+              ),
             ),
             daysOfWeekStyle: DaysOfWeekStyle(
               weekdayStyle:
@@ -343,30 +403,67 @@ class _PrayerStatsPageState extends State<PrayerStatsPage> {
               setState(() {
                 _selectedDay = selectedDay;
                 _focusedDay = focusedDay;
+                _loading = true;
               });
+              _loadData();
             },
             calendarBuilders: CalendarBuilders(
-              defaultBuilder: (context, date, _) {
-                return _buildCalendarDay(date);
+              headerTitleBuilder: (context, day) {
+                final hijri = HijriCalendar.fromDate(day);
+                final primary = _hijriPrimary
+                    ? '${hijri.longMonthName} ${hijri.hYear}'
+                    : _gregorianMonthYear(day);
+                final secondary = _hijriPrimary
+                    ? _gregorianMonthYear(day)
+                    : '${hijri.longMonthName} ${hijri.hYear}';
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      primary,
+                      style: GoogleFonts.plusJakartaSans(
+                        fontSize: 15,
+                        fontWeight: FontWeight.w700,
+                        color: AppColors.textPrimary,
+                      ),
+                    ),
+                    Text(
+                      secondary,
+                      style: GoogleFonts.plusJakartaSans(
+                        fontSize: 11,
+                        color: AppColors.textSecondary,
+                      ),
+                    ),
+                  ],
+                );
               },
-              selectedBuilder: (context, date, _) {
-                return _buildCalendarDay(date, isSelected: true);
-              },
-              todayBuilder: (context, date, _) {
-                return _buildCalendarDay(date, isToday: true);
-              },
+              defaultBuilder: (context, date, _) =>
+                  _buildCalendarDay(context, date),
+              selectedBuilder: (context, date, _) =>
+                  _buildCalendarDay(context, date, isSelected: true),
+              todayBuilder: (context, date, _) =>
+                  _buildCalendarDay(context, date, isToday: true),
             ),
           ),
+
+          const SizedBox(height: 12),
+          _buildLegend(context),
+          const SizedBox(height: 4),
         ],
       ),
     );
   }
 
+  // ── Merged calendar day cell ───────────────────────────────────────────────
+
   Widget _buildCalendarDay(
+    BuildContext context,
     DateTime date, {
     bool isSelected = false,
     bool isToday = false,
   }) {
+    // Prayer completion state
     final dateKey = _history.keys.firstWhere(
       (d) => isSameDay(d, date),
       orElse: () => date,
@@ -375,65 +472,131 @@ class _PrayerStatsPageState extends State<PrayerStatsPage> {
     final completedCount = completions?.values.where((v) => v).length ?? 0;
     final total = _trackingService.mainPrayers.length;
 
-    Color? backgroundColor;
-    Color? borderColor;
-    Color textColor = AppColors.textPrimary;
+    // Hijri info for fasting highlights
+    final hijri = HijriCalendar.fromDate(date);
+    final isMandatoryFast = hijri.hMonth == 9; // Ramadan
+    final isOptionalFast = _whiteDays.contains(hijri.hDay);
 
-    if (completedCount == total && completedCount > 0) {
-      backgroundColor = AppColors.success.withValues(alpha: 0.2);
-      borderColor = AppColors.success.withValues(alpha: 0.5);
-      textColor = AppColors.success;
-    } else if (completedCount > 0) {
-      backgroundColor = AppColors.accent.withValues(alpha: 0.15);
-      borderColor = AppColors.accent.withValues(alpha: 0.3);
-      textColor = AppColors.accent;
-    } else {
-      backgroundColor = Colors.transparent;
-      borderColor = Colors.transparent;
-    }
+    // ── Background colour priority: selected > today > prayer > fasting ──
+    Color? bgColor;
+    Color borderColor = Colors.transparent;
+    Color primaryTextColor = AppColors.textPrimary;
 
     if (isSelected) {
-      backgroundColor = Colors.white.withValues(alpha: 0.1);
-      borderColor = Colors.white.withValues(alpha: 0.3);
-      textColor = AppColors.textPrimary;
-    } else if (isToday && completedCount == 0) {
-      backgroundColor = Colors.white.withValues(alpha: 0.05);
-      borderColor = Colors.white.withValues(alpha: 0.2);
+      bgColor = Colors.white.withValues(alpha: 0.12);
+      borderColor = Colors.white.withValues(alpha: 0.35);
+    } else if (completedCount == total && completedCount > 0) {
+      bgColor = AppColors.success.withValues(alpha: 0.18);
+      borderColor = AppColors.success.withValues(alpha: 0.45);
+      primaryTextColor = AppColors.success;
+    } else if (completedCount > 0) {
+      bgColor = AppColors.accent.withValues(alpha: 0.13);
+      borderColor = AppColors.accent.withValues(alpha: 0.28);
+      primaryTextColor = AppColors.accent;
+    } else if (isMandatoryFast) {
+      bgColor = _mandatoryFastColor;
+    } else if (isOptionalFast) {
+      bgColor = _optionalFastColor;
+    } else {
+      bgColor = Colors.transparent;
     }
 
+    if (isToday && !isSelected && completedCount == 0) {
+      bgColor = Colors.white.withValues(alpha: 0.05);
+      borderColor = Colors.white.withValues(alpha: 0.20);
+    }
+
+    // ── Dual date display ──────────────────────────────────────────────────
+    final primaryDate = _hijriPrimary ? hijri.hDay : date.day;
+    final secondaryDate = _hijriPrimary ? date.day : hijri.hDay;
+    final secondaryLabel = _hijriPrimary ? 'G' : 'H';
+
+    final secondaryTextColor =
+        isSelected ? Colors.white70 : AppColors.textSecondary;
+
     return Container(
-      margin: const EdgeInsets.all(4),
+      margin: const EdgeInsets.all(3),
       decoration: BoxDecoration(
-        color: backgroundColor,
-        borderRadius: BorderRadius.circular(12),
+        color: bgColor,
+        borderRadius: BorderRadius.circular(8),
         border: Border.all(color: borderColor, width: 1),
       ),
-      child: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(
-              '${date.day}',
-              style: GoogleFonts.plusJakartaSans(
-                fontSize: 14,
-                fontWeight:
-                    isSelected || isToday ? FontWeight.bold : FontWeight.normal,
-                color: textColor,
-              ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text(
+            '$primaryDate',
+            style: GoogleFonts.plusJakartaSans(
+              fontSize: 13,
+              fontWeight:
+                  isSelected || isToday ? FontWeight.bold : FontWeight.normal,
+              color: isSelected ? Colors.white : primaryTextColor,
             ),
-            if (completedCount > 0 && completedCount < total)
-              Container(
-                margin: const EdgeInsets.only(top: 2),
-                height: 4,
-                width: 4,
-                decoration: BoxDecoration(
-                  color: AppColors.accent,
-                  shape: BoxShape.circle,
+          ),
+          Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                '$secondaryLabel:',
+                style: TextStyle(
+                  fontSize: 7,
+                  color: secondaryTextColor,
+                  fontWeight: FontWeight.w600,
                 ),
               ),
-          ],
-        ),
+              Text(
+                '$secondaryDate',
+                style: TextStyle(fontSize: 8, color: secondaryTextColor),
+              ),
+            ],
+          ),
+          // Partial completion dot indicator
+          if (completedCount > 0 && completedCount < total)
+            Container(
+              margin: const EdgeInsets.only(top: 1),
+              height: 3,
+              width: 3,
+              decoration: BoxDecoration(
+                color: AppColors.accent,
+                shape: BoxShape.circle,
+              ),
+            ),
+        ],
       ),
+    );
+  }
+
+  // ── Legend ─────────────────────────────────────────────────────────────────
+
+  Widget _buildLegend(BuildContext context) {
+    return Wrap(
+      spacing: 12,
+      runSpacing: 8,
+      children: [
+        _legendChip(color: _mandatoryFastColor, label: 'Ramadan'),
+        _legendChip(color: _optionalFastColor, label: 'Ayyam al-Bid 13–15'),
+      ],
+    );
+  }
+
+  Widget _legendChip({required Color color, required String label}) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Container(
+          width: 10,
+          height: 10,
+          decoration: BoxDecoration(color: color, shape: BoxShape.circle),
+        ),
+        const SizedBox(width: 5),
+        Text(
+          label,
+          style: GoogleFonts.plusJakartaSans(
+            fontSize: 10,
+            color: AppColors.textSecondary,
+          ),
+        ),
+      ],
     );
   }
 }
