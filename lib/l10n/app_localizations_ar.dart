@@ -122,4 +122,13 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get listening => 'Listening...';
+
+  @override
+  String get hadiths => 'الأحاديث';
+
+  @override
+  String get searchHadiths => 'ابحث في الأحاديث...';
+
+  @override
+  String get noHadithsFound => 'لم يتم العثور على أحاديث';
 }

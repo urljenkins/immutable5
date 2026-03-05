@@ -1,8 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:immutable5/features/hadith/hadith_repository.dart';
 import 'package:immutable5/features/hadith/models/hadith_model.dart';
-import 'package:flutter/services.dart';
-import 'dart:convert';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
@@ -36,27 +34,27 @@ void main() {
 
     test('Hadith.fromJson matches schema', () {
       final json = {
-        "hadith_id": "test_1",
-        "collection": "Test Collection",
-        "book": "Test Book",
-        "book_number": 1,
-        "hadith_number": "1",
-        "narrator": "Narrator",
-        "arabic": "Arabic Text",
-        "translation_en": "English Translation",
-        "grade": "Sahih",
-        "topics": ["Topic 1", "Topic 2", "Topic 3"],
-        "summary_en": "Summary",
-        "key_lessons": ["Lesson 1", "Lesson 2"],
-        "length": "short",
-        "priority": 1
+        'hadith_id': 'test_1',
+        'collection': 'Test Collection',
+        'book': 'Test Book',
+        'book_number': 1,
+        'hadith_number': '1',
+        'narrator': 'Narrator',
+        'arabic': 'Arabic Text',
+        'translation_en': 'English Translation',
+        'grade': 'Sahih',
+        'topics': ['Topic 1', 'Topic 2', 'Topic 3'],
+        'summary_en': 'Summary',
+        'key_lessons': ['Lesson 1', 'Lesson 2'],
+        'length': 'short',
+        'priority': 1,
       };
 
       final hadith = Hadith.fromJson(json);
 
-      expect(hadith.id, "test_1");
-      expect(hadith.collection, "Test Collection");
-      expect(hadith.grade, "Sahih");
+      expect(hadith.id, 'test_1');
+      expect(hadith.collection, 'Test Collection');
+      expect(hadith.grade, 'Sahih');
       expect(hadith.topics.length, 3);
     });
   });

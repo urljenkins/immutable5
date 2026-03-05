@@ -123,4 +123,13 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get listening => 'Listening...';
+
+  @override
+  String get hadiths => 'Hadiths';
+
+  @override
+  String get searchHadiths => 'Rechercher des hadiths...';
+
+  @override
+  String get noHadithsFound => 'Aucun hadith trouvé';
 }

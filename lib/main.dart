@@ -11,7 +11,7 @@ import 'package:immutable5/services/secure_storage_provider.dart';
 import 'di/service_locator.dart';
 import 'features/common_words/common_words_page.dart';
 import 'features/duas/duas_page.dart';
-import 'features/hadith/hadith_page.dart';
+import 'features/hadith/hadiths_page.dart';
 import 'features/hajj/hajj_page.dart';
 import 'features/home/home_page.dart';
 import 'features/notifications/notification_service.dart';
@@ -545,12 +545,6 @@ class _AppScaffoldState extends State<AppScaffold> {
         page: HadithsPage(),
         icon: Icons.library_books,
         label: 'Hadiths',
-      ),
-      _NavItem(
-        id: 'hadiths',
-        page: const HadithPage(),
-        icon: Icons.auto_stories,
-        label: l10n.hadiths,
       ),
       _NavItem(
         id: 'quran',

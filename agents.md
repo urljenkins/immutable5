@@ -67,3 +67,63 @@ The project follows a **Feature-Focused Modular Architecture**.
 - `pubspec.yaml`: Project dependencies and configuration.
 - `README.md`: High-level feature overview and setup.
 - `ARCHITECTURE_REVIEW.md`: Detailed analysis of current architectural state.
+
+## Pre-Commit Checklist
+Before committing changes, verify the following to avoid common build failures:
+
+### 1. Constructor & Syntax
+- **No duplicate constructor bodies** — Ensure initializer lists (`:`) and constructor bodies (`{`) are not duplicated from merge conflicts or copy-paste errors.
+- **Parameter placement** — All constructor parameters must be inside the parentheses, before the initializer list.
+- **Balanced brackets** — Check for unclosed strings, missing commas in multiline strings, and mismatched `{}`, `[]`, `()`.
+
+### 2. Imports & Types
+- **Import the correct model** — This project has two Hadith models:
+  - `models/hadith.dart` — **Preferred**. Has typed `DisplayContext` from dua.dart.
+  - `models/hadith_model.dart` — Legacy. Uses `Map<String, dynamic>?` for displayContext.
+  - Always import `hadith.dart` when accessing `displayContext.timeWindows`, `.daysOfWeek`, etc.
+- **Verify imports exist** — When adding a new class usage (e.g., `HadithsPage`), ensure the import is added to the file.
+
+### 3. Localization
+When using `l10n.someKey`:
+- Ensure the key exists in **all** locale files:
+  - `lib/l10n/app_localizations.dart` (abstract getter)
+  - `lib/l10n/app_localizations_en.dart`
+  - `lib/l10n/app_localizations_ar.dart`
+  - `lib/l10n/app_localizations_es.dart`
+  - `lib/l10n/app_localizations_fr.dart`
+  - `lib/l10n/app_localizations_nl.dart`
+  - `lib/l10n/app_localizations_zh.dart`
+
+### 4. Navigation Items
+- **Unique IDs** — Each `_NavItem` in `main.dart` must have a unique `id`. Duplicate IDs cause navigation bugs.
+- **const correctness** — `_NavItem` can only be `const` if all its properties (including `page`) are const-constructible.
+
+### 5. Method References
+- **Check method exists** — Before calling private methods like `_determineActiveTimeWindow()`, verify the exact name. Similar methods may exist (e.g., `_determineActiveTimeWindows` plural vs singular).
+
+### 6. Multiline Strings in Arguments
+- **Use `\n` instead of actual newlines** — When passing multiline strings as arguments (e.g., to `ClipboardData(text: ...)`), use `\n` escape sequences instead of actual line breaks. Actual newlines in string literals within function calls cause parse errors.
+  ```dart
+  // BAD - causes parse errors
+  ClipboardData(text: '${hadith.arabic}
+  
+  ${hadith.translationEn}')
+  
+  // GOOD
+  ClipboardData(text: '${hadith.arabic}\n\n${hadith.translationEn}')
+  ```
+
+### 7. const Correctness
+- **Don't use `const` with non-const values** — Remove `const` from widgets that reference non-const static fields like `AppColors.accent` (which is mutable via settings).
+
+### 8. Dependency Injection (GetIt)
+- **No duplicate registrations** — Each type can only be registered once in `lib/di/service_locator.dart`. Duplicate `registerLazySingleton` calls cause runtime errors.
+- **Update test mocks** — When adding new required dependencies to controllers, add corresponding fakes in test files (e.g., `FakeHadithRepository`) and pass them explicitly.
+
+### 9. Quick Validation
+Run before committing:
+```bash
+flutter analyze
+flutter test
+flutter build apk --debug  # or: flutter build ios --debug
+```

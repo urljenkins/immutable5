@@ -3,7 +3,7 @@ import 'dart:developer' as developer;
 
 import 'package:flutter/services.dart';
 
-import 'models/hadith_model.dart';
+import 'models/hadith.dart';
 
 class HadithRepository {
   List<Hadith> _hadiths = [];

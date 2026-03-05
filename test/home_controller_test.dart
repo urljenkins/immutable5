@@ -2,6 +2,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:hijri/hijri_calendar.dart';
 import 'package:immutable5/features/duas/contextual_dua_service.dart';
 import 'package:immutable5/features/duas/models/dua_model.dart';
+import 'package:immutable5/features/hadith/hadith_repository.dart';
+import 'package:immutable5/features/hadith/models/hadith.dart';
 import 'package:immutable5/features/home/home_controller.dart';
 import 'package:immutable5/features/prayer/prayer_times_service.dart';
 import 'package:immutable5/features/quotes/quote_picker_service.dart';
@@ -12,6 +14,20 @@ import 'mocks.dart';
 class FakeQuoteService extends QuotePickerService {
   @override
   Future<String> getQuote({String? topic}) async => 'Test Quote';
+}
+
+class FakeHadithRepository extends HadithRepository {
+  @override
+  Future<List<Hadith>> getAllHadiths() async => [];
+  
+  @override
+  Future<Hadith?> getHadithById(String id) async => null;
+  
+  @override
+  Future<List<Hadith>> getHadithsByTopic(String topic) async => [];
+  
+  @override
+  Future<List<Hadith>> getHadithsByCollection(String collection) async => [];
 }
 
 class FakeContextualDuaService implements ContextualDuaService {
@@ -113,6 +129,7 @@ void main() {
       prayerFactory: (_, __, ___, ____) => fakePrayer,
       initialPrayerService: fakePrayer,
       contextualDuaService: FakeContextualDuaService(),
+      hadithRepository: FakeHadithRepository(),
       prefs: mockPrefs,
     );
 

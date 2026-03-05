@@ -8,8 +8,9 @@ import '../../l10n/app_localizations.dart';
 import '../../shared/app_colors.dart';
 import '../../shared/glass_container.dart';
 import '../duas/models/dua_model.dart';
-import '../hadith/models/hadith_model.dart';
 import '../glossary/glossary_page.dart';
+import '../hadith/hadith_repository.dart';
+import '../hadith/models/hadith.dart';
 import '../home/home_controller.dart';
 import '../prayer/prayer_times_service.dart';
 import '../quotes/quote_picker_service.dart';
@@ -286,25 +287,25 @@ class _MyHomePageState extends State<MyHomePage> {
                                             key: ValueKey<String>(
                                               state.quote ?? '',
                                             ),
-                                        width: double.infinity,
-                                        padding: const EdgeInsets.all(24),
-                                        child: Center(
-                                          child: SingleChildScrollView(
-                                            child: Text(
-                                              state.quote ?? '...',
-                                              textAlign: TextAlign.center,
-                                              style:
-                                                  GoogleFonts.plusJakartaSans(
-                                                fontSize: 16,
-                                                height: 1.6,
-                                                color: AppColors.textPrimary
-                                                    .withValues(alpha: 0.9),
-                                                fontStyle: FontStyle.italic,
+                                            width: double.infinity,
+                                            padding: const EdgeInsets.all(24),
+                                            child: Center(
+                                              child: SingleChildScrollView(
+                                                child: Text(
+                                                  state.quote ?? '...',
+                                                  textAlign: TextAlign.center,
+                                                  style: GoogleFonts
+                                                      .plusJakartaSans(
+                                                    fontSize: 16,
+                                                    height: 1.6,
+                                                    color: AppColors.textPrimary
+                                                        .withValues(alpha: 0.9),
+                                                    fontStyle: FontStyle.italic,
+                                                  ),
+                                                ),
                                               ),
                                             ),
                                           ),
-                                        ),
-                                      ),
                               ),
                             ),
                           ),

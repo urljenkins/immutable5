@@ -118,4 +118,13 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get listening => 'Listening...';
+
+  @override
+  String get hadiths => '圣训';
+
+  @override
+  String get searchHadiths => '搜索圣训...';
+
+  @override
+  String get noHadithsFound => '未找到圣训';
 }

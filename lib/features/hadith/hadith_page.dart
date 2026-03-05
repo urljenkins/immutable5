@@ -9,7 +9,7 @@ import '../../l10n/app_localizations.dart';
 import '../../shared/app_colors.dart';
 import '../../shared/glass_container.dart';
 import 'hadith_repository.dart';
-import 'models/hadith_model.dart';
+import 'models/hadith.dart';
 
 class HadithPage extends StatefulWidget {
   const HadithPage({super.key});
@@ -72,9 +72,8 @@ class _HadithPageState extends State<HadithPage> {
       var filtered = _hadiths;
 
       if (_selectedCollection != 'All') {
-        filtered = filtered
-            .where((h) => h.collection == _selectedCollection)
-            .toList();
+        filtered =
+            filtered.where((h) => h.collection == _selectedCollection).toList();
       }
 
       if (_searchQuery.isNotEmpty) {
@@ -554,10 +553,13 @@ class _HadithDetailSheet extends StatelessWidget {
                                 child: Row(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    const Text('• ',
-                                        style: TextStyle(
-                                            color: AppColors.accent,
-                                            fontWeight: FontWeight.bold)),
+                                    Text(
+                                      '• ',
+                                      style: TextStyle(
+                                        color: AppColors.accent,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
                                     Expanded(
                                       child: Text(
                                         lesson,
@@ -648,16 +650,13 @@ class _HadithDetailSheet extends StatelessWidget {
                                   Clipboard.setData(
                                     ClipboardData(
                                       text:
-                                          '${hadith.arabic}
-
-${hadith.translationEn}
-
-[${hadith.collection}, ${hadith.hadithNumber}]',
+                                          '${hadith.arabic}\n\n${hadith.translationEn}\n\n[${hadith.collection}, ${hadith.hadithNumber}]',
                                     ),
                                   );
                                   ScaffoldMessenger.of(context).showSnackBar(
                                     const SnackBar(
-                                      content: Text('Hadith copied to clipboard'),
+                                      content:
+                                          Text('Hadith copied to clipboard'),
                                       duration: Duration(seconds: 2),
                                     ),
                                   );

@@ -1,5 +1,5 @@
 import '../duas/models/dua_model.dart';
-import '../hadith/models/hadith_model.dart';
+import '../hadith/models/hadith.dart';
 
 class HomeState {
   final bool loading;

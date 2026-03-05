@@ -327,6 +327,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Listening...'**
   String get listening;
+
+  /// No description provided for @hadiths.
+  ///
+  /// In en, this message translates to:
+  /// **'Hadiths'**
+  String get hadiths;
+
+  /// No description provided for @searchHadiths.
+  ///
+  /// In en, this message translates to:
+  /// **'Search hadiths...'**
+  String get searchHadiths;
+
+  /// No description provided for @noHadithsFound.
+  ///
+  /// In en, this message translates to:
+  /// **'No hadiths found'**
+  String get noHadithsFound;
 }
 
 class _AppLocalizationsDelegate

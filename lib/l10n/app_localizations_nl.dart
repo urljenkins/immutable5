@@ -123,4 +123,13 @@ class AppLocalizationsNl extends AppLocalizations {
 
   @override
   String get listening => 'Listening...';
+
+  @override
+  String get hadiths => 'Hadith';
+
+  @override
+  String get searchHadiths => 'Zoek hadith...';
+
+  @override
+  String get noHadithsFound => 'Geen hadith gevonden';
 }

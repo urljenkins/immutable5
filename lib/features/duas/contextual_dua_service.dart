@@ -22,7 +22,8 @@ class ContextualDuaService {
     int bestPriority = 999;
 
     // Compute the active context tokens
-    final activeTimeWindows = _determineActiveTimeWindows(now, todayPrayerTimes);
+    final activeTimeWindows =
+        _determineActiveTimeWindows(now, todayPrayerTimes);
     final activeHijriPeriods = _determineActiveHijriPeriods(hijriDate);
     final activeDayOfWeek = _determineDayOfWeek(now);
     final seasonalContext = _determineSeasonalContext(now);
@@ -109,8 +110,9 @@ class ContextualDuaService {
     final duas = await _repository.getAllDuas();
     if (duas.isEmpty) return [];
 
-    final activeTimeWindow = _determineActiveTimeWindow(now, todayPrayerTimes);
-    final activeHijriPeriod = _determineActiveHijriPeriod(hijriDate);
+    final activeTimeWindows =
+        _determineActiveTimeWindows(now, todayPrayerTimes);
+    final activeHijriPeriods = _determineActiveHijriPeriods(hijriDate);
     final activeDayOfWeek = _determineDayOfWeek(now);
 
     final List<Map<String, dynamic>> scoredDuas = [];
@@ -123,8 +125,10 @@ class ContextualDuaService {
 
       // 1. Check Time Windows
       if (ctx.timeWindows.isNotEmpty) {
-        if (ctx.timeWindows.contains(activeTimeWindow) ||
-            ctx.timeWindows.contains('anytime')) {
+        final hasMatch = ctx.timeWindows.any(
+          (window) => activeTimeWindows.contains(window) || window == 'anytime',
+        );
+        if (hasMatch) {
           score += 10;
         } else {
           // If strictly restricted by time window and we are not in it, skip this dua
@@ -134,8 +138,10 @@ class ContextualDuaService {
 
       // 2. Check Hijri Periods
       if (ctx.hijriPeriods.isNotEmpty) {
-        if (activeHijriPeriod != null &&
-            ctx.hijriPeriods.contains(activeHijriPeriod)) {
+        final hasMatch = ctx.hijriPeriods.any(
+          (period) => activeHijriPeriods.contains(period),
+        );
+        if (hasMatch) {
           score += 20; // High weight for specific Islamic periods like Ramadan
         } else {
           // Restricted by period and not in it
@@ -236,7 +242,8 @@ class ContextualDuaService {
 
     // Advanced window checking using actual prayer times
     final fajr = prayerTimes['Fajr'];
-    final sunrise = prayerTimes['Sunrise'] ?? fajr?.add(const Duration(minutes: 90));
+    final sunrise =
+        prayerTimes['Sunrise'] ?? fajr?.add(const Duration(minutes: 90));
     final dhuhr = prayerTimes['Dhuhr'];
     final asr = prayerTimes['Asr'];
     final maghrib = prayerTimes['Maghrib'];
@@ -244,10 +251,12 @@ class ContextualDuaService {
 
     // Pre/Post Sunrise
     if (sunrise != null) {
-      if (now.isBefore(sunrise) && now.isAfter(sunrise.subtract(const Duration(minutes: 30)))) {
+      if (now.isBefore(sunrise) &&
+          now.isAfter(sunrise.subtract(const Duration(minutes: 30)))) {
         windows.add('pre_sunrise');
       }
-      if (now.isAfter(sunrise) && now.isBefore(sunrise.add(const Duration(hours: 1)))) {
+      if (now.isAfter(sunrise) &&
+          now.isBefore(sunrise.add(const Duration(hours: 1)))) {
         windows.add('post_sunrise');
       }
     }
@@ -269,32 +278,48 @@ class ContextualDuaService {
     }
 
     // Between Maghrib and Isha
-    if (maghrib != null && isha != null && now.isAfter(maghrib) && now.isBefore(isha)) {
+    if (maghrib != null &&
+        isha != null &&
+        now.isAfter(maghrib) &&
+        now.isBefore(isha)) {
       windows.add('between_maghrib_isha');
     }
 
     // Standard prayer windows
-    if (fajr != null && _isBetween(now, fajr.subtract(const Duration(minutes: 30)), fajr.add(const Duration(hours: 1)))) {
+    if (fajr != null &&
+        _isBetween(now, fajr.subtract(const Duration(minutes: 30)),
+            fajr.add(const Duration(hours: 1)))) {
       windows.add('fajr');
     }
-    if (dhuhr != null && _isBetween(now, dhuhr, asr ?? dhuhr.add(const Duration(hours: 3)))) {
+    if (dhuhr != null &&
+        _isBetween(now, dhuhr, asr ?? dhuhr.add(const Duration(hours: 3)))) {
       windows.add('dhuhr');
     }
-    if (asr != null && _isBetween(now, asr, maghrib ?? asr.add(const Duration(hours: 3)))) {
+    if (asr != null &&
+        _isBetween(now, asr, maghrib ?? asr.add(const Duration(hours: 3)))) {
       windows.add('asr');
     }
-    if (maghrib != null && _isBetween(now, maghrib, isha ?? maghrib.add(const Duration(hours: 1, minutes: 30)))) {
+    if (maghrib != null &&
+        _isBetween(now, maghrib,
+            isha ?? maghrib.add(const Duration(hours: 1, minutes: 30)))) {
       windows.add('maghrib');
     }
-    if (isha != null && _isBetween(now, isha, fajr?.add(const Duration(days: 1)) ?? isha.add(const Duration(hours: 8)))) {
+    if (isha != null &&
+        _isBetween(
+            now,
+            isha,
+            fajr?.add(const Duration(days: 1)) ??
+                isha.add(const Duration(hours: 8)))) {
       windows.add('isha');
     }
 
     // Last third of the night
     if (fajr != null && maghrib != null) {
-      final nextFajr = fajr.isBefore(maghrib) ? fajr.add(const Duration(days: 1)) : fajr;
+      final nextFajr =
+          fajr.isBefore(maghrib) ? fajr.add(const Duration(days: 1)) : fajr;
       final nightDuration = nextFajr.difference(maghrib);
-      final lastThirdStart = nextFajr.subtract(Duration(seconds: nightDuration.inSeconds ~/ 3));
+      final lastThirdStart =
+          nextFajr.subtract(Duration(seconds: nightDuration.inSeconds ~/ 3));
 
       if (now.isAfter(lastThirdStart) && now.isBefore(nextFajr)) {
         windows.add('last_third_night');
@@ -312,7 +337,7 @@ class ContextualDuaService {
 
   List<String> _determineActiveHijriPeriods(HijriCalendar date) {
     final List<String> periods = [];
-    
+
     // Month-based
     if (date.hMonth == 1) periods.add('muharram');
     if (date.hMonth == 7) periods.add('rajab');
@@ -324,11 +349,12 @@ class ContextualDuaService {
     // Specific days
     if (date.hMonth == 1 && date.hDay == 10) periods.add('ashura');
     if (date.hMonth == 9 && date.hDay >= 21) periods.add('ramadan_last_ten');
-    if (date.hMonth == 12 && date.hDay <= 10) periods.add('dhul_hijjah_first_ten');
+    if (date.hMonth == 12 && date.hDay <= 10)
+      periods.add('dhul_hijjah_first_ten');
     if (date.hMonth == 12 && date.hDay == 9) periods.add('arafah');
     if (date.hMonth == 10 && date.hDay == 1) periods.add('eid_al_fitr');
     if (date.hMonth == 12 && date.hDay == 10) periods.add('eid_al_adha');
-    
+
     // White Days (13, 14, 15)
     if (date.hDay >= 13 && date.hDay <= 15) periods.add('white_days');
 
@@ -337,14 +363,22 @@ class ContextualDuaService {
 
   String _determineDayOfWeek(DateTime date) {
     switch (date.weekday) {
-      case DateTime.monday: return 'monday';
-      case DateTime.tuesday: return 'tuesday';
-      case DateTime.wednesday: return 'wednesday';
-      case DateTime.thursday: return 'thursday';
-      case DateTime.friday: return 'friday';
-      case DateTime.saturday: return 'saturday';
-      case DateTime.sunday: return 'sunday';
-      default: return 'any';
+      case DateTime.monday:
+        return 'monday';
+      case DateTime.tuesday:
+        return 'tuesday';
+      case DateTime.wednesday:
+        return 'wednesday';
+      case DateTime.thursday:
+        return 'thursday';
+      case DateTime.friday:
+        return 'friday';
+      case DateTime.saturday:
+        return 'saturday';
+      case DateTime.sunday:
+        return 'sunday';
+      default:
+        return 'any';
     }
   }
 

@@ -123,4 +123,13 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get listening => 'Listening...';
+
+  @override
+  String get hadiths => 'Hadices';
+
+  @override
+  String get searchHadiths => 'Buscar hadices...';
+
+  @override
+  String get noHadithsFound => 'No se encontraron hadices';
 }

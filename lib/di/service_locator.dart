@@ -26,7 +26,6 @@ void setupLocator() {
   getIt.registerLazySingleton<ContextualDuaService>(
     () => ContextualDuaService(),
   );
-  getIt.registerLazySingleton<HadithRepository>(() => HadithRepository());
   getIt.registerLazySingleton<ContextualHadithService>(
     () => ContextualHadithService(getIt<HadithRepository>()),
   );

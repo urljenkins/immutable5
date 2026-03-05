@@ -12,7 +12,7 @@ import 'package:immutable5/services/secure_storage_provider.dart';
 import '../../di/service_locator.dart';
 import '../duas/contextual_dua_service.dart';
 import '../hadith/hadith_repository.dart';
-import '../hadith/models/hadith_model.dart';
+import '../hadith/models/hadith.dart';
 import '../prayer/prayer_times_service.dart';
 import '../quotes/quote_picker_service.dart';
 import 'home_state.dart';
@@ -36,12 +36,10 @@ class HomeController extends ChangeNotifier {
     PrayerTimesService? initialPrayerService,
     ContextualDuaService? contextualDuaService,
     HadithRepository? hadithRepository,
-  })  : contextualDuaService =
-            contextualDuaService ?? getIt<ContextualDuaService>(),
-        hadithRepository = hadithRepository ?? getIt<HadithRepository>() {
     SecureStorageProvider? prefs,
   })  : contextualDuaService =
             contextualDuaService ?? getIt<ContextualDuaService>(),
+        hadithRepository = hadithRepository ?? getIt<HadithRepository>(),
         _prefs = prefs ?? getIt<SecureStorageProvider>() {
     if (initialPrayerService != null) {
       _prayerTimesService = initialPrayerService;

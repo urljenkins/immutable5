@@ -28,6 +28,9 @@ class Hadith {
   final DisplayContext? displayContext;
   final List<HadithVariant> variants;
 
+  /// Convenience getter for backwards compatibility with code using 'id'
+  String get id => hadithId;
+
   const Hadith({
     required this.schemaVersion,
     required this.hadithId,
