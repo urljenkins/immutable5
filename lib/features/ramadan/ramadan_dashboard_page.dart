@@ -4,8 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hijri/hijri_calendar.dart';
 import 'package:immutable5/services/secure_storage_provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-
 import '../../di/service_locator.dart';
 import '../../shared/app_colors.dart';
 import '../../shared/glass_container.dart';

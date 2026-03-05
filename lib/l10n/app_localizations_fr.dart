@@ -15,9 +15,6 @@ class AppLocalizationsFr extends AppLocalizations {
   String get home => 'Accueil';
 
   @override
-  String get calendar => 'Calendrier';
-
-  @override
   String get hajj => 'Hadj';
 
   @override

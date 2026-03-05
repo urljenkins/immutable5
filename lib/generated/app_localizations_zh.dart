@@ -15,9 +15,6 @@ class AppLocalizationsZh extends AppLocalizations {
   String get home => '主页';
 
   @override
-  String get calendar => '日历';
-
-  @override
   String get hajj => '朝觐';
 
   @override

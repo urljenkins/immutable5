@@ -26,7 +26,6 @@ class _NavBarCustomizationPageState extends State<NavBarCustomizationPage> {
     'track': _TabMeta(Icons.check_circle, 'Track'),
     'places': _TabMeta(Icons.map, 'Places'),
     'qibla': _TabMeta(Icons.explore, 'Qibla'),
-    'calendar': _TabMeta(Icons.calendar_today, 'Calendar'),
     'hajj': _TabMeta(Icons.directions_walk, 'Hajj'),
     'common_words': _TabMeta(Icons.translate, 'Common Words'),
     'tasbih': _TabMeta(Icons.fingerprint, 'Tasbih'),
@@ -255,16 +254,46 @@ class _NavBarCustomizationPageState extends State<NavBarCustomizationPage> {
             final meta = _meta[e.id]!;
             return Padding(
               padding: const EdgeInsets.all(8.0),
-              child: Icon(meta.icon, size: 22, color: AppColors.textSecondary),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(meta.icon, size: 22, color: AppColors.textSecondary),
+                  const SizedBox(height: 4),
+                  Text(
+                    meta.label,
+                    style: const TextStyle(
+                      fontSize: 10,
+                      color: AppColors.textSecondary,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ],
+              ),
             );
           }),
           if (hasOverflow)
             const Padding(
               padding: EdgeInsets.all(8.0),
-              child: Icon(
-                Icons.more_horiz,
-                size: 22,
-                color: AppColors.textSecondary,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(
+                    Icons.more_horiz,
+                    size: 22,
+                    color: AppColors.textSecondary,
+                  ),
+                  SizedBox(height: 4),
+                  Text(
+                    'More',
+                    style: TextStyle(
+                      fontSize: 10,
+                      color: AppColors.textSecondary,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ],
               ),
             ),
         ],

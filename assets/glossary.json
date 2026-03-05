@@ -1,0 +1,638 @@
+[
+    {
+        "term": "Allah",
+        "arabic": "الله",
+        "definition": "The Arabic word for 'God,' signifying the one and only deity in Islam.",
+        "category": "Core Beliefs"
+    },
+    {
+        "term": "Wudu",
+        "arabic": "وضوء",
+        "definition": "The ritual washing performed by Muslims before prayer (Salah).",
+        "category": "Practices"
+    },
+    {
+        "term": "Adhan",
+        "arabic": "أذان",
+        "definition": "The Islamic call to prayer.",
+        "category": "Practices"
+    },
+    {
+        "term": "Akhirah",
+        "arabic": "الآخرة",
+        "definition": "Referring to the hereafter or the afterlife.",
+        "category": "Core Beliefs"
+    },
+    {
+        "term": "Alhamdulillah",
+        "arabic": "الحمد لله",
+        "definition": "An expression meaning 'Praise be to God!'",
+        "category": "Common Phrases"
+    },
+    {
+        "term": "Allahu Akbar",
+        "arabic": "الله أكبر",
+        "definition": "Meaning 'Allah is [the] greatest'.",
+        "category": "Common Phrases"
+    },
+    {
+        "term": "Dhikr",
+        "arabic": "ذكر",
+        "definition": "The practice of invoking the name of God through repetition.",
+        "category": "Practices"
+    },
+    {
+        "term": "Dua",
+        "arabic": "دعاء",
+        "definition": "Personal prayer or supplication.",
+        "category": "Practices"
+    },
+    {
+        "term": "Fard",
+        "arabic": "فرض",
+        "definition": "An act that is obligatory upon Muslims.",
+        "category": "Jurisprudence"
+    },
+    {
+        "term": "Hadith",
+        "arabic": "حديث",
+        "definition": "Sayings, actions, and approvals of Prophet Muhammad ﷺ.",
+        "category": "Sacred Texts"
+    },
+    {
+        "term": "Hajj",
+        "arabic": "حج",
+        "definition": "The pilgrimage to Makkah, one of the Five Pillars of Islam.",
+        "category": "Pillars of Islam"
+    },
+    {
+        "term": "Halal",
+        "arabic": "حلال",
+        "definition": "Permissible or lawful according to Islamic law.",
+        "category": "Jurisprudence"
+    },
+    {
+        "term": "Haram",
+        "arabic": "حرام",
+        "definition": "Forbidden or illegal according to Islamic law.",
+        "category": "Jurisprudence"
+    },
+    {
+        "term": "Imam",
+        "arabic": "إمام",
+        "definition": "A leader of congregational prayers or a religious guide.",
+        "category": "General"
+    },
+    {
+        "term": "Islam",
+        "arabic": "إسلام",
+        "definition": "Submission to God's will.",
+        "category": "Core Beliefs"
+    },
+    {
+        "term": "Jannah",
+        "arabic": "جنة",
+        "definition": "Paradise or Heaven.",
+        "category": "Core Beliefs"
+    },
+    {
+        "term": "Jihad",
+        "arabic": "جهاد",
+        "definition": "Struggle or striving for righteousness.",
+        "category": "General"
+    },
+    {
+        "term": "Ka'bah",
+        "arabic": "كعبة",
+        "definition": "The cube-shaped building in Makkah faced during prayer.",
+        "category": "General"
+    },
+    {
+        "term": "Masjid",
+        "arabic": "مسجد",
+        "definition": "A place of worship for Muslims (Mosque).",
+        "category": "General"
+    },
+    {
+        "term": "Qibla",
+        "arabic": "قبلة",
+        "definition": "The direction toward the Ka'bah in Makkah.",
+        "category": "Practices"
+    },
+    {
+        "term": "Quran",
+        "arabic": "قرآن",
+        "definition": "The central religious text of Islam, the word of Allah.",
+        "category": "Sacred Texts"
+    },
+    {
+        "term": "Salah",
+        "arabic": "صلاة",
+        "definition": "The ritual prayer performed five times daily.",
+        "category": "Pillars of Islam"
+    },
+    {
+        "term": "Sawm",
+        "arabic": "صوم",
+        "definition": "Fasting, particularly during the month of Ramadan.",
+        "category": "Pillars of Islam"
+    },
+    {
+        "term": "Shahada",
+        "arabic": "شهادة",
+        "definition": "The Islamic declaration of faith.",
+        "category": "Pillars of Islam"
+    },
+    {
+        "term": "Sharia",
+        "arabic": "شريعة",
+        "definition": "Islamic law based on the Quran and Sunnah.",
+        "category": "Jurisprudence"
+    },
+    {
+        "term": "Sunnah",
+        "arabic": "سنة",
+        "definition": "Practices and teachings of the Prophet Muhammad ﷺ.",
+        "category": "General"
+    },
+    {
+        "term": "Tawheed",
+        "arabic": "توحيد",
+        "definition": "Belief in the absolute oneness of Allah.",
+        "category": "Core Beliefs"
+    },
+    {
+        "term": "Ummah",
+        "arabic": "أمة",
+        "definition": "The global community of Muslim believers.",
+        "category": "General"
+    },
+    {
+        "term": "Zakat",
+        "arabic": "زكاة",
+        "definition": "Obligatory charity given to the needy.",
+        "category": "Pillars of Islam"
+    },
+    {
+        "term": "Adam",
+        "arabic": "آدم",
+        "definition": "The first human and the first Prophet.",
+        "category": "Prophets"
+    },
+    {
+        "term": "Nuh",
+        "arabic": "نوح",
+        "definition": "Prophet who built the ark.",
+        "category": "Prophets"
+    },
+    {
+        "term": "Ibrahim",
+        "arabic": "إبراهيم",
+        "definition": "The patriarch and a close friend of Allah.",
+        "category": "Prophets"
+    },
+    {
+        "term": "Musa",
+        "arabic": "موسى",
+        "definition": "Prophet sent to the Israelites, receiver of the Torah.",
+        "category": "Prophets"
+    },
+    {
+        "term": "Isa",
+        "arabic": "عيسى",
+        "definition": "Prophet and Messiah sent to the Israelites.",
+        "category": "Prophets"
+    },
+    {
+        "term": "Muhammad",
+        "arabic": "محمد",
+        "definition": "The final Prophet and Messenger of Allah ﷺ.",
+        "category": "Prophets"
+    },
+    {
+        "term": "Jibreel",
+        "arabic": "جبريل",
+        "definition": "The angel responsible for delivering revelations.",
+        "category": "Angels"
+    },
+    {
+        "term": "Mikaeel",
+        "arabic": "ميكائيل",
+        "definition": "The angel responsible for rain and sustenance.",
+        "category": "Angels"
+    },
+    {
+        "term": "Israfeel",
+        "arabic": "إسرافيل",
+        "definition": "The angel who will blow the trumpet on Judgment Day.",
+        "category": "Angels"
+    },
+    {
+        "term": "Malak al-Mawt",
+        "arabic": "ملك الموت",
+        "definition": "The Angel of Death.",
+        "category": "Angels"
+    },
+    {
+        "term": "Tawrat",
+        "arabic": "توراة",
+        "definition": "The Torah, revealed to Prophet Musa.",
+        "category": "Sacred Books"
+    },
+    {
+        "term": "Zabur",
+        "arabic": "زبور",
+        "definition": "The Psalms, revealed to Prophet Dawud.",
+        "category": "Sacred Books"
+    },
+    {
+        "term": "Injil",
+        "arabic": "إنجيل",
+        "definition": "The Gospel, revealed to Prophet Isa.",
+        "category": "Sacred Books"
+    },
+    {
+        "term": "Bismillah",
+        "arabic": "بسم الله",
+        "definition": "In the name of Allah.",
+        "category": "Common Phrases"
+    },
+    {
+        "term": "InshaAllah",
+        "arabic": "إن شاء الله",
+        "definition": "God willing.",
+        "category": "Common Phrases"
+    },
+    {
+        "term": "SubhanAllah",
+        "arabic": "سبحان الله",
+        "definition": "Glory be to Allah.",
+        "category": "Common Phrases"
+    },
+    {
+        "term": "Aqeeda",
+        "arabic": "عقيدة",
+        "definition": "Fundamental creed or belief system.",
+        "category": "Core Beliefs"
+    },
+    {
+        "term": "Assalamu Alaykum",
+        "arabic": "السلام عليكم",
+        "definition": "Peace be upon you (Greeting).",
+        "category": "Common Phrases"
+    },
+    {
+        "term": "Jazak Allahu Khayran",
+        "arabic": "جزاك الله خيرًا",
+        "definition": "May Allah reward you with goodness.",
+        "category": "Common Phrases"
+    },
+    {
+        "term": "Tazkiyah",
+        "arabic": "تزكية",
+        "definition": "Purification of the soul.",
+        "category": "General"
+    },
+    {
+        "term": "Nafs",
+        "arabic": "نفس",
+        "definition": "The self, soul, or ego.",
+        "category": "General"
+    },
+    {
+        "term": "Qalb",
+        "arabic": "قلب",
+        "definition": "The spiritual heart.",
+        "category": "General"
+    },
+    {
+        "term": "Fatwa",
+        "arabic": "فتوى",
+        "definition": "A legal opinion on a matter of Islamic law.",
+        "category": "Jurisprudence"
+    },
+    {
+        "term": "Fiqh",
+        "arabic": "فقه",
+        "definition": "Islamic jurisprudence.",
+        "category": "Jurisprudence"
+    },
+    {
+        "term": "Mubah",
+        "arabic": "مباح",
+        "definition": "Neutral or permissible acts in Islamic law.",
+        "category": "Jurisprudence"
+    },
+    {
+        "term": "Mustahabb",
+        "arabic": "مستحب",
+        "definition": "Recommended acts in Islamic law.",
+        "category": "Jurisprudence"
+    },
+    {
+        "term": "Makruh",
+        "arabic": "مكروه",
+        "definition": "Disliked or discouraged acts in Islamic law.",
+        "category": "Jurisprudence"
+    },
+    {
+        "term": "Shirk",
+        "arabic": "شرك",
+        "definition": "Associating partners with Allah (the greatest sin).",
+        "category": "Core Beliefs"
+    },
+    {
+        "term": "Kufr",
+        "arabic": "كفر",
+        "definition": "Disbelief or denial of the truth.",
+        "category": "Core Beliefs"
+    },
+    {
+        "term": "Nifaq",
+        "arabic": "نفاق",
+        "definition": "Hypocrisy in faith.",
+        "category": "Core Beliefs"
+    },
+    {
+        "term": "Idris",
+        "arabic": "إدريس",
+        "definition": "An early Prophet mentioned in the Quran.",
+        "category": "Prophets"
+    },
+    {
+        "term": "Hud",
+        "arabic": "هود",
+        "definition": "Prophet sent to the people of 'Ad.",
+        "category": "Prophets"
+    },
+    {
+        "term": "Saleh",
+        "arabic": "صالح",
+        "definition": "Prophet sent to the people of Thamud.",
+        "category": "Prophets"
+    },
+    {
+        "term": "Lut",
+        "arabic": "لوط",
+        "definition": "Prophet sent to the people of Sodom.",
+        "category": "Prophets"
+    },
+    {
+        "term": "Ismail",
+        "arabic": "إسماعيل",
+        "definition": "Son of Ibrahim, helper in building the Ka'bah.",
+        "category": "Prophets"
+    },
+    {
+        "term": "Ishaq",
+        "arabic": "إسحاق",
+        "definition": "Son of Ibrahim and father of Yaqub.",
+        "category": "Prophets"
+    },
+    {
+        "term": "Yaqub",
+        "arabic": "يعقوب",
+        "definition": "Prophet and grandson of Ibrahim.",
+        "category": "Prophets"
+    },
+    {
+        "term": "Yusuf",
+        "arabic": "يوسف",
+        "definition": "Prophet renowned for his beauty and patience.",
+        "category": "Prophets"
+    },
+    {
+        "term": "Ayyub",
+        "arabic": "أيوب",
+        "definition": "Prophet known for his extreme patience during trials.",
+        "category": "Prophets"
+    },
+    {
+        "term": "Shu'aib",
+        "arabic": "شعيب",
+        "definition": "Prophet sent to the people of Midian.",
+        "category": "Prophets"
+    },
+    {
+        "term": "Harun",
+        "arabic": "هارون",
+        "definition": "Prophet and brother/helper of Musa.",
+        "category": "Prophets"
+    },
+    {
+        "term": "Dhulkifl",
+        "arabic": "ذو الكفل",
+        "definition": "A prophet mentioned in the Quran.",
+        "category": "Prophets"
+    },
+    {
+        "term": "Dawud",
+        "arabic": "داود",
+        "definition": "Prophet and king who received the Zabur.",
+        "category": "Prophets"
+    },
+    {
+        "term": "Sulayman",
+        "arabic": "سليمان",
+        "definition": "Prophet and king known for his wisdom and power.",
+        "category": "Prophets"
+    },
+    {
+        "term": "Ilyas",
+        "arabic": "إلياس",
+        "definition": "Prophet sent to the people of Baalbek.",
+        "category": "Prophets"
+    },
+    {
+        "term": "Alyasa",
+        "arabic": "اليسع",
+        "definition": "A prophet mentioned in the Quran.",
+        "category": "Prophets"
+    },
+    {
+        "term": "Yunus",
+        "arabic": "يونس",
+        "definition": "Prophet who was swallowed by a whale.",
+        "category": "Prophets"
+    },
+    {
+        "term": "Zakariya",
+        "arabic": "زكريا",
+        "definition": "Prophet and guardian of Maryam.",
+        "category": "Prophets"
+    },
+    {
+        "term": "Yahya",
+        "arabic": "يحيى",
+        "definition": "Prophet and son of Zakariya.",
+        "category": "Prophets"
+    },
+    {
+        "term": "Munkar",
+        "arabic": "منكر",
+        "definition": "One of the angels who questions souls in the grave.",
+        "category": "Angels"
+    },
+    {
+        "term": "Nakir",
+        "arabic": "نكير",
+        "definition": "One of the angels who questions souls in the grave.",
+        "category": "Angels"
+    },
+    {
+        "term": "Kiraman Katibeen",
+        "arabic": "كراماً كاتبين",
+        "definition": "The noble scribes recording good and bad deeds.",
+        "category": "Angels"
+    },
+    {
+        "term": "Malik",
+        "arabic": "مالك",
+        "definition": "The guardian angel of Hell (Jahannam).",
+        "category": "Angels"
+    },
+    {
+        "term": "Ridwan",
+        "arabic": "رضوان",
+        "definition": "The guardian angel of Paradise (Jannah).",
+        "category": "Angels"
+    },
+    {
+        "term": "Hamalat al-'Arsh",
+        "arabic": "حملة العرش",
+        "definition": "The angels who bear the Throne of Allah.",
+        "category": "Angels"
+    },
+    {
+        "term": "Hafaza",
+        "arabic": "حفظة",
+        "definition": "Guardian angels assigned to protect individuals.",
+        "category": "Angels"
+    },
+    {
+        "term": "Sahih al-Bukhari",
+        "arabic": "صحيح البخاري",
+        "definition": "Most authentic collection of Hadith in Sunni Islam.",
+        "category": "Sacred Books"
+    },
+    {
+        "term": "Sahih Muslim",
+        "arabic": "صحيح مسلم",
+        "definition": "One of the two most authentic Hadith collections.",
+        "category": "Sacred Books"
+    },
+    {
+        "term": "Sunan Abi Dawud",
+        "arabic": "سنن أبي داود",
+        "definition": "One of the six major Hadith collections.",
+        "category": "Sacred Books"
+    },
+    {
+        "term": "Jami' at-Tirmidhi",
+        "arabic": "جامع الترمذي",
+        "definition": "One of the six major Hadith collections.",
+        "category": "Sacred Books"
+    },
+    {
+        "term": "Sunan an-Nasa'i",
+        "arabic": "سنن النسائي",
+        "definition": "One of the six major Hadith collections.",
+        "category": "Sacred Books"
+    },
+    {
+        "term": "Sunan Ibn Majah",
+        "arabic": "سنن ابن ماجه",
+        "definition": "One of the six major Hadith collections.",
+        "category": "Sacred Books"
+    },
+    {
+        "term": "Sadaqah",
+        "arabic": "صدقة",
+        "definition": "Voluntary charity given for the sake of Allah.",
+        "category": "General"
+    },
+    {
+        "term": "Taqwa",
+        "arabic": "تقوى",
+        "definition": "God-consciousness or piety.",
+        "category": "Core Beliefs"
+    },
+    {
+        "term": "Ibadah",
+        "arabic": "عبادة",
+        "definition": "Acts of worship and devotion to Allah.",
+        "category": "General"
+    },
+    {
+        "term": "Ihsaan",
+        "arabic": "إحسان",
+        "definition": "Excellence in worship and character.",
+        "category": "Core Beliefs"
+    },
+    {
+        "term": "Barakah",
+        "arabic": "بركة",
+        "definition": "Blessing or divine grace.",
+        "category": "General"
+    },
+    {
+        "term": "Jahannam",
+        "arabic": "جهنم",
+        "definition": "Hellfire, the place of punishment in the afterlife.",
+        "category": "Core Beliefs"
+    },
+    {
+        "term": "Mahram",
+        "arabic": "محرم",
+        "definition": "An unmarriageable kin with whom proximity is allowed.",
+        "category": "Jurisprudence"
+    },
+    {
+        "term": "Awrah",
+        "arabic": "عورة",
+        "definition": "The parts of the body that must be covered.",
+        "category": "Jurisprudence"
+    },
+    {
+        "term": "Zina",
+        "arabic": "زنا",
+        "definition": "Illegal sexual intercourse (adultery or fornication).",
+        "category": "Jurisprudence"
+    },
+    {
+        "term": "Riba",
+        "arabic": "ربا",
+        "definition": "Usury or interest, which is forbidden in Islam.",
+        "category": "Jurisprudence"
+    },
+    {
+        "term": "Suhur",
+        "arabic": "سحور",
+        "definition": "Meal consumed before dawn before fasting.",
+        "category": "Practices"
+    },
+    {
+        "term": "Iftar",
+        "arabic": "إفطار",
+        "definition": "Meal consumed to break the fast at sunset.",
+        "category": "Practices"
+    },
+    {
+        "term": "Tarawih",
+        "arabic": "تراويح",
+        "definition": "Special voluntary prayers during Ramadan nights.",
+        "category": "Practices"
+    },
+    {
+        "term": "Eid al-Fitr",
+        "arabic": "عيد الفطر",
+        "definition": "Festival marking the end of Ramadan.",
+        "category": "General"
+    },
+    {
+        "term": "Eid al-Adha",
+        "arabic": "عيد الأضحى",
+        "definition": "Festival of Sacrifice marking the end of Hajj.",
+        "category": "General"
+    }
+]

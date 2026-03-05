@@ -141,23 +141,48 @@ class JuzOfTheDayService {
   }
 
   // ---------------------------------------------------------------------------
-  // Surah-based: split 114 surahs into 30 groups of whole surahs.
+  // Surah-based: mapping of 114 surahs into 30 specific groups.
   // ---------------------------------------------------------------------------
-  List<JuzRange> _surahBasedRanges(int juzNumber) {
-    const totalSurahs = 114;
-    const totalGroups = 30;
-    const baseSize = totalSurahs ~/ totalGroups; // 3
-    const remainder = totalSurahs % totalGroups; // 24
+  static const _surahBasedBoundaries = <List<int>>[
+    [1, 2], // Day 1
+    [3, 3], // Day 2
+    [4, 4], // Day 3
+    [5, 5], // Day 4
+    [6, 6], // Day 5
+    [7, 7], // Day 6
+    [8, 9], // Day 7
+    [10, 11], // Day 8
+    [12, 13], // Day 9
+    [14, 15], // Day 10
+    [16, 16], // Day 11
+    [17, 18], // Day 12
+    [19, 20], // Day 13
+    [21, 22], // Day 14
+    [23, 24], // Day 15
+    [25, 26], // Day 16
+    [27, 29], // Day 17
+    [30, 33], // Day 18
+    [34, 37], // Day 19
+    [38, 40], // Day 20
+    [41, 44], // Day 21
+    [45, 49], // Day 22
+    [50, 54], // Day 23
+    [55, 58], // Day 24
+    [59, 68], // Day 25
+    [69, 74], // Day 26
+    [75, 79], // Day 27
+    [80, 88], // Day 28
+    [89, 97], // Day 29
+    [98, 114], // Day 30
+  ];
 
-    // First `remainder` groups get baseSize+1, the rest get baseSize.
-    int startSurah = 1;
-    for (var g = 1; g < juzNumber; g++) {
-      startSurah += (g <= remainder) ? baseSize + 1 : baseSize;
-    }
-    final groupSize = (juzNumber <= remainder) ? baseSize + 1 : baseSize;
+  List<JuzRange> _surahBasedRanges(int juzNumber) {
+    final b = _surahBasedBoundaries[juzNumber - 1];
+    final start = b[0];
+    final end = b[1];
 
     final ranges = <JuzRange>[];
-    for (var s = startSurah; s < startSurah + groupSize; s++) {
+    for (var s = start; s <= end; s++) {
       ranges.add(JuzRange(surahNumber: s));
     }
     return ranges;

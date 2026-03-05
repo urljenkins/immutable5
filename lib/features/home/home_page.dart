@@ -9,6 +9,7 @@ import '../../shared/app_colors.dart';
 import '../../shared/glass_container.dart';
 import '../duas/models/dua_model.dart';
 import '../hadith/models/hadith_model.dart';
+import '../glossary/glossary_page.dart';
 import '../home/home_controller.dart';
 import '../prayer/prayer_times_service.dart';
 import '../quotes/quote_picker_service.dart';
@@ -75,13 +76,28 @@ class _MyHomePageState extends State<MyHomePage> {
                               color: AppColors.accent,
                             ),
                           )
-                        : const Icon(Icons.refresh,
-                            color: AppColors.textSecondary),
+                        : const Icon(
+                            Icons.refresh,
+                            color: AppColors.textSecondary,
+                          ),
                     onPressed: state.refreshing ? null : _controller.refresh,
                     tooltip: AppLocalizations.of(context)!.refreshPrayerTimes,
                   )
                 : null,
             actions: [
+              IconButton(
+                icon: const Icon(Icons.menu_book_outlined),
+                color: AppColors.textSecondary,
+                tooltip: 'Glossary',
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const GlossaryPage(),
+                    ),
+                  );
+                },
+              ),
               IconButton(
                 icon: const Icon(Icons.nights_stay_outlined),
                 color: AppColors.textSecondary,
@@ -222,7 +238,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                     const SizedBox(height: 16),
                                     Text(
                                       state.showPastPrayer
-                                          ? "TIME REMAINING"
+                                          ? 'TIME REMAINING'
                                           : AppLocalizations.of(
                                               context,
                                             )!

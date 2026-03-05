@@ -55,10 +55,12 @@ dependencies:
   flutter_animate: ^4.5.2
   share_plus: ^10.0.0
   flutter_map: ^7.0.2
+  flutter_map_cancellable_tile_provider: ^3.0.0
   latlong2: ^0.9.1
   url_launcher: ^6.3.1
   speech_to_text: ^7.3.0
   flutter_secure_storage: ^10.0.0
+  scrollable_positioned_list: ^0.3.8
 
 dev_dependencies:
   flutter_test:
@@ -76,6 +78,8 @@ dev_dependencies:
 # following page: https://dart.dev/tools/pub/pubspec
 
 # The following section is specific to Flutter packages.
+  geolocator_platform_interface: any
+  plugin_platform_interface: any
 flutter:
 
   generate: true
@@ -92,6 +96,7 @@ flutter:
     - assets/hadith.json
     - assets/dua_schema.json
     - assets/audio/words/
+    - assets/glossary.json
 
   # To add assets to your application, add an assets section, like this:
   # assets:

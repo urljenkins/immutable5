@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:developer' as developer;
 
+import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:immutable5/services/secure_storage_provider.dart';
 
@@ -13,11 +14,11 @@ typedef PrayerTimesServiceFactory = PrayerTimesService Function(
 );
 
 class PrayerTimesService {
-  // Replace with user's actual location and calculation params
   final double latitude;
   final double longitude;
   final int method;
   final int madhab;
+  final SecureStorageProvider _prefs;
 
   // Cache the next prayer to avoid duplicate API calls
   MapEntry<String, DateTime>? _cachedNextPrayer;
@@ -28,7 +29,8 @@ class PrayerTimesService {
     this.longitude = -0.1278,
     this.method = 2,
     this.madhab = 0,
-  }); // Default: London, method 2, Shafi
+    SecureStorageProvider? prefs,
+  }) : _prefs = prefs ?? SecureStorageProvider(); // Default singleton
 
   String _getCacheKey(DateTime date) {
     return 'prayer_times_${date.year}_${date.month}_${date.day}_${latitude.toStringAsFixed(2)}_${longitude.toStringAsFixed(2)}_${method}_$madhab';
@@ -68,7 +70,7 @@ class PrayerTimesService {
 
     // Check cache first unless force refresh
     if (!forceRefresh) {
-      final prefs = SecureStorageProvider();
+      final prefs = _prefs;
       final cachedData = await prefs.getString(cacheKey);
       if (cachedData != null) {
         try {
@@ -114,15 +116,17 @@ class PrayerTimesService {
             cacheData[name] = dateTime.millisecondsSinceEpoch;
           } catch (e) {
             // Skip invalid prayer times
-            developer.log(
-              'Warning: Could not parse prayer time for $name: $timeStr - $e',
-              name: 'PrayerTimesService',
-            );
+            if (kDebugMode) {
+              developer.log(
+                'Warning: Could not parse prayer time for $name: $timeStr - $e',
+                name: 'PrayerTimesService',
+              );
+            }
           }
         });
 
         // Cache the result
-        final prefs = SecureStorageProvider();
+        final prefs = _prefs;
         await prefs.setString(cacheKey, json.encode(cacheData));
 
         return result;
@@ -167,7 +171,7 @@ class PrayerTimesService {
       final tomorrowCacheKey = _getCacheKey(tomorrow);
 
       // Check tomorrow's cache first
-      final prefs = SecureStorageProvider();
+      final prefs = _prefs;
       final cachedTomorrowData = await prefs.getString(tomorrowCacheKey);
       if (cachedTomorrowData != null) {
         try {
@@ -212,10 +216,12 @@ class PrayerTimesService {
               final dateTime = _parseTimeString(timeStr as String, tomorrow);
               tomorrowCacheData[name] = dateTime.millisecondsSinceEpoch;
             } catch (e) {
-              developer.log(
-                'Warning: Could not parse tomorrow\'s prayer time for $name: $timeStr - $e',
-                name: 'PrayerTimesService',
-              );
+              if (kDebugMode) {
+                developer.log(
+                  'Warning: Could not parse tomorrow\'s prayer time for $name: $timeStr - $e',
+                  name: 'PrayerTimesService',
+                );
+              }
             }
           });
           await prefs.setString(
@@ -293,7 +299,7 @@ class PrayerTimesService {
   }
 
   Future<void> clearCache() async {
-    final prefs = SecureStorageProvider();
+    final prefs = _prefs;
     final keys = await prefs.getKeys();
     for (final key in keys) {
       if (key.startsWith('prayer_times_')) {

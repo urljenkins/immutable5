@@ -1,13 +1,18 @@
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class SecureStorageProvider {
-  static final SecureStorageProvider _instance =
-      SecureStorageProvider._internal();
-  factory SecureStorageProvider() => _instance;
+  final FlutterSecureStorage _storage;
+  static SecureStorageProvider? _instance;
 
-  SecureStorageProvider._internal();
+  factory SecureStorageProvider({FlutterSecureStorage? storage}) {
+    if (storage != null) {
+      return SecureStorageProvider._internal(storage: storage);
+    }
+    return _instance ??= SecureStorageProvider._internal();
+  }
 
-  final FlutterSecureStorage _storage = const FlutterSecureStorage();
+  SecureStorageProvider._internal({FlutterSecureStorage? storage})
+      : _storage = storage ?? const FlutterSecureStorage();
 
   Future<String?> getString(String key) async {
     return await _storage.read(key: key);

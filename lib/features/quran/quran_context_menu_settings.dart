@@ -21,7 +21,8 @@ class QuranContextMenuSettings {
   static const _kAyahInfo = 'quranCtxMenu_ayahInfo';
 
   static Future<QuranContextMenuSettings> fromPrefs(
-      SecureStorageProvider prefs) async {
+    SecureStorageProvider prefs,
+  ) async {
     return QuranContextMenuSettings(
       showCopy: await prefs.getBool(_kCopy) ?? true,
       showBookmark: await prefs.getBool(_kBookmark) ?? true,

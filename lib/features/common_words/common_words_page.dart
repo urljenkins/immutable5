@@ -5,9 +5,10 @@ import 'package:csv/csv.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:google_fonts/google_fonts.dart';
+import 'package:immutable5/services/secure_storage_provider.dart';
+
 import '../../l10n/app_localizations.dart';
 import '../../shared/app_colors.dart';
-import 'package:immutable5/services/secure_storage_provider.dart';
 
 class CommonWordsPage extends StatefulWidget {
   const CommonWordsPage({super.key});
@@ -330,7 +331,7 @@ class _CommonWordsPageState extends State<CommonWordsPage> {
                   setState(() => _showMemorized = value);
                   _applyFilters();
                 },
-                activeThumbColor: Colors.greenAccent,
+                activeTrackColor: Colors.greenAccent,
               ),
             ],
           ],

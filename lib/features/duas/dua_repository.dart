@@ -1,16 +1,10 @@
 import 'dart:convert';
 import 'dart:developer' as developer;
-
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
-
 import 'models/dua_model.dart';
 
 class DuaRepository {
-  static final DuaRepository _instance = DuaRepository._internal();
-  factory DuaRepository() => _instance;
-
-  DuaRepository._internal();
-
   List<Dua> _duas = [];
   bool _initialized = false;
 
@@ -22,26 +16,31 @@ class DuaRepository {
     return _duas;
   }
 
-  /// Initializes the repository by loading and parsing `assets/duas.json`.
-  Future<void> initialize() async {
-    if (_initialized) return;
+  /// Initializes the repository. Optionally takes a jsonOverride for testing.
+  Future<void> initialize({String? jsonOverride}) async {
+    if (_initialized && jsonOverride == null) return;
 
     try {
-      final jsonString = await rootBundle.loadString('assets/duas.json');
+      final jsonString =
+          jsonOverride ?? await rootBundle.loadString('assets/duas.json');
       final List<dynamic> jsonList = json.decode(jsonString);
 
       _duas = jsonList.map((json) => Dua.fromJson(json)).toList();
       _initialized = true;
-      developer.log(
-        'Successfully loaded ${_duas.length} duas',
-        name: 'DuaRepository',
-      );
+      if (kDebugMode) {
+        developer.log(
+          'Successfully loaded ${_duas.length} duas',
+          name: 'DuaRepository',
+        );
+      }
     } catch (e) {
-      developer.log(
-        'Error loading duas.json: $e',
-        name: 'DuaRepository',
-        error: e,
-      );
+      if (kDebugMode) {
+        developer.log(
+          'Error loading duas.json: $e',
+          name: 'DuaRepository',
+          error: e,
+        );
+      }
       _duas = [];
     }
   }

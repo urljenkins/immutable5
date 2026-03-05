@@ -1,1306 +1,468 @@
 [
   {
-    "hadith_id": "b_1",
-    "collection": "General Authentic Collections",
-    "book": "General",
+    "schema_version": "1.0.0",
+    "hadith_id": "nawawi_001",
+    "source": "Al-Arba'in An-Nawawiyyah (Nawawi's 40 Hadith)",
+    "license": "Public Domain",
+    "collection": "Sahih al-Bukhari & Sahih Muslim",
+    "book": "Book of Revelation",
     "book_number": 1,
     "hadith_number": "1",
-    "narrator": "Various Companions",
-    "arabic": "إِنَّمَا الْأَعْمَالُ بِالنِّيَّاتِ",
-    "translation_en": "Actions are by intentions...",
-    "translation_language": "en",
+    "narrator": "Umar bin Al-Khattab",
+    "arabic": "إِنَّمَا الأَعْمَالُ بِالنِّيَّاتِ، وَإِنَّمَا لِكُلِّ امْرِئٍ مَا نَوَى، فَمَنْ كَانَتْ هِجْرَتُهُ إِلَى اللَّهِ وَرَسُولِهِ، فَهِجْرَتُهُ إِلَى اللَّهِ وَرَسُولِهِ، وَمَنْ كَانَتْ هِجْرَتُهُ لِدُنْيَا يُصِيبُهَا، أَوِ امْرَأَةٍ يَنْكِحُهَا، فَهِجْرَتُهُ إِلَى مَا هَاجَرَ إِلَيْهِ.",
+    "transliteration": "Innamal-a'malu bin-niyat, wa innama likulli imri'in ma nawa, faman kanat hijratuhu ilallahi wa rasulihi, fahijratuhu ilallahi wa rasulihi, wa man kanat hijratuhu lidunya yusibuha, aw imra'atin yankihuha, fahijratuhu ila ma hajara ilayhi.",
+    "translation_en": "Actions are but by intentions, and every person will have only what they intended. So whoever migrated to Allah and His Messenger, then his migration is to Allah and His Messenger. And whoever migrated to get something in the world or to marry a woman, then his migration is to that to which he migrated.",
     "grade": "Sahih",
+    "grade_by": "Al-Bukhari and Muslim",
     "topics": [
-      "Iman",
-      "Intentions",
-      "Sincerity"
-    ],
-    "summary_en": "Actions are by intentions",
-    "key_lessons": [
-      "This is a fundamental teaching.",
-      "It is a reliable and authentic narration."
-    ],
-    "related_dua_ids": [],
-    "length": "short",
-    "word_count_arabic": 3,
-    "priority": 1
-  },
-  {
-    "hadith_id": "b_8",
-    "collection": "General Authentic Collections",
-    "book": "General",
-    "book_number": 1,
-    "hadith_number": "2",
-    "narrator": "Various Companions",
-    "arabic": "بُنِيَ الْإِسْلَامُ عَلَى خَمْسٍ",
-    "translation_en": "Islam is built on five pillars...",
-    "translation_language": "en",
-    "grade": "Sahih",
-    "topics": [
-      "Iman",
-      "Salah",
-      "Zakat",
-      "Hajj",
-      "Sawm"
-    ],
-    "summary_en": "Islam is built on five pillars",
-    "key_lessons": [
-      "This is a fundamental teaching.",
-      "It is a reliable and authentic narration."
-    ],
-    "related_dua_ids": [],
-    "length": "short",
-    "word_count_arabic": 4,
-    "priority": 1
-  },
-  {
-    "hadith_id": "m_223",
-    "collection": "General Authentic Collections",
-    "book": "General",
-    "book_number": 1,
-    "hadith_number": "3",
-    "narrator": "Various Companions",
-    "arabic": "الطُّهُورُ شَطْرُ الْإِيمَانِ",
-    "translation_en": "Purity is half of faith...",
-    "translation_language": "en",
-    "grade": "Sahih",
-    "topics": [
-      "Taharah",
-      "Iman",
-      "Cleanliness"
-    ],
-    "summary_en": "Purity is half of faith",
-    "key_lessons": [
-      "This is a fundamental teaching.",
-      "It is a reliable and authentic narration."
-    ],
-    "related_dua_ids": [],
-    "length": "short",
-    "word_count_arabic": 3,
-    "priority": 1
-  },
-  {
-    "hadith_id": "t_2002",
-    "collection": "General Authentic Collections",
-    "book": "General",
-    "book_number": 1,
-    "hadith_number": "4",
-    "narrator": "Various Companions",
-    "arabic": "مَا شَيْءٌ أَثْقَلُ فِي مِيزَانِ الْمُؤْمِنِ...",
-    "translation_en": "Nothing is heavier on the scale...",
-    "translation_language": "en",
-    "grade": "Sahih",
-    "topics": [
-      "Akhlaq",
-      "Day of Judgment",
-      "Manners"
-    ],
-    "summary_en": "Nothing is heavier on the scale",
-    "key_lessons": [
-      "This is a fundamental teaching.",
-      "It is a reliable and authentic narration."
-    ],
-    "related_dua_ids": [],
-    "length": "short",
-    "word_count_arabic": 6,
-    "priority": 1
-  },
-  {
-    "hadith_id": "i_224",
-    "collection": "General Authentic Collections",
-    "book": "General",
-    "book_number": 1,
-    "hadith_number": "5",
-    "narrator": "Various Companions",
-    "arabic": "طَلَبُ الْعِلْمِ فَرِيضَةٌ",
-    "translation_en": "Seeking knowledge is an obligation...",
-    "translation_language": "en",
-    "grade": "Sahih",
-    "topics": [
-      "Knowledge",
-      "Seeking Knowledge",
-      "Education"
-    ],
-    "summary_en": "Seeking knowledge is an obligation",
-    "key_lessons": [
-      "This is a fundamental teaching.",
-      "It is a reliable and authentic narration."
-    ],
-    "related_dua_ids": [],
-    "length": "short",
-    "word_count_arabic": 3,
-    "priority": 1
-  },
-  {
-    "hadith_id": "t_1924",
-    "collection": "General Authentic Collections",
-    "book": "General",
-    "book_number": 1,
-    "hadith_number": "6",
-    "narrator": "Various Companions",
-    "arabic": "الرَّاحِمُونَ يَرْحَمُهُمُ الرَّحْمَنُ",
-    "translation_en": "The merciful are shown mercy...",
-    "translation_language": "en",
-    "grade": "Sahih",
-    "topics": [
-      "Akhlaq",
-      "Mercy",
-      "Social Interactions"
-    ],
-    "summary_en": "The merciful are shown mercy",
-    "key_lessons": [
-      "This is a fundamental teaching.",
-      "It is a reliable and authentic narration."
-    ],
-    "related_dua_ids": [],
-    "length": "short",
-    "word_count_arabic": 3,
-    "priority": 1
-  },
-  {
-    "hadith_id": "t_1956",
-    "collection": "General Authentic Collections",
-    "book": "General",
-    "book_number": 1,
-    "hadith_number": "7",
-    "narrator": "Various Companions",
-    "arabic": "تَبَسُّمُكَ فِي وَجْهِ أَخِيكَ لَكَ صَدَقَةٌ",
-    "translation_en": "Smiling in your brother's face is charity...",
-    "translation_language": "en",
-    "grade": "Sahih",
-    "topics": [
-      "Akhlaq",
-      "Charity",
-      "Social Interactions"
-    ],
-    "summary_en": "Smiling in your brother's face is charity",
-    "key_lessons": [
-      "This is a fundamental teaching.",
-      "It is a reliable and authentic narration."
-    ],
-    "related_dua_ids": [],
-    "length": "short",
-    "word_count_arabic": 6,
-    "priority": 1
-  },
-  {
-    "hadith_id": "b_6114",
-    "collection": "General Authentic Collections",
-    "book": "General",
-    "book_number": 1,
-    "hadith_number": "8",
-    "narrator": "Various Companions",
-    "arabic": "لَيْسَ الشَّدِيدُ بِالصُّرَعَةِ",
-    "translation_en": "The strong is not the one who overcomes...",
-    "translation_language": "en",
-    "grade": "Sahih",
-    "topics": [
-      "Akhlaq",
-      "Anger",
-      "Self-Control"
-    ],
-    "summary_en": "The strong is not the one who overcomes",
-    "key_lessons": [
-      "This is a fundamental teaching.",
-      "It is a reliable and authentic narration."
-    ],
-    "related_dua_ids": [],
-    "length": "short",
-    "word_count_arabic": 3,
-    "priority": 1
-  },
-  {
-    "hadith_id": "t_1162",
-    "collection": "General Authentic Collections",
-    "book": "General",
-    "book_number": 1,
-    "hadith_number": "9",
-    "narrator": "Various Companions",
-    "arabic": "أَكْمَلُ الْمُؤْمِنِينَ إِيمَانًا أَحْسَنُهُمْ خُلُقًا",
-    "translation_en": "The most perfect believers...",
-    "translation_language": "en",
-    "grade": "Sahih",
-    "topics": [
-      "Iman",
-      "Akhlaq",
-      "Marriage & Family"
-    ],
-    "summary_en": "The most perfect believers",
-    "key_lessons": [
-      "This is a fundamental teaching.",
-      "It is a reliable and authentic narration."
-    ],
-    "related_dua_ids": [],
-    "length": "short",
-    "word_count_arabic": 5,
-    "priority": 1
-  },
-  {
-    "hadith_id": "t_3372",
-    "collection": "General Authentic Collections",
-    "book": "General",
-    "book_number": 1,
-    "hadith_number": "10",
-    "narrator": "Various Companions",
-    "arabic": "الدُّعَاءُ هُوَ الْعِبَادَةُ",
-    "translation_en": "Supplication is worship...",
-    "translation_language": "en",
-    "grade": "Sahih",
-    "topics": [
-      "Supplications",
-      "Worship",
-      "Dua"
-    ],
-    "summary_en": "Supplication is worship",
-    "key_lessons": [
-      "This is a fundamental teaching.",
-      "It is a reliable and authentic narration."
-    ],
-    "related_dua_ids": [],
-    "length": "short",
-    "word_count_arabic": 3,
-    "priority": 1
-  },
-  {
-    "hadith_id": "m_591",
-    "collection": "General Authentic Collections",
-    "book": "General",
-    "book_number": 1,
-    "hadith_number": "11",
-    "narrator": "Various Companions",
-    "arabic": "اللَّهُمَّ أَنْتَ السَّلَامُ",
-    "translation_en": "When the Messenger finished his prayer...",
-    "translation_language": "en",
-    "grade": "Sahih",
-    "topics": [
-      "Salah",
-      "Dhikr",
-      "Adab"
-    ],
-    "summary_en": "When the Messenger finished his prayer",
-    "key_lessons": [
-      "This is a fundamental teaching.",
-      "It is a reliable and authentic narration."
-    ],
-    "related_dua_ids": [],
-    "length": "short",
-    "word_count_arabic": 3,
-    "priority": 2
-  },
-  {
-    "hadith_id": "b_6306",
-    "collection": "General Authentic Collections",
-    "book": "General",
-    "book_number": 1,
-    "hadith_number": "12",
-    "narrator": "Various Companions",
-    "arabic": "سَيِّدُ الاِسْتِغْفَارِ",
-    "translation_en": "The master supplication for forgiveness...",
-    "translation_language": "en",
-    "grade": "Sahih",
-    "topics": [
-      "Repentance",
-      "Dhikr",
-      "Iman"
-    ],
-    "summary_en": "The master supplication for forgiveness",
-    "key_lessons": [
-      "This is a fundamental teaching.",
-      "It is a reliable and authentic narration."
-    ],
-    "related_dua_ids": [],
-    "length": "short",
-    "word_count_arabic": 2,
-    "priority": 2
-  },
-  {
-    "hadith_id": "b_5027",
-    "collection": "General Authentic Collections",
-    "book": "General",
-    "book_number": 1,
-    "hadith_number": "13",
-    "narrator": "Various Companions",
-    "arabic": "خَيْرُكُمْ مَنْ تَعَلَّمَ الْقُرْآنَ وَعَلَّمَهُ",
-    "translation_en": "The best among you are those who learn Quran...",
-    "translation_language": "en",
-    "grade": "Sahih",
-    "topics": [
-      "Quran",
-      "Knowledge",
-      "Education"
-    ],
-    "summary_en": "The best among you are those who learn Quran",
-    "key_lessons": [
-      "This is a fundamental teaching.",
-      "It is a reliable and authentic narration."
-    ],
-    "related_dua_ids": [],
-    "length": "short",
-    "word_count_arabic": 5,
-    "priority": 2
-  },
-  {
-    "hadith_id": "t_2910",
-    "collection": "General Authentic Collections",
-    "book": "General",
-    "book_number": 1,
-    "hadith_number": "14",
-    "narrator": "Various Companions",
-    "arabic": "مَنْ قَرَأَ حَرْفًا مِنْ كِتَابِ اللَّهِ",
-    "translation_en": "Whoever recites a letter...",
-    "translation_language": "en",
-    "grade": "Sahih",
-    "topics": [
-      "Quran",
-      "Reward",
-      "Virtues"
-    ],
-    "summary_en": "Whoever recites a letter",
-    "key_lessons": [
-      "This is a fundamental teaching.",
-      "It is a reliable and authentic narration."
-    ],
-    "related_dua_ids": [],
-    "length": "short",
-    "word_count_arabic": 6,
-    "priority": 2
-  },
-  {
-    "hadith_id": "m_2408",
-    "collection": "General Authentic Collections",
-    "book": "General",
-    "book_number": 1,
-    "hadith_number": "15",
-    "narrator": "Various Companions",
-    "arabic": "أَنَا تَارِكٌ فِيكُمْ ثَقَلَيْنِ",
-    "translation_en": "I am leaving among you two weighty things...",
-    "translation_language": "en",
-    "grade": "Sahih",
-    "topics": [
-      "Quran",
-      "Ahl al-Bayt",
-      "Guidance"
-    ],
-    "summary_en": "I am leaving among you two weighty things",
-    "key_lessons": [
-      "This is a fundamental teaching.",
-      "It is a reliable and authentic narration."
-    ],
-    "related_dua_ids": [],
-    "length": "short",
-    "word_count_arabic": 4,
-    "priority": 2
-  },
-  {
-    "hadith_id": "m_2832",
-    "collection": "General Authentic Collections",
-    "book": "General",
-    "book_number": 1,
-    "hadith_number": "16",
-    "narrator": "Various Companions",
-    "arabic": "مَا الدُّنْيَا فِي الْآخِرَةِ",
-    "translation_en": "This world in comparison to the Hereafter...",
-    "translation_language": "en",
-    "grade": "Sahih",
-    "topics": [
-      "Afterlife",
-      "Dunya",
-      "Perspective"
-    ],
-    "summary_en": "This world in comparison to the Hereafter",
-    "key_lessons": [
-      "This is a fundamental teaching.",
-      "It is a reliable and authentic narration."
-    ],
-    "related_dua_ids": [],
-    "length": "short",
-    "word_count_arabic": 4,
-    "priority": 2
-  },
-  {
-    "hadith_id": "m_2999",
-    "collection": "General Authentic Collections",
-    "book": "General",
-    "book_number": 1,
-    "hadith_number": "17",
-    "narrator": "Various Companions",
-    "arabic": "عَجَبًا لِأَمْرِ الْمُؤْمِنِ",
-    "translation_en": "How wonderful is the case of a believer...",
-    "translation_language": "en",
-    "grade": "Sahih",
-    "topics": [
-      "Trials",
-      "Patience",
-      "Gratitude",
-      "Iman"
-    ],
-    "summary_en": "How wonderful is the case of a believer",
-    "key_lessons": [
-      "This is a fundamental teaching.",
-      "It is a reliable and authentic narration."
-    ],
-    "related_dua_ids": [],
-    "length": "short",
-    "word_count_arabic": 3,
-    "priority": 2
-  },
-  {
-    "hadith_id": "b_13",
-    "collection": "General Authentic Collections",
-    "book": "General",
-    "book_number": 1,
-    "hadith_number": "18",
-    "narrator": "Various Companions",
-    "arabic": "لَا يُؤْمِنُ أَحَدُكُمْ",
-    "translation_en": "None of you believes until he loves...",
-    "translation_language": "en",
-    "grade": "Sahih",
-    "topics": [
-      "Iman",
-      "Akhlaq",
-      "Social",
-      "Brotherhood"
-    ],
-    "summary_en": "None of you believes until he loves",
-    "key_lessons": [
-      "This is a fundamental teaching.",
-      "It is a reliable and authentic narration."
-    ],
-    "related_dua_ids": [],
-    "length": "short",
-    "word_count_arabic": 3,
-    "priority": 2
-  },
-  {
-    "hadith_id": "b_6118",
-    "collection": "General Authentic Collections",
-    "book": "General",
-    "book_number": 1,
-    "hadith_number": "19",
-    "narrator": "Various Companions",
-    "arabic": "الْحَيَاءُ لَا يَأْتِي إِلَّا بِخَيْرٍ",
-    "translation_en": "Modesty does not bring anything except good...",
-    "translation_language": "en",
-    "grade": "Sahih",
-    "topics": [
-      "Akhlaq",
-      "Modesty",
-      "Iman"
-    ],
-    "summary_en": "Modesty does not bring anything except good",
-    "key_lessons": [
-      "This is a fundamental teaching.",
-      "It is a reliable and authentic narration."
-    ],
-    "related_dua_ids": [],
-    "length": "short",
-    "word_count_arabic": 5,
-    "priority": 2
-  },
-  {
-    "hadith_id": "m_2589",
-    "collection": "General Authentic Collections",
-    "book": "General",
-    "book_number": 1,
-    "hadith_number": "20",
-    "narrator": "Various Companions",
-    "arabic": "أَتَدْرُونَ مَا الْغِيبَةُ",
-    "translation_en": "Do you know what backbiting is?...",
-    "translation_language": "en",
-    "grade": "Sahih",
-    "topics": [
-      "Akhlaq",
-      "Sins",
-      "Social Interactions"
-    ],
-    "summary_en": "Do you know what backbiting is?",
-    "key_lessons": [
-      "This is a fundamental teaching.",
-      "It is a reliable and authentic narration."
-    ],
-    "related_dua_ids": [],
-    "length": "short",
-    "word_count_arabic": 3,
-    "priority": 2
-  },
-  {
-    "hadith_id": "b_6412",
-    "collection": "General Authentic Collections",
-    "book": "General",
-    "book_number": 1,
-    "hadith_number": "21",
-    "narrator": "Various Companions",
-    "arabic": "نِعْمَتَانِ مَغْبُونٌ فِيهِمَا",
-    "translation_en": "There are two blessings...",
-    "translation_language": "en",
-    "grade": "Sahih",
-    "topics": [
-      "Gratitude",
-      "Time Management",
-      "Health"
-    ],
-    "summary_en": "There are two blessings",
-    "key_lessons": [
-      "This is a fundamental teaching.",
-      "It is a reliable and authentic narration."
-    ],
-    "related_dua_ids": [],
-    "length": "short",
-    "word_count_arabic": 3,
-    "priority": 2
-  },
-  {
-    "hadith_id": "m_2699",
-    "collection": "General Authentic Collections",
-    "book": "General",
-    "book_number": 1,
-    "hadith_number": "22",
-    "narrator": "Various Companions",
-    "arabic": "مَنْ سَلَكَ طَرِيقًا يَلْتَمِسُ فِيهِ عِلْمًا",
-    "translation_en": "He who treads the path in search of knowledge...",
-    "translation_language": "en",
-    "grade": "Sahih",
-    "topics": [
-      "Knowledge",
-      "Seeking Knowledge",
-      "Paradise"
-    ],
-    "summary_en": "He who treads the path in search of knowledge",
-    "key_lessons": [
-      "This is a fundamental teaching.",
-      "It is a reliable and authentic narration."
-    ],
-    "related_dua_ids": [],
-    "length": "short",
-    "word_count_arabic": 6,
-    "priority": 2
-  },
-  {
-    "hadith_id": "b_6011",
-    "collection": "General Authentic Collections",
-    "book": "General",
-    "book_number": 1,
-    "hadith_number": "23",
-    "narrator": "Various Companions",
-    "arabic": "مَنْ كَانَ يُؤْمِنُ بِاللَّهِ وَالْيَوْمِ الْآخِرِ",
-    "translation_en": "Let him who believes in Allah and the Last Day...",
-    "translation_language": "en",
-    "grade": "Sahih",
-    "topics": [
-      "Neighbors",
-      "Social Interactions",
-      "Speech"
-    ],
-    "summary_en": "Let him who believes in Allah and the Last Day",
-    "key_lessons": [
-      "This is a fundamental teaching.",
-      "It is a reliable and authentic narration."
-    ],
-    "related_dua_ids": [],
-    "length": "short",
-    "word_count_arabic": 6,
-    "priority": 2
-  },
-  {
-    "hadith_id": "m_2865",
-    "collection": "General Authentic Collections",
-    "book": "General",
-    "book_number": 1,
-    "hadith_number": "24",
-    "narrator": "Various Companions",
-    "arabic": "حُفَّتِ الْجَنَّةُ بِالْمَكَارِهِ",
-    "translation_en": "Paradise is surrounded by hardships...",
-    "translation_language": "en",
-    "grade": "Sahih",
-    "topics": [
-      "Afterlife",
-      "Trials",
-      "Temptations"
-    ],
-    "summary_en": "Paradise is surrounded by hardships",
-    "key_lessons": [
-      "This is a fundamental teaching.",
-      "It is a reliable and authentic narration."
-    ],
-    "related_dua_ids": [],
-    "length": "short",
-    "word_count_arabic": 3,
-    "priority": 2
-  },
-  {
-    "hadith_id": "b_3461",
-    "collection": "General Authentic Collections",
-    "book": "General",
-    "book_number": 1,
-    "hadith_number": "25",
-    "narrator": "Various Companions",
-    "arabic": "بَلِّغُوا عَنِّي وَلَوْ آيَةً",
-    "translation_en": "Convey from me even if it is one verse...",
-    "translation_language": "en",
-    "grade": "Sahih",
-    "topics": [
-      "Knowledge",
-      "Dawah",
-      "Education"
-    ],
-    "summary_en": "Convey from me even if it is one verse",
-    "key_lessons": [
-      "This is a fundamental teaching.",
-      "It is a reliable and authentic narration."
-    ],
-    "related_dua_ids": [],
-    "length": "short",
-    "word_count_arabic": 4,
-    "priority": 2
-  },
-  {
-    "hadith_id": "m_55",
-    "collection": "General Authentic Collections",
-    "book": "General",
-    "book_number": 1,
-    "hadith_number": "26",
-    "narrator": "Various Companions",
-    "arabic": "الدِّينُ النَّصِيحَةُ",
-    "translation_en": "Religion is sincerity...",
-    "translation_language": "en",
-    "grade": "Sahih",
-    "topics": [
-      "Iman",
+      "Faith & Belief (Iman)",
       "Sincerity",
-      "Adab"
-    ],
-    "summary_en": "Religion is sincerity",
-    "key_lessons": [
-      "This is a fundamental teaching.",
-      "It is a reliable and authentic narration."
-    ],
-    "related_dua_ids": [],
-    "length": "short",
-    "word_count_arabic": 2,
-    "priority": 2
-  },
-  {
-    "hadith_id": "b_52",
-    "collection": "General Authentic Collections",
-    "book": "General",
-    "book_number": 1,
-    "hadith_number": "27",
-    "narrator": "Various Companions",
-    "arabic": "الْحَلَالُ بَيِّنٌ وَالْحَرَامُ بَيِّنٌ",
-    "translation_en": "That which is lawful is clear...",
-    "translation_language": "en",
-    "grade": "Sahih",
-    "topics": [
-      "Halal",
-      "Haram",
+      "Intentions",
       "Heart"
     ],
-    "summary_en": "That which is lawful is clear",
+    "summary_en": "The foundational principle that all actions are judged by the intention behind them.",
     "key_lessons": [
-      "This is a fundamental teaching.",
-      "It is a reliable and authentic narration."
+      "Sincerity to Allah is the most crucial element of any deed.",
+      "A mundane act can become an act of worship with the right intention.",
+      "Showing off or seeking worldly gain voids the spiritual reward of a good deed."
     ],
     "related_dua_ids": [],
-    "length": "short",
-    "word_count_arabic": 4,
-    "priority": 2
+    "related_hadith_ids": [],
+    "length": "medium",
+    "word_count_arabic": 37,
+    "priority": 1,
+    "display_context": {
+      "time_windows": [
+        "anytime"
+      ],
+      "hijri_dates": [],
+      "hijri_periods": [],
+      "conditions": [
+        "waking"
+      ],
+      "days_of_week": [
+        "any"
+      ]
+    },
+    "variants": []
   },
   {
-    "hadith_id": "t_2317",
-    "collection": "General Authentic Collections",
-    "book": "General",
+    "schema_version": "1.0.0",
+    "hadith_id": "nawawi_002",
+    "source": "Al-Arba'in An-Nawawiyyah (Nawawi's 40 Hadith)",
+    "license": "Public Domain",
+    "collection": "Sahih Muslim",
+    "book": "Book of Faith",
     "book_number": 1,
-    "hadith_number": "28",
-    "narrator": "Various Companions",
-    "arabic": "مِنْ حُسْنِ إِسْلَامِ الْمَرْءِ تَرْكُهُ مَا لَا يَعْنِيهِ",
-    "translation_en": "Part of the perfection of a person's Islam...",
-    "translation_language": "en",
+    "hadith_number": "8",
+    "narrator": "Umar bin Al-Khattab",
+    "arabic": "بَيْنَمَا نَحْنُ عِنْدَ رَسُولِ اللَّهِ صَلَّى اللَّهُ عَلَيْهِ وَسَلَّمَ ذَاتَ يَوْمٍ إِذْ طَلَعَ عَلَيْنَا رَجُلٌ شَدِيدُ بَيَاضِ الثِّيَابِ ، شَدِيدُ سَوَادِ الشَّعَرِ ، لا يُرَى عَلَيْهِ أَثَرُ السَّفَرِ ، وَلا يَعْرِفُهُ مِنَّا أَحَدٌ ، حَتَّى جَلَسَ إِلَى النَّبِيِّ صَلَّى اللَّهُ عَلَيْهِ وَسَلَّمَ ، فَأَسْنَدَ رُكْبَتَيْهِ إِلَى رُكْبَتَيْهِ ، وَوَضَعَ كَفَّيْهِ عَلَى فَخِذَيْهِ ، وَقَالَ : يَا مُحَمَّدُ ، أَخْبِرْنِي عَنْ الإِسْلامِ... فَقَالَ: الإسْلامُ أَنْ تَشْهَدَ أَنْ لا إلَهَ إلاَّ اللَّهُ وَأَنَّ مُحَمَّدًا رَسُولُ اللَّهِ، وَتُقِيمَ الصَّلاةَ، وَتُؤْتِيَ الزَّكَاةَ، وَتَصُومَ رَمَضَانَ، وَتَحُجَّ الْبَيْتَ إنْ اسْتَطَعْت إلَيْهِ سَبِيلاً.",
+    "transliteration": "Baynama nahnu 'inda rasulillahi... (Hadith of Jibril)",
+    "translation_en": "One day while we were sitting with the Messenger of Allah, there appeared before us a man whose clothes were exceedingly white and whose hair was exceedingly black; no signs of journeying were to be seen on him and none of us knew him. He walked up and sat down by the Prophet. Resting his knees against his and placing the palms of his hands on his thighs, he said: 'O Muhammad, tell me about Islam.' The Messenger of Allah replied: 'Islam is to testify that there is no deity worthy of worship but Allah and Muhammad is the Messenger of Allah, to perform the prayers, to pay the zakat, to fast in Ramadan, and to make the pilgrimage to the House if you are able to do so.' (abridged)",
     "grade": "Sahih",
+    "grade_by": "Muslim",
     "topics": [
-      "Adab",
-      "Self-Control",
-      "Focus"
+      "Faith & Belief (Iman)",
+      "Pillars of Islam",
+      "Decree (Qadar)",
+      "Seeking Knowledge"
     ],
-    "summary_en": "Part of the perfection of a person's Islam",
+    "summary_en": "The famous 'Hadith of Jibril' explaining Islam, Iman, and Ihsan.",
     "key_lessons": [
-      "This is a fundamental teaching.",
-      "It is a reliable and authentic narration."
+      "Islam comprises outward actions, inward beliefs (Iman), and spiritual excellence (Ihsan).",
+      "Ihsan is to worship Allah as if you see Him, for though you do not, He sees you.",
+      "Proper etiquette in seeking knowledge requires humility and respect."
     ],
     "related_dua_ids": [],
-    "length": "short",
-    "word_count_arabic": 8,
-    "priority": 2
+    "related_hadith_ids": [
+      "nawawi_003"
+    ],
+    "length": "long",
+    "word_count_arabic": 81,
+    "priority": 1,
+    "display_context": {
+      "time_windows": [
+        "anytime"
+      ],
+      "hijri_dates": [],
+      "hijri_periods": [],
+      "conditions": [
+        "seeking_knowledge"
+      ],
+      "days_of_week": [
+        "any"
+      ]
+    },
+    "variants": []
   },
   {
-    "hadith_id": "im_2340",
-    "collection": "General Authentic Collections",
-    "book": "General",
-    "book_number": 1,
-    "hadith_number": "29",
-    "narrator": "Various Companions",
-    "arabic": "لَا ضَرَرَ وَلَا ضِرَارَ",
-    "translation_en": "There should be neither harming nor reciprocating harm...",
-    "translation_language": "en",
+    "schema_version": "1.0.0",
+    "hadith_id": "nawawi_003",
+    "source": "Al-Arba'in An-Nawawiyyah (Nawawi's 40 Hadith)",
+    "license": "Public Domain",
+    "collection": "Sahih al-Bukhari & Sahih Muslim",
+    "book": "Book of Faith",
+    "book_number": 2,
+    "hadith_number": "8",
+    "narrator": "Abdullah ibn Umar",
+    "arabic": "بُنِيَ الإِسْلامُ عَلَى خَمْسٍ: شَهَادَةِ أَنْ لا إِلَهَ إِلا اللَّهُ وَأَنَّ مُحَمَّدًا رَسُولُ اللَّهِ، وَإِقَامِ الصَّلاةِ، وَإِيتَاءِ الزَّكَاةِ، وَحَجِّ الْبَيْتِ، وَصَوْمِ رَمَضَانَ.",
+    "transliteration": "Buniyal-islamu 'ala khams: shahadati an la ilaha illallahu wa anna Muhammadan rasulullah, wa iqamis-salah, wa ita'iz-zakah, wa hajjil-bayt, wa sawmi Ramadan.",
+    "translation_en": "Islam is built upon five pillars: testifying that there is no deity worthy of worship except Allah and that Muhammad is the Messenger of Allah, establishing regular prayer, paying the zakat, performing the pilgrimage to the House, and fasting the month of Ramadan.",
     "grade": "Sahih",
+    "grade_by": "Al-Bukhari and Muslim",
     "topics": [
-      "Ethics",
-      "Social",
-      "Justice"
+      "Faith & Belief (Iman)",
+      "Prayer (Salah)",
+      "Fasting (Sawm)",
+      "Charity (Zakat & Sadaqah)",
+      "Pilgrimage (Hajj & Umrah)"
     ],
-    "summary_en": "There should be neither harming nor reciprocating harm",
+    "summary_en": "A concise summary of the five foundational pillars of Islam.",
     "key_lessons": [
-      "This is a fundamental teaching.",
-      "It is a reliable and authentic narration."
+      "The five pillars are the foundation upon which the entire religion is built.",
+      "Missing any of these intentionally compromises the structure of one's faith."
     ],
     "related_dua_ids": [],
+    "related_hadith_ids": [
+      "nawawi_002"
+    ],
     "length": "short",
-    "word_count_arabic": 4,
-    "priority": 2
+    "word_count_arabic": 23,
+    "priority": 1,
+    "display_context": {
+      "time_windows": [
+        "anytime"
+      ],
+      "hijri_dates": [],
+      "hijri_periods": [
+        "ramadan",
+        "dhul_hijjah_first_ten"
+      ],
+      "conditions": [],
+      "days_of_week": [
+        "any"
+      ]
+    },
+    "variants": []
   },
   {
-    "hadith_id": "b_1283",
-    "collection": "General Authentic Collections",
-    "book": "General",
-    "book_number": 1,
-    "hadith_number": "30",
-    "narrator": "Various Companions",
-    "arabic": "إِنَّمَا الصَّبْرُ عِنْدَ الصَّدْمَةِ الْأُولَى",
-    "translation_en": "Patience is at the first stroke of a calamity...",
-    "translation_language": "en",
+    "schema_version": "1.0.0",
+    "hadith_id": "nawawi_013",
+    "source": "Al-Arba'in An-Nawawiyyah (Nawawi's 40 Hadith)",
+    "license": "Public Domain",
+    "collection": "Sahih al-Bukhari & Sahih Muslim",
+    "book": "Book of Faith",
+    "book_number": 2,
+    "hadith_number": "13",
+    "narrator": "Anas bin Malik",
+    "arabic": "لَا يُؤْمِنُ أَحَدُكُمْ حَتَّى يُحِبَّ لِأَخِيهِ مَا يُحِبُّ لِنَفْسِهِ.",
+    "transliteration": "La yu'minu ahadukum hatta yuhibba li'akhihi ma yuhibbu linafsih.",
+    "translation_en": "None of you [truly] believes until he loves for his brother what he loves for himself.",
     "grade": "Sahih",
+    "grade_by": "Al-Bukhari and Muslim",
     "topics": [
-      "Patience",
-      "Trials",
-      "Resilience"
-    ],
-    "summary_en": "Patience is at the first stroke of a calamity",
-    "key_lessons": [
-      "This is a fundamental teaching.",
-      "It is a reliable and authentic narration."
-    ],
-    "related_dua_ids": [],
-    "length": "short",
-    "word_count_arabic": 5,
-    "priority": 2
-  },
-  {
-    "hadith_id": "b_883",
-    "collection": "General Authentic Collections",
-    "book": "General",
-    "book_number": 1,
-    "hadith_number": "31",
-    "narrator": "Various Companions",
-    "arabic": "مَنْ اغْتَسَلَ يَوْمَ الْجُمُعَةِ",
-    "translation_en": "Whoever takes a bath on Friday...",
-    "translation_language": "en",
-    "grade": "Sahih",
-    "topics": [
-      "Salah",
-      "Taharah",
-      "Friday"
-    ],
-    "summary_en": "Whoever takes a bath on Friday",
-    "key_lessons": [
-      "This is a fundamental teaching.",
-      "It is a reliable and authentic narration."
-    ],
-    "related_dua_ids": [],
-    "length": "short",
-    "word_count_arabic": 4,
-    "priority": 2
-  },
-  {
-    "hadith_id": "m_2577",
-    "collection": "General Authentic Collections",
-    "book": "General",
-    "book_number": 1,
-    "hadith_number": "32",
-    "narrator": "Various Companions",
-    "arabic": "اتَّقُوا الظُّلْمَ",
-    "translation_en": "Beware of injustice...",
-    "translation_language": "en",
-    "grade": "Sahih",
-    "topics": [
-      "Justice",
-      "Ethics",
-      "Oppression"
-    ],
-    "summary_en": "Beware of injustice",
-    "key_lessons": [
-      "This is a fundamental teaching.",
-      "It is a reliable and authentic narration."
-    ],
-    "related_dua_ids": [],
-    "length": "short",
-    "word_count_arabic": 2,
-    "priority": 2
-  },
-  {
-    "hadith_id": "b_69",
-    "collection": "General Authentic Collections",
-    "book": "General",
-    "book_number": 1,
-    "hadith_number": "33",
-    "narrator": "Various Companions",
-    "arabic": "يَسِّرُوا وَلَا تُعَسِّرُوا",
-    "translation_en": "Make things easy and do not make them difficult...",
-    "translation_language": "en",
-    "grade": "Sahih",
-    "topics": [
-      "Adab",
-      "Ease",
+      "Good Character (Akhlaq)",
+      "Neighbors & Community",
       "Social Interactions"
     ],
-    "summary_en": "Make things easy and do not make them difficult",
+    "summary_en": "The measure of true faith is desiring the same good for others as you desire for yourself.",
     "key_lessons": [
-      "This is a fundamental teaching.",
-      "It is a reliable and authentic narration."
+      "Selflessness and empathy are direct reflections of one's spiritual health and faith.",
+      "Removing envy and selfishness from the heart is essential to perfect belief."
     ],
     "related_dua_ids": [],
+    "related_hadith_ids": [],
     "length": "short",
-    "word_count_arabic": 3,
-    "priority": 2
+    "word_count_arabic": 9,
+    "priority": 1,
+    "display_context": {
+      "time_windows": [
+        "anytime"
+      ],
+      "hijri_dates": [],
+      "hijri_periods": [],
+      "conditions": [],
+      "days_of_week": [
+        "any"
+      ]
+    },
+    "variants": []
   },
   {
-    "hadith_id": "b_2072",
-    "collection": "General Authentic Collections",
-    "book": "General",
-    "book_number": 1,
-    "hadith_number": "34",
-    "narrator": "Various Companions",
-    "arabic": "مَا أَكَلَ أَحَدٌ طَعَامًا قَطُّ خَيْرًا مِنْ أَنْ يَأْكُلَ مِنْ عَمَلِ يَدَيْهِ",
-    "translation_en": "Nobody has ever eaten a better meal...",
-    "translation_language": "en",
+    "schema_version": "1.0.0",
+    "hadith_id": "nawawi_015",
+    "source": "Al-Arba'in An-Nawawiyyah (Nawawi's 40 Hadith)",
+    "license": "Public Domain",
+    "collection": "Sahih al-Bukhari & Sahih Muslim",
+    "book": "Book of Good Manners",
+    "book_number": 78,
+    "hadith_number": "6018",
+    "narrator": "Abu Hurairah",
+    "arabic": "مَنْ كَانَ يُؤْمِنُ بِاللَّهِ وَالْيَوْمِ الآخِرِ فَلْيَقُلْ خَيْرًا أَوْ لِيَصْمُتْ، وَمَنْ كَانَ يُؤْمِنُ بِاللَّهِ وَالْيَوْمِ الآخِرِ فَلْيُكْرِمْ جَارَهُ، وَمَنْ كَانَ يُؤْمِنُ بِاللَّهِ وَالْيَوْمِ الآخِرِ فَلْيُكْرِمْ ضَيْفَهُ.",
+    "transliteration": "Man kana yu'minu billahi wal-yawmil-akhir falyaqul khayran aw liyasmut, wa man kana yu'minu billahi wal-yawmil-akhir falyukrim jarahu, wa man kana yu'minu billahi wal-yawmil-akhir falyukrim dayfahu.",
+    "translation_en": "Let him who believes in Allah and the Last Day speak good, or keep silent; and let him who believes in Allah and the Last Day be generous to his neighbor; and let him who believes in Allah and the Last Day be generous to his guest.",
     "grade": "Sahih",
+    "grade_by": "Al-Bukhari and Muslim",
     "topics": [
-      "Business",
-      "Work",
-      "Halal"
+      "Manners & Etiquette (Adab)",
+      "Neighbors & Community",
+      "Good Character (Akhlaq)",
+      "Speech"
     ],
-    "summary_en": "Nobody has ever eaten a better meal",
+    "summary_en": "Three practical applications of belief: speaking good, respecting neighbors, and honoring guests.",
     "key_lessons": [
-      "This is a fundamental teaching.",
-      "It is a reliable and authentic narration."
+      "Guarding the tongue is a direct consequence of believing in the Hereafter and accountability.",
+      "Hospitality and good neighborliness are acts of worship connected directly to faith."
     ],
     "related_dua_ids": [],
-    "length": "short",
-    "word_count_arabic": 12,
-    "priority": 2
+    "related_hadith_ids": [],
+    "length": "medium",
+    "word_count_arabic": 26,
+    "priority": 1,
+    "display_context": {
+      "time_windows": [
+        "anytime"
+      ],
+      "hijri_dates": [],
+      "hijri_periods": [],
+      "conditions": [],
+      "days_of_week": [
+        "any"
+      ]
+    },
+    "variants": []
   },
   {
-    "hadith_id": "b_6005",
-    "collection": "General Authentic Collections",
-    "book": "General",
-    "book_number": 1,
-    "hadith_number": "35",
-    "narrator": "Various Companions",
-    "arabic": "أَنَا وَكَافِلُ الْيَتِيمِ فِي الْجَنَّةِ هَكَذَا",
-    "translation_en": "I and the one who sponsors an orphan...",
-    "translation_language": "en",
+    "schema_version": "1.0.0",
+    "hadith_id": "nawawi_016",
+    "source": "Al-Arba'in An-Nawawiyyah (Nawawi's 40 Hadith)",
+    "license": "Public Domain",
+    "collection": "Sahih al-Bukhari",
+    "book": "Book of Good Manners",
+    "book_number": 78,
+    "hadith_number": "6116",
+    "narrator": "Abu Hurairah",
+    "arabic": "أَنَّ رَجُلًا قَالَ لِلنَّبِيِّ صَلَّى اللَّهُ عَلَيْهِ وَسَلَّمَ: أَوْصِنِي، قَالَ: لَا تَغْضَبْ، فَرَدَّدَ مِرَارًا، قَالَ: لَا تَغْضَبْ.",
+    "transliteration": "Anna rajulan qala lin-nabiyyi sallallahu 'alayhi wa sallam: awwsini, qala: la taghdab, faraddada miraran, qala: la taghdab.",
+    "translation_en": "A man said to the Prophet: 'Counsel me.' He said: 'Do not become angry.' The man repeated his request several times, and he said: 'Do not become angry.'",
     "grade": "Sahih",
+    "grade_by": "Al-Bukhari",
     "topics": [
-      "Charity",
-      "Orphans",
-      "Social"
+      "Good Character (Akhlaq)",
+      "Manners & Etiquette (Adab)",
+      "Self-Control",
+      "Mental Health"
     ],
-    "summary_en": "I and the one who sponsors an orphan",
+    "summary_en": "The Prophet's repetitive advice to avoid anger as a key to self-mastery.",
     "key_lessons": [
-      "This is a fundamental teaching.",
-      "It is a reliable and authentic narration."
+      "Anger is the root of many interpersonal conflicts and sins; controlling it solves many problems.",
+      "True strength is controlling oneself in moments of provocation, not physical power."
     ],
     "related_dua_ids": [],
+    "related_hadith_ids": [],
     "length": "short",
-    "word_count_arabic": 6,
-    "priority": 2
+    "word_count_arabic": 18,
+    "priority": 1,
+    "display_context": {
+      "time_windows": [
+        "anytime"
+      ],
+      "hijri_dates": [],
+      "hijri_periods": [],
+      "conditions": [
+        "anger",
+        "conflict"
+      ],
+      "days_of_week": [
+        "any"
+      ]
+    },
+    "variants": []
   },
   {
-    "hadith_id": "b_6094",
-    "collection": "General Authentic Collections",
-    "book": "General",
-    "book_number": 1,
-    "hadith_number": "36",
-    "narrator": "Various Companions",
-    "arabic": "عَلَيْكُمْ بِالصِّدْقِ",
-    "translation_en": "You must be truthful...",
-    "translation_language": "en",
+    "schema_version": "1.0.0",
+    "hadith_id": "bukhari_6306",
+    "source": "Sahih al-Bukhari",
+    "license": "Public Domain",
+    "collection": "Sahih al-Bukhari",
+    "book": "Book of Invocations",
+    "book_number": 80,
+    "hadith_number": "6306",
+    "narrator": "Shaddad bin Aus",
+    "arabic": "سَيِّدُ الِاسْتِغْفَارِ أَنْ تَقُولَ: اللَّهُمَّ أَنْتَ رَبِّي لَا إِلَهَ إِلَّا أَنْتَ، خَلَقْتَنِي وَأَنَا عَبْدُكَ، وَأَنَا عَلَى عَهْدِكَ وَوَعْدِكَ مَا اسْتَطَعْتُ، أَعُوذُ بِكَ مِنْ شَرِّ مَا صَنَعْتُ، أَبُوءُ لَكَ بِنِعْمَتِكَ عَلَيَّ، وَأَبُوءُ لَكَ بِذَنْبِي فَاغْفِرْ لِي، فَإِنَّهُ لَا يَغْفِرُ الذُّنُوبَ إِلَّا أَنْتَ.",
+    "transliteration": "Sayyidul is-tighfar an taqula: Allahumma anta rabbi la ilaha illa anta, khalaqtani wa-ana 'abduk, wa-ana 'ala 'ahdika wawa'dika mas-tata't, a'oothu bika min sharri ma sana't, aboo-o laka bini'matika 'alay, wa-aboo-o laka bithanbi faghfir lee, fa-innahu la yaghfiruth-thunooba illa ant.",
+    "translation_en": "The master of supplication for forgiveness is to say: 'O Allah, You are my Lord, none has the right to be worshipped except You. You created me and I am Your servant, and I remain upon Your covenant and promise as best I can. I seek refuge in You from the evil of what I have done. I acknowledge Your blessings upon me, and I acknowledge my sin, so forgive me, for none forgives sins except You.'",
     "grade": "Sahih",
+    "grade_by": "Al-Bukhari",
     "topics": [
-      "Akhlaq",
-      "Truth",
-      "Honesty"
+      "Repentance & Forgiveness",
+      "Supplications (Duas & Dhikr)",
+      "Faith & Belief (Iman)"
     ],
-    "summary_en": "You must be truthful",
+    "summary_en": "The ultimate supplication for seeking forgiveness from Allah (Sayyid al-Istighfar).",
     "key_lessons": [
-      "This is a fundamental teaching.",
-      "It is a reliable and authentic narration."
+      "Acknowledging Allah's favors and our own shortcomings is essential for true repentance.",
+      "This hadith promises paradise for whoever says it with certainty and dies that day or night."
     ],
-    "related_dua_ids": [],
-    "length": "short",
-    "word_count_arabic": 2,
-    "priority": 2
+    "related_dua_ids": [
+      "seeking_forgiveness_001"
+    ],
+    "related_hadith_ids": [],
+    "length": "medium",
+    "word_count_arabic": 38,
+    "priority": 1,
+    "display_context": {
+      "time_windows": [
+        "morning",
+        "evening",
+        "night"
+      ],
+      "hijri_dates": [],
+      "hijri_periods": [
+        "ramadan"
+      ],
+      "conditions": [
+        "seeking_forgiveness"
+      ],
+      "days_of_week": [
+        "any"
+      ]
+    },
+    "variants": []
   },
   {
-    "hadith_id": "m_2159",
-    "collection": "General Authentic Collections",
-    "book": "General",
-    "book_number": 1,
-    "hadith_number": "37",
-    "narrator": "Various Companions",
-    "arabic": "اصْرِفْ بَصَرَكَ",
-    "translation_en": "Turn your gaze away...",
-    "translation_language": "en",
+    "schema_version": "1.0.0",
+    "hadith_id": "muslim_482",
+    "source": "Sahih Muslim",
+    "license": "Public Domain",
+    "collection": "Sahih Muslim",
+    "book": "Book of Prayer",
+    "book_number": 4,
+    "hadith_number": "482",
+    "narrator": "Abu Hurairah",
+    "arabic": "أَقْرَبُ مَا يَكُونُ الْعَبْدُ مِنْ رَبِّهِ وَهُوَ سَاجِدٌ، فَأَكْثِرُوا الدُّعَاءَ.",
+    "transliteration": "Aqrabu ma yakunul-'abdu min rabbihi wa huwa sajidun, fa-akthirud-du'a.",
+    "translation_en": "The nearest a servant comes to his Lord is when he is prostrating himself, so make supplication (in this state) often.",
     "grade": "Sahih",
+    "grade_by": "Muslim",
     "topics": [
-      "Modesty",
-      "Purity",
-      "Adab"
-    ],
-    "summary_en": "Turn your gaze away",
-    "key_lessons": [
-      "This is a fundamental teaching.",
-      "It is a reliable and authentic narration."
-    ],
-    "related_dua_ids": [],
-    "length": "short",
-    "word_count_arabic": 2,
-    "priority": 2
-  },
-  {
-    "hadith_id": "b_2466",
-    "collection": "General Authentic Collections",
-    "book": "General",
-    "book_number": 1,
-    "hadith_number": "38",
-    "narrator": "Various Companions",
-    "arabic": "فِي كُلِّ ذَاتِ كَبِدٍ رَطْبَةٍ أَجْرٌ",
-    "translation_en": "There is a reward for serving any living being...",
-    "translation_language": "en",
-    "grade": "Sahih",
-    "topics": [
-      "Animals",
-      "Mercy",
-      "Environment"
-    ],
-    "summary_en": "There is a reward for serving any living being",
-    "key_lessons": [
-      "This is a fundamental teaching.",
-      "It is a reliable and authentic narration."
-    ],
-    "related_dua_ids": [],
-    "length": "short",
-    "word_count_arabic": 6,
-    "priority": 2
-  },
-  {
-    "hadith_id": "m_1012",
-    "collection": "General Authentic Collections",
-    "book": "General",
-    "book_number": 1,
-    "hadith_number": "39",
-    "narrator": "Various Companions",
-    "arabic": "مَا نَقَصَتْ صَدَقَةٌ مِنْ مَالٍ",
-    "translation_en": "Charity does not decrease wealth...",
-    "translation_language": "en",
-    "grade": "Sahih",
-    "topics": [
-      "Charity",
-      "Wealth",
-      "Generosity"
-    ],
-    "summary_en": "Charity does not decrease wealth",
-    "key_lessons": [
-      "This is a fundamental teaching.",
-      "It is a reliable and authentic narration."
-    ],
-    "related_dua_ids": [],
-    "length": "short",
-    "word_count_arabic": 5,
-    "priority": 2
-  },
-  {
-    "hadith_id": "b_3470",
-    "collection": "General Authentic Collections",
-    "book": "General",
-    "book_number": 1,
-    "hadith_number": "40",
-    "narrator": "Various Companions",
-    "arabic": "ارْحَمُوا تُرْحَمُوا وَاغْفِرُوا يَغْفِرِ اللَّهُ لَكُمْ",
-    "translation_en": "Show mercy, and you will be shown mercy...",
-    "translation_language": "en",
-    "grade": "Sahih",
-    "topics": [
-      "Forgiveness",
-      "Mercy",
-      "Akhlaq"
-    ],
-    "summary_en": "Show mercy, and you will be shown mercy",
-    "key_lessons": [
-      "This is a fundamental teaching.",
-      "It is a reliable and authentic narration."
-    ],
-    "related_dua_ids": [],
-    "length": "short",
-    "word_count_arabic": 6,
-    "priority": 2
-  },
-  {
-    "hadith_id": "m_2614",
-    "collection": "General Authentic Collections",
-    "book": "General",
-    "book_number": 1,
-    "hadith_number": "41",
-    "narrator": "Various Companions",
-    "arabic": "إِمَاطَةُ الْأَذَى عَنِ الطَّرِيقِ صَدَقَةٌ",
-    "translation_en": "Removing a harmful object from the road...",
-    "translation_language": "en",
-    "grade": "Sahih",
-    "topics": [
-      "Environment",
-      "Charity",
-      "Social"
-    ],
-    "summary_en": "Removing a harmful object from the road",
-    "key_lessons": [
-      "This is a fundamental teaching.",
-      "It is a reliable and authentic narration."
-    ],
-    "related_dua_ids": [],
-    "length": "short",
-    "word_count_arabic": 5,
-    "priority": 2
-  },
-  {
-    "hadith_id": "t_2459",
-    "collection": "General Authentic Collections",
-    "book": "General",
-    "book_number": 1,
-    "hadith_number": "42",
-    "narrator": "Various Companions",
-    "arabic": "الْكَيِّسُ مَنْ دَانَ نَفْسَهُ",
-    "translation_en": "The wise person is the one who holds himself accountable...",
-    "translation_language": "en",
-    "grade": "Sahih",
-    "topics": [
-      "Accountability",
-      "Self-Reflection",
-      "Akhlaq"
-    ],
-    "summary_en": "The wise person is the one who holds himself accountable",
-    "key_lessons": [
-      "This is a fundamental teaching.",
-      "It is a reliable and authentic narration."
-    ],
-    "related_dua_ids": [],
-    "length": "short",
-    "word_count_arabic": 4,
-    "priority": 2
-  },
-  {
-    "hadith_id": "m_482",
-    "collection": "General Authentic Collections",
-    "book": "General",
-    "book_number": 1,
-    "hadith_number": "43",
-    "narrator": "Various Companions",
-    "arabic": "أَقْرَبُ مَا يَكُونُ الْعَبْدُ مِنْ رَبِّهِ وَهُوَ سَاجِدٌ",
-    "translation_en": "The closest a servant comes to his Lord is when he is prostrating...",
-    "translation_language": "en",
-    "grade": "Sahih",
-    "topics": [
-      "Salah",
-      "Dua",
+      "Prayer (Salah)",
+      "Supplications (Duas & Dhikr)",
       "Worship"
     ],
-    "summary_en": "The closest a servant comes to his Lord is when he is prostrating",
+    "summary_en": "The best position to make supplication is during prostration, as it brings you closest to Allah.",
     "key_lessons": [
-      "This is a fundamental teaching.",
-      "It is a reliable and authentic narration."
+      "Prostration (Sujood) is the highest form of humility and thus brings the servant closest to God.",
+      "The duration of prostration is an ideal time for personal Duas after reciting the prescribed tasbih."
     ],
     "related_dua_ids": [],
+    "related_hadith_ids": [],
     "length": "short",
-    "word_count_arabic": 8,
-    "priority": 2
+    "word_count_arabic": 11,
+    "priority": 1,
+    "display_context": {
+      "time_windows": [
+        "anytime"
+      ],
+      "hijri_dates": [],
+      "hijri_periods": [],
+      "conditions": [
+        "prayer"
+      ],
+      "days_of_week": [
+        "any"
+      ]
+    },
+    "variants": []
   },
   {
-    "hadith_id": "b_adab_594",
-    "collection": "General Authentic Collections",
-    "book": "General",
-    "book_number": 1,
-    "hadith_number": "44",
-    "narrator": "Various Companions",
-    "arabic": "تَهَادُوا تَحَابُّوا",
-    "translation_en": "Give gifts to one another, you will love each other...",
-    "translation_language": "en",
+    "schema_version": "1.0.0",
+    "hadith_id": "muslim_2589",
+    "source": "Sahih Muslim",
+    "license": "Public Domain",
+    "collection": "Sahih Muslim",
+    "book": "Book of Virtue, Enjoining Good Manners, and Joining of the Ties of Kinship",
+    "book_number": 45,
+    "hadith_number": "2589",
+    "narrator": "Abu Hurairah",
+    "arabic": "أَتَدْرُونَ مَا الْغِيبَةُ؟ قَالُوا: اللَّهُ وَرَسُولُهُ أَعْلَمُ، قَالَ: ذِكْرُكَ أَخَاكَ بِمَا يَكْرَهُ. قِيلَ أَفَرَأَيْتَ إِنْ كَانَ فِي أَخِي مَا أَقُولُ؟ قَالَ: إِنْ كَانَ فِيهِ مَا تَقُولُ فَقَدِ اغْتَبْتَهُ، وَإِنْ لَمْ يَكُنْ فِيهِ فَقَدْ بَهَتَّهُ.",
+    "transliteration": "A-tadruna mal-ghibah? Qalu: Allahu wa rasuluhu a'lam. Qala: Thikruka akhaka bima yakrah. Qila: A-fa-ra'ayta in kana fi akhi ma aqul? Qala: In kana fihi ma taqul faqad ightabtahu, wa in lam yakun fihi faqad bahattahu.",
+    "translation_en": "Do you know what backbiting is? They said: Allah and His Messenger know best. He said: Saying something about your brother that he dislikes. It was said: What if what I say about my brother is true? He said: If what you say is true then you have backbitten him, and if it is not true, then you have slandered him.",
     "grade": "Sahih",
+    "grade_by": "Muslim",
     "topics": [
-      "Social",
-      "Love",
-      "Gifts"
+      "Good Character (Akhlaq)",
+      "Speech",
+      "Social Interactions"
     ],
-    "summary_en": "Give gifts to one another, you will love each other",
+    "summary_en": "The definition of backbiting and the distinction between backbiting and slander.",
     "key_lessons": [
-      "This is a fundamental teaching.",
-      "It is a reliable and authentic narration."
+      "Backbiting applies even when speaking the truth about someone if it's something they'd dislike being broadcasted.",
+      "Slander (saying falsehoods) is an even greater sin than backbiting."
     ],
     "related_dua_ids": [],
-    "length": "short",
-    "word_count_arabic": 2,
-    "priority": 2
+    "related_hadith_ids": [],
+    "length": "medium",
+    "word_count_arabic": 33,
+    "priority": 2,
+    "display_context": {
+      "time_windows": [
+        "anytime"
+      ],
+      "hijri_dates": [],
+      "hijri_periods": [],
+      "conditions": [],
+      "days_of_week": [
+        "any"
+      ]
+    },
+    "variants": []
   },
   {
-    "hadith_id": "b_5971",
-    "collection": "General Authentic Collections",
-    "book": "General",
-    "book_number": 1,
-    "hadith_number": "45",
-    "narrator": "Various Companions",
-    "arabic": "رِضَا الرَّبِّ فِي رِضَا الْوَالِدِ",
-    "translation_en": "The Lord's pleasure is in the parent's pleasure...",
-    "translation_language": "en",
+    "schema_version": "1.0.0",
+    "hadith_id": "bukhari_5027",
+    "source": "Sahih al-Bukhari",
+    "license": "Public Domain",
+    "collection": "Sahih al-Bukhari",
+    "book": "Book of Virtues of the Qur'an",
+    "book_number": 66,
+    "hadith_number": "5027",
+    "narrator": "Uthman bin Affan",
+    "arabic": "خَيْرُكُمْ مَنْ تَعَلَّمَ الْقُرْآنَ وَعَلَّمَهُ.",
+    "transliteration": "Khayrukum man ta'allamal-Qur'ana wa 'allamahu.",
+    "translation_en": "The best among you are those who learn the Quran and teach it.",
     "grade": "Sahih",
+    "grade_by": "Al-Bukhari",
     "topics": [
-      "Parents",
-      "Family",
-      "Obedience"
+      "Quran & Its Virtues",
+      "Knowledge & Seeking Knowledge",
+      "Education"
     ],
-    "summary_en": "The Lord's pleasure is in the parent's pleasure",
+    "summary_en": "Excellence is achieved through learning and spreading the teachings of the Quran.",
     "key_lessons": [
-      "This is a fundamental teaching.",
-      "It is a reliable and authentic narration."
+      "The highest ranks are reserved for those connected to the Book of Allah.",
+      "Spreading beneficial knowledge is superior to merely holding onto it for oneself."
     ],
     "related_dua_ids": [],
-    "length": "short",
-    "word_count_arabic": 5,
-    "priority": 2
-  },
-  {
-    "hadith_id": "m_2568",
-    "collection": "General Authentic Collections",
-    "book": "General",
-    "book_number": 1,
-    "hadith_number": "46",
-    "narrator": "Various Companions",
-    "arabic": "عُودُوا الْمَرِيضَ",
-    "translation_en": "Visit the sick...",
-    "translation_language": "en",
-    "grade": "Sahih",
-    "topics": [
-      "Social Interactions",
-      "Medicine",
-      "Mercy"
-    ],
-    "summary_en": "Visit the sick",
-    "key_lessons": [
-      "This is a fundamental teaching.",
-      "It is a reliable and authentic narration."
-    ],
-    "related_dua_ids": [],
-    "length": "short",
-    "word_count_arabic": 2,
-    "priority": 2
-  },
-  {
-    "hadith_id": "b_1521",
-    "collection": "General Authentic Collections",
-    "book": "General",
-    "book_number": 1,
-    "hadith_number": "47",
-    "narrator": "Various Companions",
-    "arabic": "الْحَجُّ الْمَبْرُورُ لَيْسَ لَهُ جَزَاءٌ إِلَّا الْجَنَّةُ",
-    "translation_en": "An accepted Hajj brings no less a reward than Paradise...",
-    "translation_language": "en",
-    "grade": "Sahih",
-    "topics": [
-      "Hajj",
-      "Paradise",
-      "Worship"
-    ],
-    "summary_en": "An accepted Hajj brings no less a reward than Paradise",
-    "key_lessons": [
-      "This is a fundamental teaching.",
-      "It is a reliable and authentic narration."
-    ],
-    "related_dua_ids": [],
-    "length": "short",
-    "word_count_arabic": 7,
-    "priority": 2
-  },
-  {
-    "hadith_id": "b_1894",
-    "collection": "General Authentic Collections",
-    "book": "General",
-    "book_number": 1,
-    "hadith_number": "48",
-    "narrator": "Various Companions",
-    "arabic": "الصِّيَامُ جُنَّةٌ",
-    "translation_en": "Fasting is a shield...",
-    "translation_language": "en",
-    "grade": "Sahih",
-    "topics": [
-      "Sawm",
-      "Protection",
-      "Worship"
-    ],
-    "summary_en": "Fasting is a shield",
-    "key_lessons": [
-      "This is a fundamental teaching.",
-      "It is a reliable and authentic narration."
-    ],
-    "related_dua_ids": [],
-    "length": "short",
-    "word_count_arabic": 2,
-    "priority": 2
-  },
-  {
-    "hadith_id": "m_1163",
-    "collection": "General Authentic Collections",
-    "book": "General",
-    "book_number": 1,
-    "hadith_number": "49",
-    "narrator": "Various Companions",
-    "arabic": "أَفْضَلُ الصَّلَاةِ بَعْدَ الْفَرِيضَةِ صَلَاةُ اللَّيْلِ",
-    "translation_en": "The best prayer after the obligatory prayers...",
-    "translation_language": "en",
-    "grade": "Sahih",
-    "topics": [
-      "Salah",
-      "Tahajjud",
-      "Night Prayer"
-    ],
-    "summary_en": "The best prayer after the obligatory prayers",
-    "key_lessons": [
-      "This is a fundamental teaching.",
-      "It is a reliable and authentic narration."
-    ],
-    "related_dua_ids": [],
+    "related_hadith_ids": [],
     "length": "short",
     "word_count_arabic": 6,
-    "priority": 2
-  },
-  {
-    "hadith_id": "m_54",
-    "collection": "General Authentic Collections",
-    "book": "General",
-    "book_number": 1,
-    "hadith_number": "50",
-    "narrator": "Various Companions",
-    "arabic": "أَفْشُوا السَّلَامَ بَيْنَكُمْ",
-    "translation_en": "Spread peace among yourselves...",
-    "translation_language": "en",
-    "grade": "Sahih",
-    "topics": [
-      "Social Interactions",
-      "Peace",
-      "Adab"
-    ],
-    "summary_en": "Spread peace among yourselves",
-    "key_lessons": [
-      "This is a fundamental teaching.",
-      "It is a reliable and authentic narration."
-    ],
-    "related_dua_ids": [],
-    "length": "short",
-    "word_count_arabic": 3,
-    "priority": 2
+    "priority": 1,
+    "display_context": {
+      "time_windows": [
+        "anytime"
+      ],
+      "hijri_dates": [],
+      "hijri_periods": [
+        "ramadan"
+      ],
+      "conditions": [
+        "seeking_knowledge"
+      ],
+      "days_of_week": [
+        "any"
+      ]
+    },
+    "variants": []
   }
 ]

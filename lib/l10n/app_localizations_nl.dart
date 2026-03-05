@@ -15,9 +15,6 @@ class AppLocalizationsNl extends AppLocalizations {
   String get home => 'Start';
 
   @override
-  String get calendar => 'Kalender';
-
-  @override
   String get hajj => 'Hadj';
 
   @override

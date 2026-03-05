@@ -5,6 +5,9 @@ import 'package:immutable5/features/duas/models/dua_model.dart';
 import 'package:immutable5/features/home/home_controller.dart';
 import 'package:immutable5/features/prayer/prayer_times_service.dart';
 import 'package:immutable5/features/quotes/quote_picker_service.dart';
+import 'package:mocktail/mocktail.dart';
+
+import 'mocks.dart';
 
 class FakeQuoteService extends QuotePickerService {
   @override
@@ -19,6 +22,15 @@ class FakeContextualDuaService implements ContextualDuaService {
     Map<String, DateTime>? todayPrayerTimes,
   }) async {
     return null;
+  }
+
+  @override
+  Future<List<Dua>> getContextualDuas({
+    required DateTime now,
+    required HijriCalendar hijriDate,
+    Map<String, DateTime>? todayPrayerTimes,
+  }) async {
+    return [];
   }
 
   @override
@@ -68,9 +80,21 @@ class FakePrayerTimesService extends PrayerTimesService {
     bool forceRefresh = false,
   }) async =>
       todayMap;
+
+  @override
+  Future<String> getPastPrayerName() async => 'Isha';
 }
 
 void main() {
+  late MockSecureStorageProvider mockPrefs;
+
+  setUp(() {
+    mockPrefs = MockSecureStorageProvider();
+    when(() => mockPrefs.getBool(any())).thenAnswer((_) async => null);
+    when(() => mockPrefs.getString(any())).thenAnswer((_) async => null);
+    when(() => mockPrefs.getInt(any())).thenAnswer((_) async => null);
+  });
+
   test('HomeController loads cached data and populates state', () async {
     final now = DateTime.now();
     final nextPrayer = MapEntry('Fajr', now.add(const Duration(hours: 1)));
@@ -89,6 +113,7 @@ void main() {
       prayerFactory: (_, __, ___, ____) => fakePrayer,
       initialPrayerService: fakePrayer,
       contextualDuaService: FakeContextualDuaService(),
+      prefs: mockPrefs,
     );
 
     await controller.loadData();

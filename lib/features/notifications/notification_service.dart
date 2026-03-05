@@ -3,11 +3,10 @@ import 'dart:developer' as developer;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:permission_handler/permission_handler.dart';
 import 'package:immutable5/services/secure_storage_provider.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:timezone/data/latest.dart' as tz_data;
 import 'package:timezone/timezone.dart' as tz;
-import 'package:shared_preferences/shared_preferences.dart';
 
 class NotificationService {
   static final NotificationService _instance = NotificationService._internal();
@@ -53,10 +52,12 @@ class NotificationService {
 
   void _onNotificationTapped(NotificationResponse response) {
     // Handle notification tap - could navigate to prayer times page
-    developer.log(
-      'Notification tapped: ${response.payload}',
-      name: 'NotificationService',
-    );
+    if (kDebugMode) {
+      developer.log(
+        'Notification tapped: ${response.payload}',
+        name: 'NotificationService',
+      );
+    }
   }
 
   Future<bool> requestPermissions() async {

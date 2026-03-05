@@ -16,13 +16,50 @@ class TasbihPage extends StatefulWidget {
 class _TasbihPageState extends State<TasbihPage>
     with SingleTickerProviderStateMixin {
   int _count = 0;
-  int _target = 33;
+  int _target = 100;
   bool _isVoiceEnabled = false;
   bool _isListening = false;
   int _lastRecognizedWords = 0;
   late stt.SpeechToText _speech;
   late AnimationController _pulseController;
   late Animation<double> _pulseAnimation;
+
+  final List<Map<String, dynamic>> _tasbihPhases = [
+    {
+      'arabic': 'سُبْحَانَ ٱللَّٰهِ',
+      'translit': 'Subhanallah',
+      'translation': 'Glory be to God.',
+      'count': 33,
+    },
+    {
+      'arabic': 'ٱلْحَمْدُ لِلَّٰهِ',
+      'translit': 'Alhamdulillah',
+      'translation': 'All praise is due to God.',
+      'count': 33,
+    },
+    {
+      'arabic': 'ٱللَّٰهُ أَكْبَرُ',
+      'translit': 'Allahu Akbar',
+      'translation': 'God is the Greatest.',
+      'count': 33,
+    },
+    {
+      'arabic': '',
+      'translit':
+          "La ilaha illallah wahdahu la sharika lahu, lahul-mulku wa lahul-hamdu wa huwa 'ala kulli shay'in qadir.",
+      'translation':
+          'There is no god but Allah, alone, without partner. His is the sovereignty, and His is the praise, and He is over all things competent.',
+      'count': 1,
+    },
+  ];
+
+  int get _phaseIndex {
+    if (_count >= 100) return 4;
+    if (_count < 33) return 0;
+    if (_count < 66) return 1;
+    if (_count < 99) return 2;
+    return 3;
+  }
 
   @override
   void initState() {
@@ -88,9 +125,12 @@ class _TasbihPageState extends State<TasbihPage>
         onError: (errorNotification) {
           if (mounted) {
             setState(() => _isListening = false);
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text('Error: ${errorNotification.errorMsg}')),
-            );
+            if (errorNotification.errorMsg != 'error_busy') {
+              ScaffoldMessenger.of(context).hideCurrentSnackBar();
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text('Error: ${errorNotification.errorMsg}')),
+              );
+            }
             if (_isVoiceEnabled) {
               Future.delayed(const Duration(milliseconds: 1000), () {
                 if (mounted && _isVoiceEnabled && !_isListening) {
@@ -122,6 +162,7 @@ class _TasbihPageState extends State<TasbihPage>
   }
 
   void _startListening() {
+    if (_speech.isListening) return; // Prevent "error_busy"
     _lastRecognizedWords = 0;
     _speech.listen(
       onResult: (result) {
@@ -137,8 +178,29 @@ class _TasbihPageState extends State<TasbihPage>
 
         if (words.length > _lastRecognizedWords) {
           int diff = words.length - _lastRecognizedWords;
+
+          // Get the current expected phrase based on phase index
+          final currentPhase = _tasbihPhases[_phaseIndex];
+          final expectedTranslit =
+              currentPhase['translit'].toString().toLowerCase().split(' ');
+
           for (int i = 0; i < diff; i++) {
-            _incrementCount();
+            // Let's do a simple check to see if the recognized words relate to the expected transliteration
+            if (words.last.toLowerCase() == 'subhanallah' ||
+                words.last.toLowerCase() == 'alhamdulillah' ||
+                words.last.toLowerCase() == 'allahu' ||
+                words.last.toLowerCase() == 'akbar' ||
+                words.last.toLowerCase() == 'allah' ||
+                words.last.toLowerCase() == 'la' ||
+                words.last.toLowerCase() == 'ilaha' ||
+                expectedTranslit
+                    .any((part) => words.last.toLowerCase().contains(part))) {
+              _incrementCount();
+            } else {
+              // Optional: we can decide to still increment or just ignore based on precise matching
+              // For now, if they enable voice, we attempt to match any of the common dhikr words
+              // or parts of the current expected phrase. If completely unrelated, we ignore.
+            }
           }
           _lastRecognizedWords = words.length;
         }
@@ -278,6 +340,107 @@ class _TasbihPageState extends State<TasbihPage>
             ),
           ),
 
+          if (_target == 100)
+            Padding(
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+              child: Column(
+                children: List.generate(_tasbihPhases.length, (index) {
+                  final phase = _tasbihPhases[index];
+                  final isActive = _phaseIndex == index;
+                  final isDone = _phaseIndex > index || _count >= 100;
+
+                  return AnimatedContainer(
+                    duration: const Duration(milliseconds: 300),
+                    margin: const EdgeInsets.symmetric(vertical: 2),
+                    padding: const EdgeInsets.all(10),
+                    decoration: BoxDecoration(
+                      color: isActive
+                          ? AppColors.cardSurface.withValues(alpha: 0.8)
+                          : AppColors.background,
+                      border: Border.all(
+                        color: isActive ? AppColors.accent : Colors.transparent,
+                        width: 1.5,
+                      ),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Container(
+                          width: 24,
+                          height: 24,
+                          margin: const EdgeInsets.only(top: 2),
+                          decoration: BoxDecoration(
+                            color: isActive
+                                ? AppColors.accent
+                                : (isDone
+                                    ? AppColors.success
+                                    : AppColors.cardSurface),
+                            shape: BoxShape.circle,
+                          ),
+                          child: Center(
+                            child: isDone
+                                ? const Icon(
+                                    Icons.check,
+                                    size: 14,
+                                    color: Colors.white,
+                                  )
+                                : Text(
+                                    '${phase['count']}',
+                                    style: GoogleFonts.plusJakartaSans(
+                                      color: isActive
+                                          ? AppColors.background
+                                          : AppColors.textSecondary,
+                                      fontSize: 10,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              if (phase['arabic'].toString().isNotEmpty)
+                                Text(
+                                  phase['arabic'],
+                                  style: const TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                    color: AppColors.textPrimary,
+                                  ),
+                                ),
+                              if (phase['translit'].toString().isNotEmpty)
+                                Text(
+                                  phase['translit'],
+                                  style: GoogleFonts.plusJakartaSans(
+                                    fontSize: index == 3 ? 12 : 13,
+                                    fontWeight: FontWeight.w600,
+                                    color: isActive
+                                        ? AppColors.accent
+                                        : AppColors.textPrimary,
+                                  ),
+                                ),
+                              if (phase['translation'].toString().isNotEmpty)
+                                Text(
+                                  phase['translation'],
+                                  style: GoogleFonts.plusJakartaSans(
+                                    fontSize: 11,
+                                    color: AppColors.textSecondary,
+                                  ),
+                                ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  );
+                }),
+              ),
+            ),
+
           Expanded(
             child: GestureDetector(
               onTap: _incrementCount,
@@ -287,8 +450,8 @@ class _TasbihPageState extends State<TasbihPage>
                 children: [
                   // Background circular progress
                   SizedBox(
-                    width: 250,
-                    height: 250,
+                    width: 180,
+                    height: 180,
                     child: CircularProgressIndicator(
                       value: progress,
                       strokeWidth: 20,

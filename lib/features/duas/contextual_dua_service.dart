@@ -100,6 +100,75 @@ class ContextualDuaService {
     return bestDua;
   }
 
+  /// Returns a list of all Duas that match the current context, sorted by score and priority.
+  Future<List<Dua>> getContextualDuas({
+    required DateTime now,
+    required HijriCalendar hijriDate,
+    Map<String, DateTime>? todayPrayerTimes,
+  }) async {
+    final duas = await _repository.getAllDuas();
+    if (duas.isEmpty) return [];
+
+    final activeTimeWindow = _determineActiveTimeWindow(now, todayPrayerTimes);
+    final activeHijriPeriod = _determineActiveHijriPeriod(hijriDate);
+    final activeDayOfWeek = _determineDayOfWeek(now);
+
+    final List<Map<String, dynamic>> scoredDuas = [];
+
+    for (final dua in duas) {
+      if (dua.displayContext == null) continue;
+      final ctx = dua.displayContext!;
+
+      int score = 0;
+
+      // 1. Check Time Windows
+      if (ctx.timeWindows.isNotEmpty) {
+        if (ctx.timeWindows.contains(activeTimeWindow) ||
+            ctx.timeWindows.contains('anytime')) {
+          score += 10;
+        } else {
+          // If strictly restricted by time window and we are not in it, skip this dua
+          continue;
+        }
+      }
+
+      // 2. Check Hijri Periods
+      if (ctx.hijriPeriods.isNotEmpty) {
+        if (activeHijriPeriod != null &&
+            ctx.hijriPeriods.contains(activeHijriPeriod)) {
+          score += 20; // High weight for specific Islamic periods like Ramadan
+        } else {
+          // Restricted by period and not in it
+          continue;
+        }
+      }
+
+      // 3. Check Day of Week
+      if (ctx.daysOfWeek.isNotEmpty) {
+        if (ctx.daysOfWeek.contains(activeDayOfWeek) ||
+            ctx.daysOfWeek.contains('any')) {
+          score += 5;
+        } else {
+          continue;
+        }
+      }
+
+      if (score > 0) {
+        scoredDuas.add({'dua': dua, 'score': score});
+      }
+    }
+
+    scoredDuas.sort((a, b) {
+      final scoreCompare = (b['score'] as int).compareTo(a['score'] as int);
+      if (scoreCompare != 0) return scoreCompare;
+      final duaA = a['dua'] as Dua;
+      final duaB = b['dua'] as Dua;
+      return duaA.priority.compareTo(duaB.priority);
+    });
+
+    return scoredDuas.map((e) => e['dua'] as Dua).toList();
+  }
+
   /// Evaluates specific context string to show alongside the Dua (e.g., "Jummah Mubarak...")
   String? getContextualMessage(
     Dua dua,

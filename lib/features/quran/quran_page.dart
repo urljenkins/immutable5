@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:ui';
 
 import 'package:audioplayers/audioplayers.dart';
@@ -5,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:immutable5/services/secure_storage_provider.dart';
+import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 import 'package:share_plus/share_plus.dart';
 
 import '../../shared/app_colors.dart';
@@ -29,7 +31,9 @@ class _QuranPageState extends State<QuranPage> {
   final JuzOfTheDayService _juzService = JuzOfTheDayService();
   final QuranAudioService _audioService = QuranAudioService();
   final _bookmarks = QuranBookmarkService.instance;
-  final ScrollController _scrollController = ScrollController();
+  final ItemScrollController _itemScrollController = ItemScrollController();
+  final ItemPositionsListener _itemPositionsListener =
+      ItemPositionsListener.create();
   final Map<int, GlobalKey> _chapterKeys = {};
   // Per-verse keys: key = surahNumber * 10000 + verseIndex
   final Map<int, GlobalKey> _verseKeys = {};
@@ -48,6 +52,13 @@ class _QuranPageState extends State<QuranPage> {
   bool _isAudioLoading = false;
   List<String> _audioUrls = [];
 
+  // Auto-scroll state
+  bool _autoScrolling = false;
+  Timer? _autoScrollTimer;
+  double _autoScrollSpeed = 1.0; // 0.5–5.0
+  int _autoScrollIndex = 0;
+  double _autoScrollAlignment = 0.0;
+
   @override
   void initState() {
     super.initState();
@@ -60,6 +71,7 @@ class _QuranPageState extends State<QuranPage> {
     final prefs = SecureStorageProvider();
     final savedMode = await prefs.getString('juzMode');
     final savedReciter = await prefs.getString('quran_reciter_id');
+    final savedSpeed = await prefs.getDouble('quran_auto_scroll_speed');
     final mode =
         savedMode == 'surahBased' ? JuzMode.surahBased : JuzMode.standard;
     final todayJuz = _juzService.getJuzForToday(mode);
@@ -82,13 +94,16 @@ class _QuranPageState extends State<QuranPage> {
       if (savedReciter != null) {
         _currentReciterId = savedReciter;
       }
+      if (savedSpeed != null) {
+        _autoScrollSpeed = savedSpeed.clamp(0.5, 5.0);
+      }
       _loading = false;
     });
   }
 
   @override
   void dispose() {
-    _scrollController.dispose();
+    _autoScrollTimer?.cancel();
     _audioPlayer.dispose();
     super.dispose();
   }
@@ -164,6 +179,7 @@ class _QuranPageState extends State<QuranPage> {
       });
       _scrollToVerse(surah, verse);
     } catch (e) {
+      if (!mounted) return;
       ScaffoldMessenger.of(
         context,
       ).showSnackBar(SnackBar(content: Text('Error playing audio: $e')));
@@ -791,44 +807,179 @@ class _QuranPageState extends State<QuranPage> {
   Future<void> _scrollToChapter(QuranChapter chapter) async {
     final index = _chapters.indexWhere((c) => c.number == chapter.number);
     if (index == -1) return;
-    final key = _chapterKeys[chapter.number];
 
-    if (key?.currentContext != null) {
-      await Scrollable.ensureVisible(
-        key!.currentContext!,
+    if (_itemScrollController.isAttached) {
+      await _itemScrollController.scrollTo(
+        index: index,
         duration: const Duration(milliseconds: 400),
         curve: Curves.easeInOut,
         alignment: 0.05,
       );
-      return;
+    }
+  }
+
+  // ── Auto-scroll ─────────────────────────────────────────────────────────────
+
+  void _startAutoScroll() {
+    if (_chapters.isEmpty) return;
+
+    // Capture current visible position so we scroll from where the user is.
+    final positions = _itemPositionsListener.itemPositions.value;
+    if (positions.isNotEmpty) {
+      final first = positions.reduce(
+        (a, b) => a.itemLeadingEdge < b.itemLeadingEdge ? a : b,
+      );
+      _autoScrollIndex = first.index;
+      // itemLeadingEdge is the fraction of the item above the viewport top.
+      // A negative value means the item starts above the viewport.
+      _autoScrollAlignment = first.itemLeadingEdge.clamp(0.0, 1.0);
     }
 
-    if (!_scrollController.hasClients) return;
-
-    double estimatedOffset = 0;
-    for (int i = 0; i < index; i++) {
-      estimatedOffset += 100 + _chapters[i].verses.length * 180.0;
-    }
-
-    _scrollController.jumpTo(
-      estimatedOffset.clamp(0.0, _scrollController.position.maxScrollExtent),
+    _autoScrollTimer?.cancel();
+    _autoScrollTimer = Timer.periodic(
+      const Duration(milliseconds: 16), // ≈ 60 fps
+      (_) => _autoScrollTick(),
     );
-    await Future.delayed(const Duration(milliseconds: 100));
+    setState(() => _autoScrolling = true);
+  }
 
-    for (int attempt = 0;
-        attempt < 30 && key?.currentContext == null;
-        attempt++) {
-      await Future.delayed(const Duration(milliseconds: 50));
+  void _autoScrollTick() {
+    if (!_itemScrollController.isAttached || _chapters.isEmpty) return;
+
+    // Delta per tick: base 0.0004 * speed (at 1× → ~25 px/s on typical item heights)
+    final delta = 0.0004 * _autoScrollSpeed;
+    _autoScrollAlignment += delta;
+
+    // When alignment goes past 1.0 the entire item has scrolled past.
+    if (_autoScrollAlignment >= 1.0) {
+      _autoScrollAlignment -= 1.0;
+      _autoScrollIndex++;
+      if (_autoScrollIndex >= _chapters.length) {
+        // Reached the end – stop.
+        _stopAutoScroll();
+        return;
+      }
     }
 
-    if (key?.currentContext != null) {
-      await Scrollable.ensureVisible(
-        key!.currentContext!,
-        duration: const Duration(milliseconds: 400),
-        curve: Curves.easeInOut,
-        alignment: 0.05,
-      );
+    _itemScrollController.jumpTo(
+      index: _autoScrollIndex,
+      alignment: _autoScrollAlignment,
+    );
+  }
+
+  void _stopAutoScroll() {
+    _autoScrollTimer?.cancel();
+    _autoScrollTimer = null;
+    if (_autoScrolling) {
+      setState(() => _autoScrolling = false);
     }
+  }
+
+  void _toggleAutoScroll() {
+    if (_autoScrolling) {
+      _stopAutoScroll();
+    } else {
+      _startAutoScroll();
+    }
+  }
+
+  void _showSpeedPicker() {
+    showModalBottomSheet<void>(
+      context: context,
+      backgroundColor: Colors.transparent,
+      builder: (sheetCtx) {
+        double tempSpeed = _autoScrollSpeed;
+        return StatefulBuilder(
+          builder: (ctx, setSheetState) {
+            return ClipRRect(
+              borderRadius:
+                  const BorderRadius.vertical(top: Radius.circular(24)),
+              child: BackdropFilter(
+                filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
+                child: Container(
+                  color: AppColors.cardSurface.withValues(alpha: 0.95),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
+                  child: SafeArea(
+                    top: false,
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Container(
+                          width: 40,
+                          height: 4,
+                          decoration: BoxDecoration(
+                            color: Colors.white.withValues(alpha: 0.2),
+                            borderRadius: BorderRadius.circular(2),
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+                        Text(
+                          'Auto-Scroll Speed',
+                          style: GoogleFonts.plusJakartaSans(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            color: AppColors.textPrimary,
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        Text(
+                          '${tempSpeed.toStringAsFixed(1)}×',
+                          style: GoogleFonts.plusJakartaSans(
+                            fontSize: 32,
+                            fontWeight: FontWeight.w700,
+                            color: AppColors.accent,
+                          ),
+                        ),
+                        const SizedBox(height: 12),
+                        Row(
+                          children: [
+                            Text(
+                              'Slow',
+                              style: GoogleFonts.plusJakartaSans(
+                                fontSize: 12,
+                                color: AppColors.textSecondary,
+                              ),
+                            ),
+                            Expanded(
+                              child: Slider(
+                                value: tempSpeed,
+                                min: 0.5,
+                                max: 5.0,
+                                divisions: 18,
+                                activeColor: AppColors.accent,
+                                inactiveColor:
+                                    AppColors.accent.withValues(alpha: 0.2),
+                                onChanged: (v) {
+                                  setSheetState(() => tempSpeed = v);
+                                  setState(() => _autoScrollSpeed = v);
+                                  SecureStorageProvider().setDouble(
+                                    'quran_auto_scroll_speed',
+                                    v,
+                                  );
+                                },
+                              ),
+                            ),
+                            Text(
+                              'Fast',
+                              style: GoogleFonts.plusJakartaSans(
+                                fontSize: 12,
+                                color: AppColors.textSecondary,
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 8),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            );
+          },
+        );
+      },
+    );
   }
 
   // ── Helper widgets ──────────────────────────────────────────────────────────
@@ -1050,6 +1201,39 @@ class _QuranPageState extends State<QuranPage> {
         backgroundColor: Colors.transparent,
         elevation: 0,
         actions: [
+          // Auto-scroll toggle
+          IconButton(
+            icon: Icon(
+              _autoScrolling
+                  ? Icons.pause_circle_outline_rounded
+                  : Icons.slow_motion_video_rounded,
+              color:
+                  _autoScrolling ? AppColors.accent : AppColors.textSecondary,
+            ),
+            onPressed: _toggleAutoScroll,
+            tooltip: _autoScrolling ? 'Stop auto-scroll' : 'Auto-scroll',
+          ),
+          // Auto-scroll speed (only shown when scrolling)
+          if (_autoScrolling)
+            GestureDetector(
+              onTap: _showSpeedPicker,
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                margin: const EdgeInsets.only(right: 4),
+                decoration: BoxDecoration(
+                  color: AppColors.accent.withValues(alpha: 0.15),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Text(
+                  '${_autoScrollSpeed.toStringAsFixed(1)}×',
+                  style: GoogleFonts.plusJakartaSans(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w700,
+                    color: AppColors.accent,
+                  ),
+                ),
+              ),
+            ),
           // Reciter button
           IconButton(
             icon: const Icon(
@@ -1125,12 +1309,13 @@ class _QuranPageState extends State<QuranPage> {
                       _buildJuzBanner(),
                       _buildQuickJump(),
                       Expanded(
-                        child: Scrollbar(
-                          controller: _scrollController,
-                          child: ListView.builder(
-                            controller: _scrollController,
+                        child: GestureDetector(
+                          behavior: HitTestBehavior.translucent,
+                          onTap: _autoScrolling ? _stopAutoScroll : null,
+                          child: ScrollablePositionedList.builder(
+                            itemScrollController: _itemScrollController,
+                            itemPositionsListener: _itemPositionsListener,
                             padding: const EdgeInsets.fromLTRB(16, 0, 16, 100),
-                            cacheExtent: 5000,
                             itemCount: _chapters.length,
                             itemBuilder: (context, index) {
                               final chapter = _chapters[index];

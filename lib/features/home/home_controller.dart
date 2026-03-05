@@ -39,6 +39,10 @@ class HomeController extends ChangeNotifier {
   })  : contextualDuaService =
             contextualDuaService ?? getIt<ContextualDuaService>(),
         hadithRepository = hadithRepository ?? getIt<HadithRepository>() {
+    SecureStorageProvider? prefs,
+  })  : contextualDuaService =
+            contextualDuaService ?? getIt<ContextualDuaService>(),
+        _prefs = prefs ?? getIt<SecureStorageProvider>() {
     if (initialPrayerService != null) {
       _prayerTimesService = initialPrayerService;
       _state = _state.copyWith(loading: false, locationLoaded: true);
@@ -51,6 +55,7 @@ class HomeController extends ChangeNotifier {
   final PrayerTimesServiceFactory prayerFactory;
   final ContextualDuaService contextualDuaService;
   final HadithRepository hadithRepository;
+  final SecureStorageProvider _prefs;
 
   final double defaultLatitude;
   final double defaultLongitude;
@@ -181,7 +186,7 @@ class HomeController extends ChangeNotifier {
         // Fallback to IP-based location for desktop/web
         try {
           final response = await http
-              .get(Uri.parse('http://ip-api.com/json/'))
+              .get(Uri.parse('https://ip-api.com/json/'))
               .timeout(const Duration(seconds: 5));
           if (response.statusCode == 200) {
             final data = jsonDecode(response.body);
@@ -210,7 +215,7 @@ class HomeController extends ChangeNotifier {
       final latitude = position?.latitude ?? defaultLatitude;
       final longitude = position?.longitude ?? defaultLongitude;
 
-      final prefs = SecureStorageProvider();
+      final prefs = _prefs;
       await _configurePrayerService(
         latitude: latitude,
         longitude: longitude,
@@ -280,7 +285,7 @@ class HomeController extends ChangeNotifier {
     bool permissionIssue = false,
   }) async {
     try {
-      final prefs = SecureStorageProvider();
+      final prefs = _prefs;
       final savedLat = await prefs.getDouble('location_latitude');
       final savedLon = await prefs.getDouble('location_longitude');
       final latitude = savedLat ?? defaultLatitude;
@@ -316,7 +321,7 @@ class HomeController extends ChangeNotifier {
         _cachedNextPrayerTime!.isAfter(now);
 
     if (!forceRefresh && cacheFresh) {
-      final prefs = SecureStorageProvider();
+      final prefs = _prefs;
       final showPastPrayer = await prefs.getBool('show_past_prayer') ?? false;
 
       _update(
@@ -371,7 +376,7 @@ class HomeController extends ChangeNotifier {
       _cachedPastPrayerName = pastPrayerName;
       _cachedDataTimestamp = DateTime.now();
 
-      final prefs = SecureStorageProvider();
+      final prefs = _prefs;
       final showPastPrayer = await prefs.getBool('show_past_prayer') ?? false;
 
       // Check for Contextual Dua
@@ -460,7 +465,7 @@ class HomeController extends ChangeNotifier {
           }
 
           final pastPrayerName = await _prayerTimesService!.getPastPrayerName();
-          final prefs = SecureStorageProvider();
+          final prefs = _prefs;
           final showPastPrayer =
               await prefs.getBool('show_past_prayer') ?? false;
 
@@ -523,7 +528,7 @@ class HomeController extends ChangeNotifier {
   }
 
   Future<void> togglePrayerDisplayOption() async {
-    final prefs = SecureStorageProvider();
+    final prefs = _prefs;
     final newValue = !_state.showPastPrayer;
     await prefs.setBool('show_past_prayer', newValue);
     // Since this simply changes what we display, and the data is already in state,

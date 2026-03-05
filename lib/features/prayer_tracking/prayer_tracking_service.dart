@@ -1,16 +1,17 @@
+import 'package:immutable5/di/service_locator.dart';
 import 'package:immutable5/services/secure_storage_provider.dart';
 
 class PrayerTrackingService {
-  static final PrayerTrackingService _instance =
-      PrayerTrackingService._internal();
-  factory PrayerTrackingService() => _instance;
-  PrayerTrackingService._internal();
+  final SecureStorageProvider _prefs;
+
+  PrayerTrackingService({SecureStorageProvider? prefs})
+      : _prefs = prefs ?? getIt<SecureStorageProvider>();
 
   final List<String> mainPrayers = ['Fajr', 'Dhuhr', 'Asr', 'Maghrib', 'Isha'];
 
   /// Mark a prayer as completed for a specific date
   Future<void> markPrayerCompleted(String prayerName, DateTime date) async {
-    final prefs = SecureStorageProvider();
+    final prefs = _prefs;
     final key = _getPrayerKey(prayerName, date);
     await prefs.setBool(key, true);
     await prefs.setInt(
@@ -21,7 +22,7 @@ class PrayerTrackingService {
 
   /// Check if a prayer is completed for a specific date
   Future<bool> isPrayerCompleted(String prayerName, DateTime date) async {
-    final prefs = SecureStorageProvider();
+    final prefs = _prefs;
     final key = _getPrayerKey(prayerName, date);
     return await prefs.getBool(key) ?? false;
   }
@@ -67,7 +68,7 @@ class PrayerTrackingService {
 
   /// Get longest streak ever
   Future<int> getLongestStreak() async {
-    final prefs = SecureStorageProvider();
+    final prefs = _prefs;
     return await prefs.getInt('longest_streak') ?? 0;
   }
 
@@ -75,14 +76,14 @@ class PrayerTrackingService {
   Future<void> updateLongestStreak(int currentStreak) async {
     final longest = await getLongestStreak();
     if (currentStreak > longest) {
-      final prefs = SecureStorageProvider();
+      final prefs = _prefs;
       await prefs.setInt('longest_streak', currentStreak);
     }
   }
 
   /// Get total prayers completed
   Future<int> getTotalPrayersCompleted() async {
-    final prefs = SecureStorageProvider();
+    final prefs = _prefs;
     final keys = await prefs.getKeys();
     int count = 0;
     for (final k in keys) {
@@ -97,14 +98,24 @@ class PrayerTrackingService {
 
   /// Get prayers completed in last 30 days
   Future<Map<DateTime, Map<String, bool>>> getLast30DaysHistory() async {
+    return getHistoryForRange(
+      DateTime.now().subtract(const Duration(days: 29)),
+      DateTime.now(),
+    );
+  }
+
+  /// Get prayer completion history for an arbitrary date range [start, end] inclusive.
+  Future<Map<DateTime, Map<String, bool>>> getHistoryForRange(
+    DateTime start,
+    DateTime end,
+  ) async {
     final Map<DateTime, Map<String, bool>> history = {};
-    final now = DateTime.now();
-
-    for (int i = 0; i < 30; i++) {
-      final date = now.subtract(Duration(days: i));
-      history[date] = await getCompletedPrayersForDate(date);
+    DateTime cursor = DateTime(start.year, start.month, start.day);
+    final last = DateTime(end.year, end.month, end.day);
+    while (!cursor.isAfter(last)) {
+      history[cursor] = await getCompletedPrayersForDate(cursor);
+      cursor = cursor.add(const Duration(days: 1));
     }
-
     return history;
   }
 
@@ -133,7 +144,7 @@ class PrayerTrackingService {
 
     if (isCompleted) {
       // Unmark
-      final prefs = SecureStorageProvider();
+      final prefs = _prefs;
       final key = _getPrayerKey(prayerName, date);
       await prefs.remove(key);
       await prefs.remove('${key}_timestamp');
