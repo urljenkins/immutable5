@@ -93,6 +93,7 @@ flutter:
     - assets/quran.txt
     - assets/common_words.csv
     - assets/duas.json
+    - assets/hadith.json
     - assets/dua_schema.json
     - assets/audio/words/
     - assets/glossary.json

@@ -1,71 +1,71 @@
+import 'dart:convert';
+import 'dart:developer' as developer;
+
 import 'package:flutter/services.dart';
-import 'models/hadith.dart';
+
+import 'models/hadith_model.dart';
 
 class HadithRepository {
-  List<Hadith>? _cachedHadiths;
-  bool _isLoading = false;
+  List<Hadith> _hadiths = [];
+  bool _initialized = false;
 
+  /// Retrieves all cached Hadiths. Initializes if not already done.
   Future<List<Hadith>> getAllHadiths() async {
-    if (_cachedHadiths != null) {
-      return _cachedHadiths!;
+    if (!_initialized) {
+      await initialize();
     }
+    return _hadiths;
+  }
 
-    if (_isLoading) {
-      // Simple wait if already loading (prevent multiple simultaneous reads)
-      while (_isLoading) {
-        await Future.delayed(const Duration(milliseconds: 50));
-      }
-      if (_cachedHadiths != null) return _cachedHadiths!;
-    }
+  /// Initializes the repository by loading and parsing `assets/hadith.json`.
+  Future<void> initialize() async {
+    if (_initialized) return;
 
-    _isLoading = true;
     try {
       final jsonString = await rootBundle.loadString('assets/hadith.json');
-      _cachedHadiths = Hadith.listFromJsonString(jsonString);
-      return _cachedHadiths!;
+      final List<dynamic> jsonList = json.decode(jsonString);
+
+      _hadiths = jsonList.map((json) => Hadith.fromJson(json)).toList();
+      _initialized = true;
+      developer.log(
+        'Successfully loaded ${_hadiths.length} hadiths',
+        name: 'HadithRepository',
+      );
     } catch (e) {
-      // Fallback to empty list or rethrow depending on app policy
-      _cachedHadiths = [];
-      rethrow;
-    } finally {
-      _isLoading = false;
+      developer.log(
+        'Error loading hadith.json: $e',
+        name: 'HadithRepository',
+        error: e,
+      );
+      _hadiths = [];
     }
   }
 
+  /// Finds a specific hadith by its unique ID.
   Future<Hadith?> getHadithById(String id) async {
-    final hadiths = await getAllHadiths();
+    if (!_initialized) {
+      await initialize();
+    }
     try {
-      return hadiths.firstWhere((h) => h.hadithId == id);
-    } catch (_) {
-      return null; // Not found
+      return _hadiths.firstWhere((h) => h.id == id);
+    } catch (e) {
+      return null;
     }
   }
 
-  Future<List<Hadith>> searchHadiths(String query) async {
-    final hadiths = await getAllHadiths();
-    if (query.isEmpty) return hadiths;
-
-    final lowerQuery = query.toLowerCase();
-    return hadiths.where((h) {
-      return h.translationEn.toLowerCase().contains(lowerQuery) ||
-          h.arabic.contains(lowerQuery) ||
-          h.topics.any((t) => t.toLowerCase().contains(lowerQuery)) ||
-          h.summaryEn.toLowerCase().contains(lowerQuery);
-    }).toList();
-  }
-
+  /// Returns hadiths matching a specific topic.
   Future<List<Hadith>> getHadithsByTopic(String topic) async {
-    final hadiths = await getAllHadiths();
-    return hadiths.where((h) => h.topics.contains(topic)).toList();
+    if (!_initialized) {
+      await initialize();
+    }
+    return _hadiths.where((h) => h.topics.contains(topic)).toList();
   }
 
-  Future<List<String>> getAllTopics() async {
-    final hadiths = await getAllHadiths();
-    final topics = <String>{};
-    for (final h in hadiths) {
-      topics.addAll(h.topics);
+  /// Returns hadiths matching a specific collection.
+  Future<List<Hadith>> getHadithsByCollection(String collection) async {
+    if (!_initialized) {
+      await initialize();
     }
-    final sortedTopics = topics.toList()..sort();
-    return sortedTopics;
+    return _hadiths.where((h) => h.collection == collection).toList();
   }
 }

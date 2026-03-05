@@ -22,6 +22,7 @@ void setupLocator() {
   getIt.registerLazySingleton<NotificationService>(() => NotificationService());
   getIt.registerLazySingleton<QuotePickerService>(() => QuotePickerService());
   getIt.registerLazySingleton<DuaRepository>(() => DuaRepository());
+  getIt.registerLazySingleton<HadithRepository>(() => HadithRepository());
   getIt.registerLazySingleton<ContextualDuaService>(
     () => ContextualDuaService(),
   );

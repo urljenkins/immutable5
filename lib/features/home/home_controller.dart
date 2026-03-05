@@ -11,6 +11,8 @@ import 'package:immutable5/services/secure_storage_provider.dart';
 
 import '../../di/service_locator.dart';
 import '../duas/contextual_dua_service.dart';
+import '../hadith/hadith_repository.dart';
+import '../hadith/models/hadith_model.dart';
 import '../prayer/prayer_times_service.dart';
 import '../quotes/quote_picker_service.dart';
 import 'home_state.dart';
@@ -33,6 +35,10 @@ class HomeController extends ChangeNotifier {
     this.defaultLongitude = 39.8579,
     PrayerTimesService? initialPrayerService,
     ContextualDuaService? contextualDuaService,
+    HadithRepository? hadithRepository,
+  })  : contextualDuaService =
+            contextualDuaService ?? getIt<ContextualDuaService>(),
+        hadithRepository = hadithRepository ?? getIt<HadithRepository>() {
     SecureStorageProvider? prefs,
   })  : contextualDuaService =
             contextualDuaService ?? getIt<ContextualDuaService>(),
@@ -48,6 +54,7 @@ class HomeController extends ChangeNotifier {
   final WidgetUpdatePort widgetPort;
   final PrayerTimesServiceFactory prayerFactory;
   final ContextualDuaService contextualDuaService;
+  final HadithRepository hadithRepository;
   final SecureStorageProvider _prefs;
 
   final double defaultLatitude;
@@ -381,6 +388,8 @@ class HomeController extends ChangeNotifier {
       );
 
       String? contextualMsg;
+      Hadith? contextualHadith;
+
       if (contextualDua != null) {
         contextualMsg = contextualDuaService.getContextualMessage(
           contextualDua,
@@ -388,6 +397,16 @@ class HomeController extends ChangeNotifier {
           prayerTimes,
           hijriDate,
         );
+      } else {
+        // If no contextual dua, pick a random high-priority hadith
+        final allHadiths = await hadithRepository.getAllHadiths();
+        if (allHadiths.isNotEmpty) {
+          final priority1 = allHadiths.where((h) => h.priority == 1).toList();
+          final source = priority1.isNotEmpty ? priority1 : allHadiths;
+          // Use a simple day-based pick for "of the day" feel
+          contextualHadith = source[now.day % source.length];
+          contextualMsg = 'Hadith of the Day';
+        }
       }
 
       _update(
@@ -402,6 +421,7 @@ class HomeController extends ChangeNotifier {
           quote: quote,
           countdown: nextPrayerTime.difference(DateTime.now()),
           contextualDua: contextualDua,
+          contextualHadith: contextualHadith,
           contextualMessage: contextualMsg,
         ),
       );
@@ -424,6 +444,8 @@ class HomeController extends ChangeNotifier {
             todayPrayerTimes: cachedTimes,
           );
           String? contextualMsg;
+          Hadith? contextualHadith;
+
           if (contextualDua != null) {
             contextualMsg = contextualDuaService.getContextualMessage(
               contextualDua,
@@ -431,6 +453,15 @@ class HomeController extends ChangeNotifier {
               cachedTimes,
               hijriDate,
             );
+          } else {
+            final allHadiths = await hadithRepository.getAllHadiths();
+            if (allHadiths.isNotEmpty) {
+              final priority1 =
+                  allHadiths.where((h) => h.priority == 1).toList();
+              final source = priority1.isNotEmpty ? priority1 : allHadiths;
+              contextualHadith = source[now.day % source.length];
+              contextualMsg = 'Hadith of the Day';
+            }
           }
 
           final pastPrayerName = await _prayerTimesService!.getPastPrayerName();
@@ -449,6 +480,7 @@ class HomeController extends ChangeNotifier {
               countdown: nextPrayer.value.difference(now),
               locationError: 'Using cached prayer times',
               contextualDua: contextualDua,
+              contextualHadith: contextualHadith,
               contextualMessage: contextualMsg,
             ),
           );
