@@ -8,6 +8,7 @@ import '../../l10n/app_localizations.dart';
 import '../../shared/app_colors.dart';
 import '../../shared/glass_container.dart';
 import '../duas/models/dua_model.dart';
+import '../hadith/models/hadith_model.dart';
 import '../home/home_controller.dart';
 import '../prayer/prayer_times_service.dart';
 import '../quotes/quote_picker_service.dart';
@@ -33,6 +34,7 @@ class _MyHomePageState extends State<MyHomePage> {
       notificationPort: getIt<NotificationPort>(),
       widgetPort: getIt<WidgetUpdatePort>(),
       prayerFactory: getIt<PrayerTimesServiceFactory>(),
+      hadithRepository: getIt<HadithRepository>(),
     );
     _controller.init();
   }
@@ -256,10 +258,18 @@ class _MyHomePageState extends State<MyHomePage> {
                                         dua: state.contextualDua!,
                                         message: state.contextualMessage,
                                       )
-                                    : GlassContainer(
-                                        key: ValueKey<String>(
-                                          state.quote ?? '',
-                                        ),
+                                    : state.contextualHadith != null
+                                        ? _ContextualHadithCard(
+                                            key: ValueKey(
+                                              'hadith_${state.contextualHadith!.id}',
+                                            ),
+                                            hadith: state.contextualHadith!,
+                                            message: state.contextualMessage,
+                                          )
+                                        : GlassContainer(
+                                            key: ValueKey<String>(
+                                              state.quote ?? '',
+                                            ),
                                         width: double.infinity,
                                         padding: const EdgeInsets.all(24),
                                         child: Center(
@@ -457,6 +467,80 @@ class _ContextualDuaCard extends StatelessWidget {
                   fontSize: 14,
                   height: 1.5,
                   color: AppColors.textPrimary.withValues(alpha: 0.8),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _ContextualHadithCard extends StatelessWidget {
+  const _ContextualHadithCard({super.key, required this.hadith, this.message});
+
+  final Hadith hadith;
+  final String? message;
+
+  @override
+  Widget build(BuildContext context) {
+    return GlassContainer(
+      width: double.infinity,
+      padding: const EdgeInsets.all(20),
+      gradientColors: [
+        AppColors.accent.withValues(alpha: 0.1),
+        AppColors.accent.withValues(alpha: 0.05),
+      ],
+      borderColor: AppColors.accent.withValues(alpha: 0.2),
+      child: Center(
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              if (message != null && message!.isNotEmpty)
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 12),
+                  child: Text(
+                    message!,
+                    textAlign: TextAlign.center,
+                    style: GoogleFonts.plusJakartaSans(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w600,
+                      color: AppColors.accent,
+                      letterSpacing: 0.5,
+                    ),
+                  ),
+                ),
+              Text(
+                hadith.arabic,
+                textAlign: TextAlign.center,
+                textDirection: TextDirection.rtl,
+                style: const TextStyle(
+                  fontSize: 18,
+                  height: 1.6,
+                  fontFamily: 'Amiri',
+                  color: AppColors.textPrimary,
+                ),
+              ),
+              const SizedBox(height: 12),
+              Text(
+                hadith.translationEn,
+                textAlign: TextAlign.center,
+                style: GoogleFonts.plusJakartaSans(
+                  fontSize: 14,
+                  height: 1.5,
+                  color: AppColors.textPrimary.withValues(alpha: 0.8),
+                ),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                '— ${hadith.collection}',
+                textAlign: TextAlign.center,
+                style: GoogleFonts.plusJakartaSans(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w600,
+                  color: AppColors.textSecondary,
                 ),
               ),
             ],

@@ -2,6 +2,7 @@ import 'package:get_it/get_it.dart';
 
 import '../features/duas/contextual_dua_service.dart';
 import '../features/duas/dua_repository.dart';
+import '../features/hadith/hadith_repository.dart';
 import '../features/home/home_controller.dart';
 import '../features/notifications/notification_service.dart';
 import '../features/places/services/places_service.dart';
@@ -17,6 +18,7 @@ void setupLocator() {
   getIt.registerLazySingleton<NotificationService>(() => NotificationService());
   getIt.registerLazySingleton<QuotePickerService>(() => QuotePickerService());
   getIt.registerLazySingleton<DuaRepository>(() => DuaRepository());
+  getIt.registerLazySingleton<HadithRepository>(() => HadithRepository());
   getIt.registerLazySingleton<ContextualDuaService>(
       () => ContextualDuaService());
   getIt.registerLazySingleton<PlacesService>(() => PlacesService());

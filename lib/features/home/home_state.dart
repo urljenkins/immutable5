@@ -1,4 +1,5 @@
 import '../duas/models/dua_model.dart';
+import '../hadith/models/hadith_model.dart';
 
 class HomeState {
   final bool loading;
@@ -15,6 +16,7 @@ class HomeState {
   final Duration countdown;
   final String? quote;
   final Dua? contextualDua;
+  final Hadith? contextualHadith;
   final String? contextualMessage;
 
   const HomeState({
@@ -32,6 +34,7 @@ class HomeState {
     this.countdown = Duration.zero,
     this.quote,
     this.contextualDua,
+    this.contextualHadith,
     this.contextualMessage,
   });
 
@@ -50,6 +53,7 @@ class HomeState {
     Duration? countdown,
     String? quote,
     Dua? contextualDua,
+    Hadith? contextualHadith,
     String? contextualMessage,
   }) {
     return HomeState(
@@ -67,7 +71,8 @@ class HomeState {
       pastPrayerName: pastPrayerName ?? this.pastPrayerName,
       countdown: countdown ?? this.countdown,
       quote: quote ?? this.quote,
-      contextualDua: contextualDua ?? this.contextualDua,
+      contextualDua: contextualDua,
+      contextualHadith: contextualHadith,
       contextualMessage: contextualMessage ?? this.contextualMessage,
     );
   }
