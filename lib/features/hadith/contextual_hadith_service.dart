@@ -53,7 +53,7 @@ class ContextualHadithService {
       }
 
       // 4. Period match (e.g., Ramadan)
-      if (ctx.hijriPeriods.any((p) => currentHijriPeriods.contains(p))) {
+      if (ctx.hijriPeriods.any(currentHijriPeriods.contains)) {
         return true;
       }
 

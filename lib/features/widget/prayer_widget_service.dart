@@ -254,10 +254,10 @@ class PrayerWidgetService {
     if (kIsWeb) return;
     final settings = await getStoredSettings();
     await updateWidget(
-      latitude: settings['latitude'],
-      longitude: settings['longitude'],
-      method: settings['method'],
-      madhab: settings['madhab'],
+      latitude: settings['latitude'] as double,
+      longitude: settings['longitude'] as double,
+      method: settings['method'] as int,
+      madhab: settings['madhab'] as int,
     );
   }
 

@@ -23,9 +23,11 @@ class HadithRepository {
 
     try {
       final jsonString = await rootBundle.loadString('assets/hadith.json');
-      final List<dynamic> jsonList = json.decode(jsonString);
+      final jsonList = json.decode(jsonString) as List<dynamic>;
 
-      _hadiths = jsonList.map((json) => Hadith.fromJson(json)).toList();
+      _hadiths = jsonList
+          .map((json) => Hadith.fromJson(json as Map<String, dynamic>))
+          .toList();
       _initialized = true;
       developer.log(
         'Successfully loaded ${_hadiths.length} hadiths',

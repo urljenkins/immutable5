@@ -1,28 +1,5 @@
 include: package:flutter_lints/flutter.yaml
 
-linter:
-  rules:
-    # --- Formatting "Peace Treaty" Rules ---
-    # This is the most important one. It forces the trailing comma,
-    # which tells the formatter to keep widgets on separate lines.
-    # This prevents one AI from trying to "one-line" your code.
-    require_trailing_commas: true 
-
-    # Consistency in strings (prevents ' vs ")
-    prefer_single_quotes: true
-    
-    # Keeps your code "Clean" and predictable for the AI
-    prefer_const_constructors: true
-    prefer_const_literals_to_create_immutables: true
-    prefer_const_declarations: true
-    
-    # Logic & Style consistency
-    always_declare_return_types: true
-    cancel_subscriptions: true
-    close_sinks: true
-    directives_ordering: true
-    type_init_formals: true
-
 analyzer:
   # This stops the IDE and AI from lagging on generated files
   exclude:
@@ -30,8 +7,63 @@ analyzer:
     - "**/*.freezed.dart"
     - "lib/generated/**"
 
+  language:
+    strict-casts: true
+    strict-raw-types: true
+    strict-inference: true
+
   errors:
-    # Treat some warnings as errors so the AI can't ignore them
     todo: ignore
-    missing_required_param: error
     missing_return: error
+    missing_required_param: error
+    dead_code: warning
+    # Strictness rules: info-level until existing codebase is cleaned up
+    strict_raw_type: info
+    inference_failure_on_function_invocation: info
+    inference_failure_on_instance_creation: info
+    inference_failure_on_collection_literal: info
+    inference_failure_on_untyped_parameter: info
+    inference_failure_on_function_return_type: info
+    # Futures: info-level
+    unawaited_futures: info
+    discarded_futures: info
+
+linter:
+  rules:
+    # --- Formatting "Peace Treaty" Rules ---
+    require_trailing_commas: true 
+    always_declare_return_types: true
+    directives_ordering: true
+    type_init_formals: true
+
+    # Safety & correctness
+    cancel_subscriptions: true
+    close_sinks: true
+    test_types_in_equals: true
+    throw_in_finally: true
+    unnecessary_statements: true
+    no_duplicate_case_values: true
+    unawaited_futures: true
+    discarded_futures: true
+
+    # Null safety
+    avoid_null_checks_in_equality_operators: true
+    cast_nullable_to_non_nullable: true
+
+    # Style consistency
+    prefer_const_constructors: true
+    prefer_const_literals_to_create_immutables: true
+    prefer_const_declarations: true
+    prefer_final_locals: true
+    prefer_final_in_for_each: true
+    prefer_single_quotes: true
+    prefer_typing_uninitialized_variables: true
+    prefer_void_to_null: true
+    avoid_void_async: true
+    avoid_redundant_argument_values: true
+    unnecessary_null_checks: true
+    unnecessary_lambdas: true
+
+    # Flutter-specific performance
+    use_colored_box: true
+    use_decorated_box: true

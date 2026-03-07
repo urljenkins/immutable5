@@ -74,7 +74,7 @@ class PrayerTimesService {
       final cachedData = await prefs.getString(cacheKey);
       if (cachedData != null) {
         try {
-          final Map<String, dynamic> cached = json.decode(cachedData);
+          final cached = json.decode(cachedData) as Map<String, dynamic>;
           final Map<String, DateTime> result = {};
           cached.forEach((name, timestamp) {
             result[name] = DateTime.fromMillisecondsSinceEpoch(
@@ -104,8 +104,8 @@ class PrayerTimesService {
       );
 
       if (response.statusCode == 200) {
-        final data = json.decode(response.body);
-        final timings = data['data']['timings'];
+        final data = json.decode(response.body) as Map<String, dynamic>;
+        final timings = data['data']['timings'] as Map<String, dynamic>;
         final Map<String, DateTime> result = {};
         final Map<String, int> cacheData = {};
 
@@ -175,7 +175,7 @@ class PrayerTimesService {
       final cachedTomorrowData = await prefs.getString(tomorrowCacheKey);
       if (cachedTomorrowData != null) {
         try {
-          final Map<String, dynamic> cached = json.decode(cachedTomorrowData);
+          final cached = json.decode(cachedTomorrowData) as Map<String, dynamic>;
           if (cached.containsKey('Fajr')) {
             final fajrTime = DateTime.fromMillisecondsSinceEpoch(
               cached['Fajr'] as int,
@@ -206,8 +206,8 @@ class PrayerTimesService {
         );
 
         if (response.statusCode == 200) {
-          final data = json.decode(response.body);
-          final timings = data['data']['timings'];
+          final data = json.decode(response.body) as Map<String, dynamic>;
+          final timings = data['data']['timings'] as Map<String, dynamic>;
 
           // Cache all of tomorrow's prayer times while we're at it
           final Map<String, int> tomorrowCacheData = {};

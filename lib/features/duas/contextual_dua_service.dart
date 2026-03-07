@@ -139,7 +139,7 @@ class ContextualDuaService {
       // 2. Check Hijri Periods
       if (ctx.hijriPeriods.isNotEmpty) {
         final hasMatch = ctx.hijriPeriods.any(
-          (period) => activeHijriPeriods.contains(period),
+          activeHijriPeriods.contains,
         );
         if (hasMatch) {
           score += 20; // High weight for specific Islamic periods like Ramadan
@@ -288,7 +288,7 @@ class ContextualDuaService {
     // Standard prayer windows
     if (fajr != null &&
         _isBetween(now, fajr.subtract(const Duration(minutes: 30)),
-            fajr.add(const Duration(hours: 1)))) {
+            fajr.add(const Duration(hours: 1)),)) {
       windows.add('fajr');
     }
     if (dhuhr != null &&
@@ -301,7 +301,7 @@ class ContextualDuaService {
     }
     if (maghrib != null &&
         _isBetween(now, maghrib,
-            isha ?? maghrib.add(const Duration(hours: 1, minutes: 30)))) {
+            isha ?? maghrib.add(const Duration(hours: 1, minutes: 30)),)) {
       windows.add('maghrib');
     }
     if (isha != null &&
@@ -309,7 +309,7 @@ class ContextualDuaService {
             now,
             isha,
             fajr?.add(const Duration(days: 1)) ??
-                isha.add(const Duration(hours: 8)))) {
+                isha.add(const Duration(hours: 8)),)) {
       windows.add('isha');
     }
 
@@ -349,8 +349,9 @@ class ContextualDuaService {
     // Specific days
     if (date.hMonth == 1 && date.hDay == 10) periods.add('ashura');
     if (date.hMonth == 9 && date.hDay >= 21) periods.add('ramadan_last_ten');
-    if (date.hMonth == 12 && date.hDay <= 10)
+    if (date.hMonth == 12 && date.hDay <= 10) {
       periods.add('dhul_hijjah_first_ten');
+    }
     if (date.hMonth == 12 && date.hDay == 9) periods.add('arafah');
     if (date.hMonth == 10 && date.hDay == 1) periods.add('eid_al_fitr');
     if (date.hMonth == 12 && date.hDay == 10) periods.add('eid_al_adha');

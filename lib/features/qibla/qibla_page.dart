@@ -255,7 +255,7 @@ class _QiblaPageState extends State<QiblaPage> {
                               0,
                               -115,
                             ), // Placed neatly on the inner ring
-                            child: const _KaabaIcon(size: 32),
+                            child: const _KaabaIcon(),
                           ),
                         ],
                       ),
@@ -291,8 +291,8 @@ class _QiblaPageState extends State<QiblaPage> {
 }
 
 class _KaabaIcon extends StatelessWidget {
-  final double size;
-  const _KaabaIcon({this.size = 32});
+  final double size = 40;
+  const _KaabaIcon();
 
   @override
   Widget build(BuildContext context) {

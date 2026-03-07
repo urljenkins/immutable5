@@ -27,7 +27,7 @@ class QuotePickerService {
   Future<List<String>> getTopics() async {
     await _loadQuotes();
     final topicsSet = <String>{};
-    for (var q in _quotes!) {
+    for (final q in _quotes!) {
       topicsSet.addAll(q.topics);
     }
     final topics = topicsSet.toList()..sort();

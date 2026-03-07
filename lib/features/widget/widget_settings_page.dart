@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 
 import 'prayer_widget_service.dart';
@@ -16,7 +17,7 @@ class _WidgetSettingsPageState extends State<WidgetSettingsPage> {
   @override
   void initState() {
     super.initState();
-    _loadPreferences();
+    unawaited(_loadPreferences());
   }
 
   Future<void> _loadPreferences() async {
@@ -146,8 +147,8 @@ class _WidgetSettingsPageState extends State<WidgetSettingsPage> {
           final theme = WidgetTheme.values[index];
           final isSelected = _selectedTheme == theme;
           final colors = WidgetPreferences.getThemeColors(theme);
-          final bgColor = Color(colors['background'] as int);
-          final accentColor = Color(colors['accent'] as int);
+          final bgColor = Color(colors['background']!);
+          final accentColor = Color(colors['accent']!);
 
           return GestureDetector(
             onTap: () async {
@@ -186,8 +187,8 @@ class _WidgetSettingsPageState extends State<WidgetSettingsPage> {
                       fontSize: 10,
                       fontWeight:
                           isSelected ? FontWeight.bold : FontWeight.normal,
-                      color: colors['text'] as int == 0xFFFFFFFF ||
-                              colors['text'] as int == 0xFFF8FAFC
+                      color: colors['text']! == 0xFFFFFFFF ||
+                              colors['text']! == 0xFFF8FAFC
                           ? Colors.white
                           : Colors.black87,
                     ),
@@ -204,12 +205,12 @@ class _WidgetSettingsPageState extends State<WidgetSettingsPage> {
 
   Widget _buildPreview() {
     final colors = WidgetPreferences.getThemeColors(_selectedTheme);
-    final bgColor = Color(colors['background'] as int);
-    final textColor = Color(colors['text'] as int);
-    final textSecondaryColor = Color(colors['textSecondary'] as int);
-    final accentColor = Color(colors['accent'] as int);
+    final bgColor = Color(colors['background']!);
+    final textColor = Color(colors['text']!);
+    final textSecondaryColor = Color(colors['textSecondary']!);
+    final accentColor = Color(colors['accent']!);
 
-    return Container(
+    return DecoratedBox(
       decoration: BoxDecoration(
         color: bgColor,
         borderRadius: BorderRadius.circular(16),

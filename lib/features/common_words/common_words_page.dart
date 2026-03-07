@@ -1,8 +1,11 @@
+import 'dart:async';
 import 'dart:ui';
 
 import 'package:audioplayers/audioplayers.dart';
 import 'package:csv/csv.dart';
+import 'dart:async';
 import 'package:flutter/material.dart';
+import 'dart:async';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:google_fonts/google_fonts.dart';
 import 'package:immutable5/services/secure_storage_provider.dart';
@@ -32,7 +35,7 @@ class _CommonWordsPageState extends State<CommonWordsPage> {
   @override
   void initState() {
     super.initState();
-    _loadCsv();
+    unawaited(_loadCsv());
     _searchController.addListener(() {
       setState(() {
         _searchQuery = _searchController.text.toLowerCase();
@@ -44,7 +47,7 @@ class _CommonWordsPageState extends State<CommonWordsPage> {
   @override
   void dispose() {
     _searchController.dispose();
-    _audioPlayer.dispose();
+    unawaited(_audioPlayer.dispose());
     super.dispose();
   }
 
@@ -57,7 +60,7 @@ class _CommonWordsPageState extends State<CommonWordsPage> {
       return;
     }
     final data = await rootBundle.loadString('assets/common_words.csv');
-    const converter = CsvToListConverter(fieldDelimiter: ',', eol: '\n');
+    const converter = CsvToListConverter(eol: '\n');
     final list = converter.convert(data, shouldParseNumbers: false);
     final rows = list.map((e) => e.cast<String>()).toList();
     final dataRows = rows.skip(1).toList(); // drop header row from display
@@ -113,7 +116,7 @@ class _CommonWordsPageState extends State<CommonWordsPage> {
     final transliteration = row[1];
     final english = row[2];
 
-    showModalBottomSheet<void>(
+    unawaited(showModalBottomSheet<void>(
       context: context,
       backgroundColor: Colors.transparent,
       isScrollControlled: true,
@@ -127,7 +130,7 @@ class _CommonWordsPageState extends State<CommonWordsPage> {
               ),
               child: BackdropFilter(
                 filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
-                child: Container(
+                child: ColoredBox(
                   color: AppColors.cardSurface.withValues(alpha: 0.95),
                   child: SafeArea(
                     top: false,
@@ -190,9 +193,9 @@ class _CommonWordsPageState extends State<CommonWordsPage> {
                                   color: AppColors.accent,
                                   iconSize: 28,
                                   onPressed: () {
-                                    _audioPlayer.play(
+                                    unawaited(_audioPlayer.play(
                                       AssetSource('audio/words/$rowIndex.mp3'),
-                                    );
+                                    ));
                                   },
                                 ),
                               ),
@@ -287,7 +290,7 @@ class _CommonWordsPageState extends State<CommonWordsPage> {
           },
         );
       },
-    );
+    ));
   }
 
   @override
@@ -382,7 +385,6 @@ class _CommonWordsPageState extends State<CommonWordsPage> {
                           child: Padding(
                             padding: const EdgeInsets.all(16.0),
                             child: Row(
-                              crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
                                 Expanded(
                                   child: Column(

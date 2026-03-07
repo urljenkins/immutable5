@@ -267,7 +267,6 @@ class _RamadanDashboardPageState extends State<RamadanDashboardPage> {
                                 vertical: 40,
                                 horizontal: 24,
                               ),
-                              borderRadius: 24,
                               gradientColors: [
                                 AppColors.accent.withValues(alpha: 0.1),
                                 AppColors.accent.withValues(alpha: 0.05),
@@ -316,7 +315,6 @@ class _RamadanDashboardPageState extends State<RamadanDashboardPage> {
                             // Fasting Duration
                             if (_fajrToday != null && _maghribToday != null)
                               GlassContainer(
-                                padding: const EdgeInsets.all(20),
                                 child: Row(
                                   mainAxisAlignment:
                                       MainAxisAlignment.spaceBetween,
@@ -360,7 +358,6 @@ class _RamadanDashboardPageState extends State<RamadanDashboardPage> {
 
                             // Taraweeh Tracker
                             GlassContainer(
-                              padding: const EdgeInsets.all(20),
                               child: Row(
                                 children: [
                                   Container(

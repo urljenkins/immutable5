@@ -56,7 +56,6 @@ class GlassContainer extends StatelessWidget {
                 // Subtle border for definition
                 border: Border.all(
                   color: borderColor ?? Colors.white.withValues(alpha: 0.1),
-                  width: 1,
                 ),
               ),
               child: child,

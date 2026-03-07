@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
@@ -46,7 +47,7 @@ class _DuasPageState extends State<DuasPage> {
   @override
   void initState() {
     super.initState();
-    _loadDuas();
+    unawaited(_loadDuas());
   }
 
   Future<void> _loadDuas() async {
@@ -156,7 +157,7 @@ class _DuasPageState extends State<DuasPage> {
   }
 
   void _showFilterSheet() {
-    showModalBottomSheet(
+    unawaited(showModalBottomSheet<void>(
       context: context,
       backgroundColor: AppColors.cardSurface,
       shape: const RoundedRectangleBorder(
@@ -204,7 +205,7 @@ class _DuasPageState extends State<DuasPage> {
           },
         );
       },
-    );
+    ));
   }
 
   @override
@@ -404,7 +405,6 @@ class _DuasPageState extends State<DuasPage> {
     return Padding(
       padding: const EdgeInsets.only(bottom: 12.0),
       child: GlassContainer(
-        padding: const EdgeInsets.all(20),
         onTap: () => setState(() => _selectedDua = dua),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -523,11 +523,11 @@ class _DuasPageState extends State<DuasPage> {
                     ),
                   ),
                   onPressed: () {
-                    Clipboard.setData(
+                    unawaited(Clipboard.setData(
                       ClipboardData(
                         text: '${dua.arabic}\n\n${dua.translationEn}',
                       ),
-                    );
+                    ));
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(
                         content: Text('Dua copied to clipboard'),
@@ -577,7 +577,7 @@ class _DuaDetailSheet extends StatelessWidget {
         borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
         child: BackdropFilter(
           filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-          child: Container(
+          child: ColoredBox(
             color: AppColors.cardSurface.withValues(alpha: 0.9),
             child: SafeArea(
               // SafeArea for bottom padding

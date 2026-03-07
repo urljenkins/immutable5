@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 
 class QuranReciter {
   final String id;
@@ -30,15 +31,32 @@ class QuranAudioService {
     );
 
     try {
+      final prefs = await SharedPreferences.getInstance();
+      final cacheKey = 'quran_audio_${surahNumber}_$reciterId';
+
+      final cached = prefs.getString(cacheKey);
+      if (cached != null) {
+        try {
+          final list = json.decode(cached) as List;
+          return list.map((e) => e as String).toList();
+        } catch (_) {
+          // Fallback to fetch if corrupted
+        }
+      }
+
       final response = await http.get(url);
 
       if (response.statusCode == 200) {
-        final Map<String, dynamic> data = json.decode(response.body);
-        final List<dynamic> ayahs = data['data']['ayahs'];
+        final data = json.decode(response.body) as Map<String, dynamic>;
+        final ayahs = data['data']['ayahs'] as List;
 
         // Extract audio URLs from the response
-        // The API returns 'audio' field for each ayah
-        return ayahs.map<String>((ayah) => ayah['audio'] as String).toList();
+        final urls = ayahs
+            .map((ayah) => (ayah as Map<String, dynamic>)['audio'] as String)
+            .toList();
+
+        await prefs.setString(cacheKey, json.encode(urls));
+        return urls;
       } else {
         throw Exception('Failed to load audio data: ${response.statusCode}');
       }

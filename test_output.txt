@@ -1,67 +1,0 @@
-00:00 +0: loading /Users/daniel.jatto/Source/mine/immutable5/test/layout_test.dart                                                                                                                     00:01 +0: loading /Users/daniel.jatto/Source/mine/immutable5/test/layout_test.dart                                                                                                                     00:01 +0: (setUpAll)                                                                                                                                                                                   00:01 +0: Check PlacesPage map dimensions                                                                                                                                                              00:02 +0: Check PlacesPage map dimensions                                                                                                                                                              00:02 +0: Check PlacesPage map dimensions                                                                                                                                                              
-ClientException: Request to https://tile.openstreetmap.org/13/5002/3597.png failed with status 400: ., uri=https://tile.openstreetmap.org/13/5002/3597.png
-ClientException: Request to https://tile.openstreetmap.org/13/5003/3597.png failed with status 400: ., uri=https://tile.openstreetmap.org/13/5003/3597.png
-ClientException: Request to https://tile.openstreetmap.org/13/5002/3596.png failed with status 400: ., uri=https://tile.openstreetmap.org/13/5002/3596.png
-ClientException: Request to https://tile.openstreetmap.org/13/5003/3596.png failed with status 400: ., uri=https://tile.openstreetmap.org/13/5003/3596.png
-ClientException: Request to https://tile.openstreetmap.org/13/5002/3598.png failed with status 400: ., uri=https://tile.openstreetmap.org/13/5002/3598.png
-ClientException: Request to https://tile.openstreetmap.org/13/5003/3598.png failed with status 400: ., uri=https://tile.openstreetmap.org/13/5003/3598.png
-ClientException: Request to https://tile.openstreetmap.org/13/5001/3597.png failed with status 400: ., uri=https://tile.openstreetmap.org/13/5001/3597.png
-ClientException: Request to https://tile.openstreetmap.org/13/5004/3597.png failed with status 400: ., uri=https://tile.openstreetmap.org/13/5004/3597.png
-ClientException: Request to https://tile.openstreetmap.org/13/5001/3596.png failed with status 400: ., uri=https://tile.openstreetmap.org/13/5001/3596.png
-ClientException: Request to https://tile.openstreetmap.org/13/5004/3596.png failed with status 400: ., uri=https://tile.openstreetmap.org/13/5004/3596.png
-ClientException: Request to https://tile.openstreetmap.org/13/5001/3598.png failed with status 400: ., uri=https://tile.openstreetmap.org/13/5001/3598.png
-ClientException: Request to https://tile.openstreetmap.org/13/5004/3598.png failed with status 400: ., uri=https://tile.openstreetmap.org/13/5004/3598.png
-ClientException: Request to https://tile.openstreetmap.org/13/5002/3595.png failed with status 400: ., uri=https://tile.openstreetmap.org/13/5002/3595.png
-ClientException: Request to https://tile.openstreetmap.org/13/5003/3595.png failed with status 400: ., uri=https://tile.openstreetmap.org/13/5003/3595.png
-ClientException: Request to https://tile.openstreetmap.org/13/5002/3599.png failed with status 400: ., uri=https://tile.openstreetmap.org/13/5002/3599.png
-ClientException: Request to https://tile.openstreetmap.org/13/5003/3599.png failed with status 400: ., uri=https://tile.openstreetmap.org/13/5003/3599.png
-ClientException: Request to https://tile.openstreetmap.org/13/5001/3595.png failed with status 400: ., uri=https://tile.openstreetmap.org/13/5001/3595.png
-ClientException: Request to https://tile.openstreetmap.org/13/5004/3595.png failed with status 400: ., uri=https://tile.openstreetmap.org/13/5004/3595.png
-ClientException: Request to https://tile.openstreetmap.org/13/5001/3599.png failed with status 400: ., uri=https://tile.openstreetmap.org/13/5001/3599.png
-ClientException: Request to https://tile.openstreetmap.org/13/5004/3599.png failed with status 400: ., uri=https://tile.openstreetmap.org/13/5004/3599.png
-FLUTTERMAP SIZE: Size(360.0, 640.0)
-══╡ EXCEPTION CAUGHT BY RENDERING LIBRARY ╞═════════════════════════════════════════════════════════
-The following assertion was thrown during layout:
-A RenderFlex overflowed by 15 pixels on the right.
-
-The relevant error-causing widget was:
-  Row
-  Row:file:///Users/daniel.jatto/Source/mine/immutable5/lib/features/places/places_page.dart:519:26
-
-The overflowing RenderFlex has an orientation of Axis.horizontal.
-The edge of the RenderFlex that is overflowing has been marked in the rendering with a yellow and
-black striped pattern. This is usually caused by the contents being too big for the RenderFlex.
-Consider applying a flex factor (e.g. using an Expanded widget) to force the children of the
-RenderFlex to fit within the available space instead of being sized to their natural size.
-This is considered an error condition because it indicates that there is content that cannot be
-seen. If the content is legitimately bigger than the available space, consider clipping it with a
-ClipRect widget before putting it in the flex, or using a scrollable container rather than a Flex,
-like a ListView.
-The specific RenderFlex in question is: RenderFlex#f670c relayoutBoundary=up5 OVERFLOWING:
-  creator: Row ← Padding ← DecoratedBox ← Container ← Column ← Positioned ← Stack ←
-    KeyedSubtree-[GlobalKey#e4727] ← _BodyBuilder ← MediaQuery ← LayoutId-[<_ScaffoldSlot.body>] ←
-    CustomMultiChildLayout ← ⋯
-  parentData: offset=Offset(20.0, 60.0) (can use size)
-  constraints: BoxConstraints(0.0<=w<=320.0, 0.0<=h<=Infinity)
-  size: Size(320.0, 48.0)
-  direction: horizontal
-  mainAxisAlignment: start
-  mainAxisSize: max
-  crossAxisAlignment: center
-  textDirection: ltr
-  verticalDirection: down
-  spacing: 0.0
-◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤◢◤
-════════════════════════════════════════════════════════════════════════════════════════════════════
-00:02 +0 -1: Check PlacesPage map dimensions [E]                                                                                                                                                       
-  Test failed. See exception logs above.
-  The test description was: Check PlacesPage map dimensions
-  
-Warning: At least one test in this suite creates an HttpClient. When running a test suite that uses
-TestWidgetsFlutterBinding, all HTTP requests will return status code 400, and no network request
-will actually be made. Any test expecting a real network connection and status code will fail.
-To test code that needs an HttpClient, provide your own HttpClient implementation to the code under
-test, so that your test can consistently provide a testable response to the code under test.
-
-To run this test again: /opt/homebrew/share/flutter/bin/cache/dart-sdk/bin/dart test /Users/daniel.jatto/Source/mine/immutable5/test/layout_test.dart -p vm --plain-name 'Check PlacesPage map dimensions'
-00:02 +0 -1: (tearDownAll)                                                                                                                                                                             00:02 +0 -1: Some tests failed.                                                                                                                                                                        

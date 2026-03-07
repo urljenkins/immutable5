@@ -38,7 +38,7 @@ class _MyHomePageState extends State<MyHomePage> {
       prayerFactory: getIt<PrayerTimesServiceFactory>(),
       hadithRepository: getIt<HadithRepository>(),
     );
-    _controller.init();
+    unawaited(_controller.init());
   }
 
   @override
@@ -81,7 +81,9 @@ class _MyHomePageState extends State<MyHomePage> {
                             Icons.refresh,
                             color: AppColors.textSecondary,
                           ),
-                    onPressed: state.refreshing ? null : _controller.refresh,
+                    onPressed: state.refreshing
+                        ? null
+                        : () => unawaited(_controller.refresh()),
                     tooltip: AppLocalizations.of(context)!.refreshPrayerTimes,
                   )
                 : null,
@@ -170,7 +172,8 @@ class _MyHomePageState extends State<MyHomePage> {
                                 message: state.locationNotice!,
                                 action: state.locationPermissionIssue
                                     ? TextButton(
-                                        onPressed: _controller.refresh,
+                                        onPressed: () =>
+                                            unawaited(_controller.refresh()),
                                         child: Text(
                                           AppLocalizations.of(
                                             context,
@@ -199,8 +202,9 @@ class _MyHomePageState extends State<MyHomePage> {
                                 horizontal: 24.0,
                               ),
                               child: InkWell(
-                                onTap: () =>
-                                    _controller.togglePrayerDisplayOption(),
+                                onTap: () => unawaited(
+                                  _controller.togglePrayerDisplayOption(),
+                                ),
                                 borderRadius: BorderRadius.circular(16),
                                 child: Column(
                                   mainAxisAlignment: MainAxisAlignment.center,
@@ -380,7 +384,7 @@ class _HijriDateBannerState extends State<_HijriDateBanner> {
   @override
   void initState() {
     super.initState();
-    _loadOffset();
+    unawaited(_loadOffset());
   }
 
   Future<void> _loadOffset() async {
@@ -429,7 +433,6 @@ class _ContextualDuaCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return GlassContainer(
       width: double.infinity,
-      padding: const EdgeInsets.all(20),
       gradientColors: [
         AppColors.accent.withValues(alpha: 0.2),
         AppColors.accent.withValues(alpha: 0.05),
@@ -504,7 +507,6 @@ class _ContextualHadithCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return GlassContainer(
       width: double.infinity,
-      padding: const EdgeInsets.all(20),
       gradientColors: [
         AppColors.accent.withValues(alpha: 0.1),
         AppColors.accent.withValues(alpha: 0.05),

@@ -41,7 +41,10 @@ class PlacesService {
           final coordinates = geometry['coordinates'] as List;
 
           return coordinates
-              .map((c) => LatLng(c[1].toDouble(), c[0].toDouble()))
+              .map((c) => LatLng(
+                    ((c as List)[1] as num).toDouble(),
+                    (c[0] as num).toDouble(),
+                  ))
               .toList();
         }
       }

@@ -24,7 +24,6 @@ class HadithCard extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.only(bottom: 12.0),
       child: GlassContainer(
-        padding: const EdgeInsets.all(20),
         onTap: onTap,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -162,12 +161,12 @@ class HadithCard extends StatelessWidget {
                     ),
                   ),
                   onPressed: () {
-                    Clipboard.setData(
+                    unawaited(Clipboard.setData(
                       ClipboardData(
                         text:
                             '${hadith.arabic}\n\n${hadith.translationEn}\n\n[${hadith.collection} ${hadith.hadithNumber}]',
                       ),
-                    );
+                    ));
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(
                         content: Text('Hadith copied to clipboard'),

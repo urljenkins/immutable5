@@ -49,7 +49,7 @@ class CacheManager {
     final now = DateTime.now().millisecondsSinceEpoch;
 
     // Check if expired
-    if (meta!['expiry'] < now) {
+    if ((meta!['expiry'] as int) < now) {
       await remove(key);
       return null;
     }
@@ -93,7 +93,7 @@ class CacheManager {
 
     for (final meta in metadata.values) {
       totalSize += meta['size'] as int;
-      if (meta['expiry'] < now) {
+      if ((meta['expiry'] as int) < now) {
         expiredCount++;
       }
     }
@@ -116,7 +116,7 @@ class CacheManager {
     final keysToRemove = <String>[];
 
     for (final entry in metadata.entries) {
-      if (entry.value['expiry'] < now) {
+      if ((entry.value['expiry'] as int) < now) {
         keysToRemove.add(entry.key);
       }
     }
@@ -131,7 +131,7 @@ class CacheManager {
 
   // Private methods
 
-  Future<Map<String, dynamic>> _getMetadata() async {
+  Future<Map<String, Map<String, dynamic>>> _getMetadata() async {
     final prefs = _prefs;
     final metaJson = await prefs.getString(_cacheMetaKey);
 

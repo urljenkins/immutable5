@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -43,7 +44,7 @@ class _HadithsPageState extends State<HadithsPage> {
   @override
   void initState() {
     super.initState();
-    _loadHadiths();
+    unawaited(_loadHadiths());
   }
 
   Future<void> _loadHadiths() async {
@@ -56,7 +57,7 @@ class _HadithsPageState extends State<HadithsPage> {
       );
 
       final topicsSet = <String>{};
-      for (var h in hadiths) {
+      for (final h in hadiths) {
         topicsSet.addAll(h.topics);
       }
       final topics = topicsSet.toList()..sort();
@@ -139,7 +140,7 @@ class _HadithsPageState extends State<HadithsPage> {
   }
 
   void _showFilterSheet() {
-    showModalBottomSheet(
+    unawaited(showModalBottomSheet<void>(
       context: context,
       backgroundColor: AppColors.cardSurface,
       shape: const RoundedRectangleBorder(
@@ -187,7 +188,7 @@ class _HadithsPageState extends State<HadithsPage> {
           },
         );
       },
-    );
+    ));
   }
 
   @override

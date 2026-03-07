@@ -75,7 +75,7 @@ class _QuranPageState extends State<QuranPage> {
     final mode =
         savedMode == 'surahBased' ? JuzMode.surahBased : JuzMode.standard;
     final todayJuz = _juzService.getJuzForToday(mode);
-    final ctxSettings = await QuranContextMenuSettings.fromPrefs(prefs);
+    final ctxSettings = await QuranContextMenuSettings.fromPrefs();
     await _bookmarks.load();
     if (!mounted) return;
     setState(() {
@@ -259,7 +259,7 @@ class _QuranPageState extends State<QuranPage> {
           borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
           child: BackdropFilter(
             filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
-            child: Container(
+            child: ColoredBox(
               color: AppColors.cardSurface.withValues(alpha: 0.95),
               child: SafeArea(
                 top: false,
@@ -1517,7 +1517,6 @@ class _ChapterCard extends StatelessWidget {
                         color: AppColors.accent.withValues(alpha: 0.15),
                         border: Border.all(
                           color: AppColors.accent.withValues(alpha: 0.5),
-                          width: 1,
                         ),
                       );
                     } else if (isBookmarked) {
@@ -1526,7 +1525,6 @@ class _ChapterCard extends StatelessWidget {
                         color: AppColors.accent.withValues(alpha: 0.07),
                         border: Border.all(
                           color: AppColors.accent.withValues(alpha: 0.2),
-                          width: 1,
                         ),
                       );
                     }

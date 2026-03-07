@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:ui';
 
@@ -239,7 +240,7 @@ class _AppScaffoldState extends State<AppScaffold> {
                 if (_lastBackPress != null &&
                     now.difference(_lastBackPress!) <
                         const Duration(seconds: 2)) {
-                  SystemNavigator.pop();
+                  unawaited(SystemNavigator.pop());
                   return;
                 }
                 _lastBackPress = now;
@@ -260,7 +261,6 @@ class _AppScaffoldState extends State<AppScaffold> {
                       backgroundColor: Colors.transparent,
                       body: currentPage,
                       bottomNavigationBar: SafeArea(
-                        bottom: true,
                         child: Container(
                           margin: const EdgeInsets.fromLTRB(20, 0, 20, 20),
                           decoration: BoxDecoration(
@@ -288,7 +288,6 @@ class _AppScaffoldState extends State<AppScaffold> {
                                   borderRadius: BorderRadius.circular(30),
                                   border: Border.all(
                                     color: Colors.white.withValues(alpha: 0.1),
-                                    width: 1,
                                   ),
                                 ),
                                 child: Row(
@@ -435,7 +434,7 @@ class _AppScaffoldState extends State<AppScaffold> {
     List<_NavItem> overflowItems,
     Color accentColor,
   ) {
-    showModalBottomSheet(
+    unawaited(showModalBottomSheet(
       context: context,
       backgroundColor: AppColors.cardSurface,
       shape: const RoundedRectangleBorder(
@@ -484,7 +483,7 @@ class _AppScaffoldState extends State<AppScaffold> {
           ),
         );
       },
-    );
+    ));
   }
 
   /// Returns ALL possible nav items in a canonical order.

@@ -157,8 +157,6 @@ class NotificationService {
       channelDescription: 'Specific reminders for Sunnah acts and Duas',
       importance: Importance.high,
       priority: Priority.high,
-      playSound: true,
-      enableVibration: true,
       color: Color(0xFFD4AF37), // AppColors.accent equivalent
     );
 
@@ -207,8 +205,6 @@ class NotificationService {
       channelDescription: 'Notifications for prayer times',
       importance: Importance.high,
       priority: Priority.high,
-      playSound: true,
-      enableVibration: true,
     );
 
     const iosDetails = DarwinNotificationDetails(

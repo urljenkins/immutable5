@@ -76,7 +76,7 @@ class _PrayerStatsPageState extends State<PrayerStatsPage> {
   Future<void> _loadData() async {
     await _trackingService.getStatistics();
 
-    final start = DateTime(_focusedDay.year, _focusedDay.month - 1, 1);
+    final start = DateTime(_focusedDay.year, _focusedDay.month - 1);
     final end = DateTime(_focusedDay.year, _focusedDay.month + 2, 0);
     final history = await _trackingService.getHistoryForRange(start, end);
 
@@ -231,7 +231,6 @@ class _PrayerStatsPageState extends State<PrayerStatsPage> {
   Widget _buildTodayPrayers() {
     return GlassContainer(
       padding: const EdgeInsets.all(12.0),
-      borderRadius: 24,
       gradientColors: [
         AppColors.cardSurface.withValues(alpha: 0.5),
         AppColors.cardSurface.withValues(alpha: 0.2),
@@ -357,7 +356,6 @@ class _PrayerStatsPageState extends State<PrayerStatsPage> {
   Widget _buildCalendarView() {
     return GlassContainer(
       padding: const EdgeInsets.all(16.0),
-      borderRadius: 24,
       gradientColors: [
         AppColors.cardSurface.withValues(alpha: 0.5),
         AppColors.cardSurface.withValues(alpha: 0.2),
@@ -373,7 +371,6 @@ class _PrayerStatsPageState extends State<PrayerStatsPage> {
             focusedDay: _focusedDay,
             headerStyle: const HeaderStyle(
               formatButtonVisible: false,
-              titleCentered: false,
               headerPadding: EdgeInsets.only(bottom: 4),
               leftChevronIcon: Icon(
                 Icons.chevron_left,
@@ -500,7 +497,7 @@ class _PrayerStatsPageState extends State<PrayerStatsPage> {
       decoration: BoxDecoration(
         color: bgColor,
         shape: BoxShape.circle,
-        border: Border.all(color: borderColor, width: 1),
+        border: Border.all(color: borderColor),
       ),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,

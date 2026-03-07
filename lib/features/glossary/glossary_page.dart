@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
@@ -32,7 +33,7 @@ class _GlossaryPageState extends State<GlossaryPage> {
   @override
   void initState() {
     super.initState();
-    _loadGlossary();
+    unawaited(_loadGlossary());
     _searchController.addListener(_onSearchChanged);
   }
 
@@ -44,9 +45,11 @@ class _GlossaryPageState extends State<GlossaryPage> {
 
   Future<void> _loadGlossary() async {
     final String response = await rootBundle.loadString('assets/glossary.json');
-    final data = await json.decode(response) as List;
+    final data = json.decode(response) as List;
     setState(() {
-      _allItem = data.map((json) => GlossaryItem.fromJson(json)).toList();
+      _allItem = data
+          .map((json) => GlossaryItem.fromJson(json as Map<String, dynamic>))
+          .toList();
       _filteredItems = _allItem;
       _loading = false;
     });
@@ -147,7 +150,7 @@ class _GlossaryPageState extends State<GlossaryPage> {
             suffixIcon: _searchController.text.isNotEmpty
                 ? IconButton(
                     icon: const Icon(Icons.clear, size: 20),
-                    onPressed: () => _searchController.clear(),
+                    onPressed: _searchController.clear,
                   )
                 : null,
           ),

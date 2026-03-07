@@ -62,7 +62,7 @@ class WidgetPreferences {
     await prefs.setBool(_keyShowHijriDate, value);
   }
 
-  static Map<String, dynamic> getThemeColors(WidgetTheme theme) {
+  static Map<String, int> getThemeColors(WidgetTheme theme) {
     switch (theme) {
       case WidgetTheme.nightSky:
         // Dark navy background, gold accent, soft white text
