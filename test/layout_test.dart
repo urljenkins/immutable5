@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_map/flutter_map.dart';
@@ -12,6 +14,20 @@ import 'package:mocktail/mocktail.dart';
 
 import 'mocks.dart';
 
+/// Prevents real HTTP requests during tests by blocking all connections.
+class _NoNetworkHttpOverrides extends HttpOverrides {
+  @override
+  HttpClient createHttpClient(SecurityContext? context) {
+    final client = super.createHttpClient(context);
+    client.findProxy = (_) => 'DIRECT';
+    client.connectionFactory =
+        (Uri uri, String? proxyHost, int? proxyPort) async {
+      throw const SocketException('No network requests allowed in tests');
+    };
+    return client;
+  }
+}
+
 void main() {
   late MockPlacesService mockPlacesService;
   late MockPrayerTimesService mockPrayerTimesService;
@@ -19,16 +35,21 @@ void main() {
 
   setUpAll(() {
     registerFallbackValue(DateTime.now());
+    HttpOverrides.global = _NoNetworkHttpOverrides();
   });
 
-  setUp(() {
+  tearDownAll(() {
+    HttpOverrides.global = null;
+  });
+
+  setUp(() async {
     mockPlacesService = MockPlacesService();
     mockPrayerTimesService = MockPrayerTimesService();
     mockGeolocatorPlatform = MockGeolocatorPlatform();
 
     GeolocatorPlatform.instance = mockGeolocatorPlatform;
 
-    getIt.reset();
+    await getIt.reset();
     getIt.registerLazySingleton<PlacesService>(() => mockPlacesService);
     getIt.registerFactory<PrayerTimesServiceFactory>(
       () => (lat, lon, method, madhab) => mockPrayerTimesService,

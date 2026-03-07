@@ -11,7 +11,8 @@ import 'models/hadith.dart';
 import 'widgets/hadith_card.dart';
 
 class HadithsPage extends StatefulWidget {
-  const HadithsPage({super.key});
+  final Hadith? initialHadith;
+  const HadithsPage({super.key, this.initialHadith});
 
   @override
   State<HadithsPage> createState() => _HadithsPageState();
@@ -44,6 +45,7 @@ class _HadithsPageState extends State<HadithsPage> {
   @override
   void initState() {
     super.initState();
+    _selectedHadith = widget.initialHadith;
     unawaited(_loadHadiths());
   }
 

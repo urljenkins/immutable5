@@ -15,7 +15,8 @@ import 'dua_repository.dart';
 import 'models/dua_model.dart';
 
 class DuasPage extends StatefulWidget {
-  const DuasPage({super.key});
+  final Dua? initialDua;
+  const DuasPage({super.key, this.initialDua});
 
   @override
   State<DuasPage> createState() => _DuasPageState();
@@ -47,6 +48,7 @@ class _DuasPageState extends State<DuasPage> {
   @override
   void initState() {
     super.initState();
+    _selectedDua = widget.initialDua;
     unawaited(_loadDuas());
   }
 

@@ -20,14 +20,14 @@ void main() {
     registerFallbackValue(DateTime.now());
   });
 
-  setUp(() {
+  setUp(() async {
     mockPlacesService = MockPlacesService();
     mockPrayerTimesService = MockPrayerTimesService();
     mockGeolocatorPlatform = MockGeolocatorPlatform();
 
     GeolocatorPlatform.instance = mockGeolocatorPlatform;
 
-    getIt.reset();
+    await getIt.reset();
     getIt.registerLazySingleton<PlacesService>(() => mockPlacesService);
     getIt.registerFactory<PrayerTimesServiceFactory>(
       () => (lat, lon, method, madhab) => mockPrayerTimesService,

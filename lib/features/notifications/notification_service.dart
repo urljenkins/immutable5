@@ -43,7 +43,7 @@ class NotificationService {
     );
 
     await _notifications.initialize(
-      initSettings,
+      settings: initSettings,
       onDidReceiveNotificationResponse: _onNotificationTapped,
     );
 
@@ -177,14 +177,12 @@ class NotificationService {
     final tzScheduledTime = tz.TZDateTime.from(scheduledTime, tz.local);
 
     await _notifications.zonedSchedule(
-      id,
-      title,
-      body,
-      tzScheduledTime,
-      details,
+      id: id,
+      title: title,
+      body: body,
+      scheduledDate: tzScheduledTime,
+      notificationDetails: details,
       androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
-      uiLocalNotificationDateInterpretation:
-          UILocalNotificationDateInterpretation.absoluteTime,
       payload: payload,
     );
   }
@@ -224,14 +222,12 @@ class NotificationService {
     final tzScheduledTime = tz.TZDateTime.from(scheduledTime, tz.local);
 
     await _notifications.zonedSchedule(
-      id,
-      'Prayer Time',
-      'Time for $prayerName prayer',
-      tzScheduledTime,
-      details,
+      id: id,
+      title: 'Prayer Time',
+      body: 'Time for $prayerName prayer',
+      scheduledDate: tzScheduledTime,
+      notificationDetails: details,
       androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
-      uiLocalNotificationDateInterpretation:
-          UILocalNotificationDateInterpretation.absoluteTime,
       payload: prayerName,
     );
   }

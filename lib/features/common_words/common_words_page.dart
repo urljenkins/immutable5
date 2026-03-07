@@ -3,9 +3,7 @@ import 'dart:ui';
 
 import 'package:audioplayers/audioplayers.dart';
 import 'package:csv/csv.dart';
-import 'dart:async';
 import 'package:flutter/material.dart';
-import 'dart:async';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:google_fonts/google_fonts.dart';
 import 'package:immutable5/services/secure_storage_provider.dart';
@@ -60,8 +58,8 @@ class _CommonWordsPageState extends State<CommonWordsPage> {
       return;
     }
     final data = await rootBundle.loadString('assets/common_words.csv');
-    const converter = CsvToListConverter(eol: '\n');
-    final list = converter.convert(data, shouldParseNumbers: false);
+    final converter = CsvCodec(lineDelimiter: '\n');
+    final list = converter.decode(data);
     final rows = list.map((e) => e.cast<String>()).toList();
     final dataRows = rows.skip(1).toList(); // drop header row from display
     _cache = dataRows;

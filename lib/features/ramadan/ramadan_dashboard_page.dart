@@ -8,7 +8,6 @@ import '../../di/service_locator.dart';
 import '../../shared/app_colors.dart';
 import '../../shared/glass_container.dart';
 import '../prayer/prayer_times_service.dart';
-import '../prayer_tracking/prayer_tracking_service.dart';
 
 class RamadanDashboardPage extends StatefulWidget {
   const RamadanDashboardPage({super.key});
@@ -19,7 +18,6 @@ class RamadanDashboardPage extends StatefulWidget {
 
 class _RamadanDashboardPageState extends State<RamadanDashboardPage> {
   PrayerTimesService? _prayerTimesService;
-  late final PrayerTrackingService _trackingService;
 
   bool _loading = true;
   String _error = '';
@@ -34,13 +32,9 @@ class _RamadanDashboardPageState extends State<RamadanDashboardPage> {
   Duration _countdown = Duration.zero;
   bool _isFastingHours = false; // true if between Fajr and Maghrib
 
-  // Taraweeh
-  bool _taraweehCompleted = false;
-
   @override
   void initState() {
     super.initState();
-    _trackingService = getIt<PrayerTrackingService>();
     _initServiceAndLoadData();
   }
 
@@ -85,18 +79,11 @@ class _RamadanDashboardPageState extends State<RamadanDashboardPage> {
         tomorrow,
       );
 
-      // Check Taraweeh status
-      final taraweehCompleted = await _trackingService.isPrayerCompleted(
-        'Taraweeh',
-        now,
-      );
-
       if (mounted) {
         setState(() {
           _fajrToday = todayTimes['Fajr'];
           _maghribToday = todayTimes['Maghrib'];
           _fajrTomorrow = tomorrowTimes['Fajr'];
-          _taraweehCompleted = taraweehCompleted;
           _loading = false;
         });
         _startTimer();
@@ -171,14 +158,6 @@ class _RamadanDashboardPageState extends State<RamadanDashboardPage> {
     final h = d.inHours;
     final m = d.inMinutes.remainder(60);
     return '${h}h ${m}m';
-  }
-
-  Future<void> _toggleTaraweeh() async {
-    final now = DateTime.now();
-    await _trackingService.togglePrayerCompletion('Taraweeh', now);
-    setState(() {
-      _taraweehCompleted = !_taraweehCompleted;
-    });
   }
 
   @override
@@ -353,64 +332,6 @@ class _RamadanDashboardPageState extends State<RamadanDashboardPage> {
                                   ],
                                 ),
                               ),
-
-                            const SizedBox(height: 16),
-
-                            // Taraweeh Tracker
-                            GlassContainer(
-                              child: Row(
-                                children: [
-                                  Container(
-                                    padding: const EdgeInsets.all(12),
-                                    decoration: BoxDecoration(
-                                      color: _taraweehCompleted
-                                          ? Colors.green.withValues(alpha: 0.1)
-                                          : Colors.grey.withValues(alpha: 0.1),
-                                      shape: BoxShape.circle,
-                                    ),
-                                    child: Icon(
-                                      Icons.mosque,
-                                      color: _taraweehCompleted
-                                          ? Colors.green
-                                          : Colors.grey,
-                                    ),
-                                  ),
-                                  const SizedBox(width: 16),
-                                  Expanded(
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          'Taraweeh',
-                                          style: GoogleFonts.plusJakartaSans(
-                                            fontSize: 16,
-                                            fontWeight: FontWeight.w600,
-                                            color: AppColors.textPrimary,
-                                          ),
-                                        ),
-                                        Text(
-                                          _taraweehCompleted
-                                              ? 'Completed'
-                                              : 'Not completed yet',
-                                          style: GoogleFonts.plusJakartaSans(
-                                            fontSize: 12,
-                                            color: _taraweehCompleted
-                                                ? Colors.green
-                                                : AppColors.textSecondary,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                  Switch(
-                                    value: _taraweehCompleted,
-                                    onChanged: (val) => _toggleTaraweeh(),
-                                    activeThumbColor: AppColors.accent,
-                                  ),
-                                ],
-                              ),
-                            ),
                           ],
                         ),
                       ),

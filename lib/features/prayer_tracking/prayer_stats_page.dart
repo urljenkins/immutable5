@@ -19,7 +19,7 @@ class PrayerStatsPage extends StatefulWidget {
 
 class _PrayerStatsPageState extends State<PrayerStatsPage> {
   final PrayerTrackingService _trackingService = PrayerTrackingService();
-  late final PrayerTimesService _prayerTimesService;
+  PrayerTimesService? _prayerTimesService;
   Map<DateTime, Map<String, bool>> _history = {};
   Map<String, DateTime> _todayPrayerTimes = {};
   Map<String, bool> _selectedDayCompletions = {};
@@ -38,12 +38,6 @@ class _PrayerStatsPageState extends State<PrayerStatsPage> {
   @override
   void initState() {
     super.initState();
-    _prayerTimesService = getIt<PrayerTimesServiceFactory>()(
-      51.5074, // Default lat, ideally from user location
-      -0.1278, // Default lon
-      2, // Default method
-      0, // Default madhab
-    );
     _loadData();
   }
 
@@ -74,6 +68,19 @@ class _PrayerStatsPageState extends State<PrayerStatsPage> {
   // ── Data loading ───────────────────────────────────────────────────────────
 
   Future<void> _loadData() async {
+    final prefs = SecureStorageProvider();
+    final latitude = await prefs.getDouble('location_latitude') ?? 21.3891;
+    final longitude = await prefs.getDouble('location_longitude') ?? 39.8579;
+    final method = await prefs.getInt('calculation_method') ?? 2;
+    final madhab = await prefs.getInt('madhab') ?? 0;
+
+    _prayerTimesService = getIt<PrayerTimesServiceFactory>()(
+      latitude,
+      longitude,
+      method,
+      madhab,
+    );
+
     await _trackingService.getStatistics();
 
     final start = DateTime(_focusedDay.year, _focusedDay.month - 1);
@@ -115,13 +122,24 @@ class _PrayerStatsPageState extends State<PrayerStatsPage> {
         final displayPrayers = _trackingService.mainPrayers;
         final highlightIndex =
             displayPrayers.indexOf(_highlightPrayerName ?? '');
+        final targetIndex = highlightIndex >= 0 ? highlightIndex : 0;
 
-        if (_scrollController != null) {
-          _scrollController!.dispose();
+        if (_scrollController == null || !_scrollController!.hasClients) {
+          _scrollController?.dispose();
+          _scrollController = FixedExtentScrollController(
+            initialItem: targetIndex,
+          );
+        } else {
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            if (_scrollController!.hasClients) {
+              _scrollController!.animateToItem(
+                targetIndex,
+                duration: const Duration(milliseconds: 300),
+                curve: Curves.easeInOut,
+              );
+            }
+          });
         }
-        _scrollController = FixedExtentScrollController(
-          initialItem: highlightIndex >= 0 ? highlightIndex : 0,
-        );
 
         _loading = false;
       });
@@ -267,10 +285,13 @@ class _PrayerStatsPageState extends State<PrayerStatsPage> {
                   )
                 : ListWheelScrollView.useDelegate(
                     controller: _scrollController,
-                    itemExtent: 65,
-                    physics: const BouncingScrollPhysics(),
+                    itemExtent: 75,
+                    physics: const FixedExtentScrollPhysics(),
                     perspective: 0.005,
-                    diameterRatio: 2.5,
+                    diameterRatio: 1.5,
+                    useMagnifier: true,
+                    magnification: 1.2,
+                    overAndUnderCenterOpacity: 0.5,
                     childDelegate: ListWheelChildBuilderDelegate(
                       childCount: _trackingService.mainPrayers.length,
                       builder: (context, index) {
@@ -288,55 +309,65 @@ class _PrayerStatsPageState extends State<PrayerStatsPage> {
                         FontWeight titleWeight = FontWeight.normal;
 
                         if (isHighlighted) {
-                          bgColor = AppColors.accent.withValues(alpha: 0.15);
-                          borderColor = AppColors.accent.withValues(alpha: 0.5);
+                          bgColor = AppColors.accent.withValues(alpha: 0.25);
+                          borderColor = AppColors.accent;
                           titleColor = AppColors.accent;
                           timeColor = AppColors.accent;
                           titleWeight = FontWeight.bold;
                         }
 
-                        return Container(
-                          margin: const EdgeInsets.symmetric(
-                            horizontal: 8,
-                            vertical: 4,
-                          ),
-                          decoration: BoxDecoration(
-                            color: bgColor,
-                            borderRadius: BorderRadius.circular(12),
-                            border: Border.all(color: borderColor),
-                          ),
-                          child: Opacity(
-                            opacity: isCompleted ? 0.5 : 1.0,
-                            child: InkWell(
-                              onTap: () => _togglePrayer(prayer),
-                              borderRadius: BorderRadius.circular(12),
-                              child: Padding(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 16.0,
-                                  vertical: 12.0,
-                                ),
-                                child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Text(
-                                      prayer,
-                                      style: GoogleFonts.plusJakartaSans(
-                                        fontWeight: titleWeight,
-                                        color: titleColor,
-                                        fontSize: 16,
-                                      ),
-                                    ),
-                                    if (prayerTime != null)
+                        return Center(
+                          child: AnimatedContainer(
+                            duration: const Duration(milliseconds: 300),
+                            margin: const EdgeInsets.symmetric(
+                              horizontal: 16,
+                              vertical: 4,
+                            ),
+                            decoration: BoxDecoration(
+                              color: bgColor,
+                              borderRadius: BorderRadius.circular(16),
+                              border: Border.all(color: borderColor, width: isHighlighted ? 2 : 1),
+                              boxShadow: isHighlighted ? [
+                                BoxShadow(
+                                  color: AppColors.accent.withValues(alpha: 0.2),
+                                  blurRadius: 10,
+                                  spreadRadius: 2,
+                                )
+                              ] : null,
+                            ),
+                            child: Opacity(
+                              opacity: isCompleted ? 0.5 : 1.0,
+                              child: InkWell(
+                                onTap: () => _togglePrayer(prayer),
+                                borderRadius: BorderRadius.circular(16),
+                                child: Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 20.0,
+                                    vertical: 12.0,
+                                  ),
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
                                       Text(
-                                        _formatTime(prayerTime),
+                                        prayer,
                                         style: GoogleFonts.plusJakartaSans(
-                                          fontSize: 14,
-                                          color: timeColor,
                                           fontWeight: titleWeight,
+                                          color: titleColor,
+                                          fontSize: 18,
                                         ),
                                       ),
-                                  ],
+                                      if (prayerTime != null)
+                                        Text(
+                                          _formatTime(prayerTime),
+                                          style: GoogleFonts.plusJakartaSans(
+                                            fontSize: 16,
+                                            color: timeColor,
+                                            fontWeight: titleWeight,
+                                          ),
+                                        ),
+                                    ],
+                                  ),
                                 ),
                               ),
                             ),
