@@ -231,6 +231,8 @@ class _QuranPageState extends State<QuranPage> {
 
   Future<void> _scrollToVerse(int surah, int verse) async {
     final key = _verseKeys[surah * 10000 + verse];
+
+    // Case 1: Verse is already built and visible in the tree
     if (key?.currentContext != null) {
       await Scrollable.ensureVisible(
         key!.currentContext!,
@@ -238,6 +240,34 @@ class _QuranPageState extends State<QuranPage> {
         curve: Curves.easeInOut,
         alignment: 0.3, // Position somewhat near top
       );
+      return;
+    }
+
+    // Case 2: Verse is not built yet (off-screen).
+    // First, find and scroll to the chapter.
+    final chapterIndex = _chapters.indexWhere((c) => c.number == surah);
+    if (chapterIndex != -1 && _itemScrollController.isAttached) {
+      // Scroll to chapter first to bring it into view
+      await _itemScrollController.scrollTo(
+        index: chapterIndex,
+        duration: const Duration(milliseconds: 400),
+        curve: Curves.easeInOut,
+        alignment: 0.1,
+      );
+
+      // Give it a tiny bit of time to build the chapter content
+      await Future.delayed(const Duration(milliseconds: 100));
+
+      // Now try Scrollable.ensureVisible again for the specific verse
+      final retryKey = _verseKeys[surah * 10000 + verse];
+      if (retryKey?.currentContext != null) {
+        await Scrollable.ensureVisible(
+          retryKey!.currentContext!,
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.easeInOut,
+          alignment: 0.3,
+        );
+      }
     }
   }
 
@@ -830,9 +860,7 @@ class _QuranPageState extends State<QuranPage> {
         (a, b) => a.itemLeadingEdge < b.itemLeadingEdge ? a : b,
       );
       _autoScrollIndex = first.index;
-      // itemLeadingEdge is the fraction of the item above the viewport top.
-      // A negative value means the item starts above the viewport.
-      _autoScrollAlignment = first.itemLeadingEdge.clamp(0.0, 1.0);
+      _autoScrollAlignment = first.itemLeadingEdge;
     }
 
     _autoScrollTimer?.cancel();
@@ -846,20 +874,28 @@ class _QuranPageState extends State<QuranPage> {
   void _autoScrollTick() {
     if (!_itemScrollController.isAttached || _chapters.isEmpty) return;
 
-    // Delta per tick: base 0.0004 * speed (at 1× → ~25 px/s on typical item heights)
-    final delta = 0.0004 * _autoScrollSpeed;
-    _autoScrollAlignment += delta;
+    final positions = _itemPositionsListener.itemPositions.value;
+    if (positions.isEmpty) return;
 
-    // When alignment goes past 1.0 the entire item has scrolled past.
-    if (_autoScrollAlignment >= 1.0) {
-      _autoScrollAlignment -= 1.0;
-      _autoScrollIndex++;
-      if (_autoScrollIndex >= _chapters.length) {
-        // Reached the end – stop.
-        _stopAutoScroll();
-        return;
-      }
+    // Closed-loop: find what's actually at the top right now
+    final first = positions.reduce(
+      (a, b) => a.itemLeadingEdge < b.itemLeadingEdge ? a : b,
+    );
+
+    // Check if we hit the end of the scrollable area
+    final last = positions.reduce(
+      (a, b) => a.itemTrailingEdge > b.itemTrailingEdge ? a : b,
+    );
+    if (last.index == _chapters.length - 1 && last.itemTrailingEdge <= 1.0) {
+      _stopAutoScroll();
+      return;
     }
+
+    // Scroll down (view moves down, items move up): alignment decreases
+    // Delta per tick: base 0.0004 * speed
+    final delta = 0.0004 * _autoScrollSpeed;
+    _autoScrollIndex = first.index;
+    _autoScrollAlignment = first.itemLeadingEdge - delta;
 
     _itemScrollController.jumpTo(
       index: _autoScrollIndex,
