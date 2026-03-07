@@ -1,8 +1,10 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:immutable5/services/secure_storage_provider.dart';
 import 'package:immutable5/shared/app_colors.dart';
 import 'package:immutable5/shared/glass_container.dart';
 
@@ -21,8 +23,11 @@ class _GlossaryPageState extends State<GlossaryPage> {
   String _searchQuery = '';
   String _selectedCategory = 'All';
   bool _loading = true;
+  bool _hideKnown = false;
+  Set<String> _knownItems = {};
 
   final TextEditingController _searchController = TextEditingController();
+  final _prefs = SecureStorageProvider();
 
   List<String> get _categories => [
         'All',
@@ -32,7 +37,7 @@ class _GlossaryPageState extends State<GlossaryPage> {
   @override
   void initState() {
     super.initState();
-    _loadGlossary();
+    unawaited(_loadKnownStatusAndGlossary());
     _searchController.addListener(_onSearchChanged);
   }
 
@@ -42,17 +47,51 @@ class _GlossaryPageState extends State<GlossaryPage> {
     super.dispose();
   }
 
+  Future<void> _loadKnownStatusAndGlossary() async {
+    final hideKnown = await _prefs.getBool('glossary_hide_known') ?? false;
+    final knownList = await _prefs.getStringList('glossary_known_items') ?? [];
+
+    setState(() {
+      _hideKnown = hideKnown;
+      _knownItems = knownList.toSet();
+    });
+
+    await _loadGlossary();
+  }
+
   Future<void> _loadGlossary() async {
     final String response = await rootBundle.loadString('assets/glossary.json');
-    final data = await json.decode(response) as List;
+    final data = json.decode(response) as List;
     setState(() {
-      _allItem = data.map((json) => GlossaryItem.fromJson(json)).toList();
-      _filteredItems = _allItem;
+      _allItem = data
+          .map((json) => GlossaryItem.fromJson(json as Map<String, dynamic>))
+          .toList();
       _loading = false;
     });
+    _applyFilters();
   }
 
   void _onSearchChanged() {
+    _applyFilters();
+  }
+
+  Future<void> _toggleHideKnown() async {
+    final newVal = !_hideKnown;
+    await _prefs.setBool('glossary_hide_known', newVal);
+    setState(() {
+      _hideKnown = newVal;
+    });
+    _applyFilters();
+  }
+
+  Future<void> _markAsKnown(String term, bool known) async {
+    if (known) {
+      _knownItems.add(term);
+    } else {
+      _knownItems.remove(term);
+    }
+    await _prefs.setStringList('glossary_known_items', _knownItems.toList());
+    setState(() {});
     _applyFilters();
   }
 
@@ -64,7 +103,10 @@ class _GlossaryPageState extends State<GlossaryPage> {
             item.definition.toLowerCase().contains(_searchQuery);
         final matchesCategory =
             _selectedCategory == 'All' || item.category == _selectedCategory;
-        return matchesSearch && matchesCategory;
+        final isKnown = _knownItems.contains(item.term);
+        final matchesKnownFilter = !_hideKnown || !isKnown;
+
+        return matchesSearch && matchesCategory && matchesKnownFilter;
       }).toList();
     });
   }
@@ -84,6 +126,16 @@ class _GlossaryPageState extends State<GlossaryPage> {
           ),
         ),
         iconTheme: const IconThemeData(color: AppColors.textPrimary),
+        actions: [
+          IconButton(
+            icon: Icon(
+              _hideKnown ? Icons.visibility_off : Icons.visibility,
+              color: _hideKnown ? AppColors.accent : AppColors.textSecondary,
+            ),
+            tooltip: _hideKnown ? 'Show known items' : 'Hide known items',
+            onPressed: _toggleHideKnown,
+          ),
+        ],
       ),
       body: Stack(
         children: [
@@ -147,7 +199,7 @@ class _GlossaryPageState extends State<GlossaryPage> {
             suffixIcon: _searchController.text.isNotEmpty
                 ? IconButton(
                     icon: const Icon(Icons.clear, size: 20),
-                    onPressed: () => _searchController.clear(),
+                    onPressed: _searchController.clear,
                   )
                 : null,
           ),
@@ -206,67 +258,107 @@ class _GlossaryPageState extends State<GlossaryPage> {
       itemCount: _filteredItems.length,
       itemBuilder: (context, index) {
         final item = _filteredItems[index];
+        final isKnown = _knownItems.contains(item.term);
+
         return Padding(
           padding: const EdgeInsets.only(bottom: 12),
-          child: GlassContainer(
-            borderRadius: 16,
-            padding: EdgeInsets.zero,
-            child: ExpansionTile(
-              shape: const RoundedRectangleBorder(
-                borderRadius: BorderRadius.all(Radius.circular(16)),
-              ),
-              collapsedShape: const RoundedRectangleBorder(
-                borderRadius: BorderRadius.all(Radius.circular(16)),
-              ),
-              tilePadding:
-                  const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
-              title: Text(
-                item.term,
-                style: GoogleFonts.plusJakartaSans(
-                  fontWeight: FontWeight.w600,
-                  fontSize: 16,
-                  color: AppColors.textPrimary,
+          child: Opacity(
+            opacity: isKnown ? 0.6 : 1.0,
+            child: GlassContainer(
+              borderRadius: 16,
+              padding: EdgeInsets.zero,
+              child: ExpansionTile(
+                shape: const RoundedRectangleBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(16)),
                 ),
-              ),
-              subtitle: item.arabic != null
-                  ? Text(
-                      item.arabic!,
-                      style: TextStyle(
-                        fontFamily: 'Amiri',
-                        fontSize: 18,
-                        color: AppColors.accent,
-                        height: 1.2,
+                collapsedShape: const RoundedRectangleBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(16)),
+                ),
+                tilePadding:
+                    const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+                title: Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        item.term,
+                        style: GoogleFonts.plusJakartaSans(
+                          fontWeight: FontWeight.w600,
+                          fontSize: 16,
+                          color: AppColors.textPrimary,
+                        ),
                       ),
-                    )
-                  : null,
-              trailing: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                decoration: BoxDecoration(
-                  color: AppColors.accent.withValues(alpha: 0.1),
-                  borderRadius: BorderRadius.circular(8),
+                    ),
+                    if (isKnown)
+                      Icon(Icons.check_circle, color: AppColors.accent, size: 16),
+                  ],
                 ),
-                child: Text(
-                  item.category,
-                  style: GoogleFonts.plusJakartaSans(
-                    fontSize: 10,
-                    fontWeight: FontWeight.bold,
-                    color: AppColors.accent,
+                subtitle: item.arabic != null
+                    ? Text(
+                        item.arabic!,
+                        style: TextStyle(
+                          fontFamily: 'Amiri',
+                          fontSize: 18,
+                          color: AppColors.accent,
+                          height: 1.2,
+                        ),
+                      )
+                    : null,
+                trailing: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  decoration: BoxDecoration(
+                    color: AppColors.accent.withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(8),
                   ),
-                ),
-              ),
-              children: [
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
                   child: Text(
-                    item.definition,
+                    item.category,
                     style: GoogleFonts.plusJakartaSans(
-                      fontSize: 14,
-                      height: 1.6,
-                      color: AppColors.textSecondary,
+                      fontSize: 10,
+                      fontWeight: FontWeight.bold,
+                      color: AppColors.accent,
                     ),
                   ),
                 ),
-              ],
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(20, 0, 20, 12),
+                    child: Text(
+                      item.definition,
+                      style: GoogleFonts.plusJakartaSans(
+                        fontSize: 14,
+                        height: 1.6,
+                        color: AppColors.textSecondary,
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        TextButton.icon(
+                          onPressed: () => _markAsKnown(item.term, !isKnown),
+                          icon: Icon(
+                            isKnown ? Icons.undo : Icons.check_circle_outline,
+                            size: 18,
+                          ),
+                          label: Text(
+                            isKnown ? 'Mark as unknown' : 'I know this',
+                            style: GoogleFonts.plusJakartaSans(
+                              fontSize: 13,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                          style: TextButton.styleFrom(
+                            foregroundColor:
+                                isKnown ? AppColors.textSecondary : AppColors.accent,
+                            padding: const EdgeInsets.symmetric(horizontal: 12),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         );
@@ -286,7 +378,9 @@ class _GlossaryPageState extends State<GlossaryPage> {
           ),
           const SizedBox(height: 16),
           Text(
-            'No terms found',
+            _hideKnown && _knownItems.isNotEmpty
+                ? 'No remaining terms'
+                : 'No terms found',
             style: GoogleFonts.plusJakartaSans(
               fontSize: 18,
               fontWeight: FontWeight.w500,
@@ -295,14 +389,25 @@ class _GlossaryPageState extends State<GlossaryPage> {
           ),
           const SizedBox(height: 8),
           Text(
-            'Try adjusting your search or category filter',
+            _hideKnown && _knownItems.isNotEmpty
+                ? 'You have marked all visible items as known'
+                : 'Try adjusting your search or category filter',
             style: GoogleFonts.plusJakartaSans(
               fontSize: 14,
               color: AppColors.textSecondary.withValues(alpha: 0.7),
             ),
           ),
+          if (_hideKnown && _knownItems.isNotEmpty)
+            Padding(
+              padding: const EdgeInsets.only(top: 16),
+              child: ElevatedButton(
+                onPressed: _toggleHideKnown,
+                child: const Text('Show all items'),
+              ),
+            ),
         ],
       ),
     );
   }
+}
 }

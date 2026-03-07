@@ -14,7 +14,7 @@ class QuotePickerService {
   Future<void> _loadQuotes() async {
     if (_quotes != null) return;
     final raw = await rootBundle.loadString('assets/quotes.csv');
-    final rows = const CsvToListConverter().convert(raw, eol: '\n');
+    final rows = CsvCodec(lineDelimiter: '\n').decode(raw);
     _quotes = rows.skip(1).map((row) {
       final source = row[0].toString();
       final text = row[1].toString();
@@ -27,7 +27,7 @@ class QuotePickerService {
   Future<List<String>> getTopics() async {
     await _loadQuotes();
     final topicsSet = <String>{};
-    for (var q in _quotes!) {
+    for (final q in _quotes!) {
       topicsSet.addAll(q.topics);
     }
     final topics = topicsSet.toList()..sort();

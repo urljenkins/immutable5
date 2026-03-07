@@ -23,9 +23,11 @@ class DuaRepository {
     try {
       final jsonString =
           jsonOverride ?? await rootBundle.loadString('assets/duas.json');
-      final List<dynamic> jsonList = json.decode(jsonString);
+      final jsonList = json.decode(jsonString) as List<dynamic>;
 
-      _duas = jsonList.map((json) => Dua.fromJson(json)).toList();
+      _duas = jsonList
+          .map((json) => Dua.fromJson(json as Map<String, dynamic>))
+          .toList();
       _initialized = true;
       if (kDebugMode) {
         developer.log(

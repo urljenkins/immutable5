@@ -81,7 +81,7 @@ class _SettingsPageState extends State<SettingsPage> {
     _iftarReminders =
         await prefs.getBool(_keyIftarReminders) ?? _iftarReminders;
     final savedJuzMode = await prefs.getString(_keyJuzMode);
-    final ctxMenuSettings = await QuranContextMenuSettings.fromPrefs(prefs);
+    final ctxMenuSettings = await QuranContextMenuSettings.fromPrefs();
     final showPastPrayer = await prefs.getBool('show_past_prayer') ?? false;
 
     setState(() {
@@ -455,9 +455,8 @@ class _SettingsPageState extends State<SettingsPage> {
               activeThumbColor: AppColors.accent,
               contentPadding: const EdgeInsets.symmetric(horizontal: 40),
               onChanged: (v) async {
-                final prefs = SecureStorageProvider();
                 final updated = _ctxMenuSettings.copyWith(showCopy: v);
-                await updated.save(prefs);
+                await updated.save();
                 if (!mounted) return;
                 setState(() => _ctxMenuSettings = updated);
               },
@@ -469,9 +468,8 @@ class _SettingsPageState extends State<SettingsPage> {
               activeThumbColor: AppColors.accent,
               contentPadding: const EdgeInsets.symmetric(horizontal: 40),
               onChanged: (v) async {
-                final prefs = SecureStorageProvider();
                 final updated = _ctxMenuSettings.copyWith(showBookmark: v);
-                await updated.save(prefs);
+                await updated.save();
                 if (!mounted) return;
                 setState(() => _ctxMenuSettings = updated);
               },
@@ -483,9 +481,8 @@ class _SettingsPageState extends State<SettingsPage> {
               activeThumbColor: AppColors.accent,
               contentPadding: const EdgeInsets.symmetric(horizontal: 40),
               onChanged: (v) async {
-                final prefs = SecureStorageProvider();
                 final updated = _ctxMenuSettings.copyWith(showShare: v);
-                await updated.save(prefs);
+                await updated.save();
                 if (!mounted) return;
                 setState(() => _ctxMenuSettings = updated);
               },
@@ -497,9 +494,8 @@ class _SettingsPageState extends State<SettingsPage> {
               activeThumbColor: AppColors.accent,
               contentPadding: const EdgeInsets.symmetric(horizontal: 40),
               onChanged: (v) async {
-                final prefs = SecureStorageProvider();
                 final updated = _ctxMenuSettings.copyWith(showAyahInfo: v);
-                await updated.save(prefs);
+                await updated.save();
                 if (!mounted) return;
                 setState(() => _ctxMenuSettings = updated);
               },

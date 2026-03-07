@@ -270,7 +270,6 @@ class HomeController extends ChangeNotifier {
       _state.copyWith(
         loading: false,
         locationLoaded: true,
-        locationError: null,
         locationNotice: clearNotice ? null : _state.locationNotice,
         locationPermissionIssue:
             clearNotice ? false : _state.locationPermissionIssue,
@@ -325,7 +324,6 @@ class HomeController extends ChangeNotifier {
       _update(
         _state.copyWith(
           loading: false,
-          locationError: null,
           usingCache: true,
           showPastPrayer: showPastPrayer,
           nextPrayerTime: _cachedNextPrayerTime,
@@ -411,7 +409,6 @@ class HomeController extends ChangeNotifier {
         _state.copyWith(
           loading: false,
           usingCache: false,
-          locationError: null,
           showPastPrayer: showPastPrayer,
           nextPrayerTime: nextPrayerTime,
           nextPrayerName: nextPrayerName,

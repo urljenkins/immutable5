@@ -43,7 +43,7 @@ class PlaceModel {
 
     return PlaceModel(
       id: json['id'].toString(),
-      name: tags['name'] ?? tags['name:en'] ?? 'Prayer Place',
+      name: (tags['name'] as String?) ?? (tags['name:en'] as String?) ?? 'Prayer Place',
       type: type,
       subcategory: subcategory,
       lat: (json['lat'] as num).toDouble(),

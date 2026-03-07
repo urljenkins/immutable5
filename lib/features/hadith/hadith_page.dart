@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
@@ -38,7 +39,7 @@ class _HadithPageState extends State<HadithPage> {
   @override
   void initState() {
     super.initState();
-    _loadHadiths();
+    unawaited(_loadHadiths());
   }
 
   Future<void> _loadHadiths() async {
@@ -282,7 +283,6 @@ class _HadithPageState extends State<HadithPage> {
     return Padding(
       padding: const EdgeInsets.only(bottom: 12.0),
       child: GlassContainer(
-        padding: const EdgeInsets.all(20),
         onTap: () => setState(() => _selectedHadith = hadith),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -647,12 +647,12 @@ class _HadithDetailSheet extends StatelessWidget {
                                   ),
                                 ),
                                 onPressed: () {
-                                  Clipboard.setData(
+                                  unawaited(Clipboard.setData(
                                     ClipboardData(
                                       text:
                                           '${hadith.arabic}\n\n${hadith.translationEn}\n\n[${hadith.collection}, ${hadith.hadithNumber}]',
                                     ),
-                                  );
+                                  ));
                                   ScaffoldMessenger.of(context).showSnackBar(
                                     const SnackBar(
                                       content:

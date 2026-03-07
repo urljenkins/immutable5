@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:immutable5/services/secure_storage_provider.dart';
 
@@ -74,7 +76,7 @@ class _HajjPageState extends State<HajjPage> {
   void initState() {
     super.initState();
     _completed = List.filled(_stepsData.length, false);
-    _loadCompletionState();
+    unawaited(_loadCompletionState());
   }
 
   Future<void> _loadCompletionState() async {
@@ -154,7 +156,7 @@ class _HajjPageState extends State<HajjPage> {
                         value: _completed[i],
                         title: const Text('Completed'),
                         controlAffinity: ListTileControlAffinity.leading,
-                        onChanged: (v) => _toggleStep(i, v),
+                        onChanged: (v) => unawaited(_toggleStep(i, v)),
                       ),
                     ],
                   ),

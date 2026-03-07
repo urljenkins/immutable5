@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -107,7 +108,7 @@ class _TasbihPageState extends State<TasbihPage>
 
   Future<void> _toggleVoiceMode(bool enabled) async {
     if (enabled) {
-      bool available = await _speech.initialize(
+      final bool available = await _speech.initialize(
         onStatus: (status) {
           if (mounted) {
             setState(() => _isListening = status == 'listening');
@@ -164,7 +165,7 @@ class _TasbihPageState extends State<TasbihPage>
   void _startListening() {
     if (_speech.isListening) return; // Prevent "error_busy"
     _lastRecognizedWords = 0;
-    _speech.listen(
+    unawaited(_speech.listen(
       onResult: (result) {
         if (!mounted || !_isVoiceEnabled) return;
 
@@ -177,7 +178,7 @@ class _TasbihPageState extends State<TasbihPage>
             .toList();
 
         if (words.length > _lastRecognizedWords) {
-          int diff = words.length - _lastRecognizedWords;
+          final int diff = words.length - _lastRecognizedWords;
 
           // Get the current expected phrase based on phase index
           final currentPhase = _tasbihPhases[_phaseIndex];
@@ -213,14 +214,13 @@ class _TasbihPageState extends State<TasbihPage>
       listenFor: const Duration(seconds: 60),
       pauseFor: const Duration(seconds: 5),
       listenOptions: stt.SpeechListenOptions(
-        partialResults: true,
-        cancelOnError: false,
+        
       ),
-    );
+    ));
   }
 
   void _showTargetDialog() {
-    showDialog(
+    unawaited(showDialog(
       context: context,
       builder: (context) => AlertDialog(
         backgroundColor: AppColors.cardSurface,
@@ -265,7 +265,7 @@ class _TasbihPageState extends State<TasbihPage>
           ],
         ),
       ),
-    );
+    ));
   }
 
   @override
@@ -405,7 +405,7 @@ class _TasbihPageState extends State<TasbihPage>
                             children: [
                               if (phase['arabic'].toString().isNotEmpty)
                                 Text(
-                                  phase['arabic'],
+                                  phase['arabic'] as String,
                                   style: const TextStyle(
                                     fontSize: 16,
                                     fontWeight: FontWeight.bold,
@@ -414,7 +414,7 @@ class _TasbihPageState extends State<TasbihPage>
                                 ),
                               if (phase['translit'].toString().isNotEmpty)
                                 Text(
-                                  phase['translit'],
+                                  phase['translit'] as String,
                                   style: GoogleFonts.plusJakartaSans(
                                     fontSize: index == 3 ? 12 : 13,
                                     fontWeight: FontWeight.w600,
@@ -425,11 +425,11 @@ class _TasbihPageState extends State<TasbihPage>
                                 ),
                               if (phase['translation'].toString().isNotEmpty)
                                 Text(
-                                  phase['translation'],
+                                  phase['translation'] as String,
                                   style: GoogleFonts.plusJakartaSans(
                                     fontSize: 11,
                                     color: AppColors.textSecondary,
-                                  ),
+                                    ),
                                 ),
                             ],
                           ),

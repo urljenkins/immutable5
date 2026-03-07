@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class SecureStorageProvider {
@@ -50,6 +51,24 @@ class SecureStorageProvider {
 
   Future<void> setBool(String key, bool value) async {
     await _storage.write(key: key, value: value.toString());
+  }
+
+  Future<List<String>?> getStringList(String key) async {
+    final str = await _storage.read(key: key);
+    if (str == null) return null;
+    try {
+      final decoded = json.decode(str);
+      if (decoded is List) {
+        return decoded.cast<String>();
+      }
+      return null;
+    } catch (_) {
+      return null;
+    }
+  }
+
+  Future<void> setStringList(String key, List<String> value) async {
+    await _storage.write(key: key, value: json.encode(value));
   }
 
   Future<void> remove(String key) async {

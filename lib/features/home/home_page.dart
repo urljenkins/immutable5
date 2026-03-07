@@ -1,3 +1,6 @@
+import 'dart:async';
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hijri/hijri_calendar.dart';
@@ -7,9 +10,11 @@ import '../../di/service_locator.dart';
 import '../../l10n/app_localizations.dart';
 import '../../shared/app_colors.dart';
 import '../../shared/glass_container.dart';
+import '../duas/duas_page.dart';
 import '../duas/models/dua_model.dart';
 import '../glossary/glossary_page.dart';
 import '../hadith/hadith_repository.dart';
+import '../hadith/hadiths_page.dart';
 import '../hadith/models/hadith.dart';
 import '../home/home_controller.dart';
 import '../prayer/prayer_times_service.dart';
@@ -38,7 +43,7 @@ class _MyHomePageState extends State<MyHomePage> {
       prayerFactory: getIt<PrayerTimesServiceFactory>(),
       hadithRepository: getIt<HadithRepository>(),
     );
-    _controller.init();
+    unawaited(_controller.init());
   }
 
   @override
@@ -81,7 +86,9 @@ class _MyHomePageState extends State<MyHomePage> {
                             Icons.refresh,
                             color: AppColors.textSecondary,
                           ),
-                    onPressed: state.refreshing ? null : _controller.refresh,
+                    onPressed: state.refreshing
+                        ? null
+                        : () => unawaited(_controller.refresh()),
                     tooltip: AppLocalizations.of(context)!.refreshPrayerTimes,
                   )
                 : null,
@@ -113,7 +120,6 @@ class _MyHomePageState extends State<MyHomePage> {
                 },
               ),
             ],
-            // Premium: No title in AppBar, keeping it clean
           ),
           body: Stack(
             children: [
@@ -146,61 +152,62 @@ class _MyHomePageState extends State<MyHomePage> {
                           color: AppColors.accent,
                         ),
                       )
-                    : Column(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [
-                          // Status Banners
-                          if (state.locationNotice != null)
-                            Padding(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 24,
-                                vertical: 8,
-                              ),
-                              child: _StatusBanner(
-                                icon: state.locationPermissionIssue
-                                    ? Icons.location_off_outlined
-                                    : Icons.info_outline,
-                                background: (state.locationPermissionIssue
-                                        ? AppColors.error
-                                        : AppColors.accent)
-                                    .withValues(alpha: 0.1),
-                                foreground: state.locationPermissionIssue
-                                    ? AppColors.error
-                                    : AppColors.accent,
-                                message: state.locationNotice!,
-                                action: state.locationPermissionIssue
-                                    ? TextButton(
-                                        onPressed: _controller.refresh,
-                                        child: Text(
-                                          AppLocalizations.of(
-                                            context,
-                                          )!
-                                              .refreshPrayerTimes,
-                                          style: TextStyle(
-                                            color: state.locationPermissionIssue
-                                                ? AppColors.error
-                                                : AppColors.accent,
-                                            fontWeight: FontWeight.bold,
+                    : SingleChildScrollView(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            // Status Banners
+                            if (state.locationNotice != null)
+                              Padding(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 24,
+                                  vertical: 8,
+                                ),
+                                child: _StatusBanner(
+                                  icon: state.locationPermissionIssue
+                                      ? Icons.location_off_outlined
+                                      : Icons.info_outline,
+                                  background: (state.locationPermissionIssue
+                                          ? AppColors.error
+                                          : AppColors.accent)
+                                      .withValues(alpha: 0.1),
+                                  foreground: state.locationPermissionIssue
+                                      ? AppColors.error
+                                      : AppColors.accent,
+                                  message: state.locationNotice!,
+                                  action: state.locationPermissionIssue
+                                      ? TextButton(
+                                          onPressed: () =>
+                                              unawaited(_controller.refresh()),
+                                          child: Text(
+                                            AppLocalizations.of(
+                                              context,
+                                            )!
+                                                .refreshPrayerTimes,
+                                            style: TextStyle(
+                                              color:
+                                                  state.locationPermissionIssue
+                                                      ? AppColors.error
+                                                      : AppColors.accent,
+                                              fontWeight: FontWeight.bold,
+                                            ),
                                           ),
-                                        ),
-                                      )
-                                    : null,
+                                        )
+                                      : null,
+                                ),
                               ),
-                            ),
 
-                          // Removed the 'using cached times' banner per user request
-                          const SizedBox(height: 20),
+                            const SizedBox(height: 20),
 
-                          // Hero Section
-                          Expanded(
-                            flex: 3,
-                            child: Padding(
+                            // Hero Section
+                            Padding(
                               padding: const EdgeInsets.symmetric(
                                 horizontal: 24.0,
                               ),
                               child: InkWell(
-                                onTap: () =>
-                                    _controller.togglePrayerDisplayOption(),
+                                onTap: () => unawaited(
+                                  _controller.togglePrayerDisplayOption(),
+                                ),
                                 borderRadius: BorderRadius.circular(16),
                                 child: Column(
                                   mainAxisAlignment: MainAxisAlignment.center,
@@ -256,12 +263,11 @@ class _MyHomePageState extends State<MyHomePage> {
                                 ),
                               ),
                             ),
-                          ),
 
-                          // Contextual or Standard Quote Card
-                          Expanded(
-                            flex: 2,
-                            child: Padding(
+                            const SizedBox(height: 40),
+
+                            // Contextual or Standard Quote Card
+                            Padding(
                               padding: const EdgeInsets.fromLTRB(24, 0, 24, 40),
                               child: AnimatedSwitcher(
                                 duration: const Duration(milliseconds: 500),
@@ -274,6 +280,17 @@ class _MyHomePageState extends State<MyHomePage> {
                                         ),
                                         dua: state.contextualDua!,
                                         message: state.contextualMessage,
+                                        onTap: () {
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (context) => DuasPage(
+                                                initialDua:
+                                                    state.contextualDua,
+                                              ),
+                                            ),
+                                          );
+                                        },
                                       )
                                     : state.contextualHadith != null
                                         ? _ContextualHadithCard(
@@ -282,6 +299,18 @@ class _MyHomePageState extends State<MyHomePage> {
                                             ),
                                             hadith: state.contextualHadith!,
                                             message: state.contextualMessage,
+                                            onTap: () {
+                                              Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      HadithsPage(
+                                                        initialHadith:
+                                                            state.contextualHadith,
+                                                      ),
+                                                ),
+                                              );
+                                            },
                                           )
                                         : GlassContainer(
                                             key: ValueKey<String>(
@@ -290,26 +319,24 @@ class _MyHomePageState extends State<MyHomePage> {
                                             width: double.infinity,
                                             padding: const EdgeInsets.all(24),
                                             child: Center(
-                                              child: SingleChildScrollView(
-                                                child: Text(
-                                                  state.quote ?? '...',
-                                                  textAlign: TextAlign.center,
-                                                  style: GoogleFonts
-                                                      .plusJakartaSans(
-                                                    fontSize: 16,
-                                                    height: 1.6,
-                                                    color: AppColors.textPrimary
-                                                        .withValues(alpha: 0.9),
-                                                    fontStyle: FontStyle.italic,
-                                                  ),
+                                              child: Text(
+                                                state.quote ?? '...',
+                                                textAlign: TextAlign.center,
+                                                style: GoogleFonts
+                                                    .plusJakartaSans(
+                                                  fontSize: 16,
+                                                  height: 1.6,
+                                                  color: AppColors.textPrimary
+                                                      .withValues(alpha: 0.9),
+                                                  fontStyle: FontStyle.italic,
                                                 ),
                                               ),
                                             ),
                                           ),
                               ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
               ),
             ],
@@ -368,6 +395,8 @@ class _StatusBanner extends StatelessWidget {
 }
 
 class _HijriDateBanner extends StatefulWidget {
+  const _HijriDateBanner({super.key});
+
   @override
   State<_HijriDateBanner> createState() => _HijriDateBannerState();
 }
@@ -380,7 +409,7 @@ class _HijriDateBannerState extends State<_HijriDateBanner> {
   @override
   void initState() {
     super.initState();
-    _loadOffset();
+    unawaited(_loadOffset());
   }
 
   Future<void> _loadOffset() async {
@@ -395,11 +424,8 @@ class _HijriDateBannerState extends State<_HijriDateBanner> {
 
   @override
   Widget build(BuildContext context) {
-    // Shift today by the user's correction offset before converting to Hijri.
     final adjusted = DateTime.now().add(Duration(days: _offset));
     final hijri = HijriCalendar.fromDate(adjusted);
-    // Avoid fullDate() — its format() replaces the "dd" inside "DDDD" first,
-    // corrupting the day-name token. Build the string manually instead.
     final hijriDate = '${hijri.longMonthName} ${hijri.hDay}, ${hijri.hYear}';
 
     return AnimatedOpacity(
@@ -420,74 +446,78 @@ class _HijriDateBannerState extends State<_HijriDateBanner> {
 }
 
 class _ContextualDuaCard extends StatelessWidget {
-  const _ContextualDuaCard({super.key, required this.dua, this.message});
+  const _ContextualDuaCard({
+    super.key,
+    required this.dua,
+    this.message,
+    this.onTap,
+  });
 
   final Dua dua;
   final String? message;
+  final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) {
     return GlassContainer(
       width: double.infinity,
-      padding: const EdgeInsets.all(20),
+      onTap: onTap,
       gradientColors: [
         AppColors.accent.withValues(alpha: 0.2),
         AppColors.accent.withValues(alpha: 0.05),
       ],
       borderColor: AppColors.accent.withValues(alpha: 0.3),
       child: Center(
-        child: SingleChildScrollView(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              if (message != null && message!.isNotEmpty)
-                Padding(
-                  padding: const EdgeInsets.only(bottom: 12),
-                  child: Text(
-                    message!,
-                    textAlign: TextAlign.center,
-                    style: GoogleFonts.plusJakartaSans(
-                      fontSize: 13,
-                      fontWeight: FontWeight.w600,
-                      color: AppColors.accent,
-                      letterSpacing: 0.5,
-                    ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            if (message != null && message!.isNotEmpty)
+              Padding(
+                padding: const EdgeInsets.only(bottom: 12),
+                child: Text(
+                  message!,
+                  textAlign: TextAlign.center,
+                  style: GoogleFonts.plusJakartaSans(
+                    fontSize: 13,
+                    fontWeight: FontWeight.w600,
+                    color: AppColors.accent,
+                    letterSpacing: 0.5,
                   ),
                 ),
-              Text(
-                dua.arabic,
-                textAlign: TextAlign.center,
-                textDirection: TextDirection.rtl,
-                style: const TextStyle(
-                  fontSize: 20,
-                  height: 1.8,
-                  fontFamily: 'Amiri',
-                  color: AppColors.textPrimary,
-                ),
               ),
-              const SizedBox(height: 12),
-              Text(
-                dua.transliteration,
-                textAlign: TextAlign.center,
-                style: GoogleFonts.plusJakartaSans(
-                  fontSize: 13,
-                  fontStyle: FontStyle.italic,
-                  color: AppColors.textSecondary,
-                  height: 1.4,
-                ),
+            Text(
+              dua.arabic,
+              textAlign: TextAlign.center,
+              textDirection: TextDirection.rtl,
+              style: const TextStyle(
+                fontSize: 20,
+                height: 1.8,
+                fontFamily: 'Amiri',
+                color: AppColors.textPrimary,
               ),
-              const SizedBox(height: 12),
-              Text(
-                dua.translationEn,
-                textAlign: TextAlign.center,
-                style: GoogleFonts.plusJakartaSans(
-                  fontSize: 14,
-                  height: 1.5,
-                  color: AppColors.textPrimary.withValues(alpha: 0.8),
-                ),
+            ),
+            const SizedBox(height: 12),
+            Text(
+              dua.transliteration,
+              textAlign: TextAlign.center,
+              style: GoogleFonts.plusJakartaSans(
+                fontSize: 13,
+                fontStyle: FontStyle.italic,
+                color: AppColors.textSecondary,
+                height: 1.4,
               ),
-            ],
-          ),
+            ),
+            const SizedBox(height: 12),
+            Text(
+              dua.translationEn,
+              textAlign: TextAlign.center,
+              style: GoogleFonts.plusJakartaSans(
+                fontSize: 14,
+                height: 1.5,
+                color: AppColors.textPrimary.withValues(alpha: 0.8),
+              ),
+            ),
+          ],
         ),
       ),
     );
@@ -495,73 +525,77 @@ class _ContextualDuaCard extends StatelessWidget {
 }
 
 class _ContextualHadithCard extends StatelessWidget {
-  const _ContextualHadithCard({super.key, required this.hadith, this.message});
+  const _ContextualHadithCard({
+    super.key,
+    required this.hadith,
+    this.message,
+    this.onTap,
+  });
 
   final Hadith hadith;
   final String? message;
+  final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) {
     return GlassContainer(
       width: double.infinity,
-      padding: const EdgeInsets.all(20),
+      onTap: onTap,
       gradientColors: [
         AppColors.accent.withValues(alpha: 0.1),
         AppColors.accent.withValues(alpha: 0.05),
       ],
       borderColor: AppColors.accent.withValues(alpha: 0.2),
       child: Center(
-        child: SingleChildScrollView(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              if (message != null && message!.isNotEmpty)
-                Padding(
-                  padding: const EdgeInsets.only(bottom: 12),
-                  child: Text(
-                    message!,
-                    textAlign: TextAlign.center,
-                    style: GoogleFonts.plusJakartaSans(
-                      fontSize: 13,
-                      fontWeight: FontWeight.w600,
-                      color: AppColors.accent,
-                      letterSpacing: 0.5,
-                    ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            if (message != null && message!.isNotEmpty)
+              Padding(
+                padding: const EdgeInsets.only(bottom: 12),
+                child: Text(
+                  message!,
+                  textAlign: TextAlign.center,
+                  style: GoogleFonts.plusJakartaSans(
+                    fontSize: 13,
+                    fontWeight: FontWeight.w600,
+                    color: AppColors.accent,
+                    letterSpacing: 0.5,
                   ),
                 ),
-              Text(
-                hadith.arabic,
-                textAlign: TextAlign.center,
-                textDirection: TextDirection.rtl,
-                style: const TextStyle(
-                  fontSize: 18,
-                  height: 1.6,
-                  fontFamily: 'Amiri',
-                  color: AppColors.textPrimary,
-                ),
               ),
-              const SizedBox(height: 12),
-              Text(
-                hadith.translationEn,
-                textAlign: TextAlign.center,
-                style: GoogleFonts.plusJakartaSans(
-                  fontSize: 14,
-                  height: 1.5,
-                  color: AppColors.textPrimary.withValues(alpha: 0.8),
-                ),
+            Text(
+              hadith.arabic,
+              textAlign: TextAlign.center,
+              textDirection: TextDirection.rtl,
+              style: const TextStyle(
+                fontSize: 18,
+                height: 1.6,
+                fontFamily: 'Amiri',
+                color: AppColors.textPrimary,
               ),
-              const SizedBox(height: 8),
-              Text(
-                '— ${hadith.collection}',
-                textAlign: TextAlign.center,
-                style: GoogleFonts.plusJakartaSans(
-                  fontSize: 12,
-                  fontWeight: FontWeight.w600,
-                  color: AppColors.textSecondary,
-                ),
+            ),
+            const SizedBox(height: 12),
+            Text(
+              hadith.translationEn,
+              textAlign: TextAlign.center,
+              style: GoogleFonts.plusJakartaSans(
+                fontSize: 14,
+                height: 1.5,
+                color: AppColors.textPrimary.withValues(alpha: 0.8),
               ),
-            ],
-          ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              '— ${hadith.collection}',
+              textAlign: TextAlign.center,
+              style: GoogleFonts.plusJakartaSans(
+                fontSize: 12,
+                fontWeight: FontWeight.w600,
+                color: AppColors.textSecondary,
+              ),
+            ),
+          ],
         ),
       ),
     );

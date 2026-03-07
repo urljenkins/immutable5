@@ -257,7 +257,7 @@ class _PlacesPageState extends State<PlacesPage> {
                     ),
                     const SizedBox(width: 8),
                     Text(
-                      place.details!['opening_hours'],
+                      place.details!['opening_hours'] as String,
                       style: GoogleFonts.plusJakartaSans(
                         color: AppColors.textSecondary,
                       ),
@@ -368,7 +368,6 @@ class _PlacesPageState extends State<PlacesPage> {
               mapController: _mapController,
               options: MapOptions(
                 initialCenter: _center,
-                initialZoom: 13.0,
                 onMapReady: () {
                   _mapReady = true;
                   if (_pendingCenter != null) {
@@ -415,7 +414,7 @@ class _PlacesPageState extends State<PlacesPage> {
                         point: _center,
                         width: 60,
                         height: 60,
-                        child: Container(
+                        child: DecoratedBox(
                           decoration: BoxDecoration(
                             color: AppColors.accent.withValues(alpha: 0.3),
                             shape: BoxShape.circle,

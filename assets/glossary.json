@@ -634,5 +634,275 @@
         "arabic": "عيد الأضحى",
         "definition": "Festival of Sacrifice marking the end of Hajj.",
         "category": "General"
+    },
+    {
+        "term": "Ghusl",
+        "arabic": "غسل",
+        "definition": "Full-body ritual purification required after certain actions.",
+        "category": "Practices"
+    },
+    {
+        "term": "Tayammum",
+        "arabic": "تيمم",
+        "definition": "Dry ritual purification using clean earth or dust when water is unavailable.",
+        "category": "Practices"
+    },
+    {
+        "term": "Mahr",
+        "arabic": "مهر",
+        "definition": "Obligatory gift given by the groom to the bride at the time of marriage.",
+        "category": "Jurisprudence"
+    },
+    {
+        "term": "Nikah",
+        "arabic": "نكاح",
+        "definition": "The formal Islamic marriage contract.",
+        "category": "Jurisprudence"
+    },
+    {
+        "term": "Wali",
+        "arabic": "ولي",
+        "definition": "Guardian or protector, often referring to the bride's guardian in marriage.",
+        "category": "Jurisprudence"
+    },
+    {
+        "term": "Sabr",
+        "arabic": "صبر",
+        "definition": "Patience, endurance, and perseverance through difficulties.",
+        "category": "General"
+    },
+    {
+        "term": "Shukr",
+        "arabic": "شكر",
+        "definition": "Gratitude and thankfulness to Allah.",
+        "category": "General"
+    },
+    {
+        "term": "Tawakkul",
+        "arabic": "توكل",
+        "definition": "Trust and complete reliance on Allah's plan.",
+        "category": "Core Beliefs"
+    },
+    {
+        "term": "Akhlaq",
+        "arabic": "أخلاق",
+        "definition": "Character, moral conduct, and manners.",
+        "category": "General"
+    },
+    {
+        "term": "Bida'ah",
+        "arabic": "بدعة",
+        "definition": "Innovation in religious matters without a precedent.",
+        "category": "Jurisprudence"
+    },
+    {
+        "term": "Ayah",
+        "arabic": "آية",
+        "definition": "A verse of the Quran; also meaning 'sign' or 'miracle'.",
+        "category": "Sacred Texts"
+    },
+    {
+        "term": "Surah",
+        "arabic": "سورة",
+        "definition": "A chapter of the Quran.",
+        "category": "Sacred Texts"
+    },
+    {
+        "term": "Tajweed",
+        "arabic": "تجويد",
+        "definition": "The rules governing the proper pronunciation during Quranic recitation.",
+        "category": "Practices"
+    },
+    {
+        "term": "Tafsir",
+        "arabic": "تفسير",
+        "definition": "Exegesis, explanation, or interpretation of the Quran.",
+        "category": "Sacred Texts"
+    },
+    {
+        "term": "Khutbah",
+        "arabic": "خطبة",
+        "definition": "A public preaching or sermon, notably during Friday prayers.",
+        "category": "Practices"
+    },
+    {
+        "term": "Rak'ah",
+        "arabic": "ركعة",
+        "definition": "A single, prescribed unit of Islamic prayer.",
+        "category": "Practices"
+    },
+    {
+        "term": "Qiyam",
+        "arabic": "قيام",
+        "definition": "The standing position during prayer.",
+        "category": "Practices"
+    },
+    {
+        "term": "Sujud",
+        "arabic": "سجود",
+        "definition": "The act of prostration during prayer.",
+        "category": "Practices"
+    },
+    {
+        "term": "Ruku",
+        "arabic": "ركوع",
+        "definition": "The act of bowing during prayer.",
+        "category": "Practices"
+    },
+    {
+        "term": "Sira",
+        "arabic": "سيرة",
+        "definition": "The biographical life story of Prophet Muhammad ﷺ.",
+        "category": "General"
+    },
+    {
+        "term": "Dajjal",
+        "arabic": "دجال",
+        "definition": "The false messiah or antichrist figure in Islamic eschatology.",
+        "category": "General"
+    },
+    {
+        "term": "Mahdi",
+        "arabic": "مهدي",
+        "definition": "The 'Guided One' who will appear before the Day of Judgment to restore justice.",
+        "category": "Core Beliefs"
+    },
+    {
+        "term": "Witr",
+        "arabic": "وتر",
+        "definition": "An odd-numbered prayer performed after Isha, highly recommended.",
+        "category": "Practices"
+    },
+    {
+        "term": "Tahajjud",
+        "arabic": "تهجد",
+        "definition": "Voluntary night prayer performed after waking up from sleep.",
+        "category": "Practices"
+    },
+    {
+        "term": "Duha",
+        "arabic": "ضحى",
+        "definition": "Voluntary prayer performed in the late morning after sunrise.",
+        "category": "Practices"
+    },
+    {
+        "term": "Istikhara",
+        "arabic": "استخارة",
+        "definition": "A prayer seeking Allah's guidance when making a decision.",
+        "category": "Practices"
+    },
+    {
+        "term": "Janazah",
+        "arabic": "جنازة",
+        "definition": "The funeral prayer performed for a deceased Muslim.",
+        "category": "Practices"
+    },
+    {
+        "term": "Aqeeqa",
+        "arabic": "عقيقة",
+        "definition": "Sacrifice performed on the occasion of a child's birth.",
+        "category": "Practices"
+    },
+    {
+        "term": "Walima",
+        "arabic": "وليمة",
+        "definition": "A marriage banquet or feast given by the groom after the Nikah.",
+        "category": "Practices"
+    },
+    {
+        "term": "Tawaf",
+        "arabic": "طواف",
+        "definition": "The act of circling the Ka'bah seven times during Hajj or Umrah.",
+        "category": "Practices"
+    },
+    {
+        "term": "Sa'i",
+        "arabic": "سعي",
+        "definition": "Walking seven times between the hills of Safa and Marwa.",
+        "category": "Practices"
+    },
+    {
+        "term": "Ihram",
+        "arabic": "إحرام",
+        "definition": "A sacred state and clothing entered into for Hajj or Umrah.",
+        "category": "Practices"
+    },
+    {
+        "term": "Arafah",
+        "arabic": "عرفة",
+        "definition": "A plain where pilgrims gather on the 9th of Dhul-Hijjah for the pinnacle of Hajj.",
+        "category": "General"
+    },
+    {
+        "term": "Jamarat",
+        "arabic": "جمرات",
+        "definition": "The pillars representing the devil that are stoned during Hajj.",
+        "category": "Practices"
+    },
+    {
+        "term": "Hafiz",
+        "arabic": "حافظ",
+        "definition": "A person who has memorized the entire Quran.",
+        "category": "General"
+    },
+    {
+        "term": "Qari",
+        "arabic": "قارئ",
+        "definition": "A proficient reciter of the Quran.",
+        "category": "General"
+    },
+    {
+        "term": "Tasbih",
+        "arabic": "تسبيح",
+        "definition": "The act of glorifying Allah (e.g., saying 'SubhanAllah').",
+        "category": "Practices"
+    },
+    {
+        "term": "Tahmeed",
+        "arabic": "تحميد",
+        "definition": "The act of praising Allah (e.g., saying 'Alhamdulillah').",
+        "category": "Practices"
+    },
+    {
+        "term": "Tahlil",
+        "arabic": "تهليل",
+        "definition": "The act of declaring Allah's oneness (e.g., saying 'La ilaha illa Allah').",
+        "category": "Practices"
+    },
+    {
+        "term": "Takbir",
+        "arabic": "تكبير",
+        "definition": "The act of declaring Allah's greatness (e.g., saying 'Allahu Akbar').",
+        "category": "Practices"
+    },
+    {
+        "term": "Miswak",
+        "arabic": "مسواك",
+        "definition": "A natural tooth-cleaning twig, used as a Sunnah practice.",
+        "category": "General"
+    },
+    {
+        "term": "Sadaqah Jariyah",
+        "arabic": "صدقة جارية",
+        "definition": "Ongoing charity that continues to benefit the donor even after death.",
+        "category": "General"
+    },
+    {
+        "term": "Waqf",
+        "arabic": "وقف",
+        "definition": "An endowment made by a Muslim to a religious, educational, or charitable cause.",
+        "category": "Jurisprudence"
+    },
+    {
+        "term": "Khatam",
+        "arabic": "ختم",
+        "definition": "The complete recitation of the Quran from beginning to end.",
+        "category": "Practices"
+    },
+    {
+        "term": "Istighfar",
+        "arabic": "استغفار",
+        "definition": "The act of seeking forgiveness from Allah.",
+        "category": "Practices"
     }
 ]

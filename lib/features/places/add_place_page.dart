@@ -113,9 +113,9 @@ class _AddPlacePageState extends State<AddPlacePage> {
                 final category = _categories[index];
                 final isSelected = _selectedCategory == category['id'];
                 return GestureDetector(
-                  onTap: () =>
-                      setState(() => _selectedCategory = category['id']),
-                  child: Container(
+                  onTap: () => setState(
+                      () => _selectedCategory = category['id'] as String?),
+                  child: DecoratedBox(
                     decoration: BoxDecoration(
                       color: isSelected
                           ? AppColors.accent.withValues(alpha: 0.2)
@@ -131,7 +131,7 @@ class _AddPlacePageState extends State<AddPlacePage> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Icon(
-                          category['icon'],
+                          category['icon'] as IconData?,
                           size: 40,
                           color: isSelected
                               ? AppColors.accent
@@ -139,7 +139,7 @@ class _AddPlacePageState extends State<AddPlacePage> {
                         ),
                         const SizedBox(height: 12),
                         Text(
-                          category['label'],
+                          category['label'] as String,
                           style: GoogleFonts.plusJakartaSans(
                             color: isSelected
                                 ? AppColors.accent

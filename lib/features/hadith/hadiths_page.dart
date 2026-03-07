@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -10,7 +11,8 @@ import 'models/hadith.dart';
 import 'widgets/hadith_card.dart';
 
 class HadithsPage extends StatefulWidget {
-  const HadithsPage({super.key});
+  final Hadith? initialHadith;
+  const HadithsPage({super.key, this.initialHadith});
 
   @override
   State<HadithsPage> createState() => _HadithsPageState();
@@ -43,7 +45,8 @@ class _HadithsPageState extends State<HadithsPage> {
   @override
   void initState() {
     super.initState();
-    _loadHadiths();
+    _selectedHadith = widget.initialHadith;
+    unawaited(_loadHadiths());
   }
 
   Future<void> _loadHadiths() async {
@@ -56,7 +59,7 @@ class _HadithsPageState extends State<HadithsPage> {
       );
 
       final topicsSet = <String>{};
-      for (var h in hadiths) {
+      for (final h in hadiths) {
         topicsSet.addAll(h.topics);
       }
       final topics = topicsSet.toList()..sort();
@@ -139,7 +142,7 @@ class _HadithsPageState extends State<HadithsPage> {
   }
 
   void _showFilterSheet() {
-    showModalBottomSheet(
+    unawaited(showModalBottomSheet<void>(
       context: context,
       backgroundColor: AppColors.cardSurface,
       shape: const RoundedRectangleBorder(
@@ -187,7 +190,7 @@ class _HadithsPageState extends State<HadithsPage> {
           },
         );
       },
-    );
+    ));
   }
 
   @override

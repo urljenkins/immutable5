@@ -43,17 +43,17 @@ class SubmissionModel {
 
   factory SubmissionModel.fromJson(Map<String, dynamic> json) {
     return SubmissionModel(
-      id: json['id'],
-      name: json['name'],
-      category: json['category'],
-      lat: json['lat'],
-      lng: json['lng'],
-      wuduAvailable: json['wuduAvailable'] ?? false,
-      womenSpaceAvailable: json['womenSpaceAvailable'] ?? false,
-      description: json['description'],
-      submittedBy: json['submittedBy'],
-      submissionDate: DateTime.parse(json['submissionDate']),
-      status: json['status'],
+      id: json['id'] as String,
+      name: json['name'] as String,
+      category: json['category'] as String,
+      lat: (json['lat'] as num).toDouble(),
+      lng: (json['lng'] as num).toDouble(),
+      wuduAvailable: (json['wuduAvailable'] as bool?) ?? false,
+      womenSpaceAvailable: (json['womenSpaceAvailable'] as bool?) ?? false,
+      description: json['description'] as String?,
+      submittedBy: json['submittedBy'] as String,
+      submissionDate: DateTime.parse(json['submissionDate'] as String),
+      status: json['status'] as String,
     );
   }
 }

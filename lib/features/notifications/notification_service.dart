@@ -43,7 +43,7 @@ class NotificationService {
     );
 
     await _notifications.initialize(
-      initSettings,
+      settings: initSettings,
       onDidReceiveNotificationResponse: _onNotificationTapped,
     );
 
@@ -157,8 +157,6 @@ class NotificationService {
       channelDescription: 'Specific reminders for Sunnah acts and Duas',
       importance: Importance.high,
       priority: Priority.high,
-      playSound: true,
-      enableVibration: true,
       color: Color(0xFFD4AF37), // AppColors.accent equivalent
     );
 
@@ -179,14 +177,12 @@ class NotificationService {
     final tzScheduledTime = tz.TZDateTime.from(scheduledTime, tz.local);
 
     await _notifications.zonedSchedule(
-      id,
-      title,
-      body,
-      tzScheduledTime,
-      details,
+      id: id,
+      title: title,
+      body: body,
+      scheduledDate: tzScheduledTime,
+      notificationDetails: details,
       androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
-      uiLocalNotificationDateInterpretation:
-          UILocalNotificationDateInterpretation.absoluteTime,
       payload: payload,
     );
   }
@@ -207,8 +203,6 @@ class NotificationService {
       channelDescription: 'Notifications for prayer times',
       importance: Importance.high,
       priority: Priority.high,
-      playSound: true,
-      enableVibration: true,
     );
 
     const iosDetails = DarwinNotificationDetails(
@@ -228,14 +222,12 @@ class NotificationService {
     final tzScheduledTime = tz.TZDateTime.from(scheduledTime, tz.local);
 
     await _notifications.zonedSchedule(
-      id,
-      'Prayer Time',
-      'Time for $prayerName prayer',
-      tzScheduledTime,
-      details,
+      id: id,
+      title: 'Prayer Time',
+      body: 'Time for $prayerName prayer',
+      scheduledDate: tzScheduledTime,
+      notificationDetails: details,
       androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
-      uiLocalNotificationDateInterpretation:
-          UILocalNotificationDateInterpretation.absoluteTime,
       payload: prayerName,
     );
   }

@@ -19,31 +19,31 @@ final getIt = GetIt.instance;
 
 void setupLocator() {
   // Core services
-  getIt.registerLazySingleton<NotificationService>(() => NotificationService());
-  getIt.registerLazySingleton<QuotePickerService>(() => QuotePickerService());
-  getIt.registerLazySingleton<DuaRepository>(() => DuaRepository());
-  getIt.registerLazySingleton<HadithRepository>(() => HadithRepository());
+  getIt.registerLazySingleton<NotificationService>(NotificationService.new);
+  getIt.registerLazySingleton<QuotePickerService>(QuotePickerService.new);
+  getIt.registerLazySingleton<DuaRepository>(DuaRepository.new);
+  getIt.registerLazySingleton<HadithRepository>(HadithRepository.new);
   getIt.registerLazySingleton<ContextualDuaService>(
-    () => ContextualDuaService(),
+    ContextualDuaService.new,
   );
   getIt.registerLazySingleton<ContextualHadithService>(
     () => ContextualHadithService(getIt<HadithRepository>()),
   );
-  getIt.registerLazySingleton<PlacesService>(() => PlacesService());
+  getIt.registerLazySingleton<PlacesService>(PlacesService.new);
   getIt.registerLazySingleton<SecureStorageProvider>(
-    () => SecureStorageProvider(),
+    SecureStorageProvider.new,
   );
-  getIt.registerLazySingleton<BatteryOptimizer>(() => BatteryOptimizer());
-  getIt.registerLazySingleton<CacheManager>(() => CacheManager());
+  getIt.registerLazySingleton<BatteryOptimizer>(BatteryOptimizer.new);
+  getIt.registerLazySingleton<CacheManager>(CacheManager.new);
   getIt.registerLazySingleton<PrayerTrackingService>(
-    () => PrayerTrackingService(),
+    PrayerTrackingService.new,
   );
 
   // Adapters/ports
   getIt.registerLazySingleton<NotificationPort>(
     () => NotificationServicePort(getIt<NotificationService>()),
   );
-  getIt.registerLazySingleton<WidgetUpdatePort>(() => PrayerWidgetPort());
+  getIt.registerLazySingleton<WidgetUpdatePort>(PrayerWidgetPort.new);
 
   // Factory for prayer service based on location/method/madhab
   getIt.registerFactory<PrayerTimesServiceFactory>(
