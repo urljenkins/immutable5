@@ -7,7 +7,7 @@ class CacheManager {
   final SecureStorageProvider _prefs;
 
   CacheManager({SecureStorageProvider? prefs})
-      : _prefs = prefs ?? getIt<SecureStorageProvider>();
+    : _prefs = prefs ?? getIt<SecureStorageProvider>();
 
   static const String _cacheMetaKey = 'cache_metadata';
   static const int _maxCacheSize = 5 * 1024 * 1024; // 5MB

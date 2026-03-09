@@ -35,9 +35,9 @@ class QuotePickerService {
   }
 
   /// Returns a random quote, optionally filtered by topic.
-  Future<String> getQuote({String? topic}) async {
+  Future<Quote?> getQuote({String? topic}) async {
     await _loadQuotes();
-    if (_quotes == null || _quotes!.isEmpty) return '';
+    if (_quotes == null || _quotes!.isEmpty) return null;
     var list = _quotes!;
     if (topic != null && topic.isNotEmpty) {
       list = list.where((q) => q.topics.contains(topic)).toList();
@@ -46,7 +46,6 @@ class QuotePickerService {
       list = _quotes!;
     }
     final rnd = Random();
-    final q = list[rnd.nextInt(list.length)];
-    return '"${q.text}"\n— ${q.source}';
+    return list[rnd.nextInt(list.length)];
   }
 }

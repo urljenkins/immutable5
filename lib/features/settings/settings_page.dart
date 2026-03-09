@@ -92,8 +92,9 @@ class _SettingsPageState extends State<SettingsPage> {
       _jummahReminders = jummahReminders;
       _batterySaverMode = batteryOptimizer.isBatterySaverEnabled();
       _showPastPrayer = showPastPrayer;
-      _juzMode =
-          savedJuzMode == 'surahBased' ? JuzMode.surahBased : JuzMode.standard;
+      _juzMode = savedJuzMode == 'surahBased'
+          ? JuzMode.surahBased
+          : JuzMode.standard;
       _ctxMenuSettings = ctxMenuSettings;
     });
   }
@@ -222,8 +223,8 @@ class _SettingsPageState extends State<SettingsPage> {
               onChanged: (value) async {
                 if (value) {
                   // Request notification permissions when enabling
-                  final granted =
-                      await NotificationService().requestPermissions();
+                  final granted = await NotificationService()
+                      .requestPermissions();
                   if (!granted) {
                     // Show dialog explaining permissions are needed
                     if (context.mounted) {

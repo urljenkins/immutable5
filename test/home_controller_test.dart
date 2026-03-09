@@ -6,6 +6,7 @@ import 'package:immutable5/features/hadith/hadith_repository.dart';
 import 'package:immutable5/features/hadith/models/hadith.dart';
 import 'package:immutable5/features/home/home_controller.dart';
 import 'package:immutable5/features/prayer/prayer_times_service.dart';
+import 'package:immutable5/features/quotes/quote.dart';
 import 'package:immutable5/features/quotes/quote_picker_service.dart';
 import 'package:mocktail/mocktail.dart';
 
@@ -13,19 +14,20 @@ import 'mocks.dart';
 
 class FakeQuoteService extends QuotePickerService {
   @override
-  Future<String> getQuote({String? topic}) async => 'Test Quote';
+  Future<Quote?> getQuote({String? topic}) async =>
+      Quote(source: 'Source', text: 'Test Quote', topics: ['test']);
 }
 
 class FakeHadithRepository extends HadithRepository {
   @override
   Future<List<Hadith>> getAllHadiths() async => [];
-  
+
   @override
   Future<Hadith?> getHadithById(String id) async => null;
-  
+
   @override
   Future<List<Hadith>> getHadithsByTopic(String topic) async => [];
-  
+
   @override
   Future<List<Hadith>> getHadithsByCollection(String collection) async => [];
 }
@@ -80,7 +82,7 @@ class FakeWidgetPort implements WidgetUpdatePort {
 
 class FakePrayerTimesService extends PrayerTimesService {
   FakePrayerTimesService(this.nextPrayer, this.todayMap)
-      : super(latitude: 0, longitude: 0, method: 2, madhab: 0);
+    : super(latitude: 0, longitude: 0, method: 2, madhab: 0);
 
   final MapEntry<String, DateTime> nextPrayer;
   final Map<String, DateTime> todayMap;
@@ -88,14 +90,12 @@ class FakePrayerTimesService extends PrayerTimesService {
   @override
   Future<MapEntry<String, DateTime>> getNextPrayer({
     bool forceRefresh = false,
-  }) async =>
-      nextPrayer;
+  }) async => nextPrayer;
 
   @override
   Future<Map<String, DateTime>> getTodayPrayerTimes({
     bool forceRefresh = false,
-  }) async =>
-      todayMap;
+  }) async => todayMap;
 
   @override
   Future<String> getPastPrayerName() async => 'Isha';
@@ -139,7 +139,8 @@ void main() {
     expect(state.loading, isFalse);
     expect(state.nextPrayerName, equals('Fajr'));
     expect(state.nextPrayerTime, equals(nextPrayer.value));
-    expect(state.quote, isNotEmpty);
+    expect(state.quote, isNotNull);
+    expect(state.quote!.text, equals('Test Quote'));
     expect(fakeNotify.called, isTrue);
     expect(fakeWidget.called, isTrue);
   });

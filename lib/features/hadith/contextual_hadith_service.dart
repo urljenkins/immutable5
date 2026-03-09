@@ -64,8 +64,7 @@ class ContextualHadithService {
       }
 
       return false;
-    }).toList()
-      ..sort((a, b) => a.priority.compareTo(b.priority));
+    }).toList()..sort((a, b) => a.priority.compareTo(b.priority));
   }
 
   String _getDayOfWeekString(int weekday) {

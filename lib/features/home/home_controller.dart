@@ -14,6 +14,7 @@ import '../duas/contextual_dua_service.dart';
 import '../hadith/hadith_repository.dart';
 import '../hadith/models/hadith.dart';
 import '../prayer/prayer_times_service.dart';
+import '../quotes/quote.dart';
 import '../quotes/quote_picker_service.dart';
 import 'home_state.dart';
 
@@ -37,10 +38,10 @@ class HomeController extends ChangeNotifier {
     ContextualDuaService? contextualDuaService,
     HadithRepository? hadithRepository,
     SecureStorageProvider? prefs,
-  })  : contextualDuaService =
-            contextualDuaService ?? getIt<ContextualDuaService>(),
-        hadithRepository = hadithRepository ?? getIt<HadithRepository>(),
-        _prefs = prefs ?? getIt<SecureStorageProvider>() {
+  }) : contextualDuaService =
+           contextualDuaService ?? getIt<ContextualDuaService>(),
+       hadithRepository = hadithRepository ?? getIt<HadithRepository>(),
+       _prefs = prefs ?? getIt<SecureStorageProvider>() {
     if (initialPrayerService != null) {
       _prayerTimesService = initialPrayerService;
       _state = _state.copyWith(loading: false, locationLoaded: true);
@@ -65,7 +66,7 @@ class HomeController extends ChangeNotifier {
   String? _cachedNextPrayerName;
   String? _cachedPastPrayerName;
   DateTime? _cachedDataTimestamp;
-  String? _cachedQuote;
+  Quote? _cachedQuote;
   DateTime? _cachedQuoteTimestamp;
 
   static const Duration _dataCacheTtl = Duration(minutes: 5);
@@ -243,7 +244,8 @@ class HomeController extends ChangeNotifier {
     bool clearNotice = false,
   }) async {
     final prefsInstance = prefs ?? SecureStorageProvider();
-    final calcMethodRaw = await prefsInstance.get('calculationMethod') ??
+    final calcMethodRaw =
+        await prefsInstance.get('calculationMethod') ??
         'Method 2 (University of Islamic Sciences)';
     final calcMethodString = calcMethodRaw.toString();
     final method = calcMethodString.contains('4') ? 4 : 2;
@@ -272,8 +274,9 @@ class HomeController extends ChangeNotifier {
         locationLoaded: true,
         locationError: null,
         locationNotice: clearNotice ? null : _state.locationNotice,
-        locationPermissionIssue:
-            clearNotice ? false : _state.locationPermissionIssue,
+        locationPermissionIssue: clearNotice
+            ? false
+            : _state.locationPermissionIssue,
       ),
     );
   }
@@ -313,7 +316,8 @@ class HomeController extends ChangeNotifier {
     if (_prayerTimesService == null) return;
 
     final now = DateTime.now();
-    final cacheFresh = _cachedDataTimestamp != null &&
+    final cacheFresh =
+        _cachedDataTimestamp != null &&
         now.difference(_cachedDataTimestamp!) < _dataCacheTtl &&
         _cachedNextPrayerTime != null &&
         _cachedNextPrayerTime!.isAfter(now);
@@ -350,12 +354,12 @@ class HomeController extends ChangeNotifier {
 
       final pastPrayerName = await _prayerTimesService!.getPastPrayerName();
 
-      String? quote = _cachedQuote;
-      final quoteFresh = _cachedQuoteTimestamp != null &&
+      Quote? quote = _cachedQuote;
+      final quoteFresh =
+          _cachedQuoteTimestamp != null &&
           now.difference(_cachedQuoteTimestamp!) < _quoteCacheTtl;
       if (forceRefresh || quote == null || !quoteFresh) {
-        quote = await quoteService
-            .getQuote(); // Deprecated or changed API? Will fix compilation later if need be.
+        quote = await quoteService.getQuote();
         _cachedQuote = quote;
         _cachedQuoteTimestamp = DateTime.now();
       }
@@ -428,8 +432,9 @@ class HomeController extends ChangeNotifier {
       // fallback to cached times if available
       try {
         final cachedTimes = await _prayerTimesService!.getTodayPrayerTimes();
-        final upcoming =
-            cachedTimes.entries.where((e) => e.value.isAfter(now)).toList();
+        final upcoming = cachedTimes.entries
+            .where((e) => e.value.isAfter(now))
+            .toList();
         if (upcoming.isNotEmpty) {
           upcoming.sort((a, b) => a.value.compareTo(b.value));
           final nextPrayer = upcoming.first;
@@ -454,8 +459,9 @@ class HomeController extends ChangeNotifier {
           } else {
             final allHadiths = await hadithRepository.getAllHadiths();
             if (allHadiths.isNotEmpty) {
-              final priority1 =
-                  allHadiths.where((h) => h.priority == 1).toList();
+              final priority1 = allHadiths
+                  .where((h) => h.priority == 1)
+                  .toList();
               final source = priority1.isNotEmpty ? priority1 : allHadiths;
               contextualHadith = source[now.day % source.length];
               contextualMsg = 'Hadith of the Day';

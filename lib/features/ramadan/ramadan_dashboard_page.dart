@@ -237,186 +237,181 @@ class _RamadanDashboardPageState extends State<RamadanDashboardPage> {
             child: _loading
                 ? const Center(child: CircularProgressIndicator())
                 : _error.isNotEmpty
-                    ? Center(
-                        child: Text(
-                          _error,
-                          style: const TextStyle(color: AppColors.error),
+                ? Center(
+                    child: Text(
+                      _error,
+                      style: const TextStyle(color: AppColors.error),
+                    ),
+                  )
+                : SingleChildScrollView(
+                    padding: const EdgeInsets.all(24),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        // Hijri Date
+                        Text(
+                          hijriString.toUpperCase(),
+                          textAlign: TextAlign.center,
+                          style: GoogleFonts.plusJakartaSans(
+                            fontSize: 14,
+                            letterSpacing: 1.5,
+                            fontWeight: FontWeight.w600,
+                            color: AppColors.textSecondary,
+                          ),
                         ),
-                      )
-                    : SingleChildScrollView(
-                        padding: const EdgeInsets.all(24),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
-                          children: [
-                            // Hijri Date
-                            Text(
-                              hijriString.toUpperCase(),
-                              textAlign: TextAlign.center,
-                              style: GoogleFonts.plusJakartaSans(
-                                fontSize: 14,
-                                letterSpacing: 1.5,
-                                fontWeight: FontWeight.w600,
-                                color: AppColors.textSecondary,
-                              ),
-                            ),
-                            const SizedBox(height: 32),
+                        const SizedBox(height: 32),
 
-                            // Countdown Card
-                            GlassContainer(
-                              padding: const EdgeInsets.symmetric(
-                                vertical: 40,
-                                horizontal: 24,
+                        // Countdown Card
+                        GlassContainer(
+                          padding: const EdgeInsets.symmetric(
+                            vertical: 40,
+                            horizontal: 24,
+                          ),
+                          borderRadius: 24,
+                          gradientColors: [
+                            AppColors.accent.withValues(alpha: 0.1),
+                            AppColors.accent.withValues(alpha: 0.05),
+                          ],
+                          borderColor: AppColors.accent.withValues(alpha: 0.2),
+                          child: Column(
+                            children: [
+                              Icon(
+                                _isFastingHours
+                                    ? Icons.wb_sunny_outlined
+                                    : Icons.nights_stay_outlined,
+                                size: 32,
+                                color: AppColors.accent,
                               ),
-                              borderRadius: 24,
-                              gradientColors: [
-                                AppColors.accent.withValues(alpha: 0.1),
-                                AppColors.accent.withValues(alpha: 0.05),
-                              ],
-                              borderColor:
-                                  AppColors.accent.withValues(alpha: 0.2),
-                              child: Column(
-                                children: [
-                                  Icon(
-                                    _isFastingHours
-                                        ? Icons.wb_sunny_outlined
-                                        : Icons.nights_stay_outlined,
-                                    size: 32,
-                                    color: AppColors.accent,
-                                  ),
-                                  const SizedBox(height: 16),
-                                  Text(
-                                    _isFastingHours
-                                        ? 'IFTAR COUNTDOWN'
-                                        : 'SUHOOR COUNTDOWN',
-                                    style: GoogleFonts.plusJakartaSans(
-                                      fontSize: 12,
-                                      letterSpacing: 2.0,
-                                      fontWeight: FontWeight.w600,
-                                      color: AppColors.textSecondary,
-                                    ),
-                                  ),
-                                  const SizedBox(height: 16),
-                                  Text(
-                                    _formatDuration(_countdown),
-                                    style: GoogleFonts.plusJakartaSans(
-                                      fontSize: 48,
-                                      fontWeight: FontWeight.bold,
-                                      color: AppColors.textPrimary,
-                                      fontFeatures: [
-                                        const FontFeature.tabularFigures(),
-                                      ],
-                                    ),
-                                  ),
-                                ],
+                              const SizedBox(height: 16),
+                              Text(
+                                _isFastingHours
+                                    ? 'IFTAR COUNTDOWN'
+                                    : 'SUHOOR COUNTDOWN',
+                                style: GoogleFonts.plusJakartaSans(
+                                  fontSize: 12,
+                                  letterSpacing: 2.0,
+                                  fontWeight: FontWeight.w600,
+                                  color: AppColors.textSecondary,
+                                ),
                               ),
-                            ),
+                              const SizedBox(height: 16),
+                              Text(
+                                _formatDuration(_countdown),
+                                style: GoogleFonts.plusJakartaSans(
+                                  fontSize: 48,
+                                  fontWeight: FontWeight.bold,
+                                  color: AppColors.textPrimary,
+                                  fontFeatures: [
+                                    const FontFeature.tabularFigures(),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
 
-                            const SizedBox(height: 16),
+                        const SizedBox(height: 16),
 
-                            // Fasting Duration
-                            if (_fajrToday != null && _maghribToday != null)
-                              GlassContainer(
-                                padding: const EdgeInsets.all(20),
-                                child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
+                        // Fasting Duration
+                        if (_fajrToday != null && _maghribToday != null)
+                          GlassContainer(
+                            padding: const EdgeInsets.all(20),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          'Fasting Duration',
-                                          style: GoogleFonts.plusJakartaSans(
-                                            fontSize: 14,
-                                            color: AppColors.textSecondary,
-                                          ),
-                                        ),
-                                        const SizedBox(height: 4),
-                                        Text(
-                                          _formatHoursMinutes(
-                                            _maghribToday!
-                                                .difference(_fajrToday!),
-                                          ),
-                                          style: GoogleFonts.plusJakartaSans(
-                                            fontSize: 20,
-                                            fontWeight: FontWeight.w600,
-                                            color: AppColors.textPrimary,
-                                          ),
-                                        ),
-                                      ],
+                                    Text(
+                                      'Fasting Duration',
+                                      style: GoogleFonts.plusJakartaSans(
+                                        fontSize: 14,
+                                        color: AppColors.textSecondary,
+                                      ),
                                     ),
-                                    Icon(
-                                      Icons.timer_outlined,
-                                      color: AppColors.accent.withValues(
-                                        alpha: 0.5,
+                                    const SizedBox(height: 4),
+                                    Text(
+                                      _formatHoursMinutes(
+                                        _maghribToday!.difference(_fajrToday!),
+                                      ),
+                                      style: GoogleFonts.plusJakartaSans(
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.w600,
+                                        color: AppColors.textPrimary,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                Icon(
+                                  Icons.timer_outlined,
+                                  color: AppColors.accent.withValues(
+                                    alpha: 0.5,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+
+                        const SizedBox(height: 16),
+
+                        // Taraweeh Tracker
+                        GlassContainer(
+                          padding: const EdgeInsets.all(20),
+                          child: Row(
+                            children: [
+                              Container(
+                                padding: const EdgeInsets.all(12),
+                                decoration: BoxDecoration(
+                                  color: _taraweehCompleted
+                                      ? Colors.green.withValues(alpha: 0.1)
+                                      : Colors.grey.withValues(alpha: 0.1),
+                                  shape: BoxShape.circle,
+                                ),
+                                child: Icon(
+                                  Icons.mosque,
+                                  color: _taraweehCompleted
+                                      ? Colors.green
+                                      : Colors.grey,
+                                ),
+                              ),
+                              const SizedBox(width: 16),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      'Taraweeh',
+                                      style: GoogleFonts.plusJakartaSans(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.w600,
+                                        color: AppColors.textPrimary,
+                                      ),
+                                    ),
+                                    Text(
+                                      _taraweehCompleted
+                                          ? 'Completed'
+                                          : 'Not completed yet',
+                                      style: GoogleFonts.plusJakartaSans(
+                                        fontSize: 12,
+                                        color: _taraweehCompleted
+                                            ? Colors.green
+                                            : AppColors.textSecondary,
                                       ),
                                     ),
                                   ],
                                 ),
                               ),
-
-                            const SizedBox(height: 16),
-
-                            // Taraweeh Tracker
-                            GlassContainer(
-                              padding: const EdgeInsets.all(20),
-                              child: Row(
-                                children: [
-                                  Container(
-                                    padding: const EdgeInsets.all(12),
-                                    decoration: BoxDecoration(
-                                      color: _taraweehCompleted
-                                          ? Colors.green.withValues(alpha: 0.1)
-                                          : Colors.grey.withValues(alpha: 0.1),
-                                      shape: BoxShape.circle,
-                                    ),
-                                    child: Icon(
-                                      Icons.mosque,
-                                      color: _taraweehCompleted
-                                          ? Colors.green
-                                          : Colors.grey,
-                                    ),
-                                  ),
-                                  const SizedBox(width: 16),
-                                  Expanded(
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          'Taraweeh',
-                                          style: GoogleFonts.plusJakartaSans(
-                                            fontSize: 16,
-                                            fontWeight: FontWeight.w600,
-                                            color: AppColors.textPrimary,
-                                          ),
-                                        ),
-                                        Text(
-                                          _taraweehCompleted
-                                              ? 'Completed'
-                                              : 'Not completed yet',
-                                          style: GoogleFonts.plusJakartaSans(
-                                            fontSize: 12,
-                                            color: _taraweehCompleted
-                                                ? Colors.green
-                                                : AppColors.textSecondary,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                  Switch(
-                                    value: _taraweehCompleted,
-                                    onChanged: (val) => _toggleTaraweeh(),
-                                    activeThumbColor: AppColors.accent,
-                                  ),
-                                ],
+                              Switch(
+                                value: _taraweehCompleted,
+                                onChanged: (val) => _toggleTaraweeh(),
+                                activeThumbColor: AppColors.accent,
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
-                      ),
+                      ],
+                    ),
+                  ),
           ),
         ],
       ),

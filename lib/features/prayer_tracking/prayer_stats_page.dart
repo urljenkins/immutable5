@@ -80,8 +80,9 @@ class _PrayerStatsPageState extends State<PrayerStatsPage> {
     final end = DateTime(_focusedDay.year, _focusedDay.month + 2, 0);
     final history = await _trackingService.getHistoryForRange(start, end);
 
-    final completions =
-        await _trackingService.getCompletedPrayersForDate(_selectedDay);
+    final completions = await _trackingService.getCompletedPrayersForDate(
+      _selectedDay,
+    );
 
     Map<String, DateTime> times = {};
     String? highlightPrayer;
@@ -113,8 +114,9 @@ class _PrayerStatsPageState extends State<PrayerStatsPage> {
         _selectedDayCompletions = completions;
 
         final displayPrayers = _trackingService.mainPrayers;
-        final highlightIndex =
-            displayPrayers.indexOf(_highlightPrayerName ?? '');
+        final highlightIndex = displayPrayers.indexOf(
+          _highlightPrayerName ?? '',
+        );
 
         if (_scrollController != null) {
           _scrollController!.dispose();
@@ -136,8 +138,9 @@ class _PrayerStatsPageState extends State<PrayerStatsPage> {
 
     await _trackingService.togglePrayerCompletion(prayer, _selectedDay);
 
-    final newCompletions =
-        await _trackingService.getCompletedPrayersForDate(_selectedDay);
+    final newCompletions = await _trackingService.getCompletedPrayersForDate(
+      _selectedDay,
+    );
 
     if (mounted) {
       setState(() {
@@ -153,8 +156,9 @@ class _PrayerStatsPageState extends State<PrayerStatsPage> {
 
   String _formatTime(DateTime? time) {
     if (time == null) return '--:--';
-    final hour =
-        time.hour > 12 ? time.hour - 12 : (time.hour == 0 ? 12 : time.hour);
+    final hour = time.hour > 12
+        ? time.hour - 12
+        : (time.hour == 0 ? 12 : time.hour);
     final minute = time.minute.toString().padLeft(2, '0');
     final amPm = time.hour >= 12 ? 'PM' : 'AM';
     return '$hour:$minute $amPm';
@@ -282,8 +286,9 @@ class _PrayerStatsPageState extends State<PrayerStatsPage> {
                         final isHighlighted = prayer == _highlightPrayerName;
 
                         Color bgColor = Colors.transparent;
-                        Color borderColor =
-                            Colors.white.withValues(alpha: 0.05);
+                        Color borderColor = Colors.white.withValues(
+                          alpha: 0.05,
+                        );
                         Color titleColor = AppColors.textPrimary;
                         Color timeColor = AppColors.textSecondary;
                         FontWeight titleWeight = FontWeight.normal;
@@ -385,10 +390,12 @@ class _PrayerStatsPageState extends State<PrayerStatsPage> {
               ),
             ),
             daysOfWeekStyle: DaysOfWeekStyle(
-              weekdayStyle:
-                  GoogleFonts.plusJakartaSans(color: AppColors.textSecondary),
-              weekendStyle:
-                  GoogleFonts.plusJakartaSans(color: AppColors.textSecondary),
+              weekdayStyle: GoogleFonts.plusJakartaSans(
+                color: AppColors.textSecondary,
+              ),
+              weekendStyle: GoogleFonts.plusJakartaSans(
+                color: AppColors.textSecondary,
+              ),
             ),
             selectedDayPredicate: (day) => isSameDay(_selectedDay, day),
             onDaySelected: (selectedDay, focusedDay) {
@@ -492,8 +499,9 @@ class _PrayerStatsPageState extends State<PrayerStatsPage> {
       borderColor = Colors.white.withValues(alpha: 0.20);
     }
 
-    final secondaryTextColor =
-        isSelected ? Colors.white70 : AppColors.textSecondary;
+    final secondaryTextColor = isSelected
+        ? Colors.white70
+        : AppColors.textSecondary;
 
     return Container(
       margin: const EdgeInsets.all(3),
@@ -509,8 +517,9 @@ class _PrayerStatsPageState extends State<PrayerStatsPage> {
             '${date.day}',
             style: GoogleFonts.plusJakartaSans(
               fontSize: 13,
-              fontWeight:
-                  isSelected || isToday ? FontWeight.bold : FontWeight.normal,
+              fontWeight: isSelected || isToday
+                  ? FontWeight.bold
+                  : FontWeight.normal,
               color: isSelected ? Colors.white : primaryTextColor,
             ),
           ),

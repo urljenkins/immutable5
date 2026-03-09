@@ -43,20 +43,23 @@ void main() {
       expect(result, isTrue);
     });
 
-    test('getCompletedPrayersForDate returns map of completion status',
-        () async {
-      final date = DateTime(2023, 10, 27);
+    test(
+      'getCompletedPrayersForDate returns map of completion status',
+      () async {
+        final date = DateTime(2023, 10, 27);
 
-      when(() => mockPrefs.getBool(any())).thenAnswer((_) async => false);
-      when(() => mockPrefs.getBool('prayer_Fajr_2023_10_27_completed'))
-          .thenAnswer((_) async => true);
+        when(() => mockPrefs.getBool(any())).thenAnswer((_) async => false);
+        when(
+          () => mockPrefs.getBool('prayer_Fajr_2023_10_27_completed'),
+        ).thenAnswer((_) async => true);
 
-      final result = await service.getCompletedPrayersForDate(date);
+        final result = await service.getCompletedPrayersForDate(date);
 
-      expect(result['Fajr'], isTrue);
-      expect(result['Dhuhr'], isFalse);
-      expect(result.length, equals(5));
-    });
+        expect(result['Fajr'], isTrue);
+        expect(result['Dhuhr'], isFalse);
+        expect(result.length, equals(5));
+      },
+    );
 
     test('getCurrentStreak calculates consecutive completed days', () async {
       // Mocking yesterday as fully completed, day before as not.

@@ -181,8 +181,10 @@ class _TasbihPageState extends State<TasbihPage>
 
           // Get the current expected phrase based on phase index
           final currentPhase = _tasbihPhases[_phaseIndex];
-          final expectedTranslit =
-              currentPhase['translit'].toString().toLowerCase().split(' ');
+          final expectedTranslit = currentPhase['translit']
+              .toString()
+              .toLowerCase()
+              .split(' ');
 
           for (int i = 0; i < diff; i++) {
             // Let's do a simple check to see if the recognized words relate to the expected transliteration
@@ -193,8 +195,9 @@ class _TasbihPageState extends State<TasbihPage>
                 words.last.toLowerCase() == 'allah' ||
                 words.last.toLowerCase() == 'la' ||
                 words.last.toLowerCase() == 'ilaha' ||
-                expectedTranslit
-                    .any((part) => words.last.toLowerCase().contains(part))) {
+                expectedTranslit.any(
+                  (part) => words.last.toLowerCase().contains(part),
+                )) {
               _incrementCount();
             } else {
               // Optional: we can decide to still increment or just ignore based on precise matching
@@ -342,8 +345,10 @@ class _TasbihPageState extends State<TasbihPage>
 
           if (_target == 100)
             Padding(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+              padding: const EdgeInsets.symmetric(
+                horizontal: 16.0,
+                vertical: 8.0,
+              ),
               child: Column(
                 children: List.generate(_tasbihPhases.length, (index) {
                   final phase = _tasbihPhases[index];
@@ -375,8 +380,8 @@ class _TasbihPageState extends State<TasbihPage>
                             color: isActive
                                 ? AppColors.accent
                                 : (isDone
-                                    ? AppColors.success
-                                    : AppColors.cardSurface),
+                                      ? AppColors.success
+                                      : AppColors.cardSurface),
                             shape: BoxShape.circle,
                           ),
                           child: Center(

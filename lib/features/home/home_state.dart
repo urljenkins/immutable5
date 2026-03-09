@@ -1,5 +1,6 @@
 import '../duas/models/dua_model.dart';
 import '../hadith/models/hadith.dart';
+import '../quotes/quote.dart';
 
 class HomeState {
   final bool loading;
@@ -14,7 +15,7 @@ class HomeState {
   final String? nextPrayerName;
   final String? pastPrayerName;
   final Duration countdown;
-  final String? quote;
+  final Quote? quote;
   final Dua? contextualDua;
   final Hadith? contextualHadith;
   final String? contextualMessage;
@@ -51,7 +52,7 @@ class HomeState {
     String? nextPrayerName,
     String? pastPrayerName,
     Duration? countdown,
-    String? quote,
+    Quote? quote,
     Dua? contextualDua,
     Hadith? contextualHadith,
     String? contextualMessage,

@@ -22,8 +22,10 @@ class ContextualDuaService {
     int bestPriority = 999;
 
     // Compute the active context tokens
-    final activeTimeWindows =
-        _determineActiveTimeWindows(now, todayPrayerTimes);
+    final activeTimeWindows = _determineActiveTimeWindows(
+      now,
+      todayPrayerTimes,
+    );
     final activeHijriPeriods = _determineActiveHijriPeriods(hijriDate);
     final activeDayOfWeek = _determineDayOfWeek(now);
     final seasonalContext = _determineSeasonalContext(now);
@@ -110,8 +112,10 @@ class ContextualDuaService {
     final duas = await _repository.getAllDuas();
     if (duas.isEmpty) return [];
 
-    final activeTimeWindows =
-        _determineActiveTimeWindows(now, todayPrayerTimes);
+    final activeTimeWindows = _determineActiveTimeWindows(
+      now,
+      todayPrayerTimes,
+    );
     final activeHijriPeriods = _determineActiveHijriPeriods(hijriDate);
     final activeDayOfWeek = _determineDayOfWeek(now);
 
@@ -287,8 +291,11 @@ class ContextualDuaService {
 
     // Standard prayer windows
     if (fajr != null &&
-        _isBetween(now, fajr.subtract(const Duration(minutes: 30)),
-            fajr.add(const Duration(hours: 1)))) {
+        _isBetween(
+          now,
+          fajr.subtract(const Duration(minutes: 30)),
+          fajr.add(const Duration(hours: 1)),
+        )) {
       windows.add('fajr');
     }
     if (dhuhr != null &&
@@ -300,26 +307,32 @@ class ContextualDuaService {
       windows.add('asr');
     }
     if (maghrib != null &&
-        _isBetween(now, maghrib,
-            isha ?? maghrib.add(const Duration(hours: 1, minutes: 30)))) {
+        _isBetween(
+          now,
+          maghrib,
+          isha ?? maghrib.add(const Duration(hours: 1, minutes: 30)),
+        )) {
       windows.add('maghrib');
     }
     if (isha != null &&
         _isBetween(
-            now,
-            isha,
-            fajr?.add(const Duration(days: 1)) ??
-                isha.add(const Duration(hours: 8)))) {
+          now,
+          isha,
+          fajr?.add(const Duration(days: 1)) ??
+              isha.add(const Duration(hours: 8)),
+        )) {
       windows.add('isha');
     }
 
     // Last third of the night
     if (fajr != null && maghrib != null) {
-      final nextFajr =
-          fajr.isBefore(maghrib) ? fajr.add(const Duration(days: 1)) : fajr;
+      final nextFajr = fajr.isBefore(maghrib)
+          ? fajr.add(const Duration(days: 1))
+          : fajr;
       final nightDuration = nextFajr.difference(maghrib);
-      final lastThirdStart =
-          nextFajr.subtract(Duration(seconds: nightDuration.inSeconds ~/ 3));
+      final lastThirdStart = nextFajr.subtract(
+        Duration(seconds: nightDuration.inSeconds ~/ 3),
+      );
 
       if (now.isAfter(lastThirdStart) && now.isBefore(nextFajr)) {
         windows.add('last_third_night');
