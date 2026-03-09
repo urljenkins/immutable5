@@ -19,7 +19,7 @@ class PrayerStatsPage extends StatefulWidget {
 
 class _PrayerStatsPageState extends State<PrayerStatsPage> {
   final PrayerTrackingService _trackingService = PrayerTrackingService();
-  PrayerTimesService? _prayerTimesService;
+  late final PrayerTimesService _prayerTimesService;
   Map<DateTime, Map<String, bool>> _history = {};
   Map<String, DateTime> _todayPrayerTimes = {};
   Map<String, bool> _selectedDayCompletions = {};

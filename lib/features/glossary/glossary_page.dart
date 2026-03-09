@@ -410,4 +410,3 @@ class _GlossaryPageState extends State<GlossaryPage> {
     );
   }
 }
-}
