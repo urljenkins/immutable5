@@ -1,6 +1,12 @@
 import '../duas/models/dua_model.dart';
 import '../hadith/models/hadith.dart';
 
+class _Sentinel {
+  const _Sentinel();
+}
+
+const _sentinel = _Sentinel();
+
 class HomeState {
   final bool loading;
   final bool refreshing;
@@ -18,6 +24,7 @@ class HomeState {
   final Dua? contextualDua;
   final Hadith? contextualHadith;
   final String? contextualMessage;
+  final bool isProhibitedTime;
 
   const HomeState({
     this.loading = true,
@@ -36,6 +43,7 @@ class HomeState {
     this.contextualDua,
     this.contextualHadith,
     this.contextualMessage,
+    this.isProhibitedTime = false,
   });
 
   HomeState copyWith({
@@ -52,9 +60,10 @@ class HomeState {
     String? pastPrayerName,
     Duration? countdown,
     String? quote,
-    Dua? contextualDua,
-    Hadith? contextualHadith,
+    Object? contextualDua = _sentinel,
+    Object? contextualHadith = _sentinel,
     String? contextualMessage,
+    bool? isProhibitedTime,
   }) {
     return HomeState(
       loading: loading ?? this.loading,
@@ -71,9 +80,14 @@ class HomeState {
       pastPrayerName: pastPrayerName ?? this.pastPrayerName,
       countdown: countdown ?? this.countdown,
       quote: quote ?? this.quote,
-      contextualDua: contextualDua,
-      contextualHadith: contextualHadith,
+      contextualDua: contextualDua == _sentinel
+          ? this.contextualDua
+          : contextualDua as Dua?,
+      contextualHadith: contextualHadith == _sentinel
+          ? this.contextualHadith
+          : contextualHadith as Hadith?,
       contextualMessage: contextualMessage ?? this.contextualMessage,
+      isProhibitedTime: isProhibitedTime ?? this.isProhibitedTime,
     );
   }
 }

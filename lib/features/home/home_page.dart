@@ -239,7 +239,9 @@ class _MyHomePageState extends State<MyHomePage> {
                                       style: GoogleFonts.plusJakartaSans(
                                         fontSize: 64,
                                         fontWeight: FontWeight.bold,
-                                        color: AppColors.accent,
+                                        color: state.isProhibitedTime
+                                            ? AppColors.error
+                                            : AppColors.accent,
                                         height: 1.0,
                                       ),
                                     ),
