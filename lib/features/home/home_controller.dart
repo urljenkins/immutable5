@@ -509,6 +509,8 @@ class HomeController extends ChangeNotifier {
   void _startTimer() {
     _timer?.cancel();
     if (_state.nextPrayerTime == null) return;
+    // Check prohibited time immediately, then every tick
+    _checkProhibitedTime();
     _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
       final target = _state.nextPrayerTime;
       if (target == null) return;
@@ -518,6 +520,16 @@ class HomeController extends ChangeNotifier {
         loadData();
       } else {
         _update(_state.copyWith(countdown: diff));
+        _checkProhibitedTime();
+      }
+    });
+  }
+
+  void _checkProhibitedTime() {
+    if (_prayerTimesService == null) return;
+    _prayerTimesService!.isProhibitedPrayerTime().then((prohibited) {
+      if (prohibited != _state.isProhibitedTime) {
+        _update(_state.copyWith(isProhibitedTime: prohibited));
       }
     });
   }

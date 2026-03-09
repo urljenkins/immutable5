@@ -20,6 +20,14 @@ class PrayerTimesService {
   final int madhab;
   final SecureStorageProvider _prefs;
 
+  static const List<String> mainPrayers = [
+    'Fajr',
+    'Dhuhr',
+    'Asr',
+    'Maghrib',
+    'Isha',
+  ];
+
   // Cache the next prayer to avoid duplicate API calls
   MapEntry<String, DateTime>? _cachedNextPrayer;
   DateTime? _cacheTimestamp;
@@ -159,7 +167,9 @@ class PrayerTimesService {
     }
 
     final times = await getTodayPrayerTimes();
-    final upcoming = times.entries.where((e) => e.value.isAfter(now)).toList();
+    final upcoming = times.entries
+        .where((e) => mainPrayers.contains(e.key) && e.value.isAfter(now))
+        .toList();
     upcoming.sort((a, b) => a.value.compareTo(b.value));
     if (upcoming.isNotEmpty) {
       _cachedNextPrayer = upcoming.first;
@@ -261,7 +271,9 @@ class PrayerTimesService {
     final now = DateTime.now();
 
     final times = await getTodayPrayerTimes();
-    final past = times.entries.where((e) => e.value.isBefore(now)).toList();
+    final past = times.entries
+        .where((e) => mainPrayers.contains(e.key) && e.value.isBefore(now))
+        .toList();
     past.sort((a, b) => b.value.compareTo(a.value)); // Descending order
     if (past.isNotEmpty) {
       return past.first;
@@ -296,6 +308,41 @@ class PrayerTimesService {
   Future<String> getNextPrayerName() async {
     final entry = await getNextPrayer();
     return entry.key;
+  }
+
+  /// Returns true if the current time falls within a period when
+  /// voluntary prayer is prohibited:
+  /// 1. From Sunrise until ~15 minutes after Sunrise
+  /// 2. ~10 minutes before Dhuhr (sun at zenith)
+  /// 3. From ~10 minutes before Sunset until Maghrib
+  Future<bool> isProhibitedPrayerTime({DateTime? now}) async {
+    now ??= DateTime.now();
+    final times = await getTodayPrayerTimes();
+
+    final sunrise = times['Sunrise'];
+    final dhuhr = times['Dhuhr'];
+    final sunset = times['Sunset'] ?? times['Maghrib'];
+
+    // 1. Sunrise window: from Sunrise to Sunrise + 15 min
+    if (sunrise != null) {
+      final sunriseEnd = sunrise.add(const Duration(minutes: 15));
+      if (now.isAfter(sunrise) && now.isBefore(sunriseEnd)) return true;
+    }
+
+    // 2. Zenith window: 10 min before Dhuhr
+    if (dhuhr != null) {
+      final zenithStart = dhuhr.subtract(const Duration(minutes: 10));
+      if (now.isAfter(zenithStart) && now.isBefore(dhuhr)) return true;
+    }
+
+    // 3. Sunset window: from ~10 min before Sunset until Maghrib
+    if (sunset != null) {
+      final sunsetStart = sunset.subtract(const Duration(minutes: 10));
+      final maghrib = times['Maghrib'] ?? sunset;
+      if (now.isAfter(sunsetStart) && now.isBefore(maghrib)) return true;
+    }
+
+    return false;
   }
 
   Future<void> clearCache() async {
