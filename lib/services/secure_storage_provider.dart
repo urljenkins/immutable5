@@ -12,7 +12,7 @@ class SecureStorageProvider {
   }
 
   SecureStorageProvider._internal({FlutterSecureStorage? storage})
-      : _storage = storage ?? const FlutterSecureStorage();
+    : _storage = storage ?? const FlutterSecureStorage();
 
   Future<String?> getString(String key) async {
     return await _storage.read(key: key);

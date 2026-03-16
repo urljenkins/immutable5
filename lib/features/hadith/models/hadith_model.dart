@@ -54,13 +54,15 @@ class Hadith {
       translationLanguage: json['translation_language'] as String? ?? 'en',
       grade: json['grade'] as String,
       gradeBy: json['grade_by'] as String?,
-      topics:
-          (json['topics'] as List<dynamic>).map((e) => e as String).toList(),
+      topics: (json['topics'] as List<dynamic>)
+          .map((e) => e as String)
+          .toList(),
       summaryEn: json['summary_en'] as String,
       keyLessons: (json['key_lessons'] as List<dynamic>)
           .map((e) => e as String)
           .toList(),
-      relatedDuaIds: (json['related_dua_ids'] as List<dynamic>?)
+      relatedDuaIds:
+          (json['related_dua_ids'] as List<dynamic>?)
               ?.map((e) => e as String)
               .toList() ??
           [],

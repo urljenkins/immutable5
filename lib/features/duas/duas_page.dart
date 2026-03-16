@@ -71,12 +71,13 @@ class _DuasPageState extends State<DuasPage> {
           return a.id.compareTo(b.id);
         });
 
-      final categories = sortedDuas
-          .map((d) => d.category)
-          .where((c) => c.isNotEmpty)
-          .toSet()
-          .toList()
-        ..sort();
+      final categories =
+          sortedDuas
+              .map((d) => d.category)
+              .where((c) => c.isNotEmpty)
+              .toSet()
+              .toList()
+            ..sort();
 
       setState(() {
         _duas = sortedDuas;
@@ -105,20 +106,23 @@ class _DuasPageState extends State<DuasPage> {
       if (_selectedCategory == 'Recommended') {
         filtered = _recommendedDuas;
       } else if (_selectedCategory != 'All') {
-        filtered =
-            filtered.where((dua) => dua.category == _selectedCategory).toList();
+        filtered = filtered
+            .where((dua) => dua.category == _selectedCategory)
+            .toList();
       }
 
       if (_filterFavoritesOnly) {
-        filtered =
-            filtered.where((dua) => _favorites.contains(dua.id)).toList();
+        filtered = filtered
+            .where((dua) => _favorites.contains(dua.id))
+            .toList();
       }
 
       if (_searchQuery.isNotEmpty) {
         final query = _searchQuery.toLowerCase();
         filtered = filtered.where((dua) {
-          final matchesTags =
-              dua.tags.any((tag) => tag.toLowerCase().contains(query));
+          final matchesTags = dua.tags.any(
+            (tag) => tag.toLowerCase().contains(query),
+          );
           return dua.translationEn.toLowerCase().contains(query) ||
               dua.transliteration.toLowerCase().contains(query) ||
               dua.arabic.contains(query) ||
@@ -435,8 +439,9 @@ class _DuasPageState extends State<DuasPage> {
                 IconButton(
                   icon: Icon(
                     isFavorite ? Icons.bookmark : Icons.bookmark_border,
-                    color:
-                        isFavorite ? AppColors.accent : AppColors.textSecondary,
+                    color: isFavorite
+                        ? AppColors.accent
+                        : AppColors.textSecondary,
                     size: 20,
                   ),
                   onPressed: () => _toggleFavorite(dua.id),
@@ -566,8 +571,9 @@ class _DuaDetailSheet extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final tags = dua.tags.toSet().toList();
-    final timeWindows =
-        (dua.displayContext?.timeWindows ?? const <String>[]).toSet().toList();
+    final timeWindows = (dua.displayContext?.timeWindows ?? const <String>[])
+        .toSet()
+        .toList();
 
     return Positioned(
       left: 0,

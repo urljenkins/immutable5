@@ -7,7 +7,7 @@ class BatteryOptimizer {
   final SecureStorageProvider _prefs;
 
   BatteryOptimizer({SecureStorageProvider? prefs})
-      : _prefs = prefs ?? getIt<SecureStorageProvider>();
+    : _prefs = prefs ?? getIt<SecureStorageProvider>();
 
   static const String _keyBatteryMode = 'battery_saver_mode';
   static const String _keyLastNetworkCheck = 'last_network_check';

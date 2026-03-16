@@ -7,7 +7,7 @@ class CacheManager {
   final SecureStorageProvider _prefs;
 
   CacheManager({SecureStorageProvider? prefs})
-      : _prefs = prefs ?? getIt<SecureStorageProvider>();
+    : _prefs = prefs ?? getIt<SecureStorageProvider>();
 
   static const String _cacheMetaKey = 'cache_metadata';
   static const int _maxCacheSize = 5 * 1024 * 1024; // 5MB
@@ -77,9 +77,8 @@ class CacheManager {
     final prefs = _prefs;
     final metadata = await _getMetadata();
 
-    for (final key in metadata.keys) {
-      await prefs.remove(key);
-    }
+    // Parallelize removal of all cached items
+    await Future.wait(metadata.keys.map((key) => prefs.remove(key)));
 
     await prefs.remove(_cacheMetaKey);
   }
@@ -121,8 +120,12 @@ class CacheManager {
       }
     }
 
+    if (keysToRemove.isEmpty) return;
+
+    // Parallelize removal of expired items
+    await Future.wait(keysToRemove.map((key) => prefs.remove(key)));
+
     for (final key in keysToRemove) {
-      await prefs.remove(key);
       metadata.remove(key);
     }
 
@@ -182,13 +185,22 @@ class CacheManager {
       (sum, meta) => sum + (meta['size'] as int),
     );
 
-    // Remove oldest entries until under limit
+    // Identify oldest entries to remove until under limit
+    final keysToRemove = <String>[];
     for (final entry in entries) {
       if (totalSize <= _maxCacheSize * 0.8) break; // Keep at 80% of max
 
-      await prefs.remove(entry.key);
+      keysToRemove.add(entry.key);
       totalSize -= entry.value['size'] as int;
-      metadata.remove(entry.key);
+    }
+
+    if (keysToRemove.isNotEmpty) {
+      // Parallelize removal of evicted items
+      await Future.wait(keysToRemove.map((key) => prefs.remove(key)));
+
+      for (final key in keysToRemove) {
+        metadata.remove(key);
+      }
     }
 
     await _saveMetadata(metadata);

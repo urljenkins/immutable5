@@ -24,8 +24,9 @@ void main() {
     });
 
     test('setString calls write', () async {
-      when(() => mockStorage.write(key: 'key', value: 'value'))
-          .thenAnswer((_) async => {});
+      when(
+        () => mockStorage.write(key: 'key', value: 'value'),
+      ).thenAnswer((_) async => {});
 
       await provider.setString('key', 'value');
 

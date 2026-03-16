@@ -15,8 +15,9 @@ void main() {
     cacheManager = CacheManager(prefs: mockPrefs);
 
     // Default metadata stub
-    when(() => mockPrefs.getString('cache_metadata'))
-        .thenAnswer((_) async => null);
+    when(
+      () => mockPrefs.getString('cache_metadata'),
+    ).thenAnswer((_) async => null);
     when(() => mockPrefs.setString(any(), any())).thenAnswer((_) async => {});
     when(() => mockPrefs.remove(any())).thenAnswer((_) async => {});
   });
@@ -47,8 +48,9 @@ void main() {
         },
       };
 
-      when(() => mockPrefs.getString('cache_metadata'))
-          .thenAnswer((_) async => json.encode(metadata));
+      when(
+        () => mockPrefs.getString('cache_metadata'),
+      ).thenAnswer((_) async => json.encode(metadata));
 
       final result = await cacheManager.get(key);
 
@@ -67,8 +69,9 @@ void main() {
         },
       };
 
-      when(() => mockPrefs.getString('cache_metadata'))
-          .thenAnswer((_) async => json.encode(metadata));
+      when(
+        () => mockPrefs.getString('cache_metadata'),
+      ).thenAnswer((_) async => json.encode(metadata));
       when(() => mockPrefs.getString(key)).thenAnswer((_) async => value);
 
       final result = await cacheManager.get(key);
@@ -77,23 +80,26 @@ void main() {
       verify(() => mockPrefs.setString('cache_metadata', any())).called(1);
     });
 
-    test('clearAll removes all items in metadata and metadata itself',
-        () async {
-      const key1 = 'key1';
-      const key2 = 'key2';
-      final metadata = {
-        key1: {'size': 10, 'expiry': 1000, 'lastAccessed': 1000},
-        key2: {'size': 10, 'expiry': 1000, 'lastAccessed': 1000},
-      };
+    test(
+      'clearAll removes all items in metadata and metadata itself',
+      () async {
+        const key1 = 'key1';
+        const key2 = 'key2';
+        final metadata = {
+          key1: {'size': 10, 'expiry': 1000, 'lastAccessed': 1000},
+          key2: {'size': 10, 'expiry': 1000, 'lastAccessed': 1000},
+        };
 
-      when(() => mockPrefs.getString('cache_metadata'))
-          .thenAnswer((_) async => json.encode(metadata));
+        when(
+          () => mockPrefs.getString('cache_metadata'),
+        ).thenAnswer((_) async => json.encode(metadata));
 
-      await cacheManager.clearAll();
+        await cacheManager.clearAll();
 
-      verify(() => mockPrefs.remove(key1)).called(1);
-      verify(() => mockPrefs.remove(key2)).called(1);
-      verify(() => mockPrefs.remove('cache_metadata')).called(1);
-    });
+        verify(() => mockPrefs.remove(key1)).called(1);
+        verify(() => mockPrefs.remove(key2)).called(1);
+        verify(() => mockPrefs.remove('cache_metadata')).called(1);
+      },
+    );
   });
 }

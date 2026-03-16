@@ -43,11 +43,10 @@ class QuranContextMenuSettings {
     bool? showBookmark,
     bool? showShare,
     bool? showAyahInfo,
-  }) =>
-      QuranContextMenuSettings(
-        showCopy: showCopy ?? this.showCopy,
-        showBookmark: showBookmark ?? this.showBookmark,
-        showShare: showShare ?? this.showShare,
-        showAyahInfo: showAyahInfo ?? this.showAyahInfo,
-      );
+  }) => QuranContextMenuSettings(
+    showCopy: showCopy ?? this.showCopy,
+    showBookmark: showBookmark ?? this.showBookmark,
+    showShare: showShare ?? this.showShare,
+    showAyahInfo: showAyahInfo ?? this.showAyahInfo,
+  );
 }

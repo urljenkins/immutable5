@@ -49,11 +49,11 @@ void setupLocator() {
   getIt.registerFactory<PrayerTimesServiceFactory>(
     () =>
         (double lat, double lon, int method, int madhab) => PrayerTimesService(
-              latitude: lat,
-              longitude: lon,
-              method: method,
-              madhab: madhab,
-            ),
+          latitude: lat,
+          longitude: lon,
+          method: method,
+          madhab: madhab,
+        ),
   );
 }
 

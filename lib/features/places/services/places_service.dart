@@ -60,7 +60,8 @@ class PlacesService {
     double radius = 5000,
   }) async {
     // Overpass QL query: find nodes/ways with amenity=place_of_worship and religion=muslim within radius
-    final query = '''
+    final query =
+        '''
       [out:json][timeout:25];
       (
         node["amenity"="place_of_worship"]["religion"="muslim"](around:$radius,$lat,$lng);
@@ -77,8 +78,8 @@ class PlacesService {
 
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
-        final elements =
-            (data['elements'] as List).cast<Map<String, dynamic>>();
+        final elements = (data['elements'] as List)
+            .cast<Map<String, dynamic>>();
 
         return elements.map((e) {
           if (e['type'] == 'way' && e.containsKey('center')) {

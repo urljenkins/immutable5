@@ -25,9 +25,9 @@ class _GlossaryPageState extends State<GlossaryPage> {
   final TextEditingController _searchController = TextEditingController();
 
   List<String> get _categories => [
-        'All',
-        ...{..._allItem.map((item) => item.category)},
-      ];
+    'All',
+    ...{..._allItem.map((item) => item.category)},
+  ];
 
   @override
   void initState() {
@@ -60,7 +60,8 @@ class _GlossaryPageState extends State<GlossaryPage> {
     setState(() {
       _searchQuery = _searchController.text.toLowerCase();
       _filteredItems = _allItem.where((item) {
-        final matchesSearch = item.term.toLowerCase().contains(_searchQuery) ||
+        final matchesSearch =
+            item.term.toLowerCase().contains(_searchQuery) ||
             item.definition.toLowerCase().contains(_searchQuery);
         final matchesCategory =
             _selectedCategory == 'All' || item.category == _selectedCategory;
@@ -116,8 +117,8 @@ class _GlossaryPageState extends State<GlossaryPage> {
                   child: _loading
                       ? const Center(child: CircularProgressIndicator())
                       : _filteredItems.isEmpty
-                          ? _buildEmptyState()
-                          : _buildGlossaryList(),
+                      ? _buildEmptyState()
+                      : _buildGlossaryList(),
                 ),
               ],
             ),
@@ -218,8 +219,10 @@ class _GlossaryPageState extends State<GlossaryPage> {
               collapsedShape: const RoundedRectangleBorder(
                 borderRadius: BorderRadius.all(Radius.circular(16)),
               ),
-              tilePadding:
-                  const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+              tilePadding: const EdgeInsets.symmetric(
+                horizontal: 20,
+                vertical: 8,
+              ),
               title: Text(
                 item.term,
                 style: GoogleFonts.plusJakartaSans(

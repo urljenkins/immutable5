@@ -47,7 +47,8 @@ class GlassContainer extends StatelessWidget {
                 gradient: LinearGradient(
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
-                  colors: gradientColors ??
+                  colors:
+                      gradientColors ??
                       [
                         Colors.white.withValues(alpha: 0.1),
                         Colors.white.withValues(alpha: 0.05),

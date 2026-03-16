@@ -88,20 +88,23 @@ class _HadithsPageState extends State<HadithsPage> {
       if (_selectedTopic == 'Recommended') {
         filtered = _recommendedHadiths;
       } else if (_selectedTopic != 'All') {
-        filtered =
-            filtered.where((h) => h.topics.contains(_selectedTopic)).toList();
+        filtered = filtered
+            .where((h) => h.topics.contains(_selectedTopic))
+            .toList();
       }
 
       if (_filterFavoritesOnly) {
-        filtered =
-            filtered.where((h) => _favorites.contains(h.hadithId)).toList();
+        filtered = filtered
+            .where((h) => _favorites.contains(h.hadithId))
+            .toList();
       }
 
       if (_searchQuery.isNotEmpty) {
         final query = _searchQuery.toLowerCase();
         filtered = filtered.where((h) {
-          final matchesTopics =
-              h.topics.any((t) => t.toLowerCase().contains(query));
+          final matchesTopics = h.topics.any(
+            (t) => t.toLowerCase().contains(query),
+          );
           return h.translationEn.toLowerCase().contains(query) ||
               h.transliteration.toLowerCase().contains(query) ||
               h.arabic.contains(query) ||
@@ -221,8 +224,9 @@ class _HadithsPageState extends State<HadithsPage> {
                           decoration: InputDecoration(
                             hintText: 'Search hadiths...',
                             hintStyle: GoogleFonts.plusJakartaSans(
-                              color: AppColors.textSecondary
-                                  .withValues(alpha: 0.5),
+                              color: AppColors.textSecondary.withValues(
+                                alpha: 0.5,
+                              ),
                             ),
                             prefixIcon: const Icon(
                               Icons.search,
@@ -254,8 +258,9 @@ class _HadithsPageState extends State<HadithsPage> {
                               ],
                             ),
                             filled: true,
-                            fillColor:
-                                AppColors.cardSurface.withValues(alpha: 0.5),
+                            fillColor: AppColors.cardSurface.withValues(
+                              alpha: 0.5,
+                            ),
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(16),
                               borderSide: BorderSide.none,
@@ -297,8 +302,9 @@ class _HadithsPageState extends State<HadithsPage> {
                                   side: BorderSide(
                                     color: isSelected
                                         ? Colors.transparent
-                                        : AppColors.textSecondary
-                                            .withValues(alpha: 0.5),
+                                        : AppColors.textSecondary.withValues(
+                                            alpha: 0.5,
+                                          ),
                                   ),
                                 ),
                                 backgroundColor: AppColors.cardSurface
@@ -321,8 +327,12 @@ class _HadithsPageState extends State<HadithsPage> {
                                 ),
                               )
                             : ListView.builder(
-                                padding:
-                                    const EdgeInsets.fromLTRB(16, 8, 16, 100),
+                                padding: const EdgeInsets.fromLTRB(
+                                  16,
+                                  8,
+                                  16,
+                                  100,
+                                ),
                                 itemCount: _filteredHadiths.length,
                                 itemBuilder: (context, index) {
                                   return HadithCard(

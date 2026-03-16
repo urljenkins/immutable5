@@ -72,8 +72,9 @@ class _QuranPageState extends State<QuranPage> {
     final savedMode = await prefs.getString('juzMode');
     final savedReciter = await prefs.getString('quran_reciter_id');
     final savedSpeed = await prefs.getDouble('quran_auto_scroll_speed');
-    final mode =
-        savedMode == 'surahBased' ? JuzMode.surahBased : JuzMode.standard;
+    final mode = savedMode == 'surahBased'
+        ? JuzMode.surahBased
+        : JuzMode.standard;
     final todayJuz = _juzService.getJuzForToday(mode);
     final ctxSettings = await QuranContextMenuSettings.fromPrefs(prefs);
     await _bookmarks.load();
@@ -326,8 +327,9 @@ class _QuranPageState extends State<QuranPage> {
                         icon: isBookmarked
                             ? Icons.bookmark_rounded
                             : Icons.bookmark_add_outlined,
-                        label:
-                            isBookmarked ? 'Remove bookmark' : 'Bookmark verse',
+                        label: isBookmarked
+                            ? 'Remove bookmark'
+                            : 'Bookmark verse',
                         iconColor: isBookmarked ? AppColors.accent : null,
                         onTap: () async {
                           Navigator.pop(sheetCtx);
@@ -768,10 +770,7 @@ class _QuranPageState extends State<QuranPage> {
                           final isSelected = reciter.id == _currentReciterId;
                           return ListTile(
                             leading: isSelected
-                                ? Icon(
-                                    Icons.check,
-                                    color: AppColors.accent,
-                                  )
+                                ? Icon(Icons.check, color: AppColors.accent)
                                 : const SizedBox(width: 24),
                             title: Text(
                               reciter.name,
@@ -892,14 +891,17 @@ class _QuranPageState extends State<QuranPage> {
         return StatefulBuilder(
           builder: (ctx, setSheetState) {
             return ClipRRect(
-              borderRadius:
-                  const BorderRadius.vertical(top: Radius.circular(24)),
+              borderRadius: const BorderRadius.vertical(
+                top: Radius.circular(24),
+              ),
               child: BackdropFilter(
                 filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
                 child: Container(
                   color: AppColors.cardSurface.withValues(alpha: 0.95),
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 24,
+                    vertical: 20,
+                  ),
                   child: SafeArea(
                     top: false,
                     child: Column(
@@ -948,8 +950,9 @@ class _QuranPageState extends State<QuranPage> {
                                 max: 5.0,
                                 divisions: 18,
                                 activeColor: AppColors.accent,
-                                inactiveColor:
-                                    AppColors.accent.withValues(alpha: 0.2),
+                                inactiveColor: AppColors.accent.withValues(
+                                  alpha: 0.2,
+                                ),
                                 onChanged: (v) {
                                   setSheetState(() => tempSpeed = v);
                                   setState(() => _autoScrollSpeed = v);
@@ -1207,8 +1210,9 @@ class _QuranPageState extends State<QuranPage> {
               _autoScrolling
                   ? Icons.pause_circle_outline_rounded
                   : Icons.slow_motion_video_rounded,
-              color:
-                  _autoScrolling ? AppColors.accent : AppColors.textSecondary,
+              color: _autoScrolling
+                  ? AppColors.accent
+                  : AppColors.textSecondary,
             ),
             onPressed: _toggleAutoScroll,
             tooltip: _autoScrolling ? 'Stop auto-scroll' : 'Auto-scroll',
@@ -1327,10 +1331,10 @@ class _QuranPageState extends State<QuranPage> {
                                 contextMenuSettings: _ctxSettings,
                                 onLongPressVerse: (verseIndex) =>
                                     _showVerseContextMenu(
-                                  context,
-                                  chapter: chapter,
-                                  verseIndex: verseIndex,
-                                ),
+                                      context,
+                                      chapter: chapter,
+                                      verseIndex: verseIndex,
+                                    ),
                                 playingSurah: _playingSurah,
                                 playingVerse: _playingVerse,
                                 isPlaying: _isPlaying,

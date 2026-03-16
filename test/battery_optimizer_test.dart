@@ -22,10 +22,12 @@ void main() {
 
   group('BatteryOptimizer Tests', () {
     test('initialize loads battery mode and last network check', () async {
-      when(() => mockPrefs.getBool('battery_saver_mode'))
-          .thenAnswer((_) async => true);
-      when(() => mockPrefs.getInt('last_network_check'))
-          .thenAnswer((_) async => 1000);
+      when(
+        () => mockPrefs.getBool('battery_saver_mode'),
+      ).thenAnswer((_) async => true);
+      when(
+        () => mockPrefs.getInt('last_network_check'),
+      ).thenAnswer((_) async => 1000);
 
       await optimizer.initialize();
 
@@ -52,15 +54,17 @@ void main() {
       verify(() => mockPrefs.setBool('battery_saver_mode', true)).called(1);
     });
 
-    test('optimizeTimerInterval extends intervals in battery saver mode',
-        () async {
-      await optimizer.setBatterySaverMode(true);
+    test(
+      'optimizeTimerInterval extends intervals in battery saver mode',
+      () async {
+        await optimizer.setBatterySaverMode(true);
 
-      const original = Duration(seconds: 30);
-      final optimized = optimizer.optimizeTimerInterval(original);
+        const original = Duration(seconds: 30);
+        final optimized = optimizer.optimizeTimerInterval(original);
 
-      expect(optimized, equals(const Duration(seconds: 60)));
-    });
+        expect(optimized, equals(const Duration(seconds: 60)));
+      },
+    );
 
     test('getUpdateIntervals returns correct values based on mode', () async {
       // Normal mode

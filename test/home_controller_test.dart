@@ -19,13 +19,13 @@ class FakeQuoteService extends QuotePickerService {
 class FakeHadithRepository extends HadithRepository {
   @override
   Future<List<Hadith>> getAllHadiths() async => [];
-  
+
   @override
   Future<Hadith?> getHadithById(String id) async => null;
-  
+
   @override
   Future<List<Hadith>> getHadithsByTopic(String topic) async => [];
-  
+
   @override
   Future<List<Hadith>> getHadithsByCollection(String collection) async => [];
 }
@@ -80,7 +80,7 @@ class FakeWidgetPort implements WidgetUpdatePort {
 
 class FakePrayerTimesService extends PrayerTimesService {
   FakePrayerTimesService(this.nextPrayer, this.todayMap)
-      : super(latitude: 0, longitude: 0, method: 2, madhab: 0);
+    : super(latitude: 0, longitude: 0, method: 2, madhab: 0);
 
   final MapEntry<String, DateTime> nextPrayer;
   final Map<String, DateTime> todayMap;
@@ -88,14 +88,12 @@ class FakePrayerTimesService extends PrayerTimesService {
   @override
   Future<MapEntry<String, DateTime>> getNextPrayer({
     bool forceRefresh = false,
-  }) async =>
-      nextPrayer;
+  }) async => nextPrayer;
 
   @override
   Future<Map<String, DateTime>> getTodayPrayerTimes({
     bool forceRefresh = false,
-  }) async =>
-      todayMap;
+  }) async => todayMap;
 
   @override
   Future<String> getPastPrayerName() async => 'Isha';

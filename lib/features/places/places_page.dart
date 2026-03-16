@@ -296,8 +296,9 @@ class _PlacesPageState extends State<PlacesPage> {
   }
 
   Future<void> _launchMaps(double lat, double lng) async {
-    final googleMapsUrl =
-        Uri.parse('https://www.google.com/maps/search/?api=1&query=$lat,$lng');
+    final googleMapsUrl = Uri.parse(
+      'https://www.google.com/maps/search/?api=1&query=$lat,$lng',
+    );
     if (await canLaunchUrl(googleMapsUrl)) {
       await launchUrl(googleMapsUrl);
     } else {
@@ -406,8 +407,11 @@ class _PlacesPageState extends State<PlacesPage> {
                         point: _routeDestination!,
                         width: 40,
                         height: 40,
-                        child:
-                            const Icon(Icons.flag, color: Colors.red, size: 40),
+                        child: const Icon(
+                          Icons.flag,
+                          color: Colors.red,
+                          size: 40,
+                        ),
                       ),
                     // User location marker
                     if (_locationPermissionGranted)
@@ -575,8 +579,10 @@ class _PlacesPageState extends State<PlacesPage> {
                 if (_nextPrayerName != null)
                   Container(
                     margin: const EdgeInsets.only(top: 12),
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 8,
+                    ),
                     decoration: BoxDecoration(
                       color: AppColors.accent.withValues(alpha: 0.9),
                       borderRadius: BorderRadius.circular(20),
@@ -621,8 +627,9 @@ class _PlacesPageState extends State<PlacesPage> {
               children: [
                 FloatingActionButton(
                   heroTag: 'route_toggle',
-                  backgroundColor:
-                      _isRouteMode ? Colors.blue : AppColors.cardSurface,
+                  backgroundColor: _isRouteMode
+                      ? Colors.blue
+                      : AppColors.cardSurface,
                   onPressed: _toggleRouteMode,
                   child: Icon(
                     Icons.directions,
