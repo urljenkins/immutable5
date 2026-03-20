@@ -287,8 +287,11 @@ class ContextualDuaService {
 
     // Standard prayer windows
     if (fajr != null &&
-        _isBetween(now, fajr.subtract(const Duration(minutes: 30)),
-            fajr.add(const Duration(hours: 1)),)) {
+        _isBetween(
+          now,
+          fajr.subtract(const Duration(minutes: 30)),
+          fajr.add(const Duration(hours: 1)),
+        )) {
       windows.add('fajr');
     }
     if (dhuhr != null &&
@@ -300,16 +303,20 @@ class ContextualDuaService {
       windows.add('asr');
     }
     if (maghrib != null &&
-        _isBetween(now, maghrib,
-            isha ?? maghrib.add(const Duration(hours: 1, minutes: 30)),)) {
+        _isBetween(
+          now,
+          maghrib,
+          isha ?? maghrib.add(const Duration(hours: 1, minutes: 30)),
+        )) {
       windows.add('maghrib');
     }
     if (isha != null &&
         _isBetween(
-            now,
-            isha,
-            fajr?.add(const Duration(days: 1)) ??
-                isha.add(const Duration(hours: 8)),)) {
+          now,
+          isha,
+          fajr?.add(const Duration(days: 1)) ??
+              isha.add(const Duration(hours: 8)),
+        )) {
       windows.add('isha');
     }
 

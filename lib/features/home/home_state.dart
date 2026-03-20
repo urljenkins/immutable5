@@ -25,6 +25,7 @@ class HomeState {
   final Hadith? contextualHadith;
   final String? contextualMessage;
   final bool isProhibitedTime;
+  final bool showSurahKahfReminder;
 
   const HomeState({
     this.loading = true,
@@ -44,6 +45,7 @@ class HomeState {
     this.contextualHadith,
     this.contextualMessage,
     this.isProhibitedTime = false,
+    this.showSurahKahfReminder = false,
   });
 
   HomeState copyWith({
@@ -64,6 +66,7 @@ class HomeState {
     Object? contextualHadith = _sentinel,
     String? contextualMessage,
     bool? isProhibitedTime,
+    bool? showSurahKahfReminder,
   }) {
     return HomeState(
       loading: loading ?? this.loading,
@@ -88,6 +91,8 @@ class HomeState {
           : contextualHadith as Hadith?,
       contextualMessage: contextualMessage ?? this.contextualMessage,
       isProhibitedTime: isProhibitedTime ?? this.isProhibitedTime,
+      showSurahKahfReminder:
+          showSurahKahfReminder ?? this.showSurahKahfReminder,
     );
   }
 }

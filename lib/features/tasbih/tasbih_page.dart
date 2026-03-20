@@ -213,9 +213,7 @@ class _TasbihPageState extends State<TasbihPage>
       },
       listenFor: const Duration(seconds: 60),
       pauseFor: const Duration(seconds: 5),
-      listenOptions: stt.SpeechListenOptions(
-        
-      ),
+      listenOptions: stt.SpeechListenOptions(),
     ));
   }
 
@@ -429,7 +427,7 @@ class _TasbihPageState extends State<TasbihPage>
                                   style: GoogleFonts.plusJakartaSans(
                                     fontSize: 11,
                                     color: AppColors.textSecondary,
-                                    ),
+                                  ),
                                 ),
                             ],
                           ),

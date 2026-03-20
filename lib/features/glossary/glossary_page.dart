@@ -289,7 +289,8 @@ class _GlossaryPageState extends State<GlossaryPage> {
                       ),
                     ),
                     if (isKnown)
-                      Icon(Icons.check_circle, color: AppColors.accent, size: 16),
+                      Icon(Icons.check_circle,
+                          color: AppColors.accent, size: 16),
                   ],
                 ),
                 subtitle: item.arabic != null
@@ -304,7 +305,8 @@ class _GlossaryPageState extends State<GlossaryPage> {
                       )
                     : null,
                 trailing: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                   decoration: BoxDecoration(
                     color: AppColors.accent.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(8),
@@ -349,8 +351,9 @@ class _GlossaryPageState extends State<GlossaryPage> {
                             ),
                           ),
                           style: TextButton.styleFrom(
-                            foregroundColor:
-                                isKnown ? AppColors.textSecondary : AppColors.accent,
+                            foregroundColor: isKnown
+                                ? AppColors.textSecondary
+                                : AppColors.accent,
                             padding: const EdgeInsets.symmetric(horizontal: 12),
                           ),
                         ),

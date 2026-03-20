@@ -20,7 +20,9 @@ import 'quran_text_service.dart';
 /// A structured Qur'an reader with chapter navigation, bookmarking,
 /// and a customisable long-press context menu per verse.
 class QuranPage extends StatefulWidget {
-  const QuranPage({super.key});
+  const QuranPage({super.key, this.initialSurah});
+
+  final int? initialSurah;
 
   @override
   State<QuranPage> createState() => _QuranPageState();
@@ -99,6 +101,23 @@ class _QuranPageState extends State<QuranPage> {
       }
       _loading = false;
     });
+
+    if (widget.initialSurah != null &&
+        widget.initialSurah! > 0 &&
+        widget.initialSurah! <= 114) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        // Delay slightly to ensure list is built
+        Future.delayed(const Duration(milliseconds: 300), () {
+          if (_itemScrollController.isAttached) {
+            final index =
+                _chapters.indexWhere((c) => c.number == widget.initialSurah);
+            if (index != -1) {
+              _itemScrollController.jumpTo(index: index);
+            }
+          }
+        });
+      });
+    }
   }
 
   @override

@@ -116,7 +116,8 @@ class _JuzPageState extends State<JuzPage> {
                     slice: slice,
                     bookmarks: _bookmarks,
                     ctxSettings: _ctxSettings,
-                    onLongPressVerse: (globalVerseIndex) => _showVerseContextMenu(
+                    onLongPressVerse: (globalVerseIndex) =>
+                        _showVerseContextMenu(
                       context,
                       chapter: slice.chapter,
                       verseIndex: globalVerseIndex,
@@ -400,7 +401,8 @@ class _SliceCard extends StatelessWidget {
               itemCount: slice.verses.length,
               separatorBuilder: (_, __) => const SizedBox(height: 12),
               itemBuilder: (_, localVerseIndex) {
-                final globalVerseIndex = slice.startVerseIndex + localVerseIndex;
+                final globalVerseIndex =
+                    slice.startVerseIndex + localVerseIndex;
                 return ValueListenableBuilder<List<QuranBookmark>>(
                   valueListenable: bookmarks.bookmarks,
                   builder: (_, bms, __) {

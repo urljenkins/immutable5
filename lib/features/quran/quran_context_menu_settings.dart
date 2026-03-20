@@ -23,7 +23,7 @@ class QuranContextMenuSettings {
 
   static Future<QuranContextMenuSettings> fromPrefs() async {
     final prefs = await SharedPreferences.getInstance();
-    
+
     // Migration from SecureStorageProvider
     final migrated = prefs.getBool('quranCtxMenu_migrated') ?? false;
     if (!migrated) {
@@ -31,10 +31,13 @@ class QuranContextMenuSettings {
       final oldCopy = await securePrefs.getBool(_kCopy);
       if (oldCopy != null) {
         await prefs.setBool(_kCopy, oldCopy);
-        await prefs.setBool(_kBookmark, await securePrefs.getBool(_kBookmark) ?? true);
-        await prefs.setBool(_kShare, await securePrefs.getBool(_kShare) ?? true);
-        await prefs.setBool(_kAyahInfo, await securePrefs.getBool(_kAyahInfo) ?? true);
-        
+        await prefs.setBool(
+            _kBookmark, await securePrefs.getBool(_kBookmark) ?? true);
+        await prefs.setBool(
+            _kShare, await securePrefs.getBool(_kShare) ?? true);
+        await prefs.setBool(
+            _kAyahInfo, await securePrefs.getBool(_kAyahInfo) ?? true);
+
         // Clean up old values
         await securePrefs.remove(_kCopy);
         await securePrefs.remove(_kBookmark);

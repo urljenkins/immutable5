@@ -321,11 +321,15 @@ class HomeController extends ChangeNotifier {
       final prefs = _prefs;
       final showPastPrayer = await prefs.getBool('show_past_prayer') ?? false;
 
+      final cachedTimes = await _prayerTimesService!.getTodayPrayerTimes();
+      final bool showKahf = _calculateSurahKahfReminder(now, cachedTimes);
+
       _update(
         _state.copyWith(
           loading: false,
           usingCache: true,
           showPastPrayer: showPastPrayer,
+          showSurahKahfReminder: showKahf,
           nextPrayerTime: _cachedNextPrayerTime,
           nextPrayerName: _cachedNextPrayerName,
           pastPrayerName: _cachedPastPrayerName,
@@ -386,6 +390,8 @@ class HomeController extends ChangeNotifier {
       String? contextualMsg;
       Hadith? contextualHadith;
 
+      final bool showKahf = _calculateSurahKahfReminder(now, prayerTimes);
+
       if (contextualDua != null) {
         contextualMsg = contextualDuaService.getContextualMessage(
           contextualDua,
@@ -418,6 +424,7 @@ class HomeController extends ChangeNotifier {
           contextualDua: contextualDua,
           contextualHadith: contextualHadith,
           contextualMessage: contextualMsg,
+          showSurahKahfReminder: showKahf,
         ),
       );
       _startTimer();
@@ -459,6 +466,9 @@ class HomeController extends ChangeNotifier {
             }
           }
 
+          final bool showKahfFallback =
+              _calculateSurahKahfReminder(now, cachedTimes);
+
           final pastPrayerName = await _prayerTimesService!.getPastPrayerName();
           final prefs = _prefs;
           final showPastPrayer =
@@ -477,6 +487,7 @@ class HomeController extends ChangeNotifier {
               contextualDua: contextualDua,
               contextualHadith: contextualHadith,
               contextualMessage: contextualMsg,
+              showSurahKahfReminder: showKahfFallback,
             ),
           );
           _startTimer();
@@ -499,6 +510,28 @@ class HomeController extends ChangeNotifier {
     }
   }
 
+  bool _calculateSurahKahfReminder(
+      DateTime now, Map<String, DateTime> prayerTimes) {
+    if (now.weekday == DateTime.thursday) {
+      final maghrib = prayerTimes['Maghrib'];
+      if (maghrib != null && now.isAfter(maghrib)) {
+        return true;
+      }
+      if (maghrib == null && now.hour >= 18) {
+        return true;
+      }
+    } else if (now.weekday == DateTime.friday) {
+      final maghrib = prayerTimes['Maghrib'];
+      if (maghrib != null && now.isBefore(maghrib)) {
+        return true;
+      }
+      if (maghrib == null && now.hour < 18) {
+        return true;
+      }
+    }
+    return false;
+  }
+
   Future<void> refresh() async {
     if (_state.refreshing) return;
     _update(_state.copyWith(refreshing: true));
@@ -511,15 +544,30 @@ class HomeController extends ChangeNotifier {
     if (_state.nextPrayerTime == null) return;
     // Check prohibited time immediately, then every tick
     _checkProhibitedTime();
-    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+    _timer = Timer.periodic(const Duration(seconds: 1), (timer) async {
+      final now = DateTime.now();
       final target = _state.nextPrayerTime;
       if (target == null) return;
-      final diff = target.difference(DateTime.now());
+      final diff = target.difference(now);
       if (diff.isNegative) {
         timer.cancel();
         loadData();
       } else {
-        _update(_state.copyWith(countdown: diff));
+        bool? kahfUpdate;
+        if (now.weekday == DateTime.thursday ||
+            now.weekday == DateTime.friday) {
+          final cachedTimes =
+              await _prayerTimesService?.getTodayPrayerTimes() ?? {};
+          final currentKahf = _calculateSurahKahfReminder(now, cachedTimes);
+          if (currentKahf != _state.showSurahKahfReminder) {
+            kahfUpdate = currentKahf;
+          }
+        }
+
+        _update(_state.copyWith(
+          countdown: diff,
+          showSurahKahfReminder: kahfUpdate,
+        ));
         _checkProhibitedTime();
       }
     });
