@@ -51,75 +51,101 @@ class PrayerWidgetService {
         }
       }
 
-      // Store prayer times data
-      await HomeWidget.saveWidgetData<String>(
-        'next_prayer_name',
-        nextPrayer.key,
-      );
-      await HomeWidget.saveWidgetData<String>(
-        'next_prayer_time',
-        timeFormat.format(nextPrayer.value),
-      );
-
-      // Store all main prayer times as a JSON-like string
-      for (final entry in mainPrayerTimes.entries) {
-        await HomeWidget.saveWidgetData<String>(
-          'prayer_${entry.key.toLowerCase()}',
-          entry.value,
-        );
-      }
-
-      // Store last update timestamp
-      await HomeWidget.saveWidgetData<String>(
-        'last_updated',
-        DateFormat('dd MMM, HH:mm').format(now),
-      );
-
       // Calculate time remaining for next prayer
       final difference = nextPrayer.value.difference(now);
       final hours = difference.inHours;
       final minutes = difference.inMinutes.remainder(60);
-      await HomeWidget.saveWidgetData<String>(
-        'time_remaining',
-        hours > 0 ? '${hours}h ${minutes}m' : '${minutes}m',
-      );
 
       // Format countdown as HH:MM for widget header
       final countdownHours = hours.toString().padLeft(2, '0');
       final countdownMinutes = minutes.toString().padLeft(2, '0');
-      await HomeWidget.saveWidgetData<String>(
-        'countdown_formatted',
-        '$countdownHours:$countdownMinutes',
-      );
 
-      // Get and store location name
+      // Get location name
       final locationName = await _getLocationName(latitude, longitude);
-      await HomeWidget.saveWidgetData<String>('location_name', locationName);
 
-      // Get and store Hijri date
+      // Get Hijri date
       final hijri = HijriCalendar.now();
       final hijriDate =
           '${hijri.hDay} ${_getHijriMonthName(hijri.hMonth)} ${hijri.hYear}';
-      await HomeWidget.saveWidgetData<String>('hijri_date', hijriDate);
 
-      // Store widget theme preferences
+      // Get widget theme preferences
       final theme = await WidgetPreferences.getTheme();
       final layout = await WidgetPreferences.getLayout();
       final colors = WidgetPreferences.getThemeColors(theme);
 
-      await HomeWidget.saveWidgetData<int>(
-        'theme_background',
-        colors['background'],
+      // Collect all data updates to execute in parallel
+      final List<Future<bool?>> updates = [];
+
+      updates.add(
+        HomeWidget.saveWidgetData<String>('next_prayer_name', nextPrayer.key),
       );
-      await HomeWidget.saveWidgetData<int>('theme_text', colors['text']);
-      await HomeWidget.saveWidgetData<int>(
-        'theme_text_secondary',
-        colors['textSecondary'],
+      updates.add(
+        HomeWidget.saveWidgetData<String>(
+          'next_prayer_time',
+          timeFormat.format(nextPrayer.value),
+        ),
       );
-      await HomeWidget.saveWidgetData<int>('theme_accent', colors['accent']);
-      await HomeWidget.saveWidgetData<int>('theme_card_bg', colors['cardBg']);
-      await HomeWidget.saveWidgetData<int>('theme_index', theme.index);
-      await HomeWidget.saveWidgetData<int>('layout_type', layout.index);
+
+      // Store all main prayer times
+      for (final entry in mainPrayerTimes.entries) {
+        updates.add(
+          HomeWidget.saveWidgetData<String>(
+            'prayer_${entry.key.toLowerCase()}',
+            entry.value,
+          ),
+        );
+      }
+
+      updates.add(
+        HomeWidget.saveWidgetData<String>(
+          'last_updated',
+          DateFormat('dd MMM, HH:mm').format(now),
+        ),
+      );
+      updates.add(
+        HomeWidget.saveWidgetData<String>(
+          'time_remaining',
+          hours > 0 ? '${hours}h ${minutes}m' : '${minutes}m',
+        ),
+      );
+      updates.add(
+        HomeWidget.saveWidgetData<String>(
+          'countdown_formatted',
+          '$countdownHours:$countdownMinutes',
+        ),
+      );
+      updates.add(
+        HomeWidget.saveWidgetData<String>('location_name', locationName),
+      );
+      updates.add(
+        HomeWidget.saveWidgetData<String>('hijri_date', hijriDate),
+      );
+
+      // Store widget theme preferences
+      updates.add(
+        HomeWidget.saveWidgetData<int>(
+          'theme_background',
+          colors['background'],
+        ),
+      );
+      updates.add(HomeWidget.saveWidgetData<int>('theme_text', colors['text']));
+      updates.add(
+        HomeWidget.saveWidgetData<int>(
+          'theme_text_secondary',
+          colors['textSecondary'],
+        ),
+      );
+      updates.add(
+        HomeWidget.saveWidgetData<int>('theme_accent', colors['accent']),
+      );
+      updates.add(
+        HomeWidget.saveWidgetData<int>('theme_card_bg', colors['cardBg']),
+      );
+      updates.add(HomeWidget.saveWidgetData<int>('theme_index', theme.index));
+      updates.add(HomeWidget.saveWidgetData<int>('layout_type', layout.index));
+
+      // Execute all saves in parallel for better performance
+      await Future.wait(updates);
 
       // Update the widget UI
       await HomeWidget.updateWidget(
