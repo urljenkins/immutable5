@@ -1,4 +1,4 @@
-package com.example.immutable5
+package com.immutable5.app
 
 import android.appwidget.AppWidgetManager
 import android.content.Context
