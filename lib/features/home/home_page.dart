@@ -167,10 +167,11 @@ class _MyHomePageState extends State<MyHomePage> {
                                   icon: state.locationPermissionIssue
                                       ? Icons.location_off_outlined
                                       : Icons.info_outline,
-                                  background: (state.locationPermissionIssue
-                                          ? AppColors.error
-                                          : AppColors.accent)
-                                      .withValues(alpha: 0.1),
+                                  background:
+                                      (state.locationPermissionIssue
+                                              ? AppColors.error
+                                              : AppColors.accent)
+                                          .withValues(alpha: 0.1),
                                   foreground: state.locationPermissionIssue
                                       ? AppColors.error
                                       : AppColors.accent,
@@ -182,13 +183,12 @@ class _MyHomePageState extends State<MyHomePage> {
                                           child: Text(
                                             AppLocalizations.of(
                                               context,
-                                            )!
-                                                .refreshPrayerTimes,
+                                            )!.refreshPrayerTimes,
                                             style: TextStyle(
                                               color:
                                                   state.locationPermissionIssue
-                                                      ? AppColors.error
-                                                      : AppColors.accent,
+                                                  ? AppColors.error
+                                                  : AppColors.accent,
                                               fontWeight: FontWeight.bold,
                                             ),
                                           ),
@@ -218,13 +218,12 @@ class _MyHomePageState extends State<MyHomePage> {
                                       state.showPastPrayer
                                           ? (state.pastPrayerName ?? '...')
                                           : (state.nextPrayerName ??
-                                              (state.locationError != null &&
-                                                      !state.usingCache
-                                                  ? 'Offline'
-                                                  : AppLocalizations.of(
-                                                      context,
-                                                    )!
-                                                      .loading)),
+                                                (state.locationError != null &&
+                                                        !state.usingCache
+                                                    ? 'Offline'
+                                                    : AppLocalizations.of(
+                                                        context,
+                                                      )!.loading)),
                                       style: GoogleFonts.plusJakartaSans(
                                         fontSize: 32,
                                         fontWeight: FontWeight.w300,
@@ -251,9 +250,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                           ? 'TIME REMAINING'
                                           : AppLocalizations.of(
                                               context,
-                                            )!
-                                              .nextPrayer
-                                              .toUpperCase(),
+                                            )!.nextPrayer.toUpperCase(),
                                       style: GoogleFonts.plusJakartaSans(
                                         fontSize: 12,
                                         letterSpacing: 2.0,
@@ -287,54 +284,51 @@ class _MyHomePageState extends State<MyHomePage> {
                                             context,
                                             MaterialPageRoute(
                                               builder: (context) => DuasPage(
-                                                initialDua:
-                                                    state.contextualDua,
+                                                initialDua: state.contextualDua,
                                               ),
                                             ),
                                           );
                                         },
                                       )
                                     : state.contextualHadith != null
-                                        ? _ContextualHadithCard(
-                                            key: ValueKey(
-                                              'hadith_${state.contextualHadith!.id}',
-                                            ),
-                                            hadith: state.contextualHadith!,
-                                            message: state.contextualMessage,
-                                            onTap: () {
-                                              Navigator.push(
-                                                context,
-                                                MaterialPageRoute(
-                                                  builder: (context) =>
-                                                      HadithsPage(
-                                                        initialHadith:
-                                                            state.contextualHadith,
-                                                      ),
-                                                ),
-                                              );
-                                            },
-                                          )
-                                        : GlassContainer(
-                                            key: ValueKey<String>(
-                                              state.quote ?? '',
-                                            ),
-                                            width: double.infinity,
-                                            padding: const EdgeInsets.all(24),
-                                            child: Center(
-                                              child: Text(
-                                                state.quote ?? '...',
-                                                textAlign: TextAlign.center,
-                                                style: GoogleFonts
-                                                    .plusJakartaSans(
-                                                  fontSize: 16,
-                                                  height: 1.6,
-                                                  color: AppColors.textPrimary
-                                                      .withValues(alpha: 0.9),
-                                                  fontStyle: FontStyle.italic,
-                                                ),
+                                    ? _ContextualHadithCard(
+                                        key: ValueKey(
+                                          'hadith_${state.contextualHadith!.id}',
+                                        ),
+                                        hadith: state.contextualHadith!,
+                                        message: state.contextualMessage,
+                                        onTap: () {
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (context) => HadithsPage(
+                                                initialHadith:
+                                                    state.contextualHadith,
                                               ),
                                             ),
+                                          );
+                                        },
+                                      )
+                                    : GlassContainer(
+                                        key: ValueKey<String>(
+                                          state.quote ?? '',
+                                        ),
+                                        width: double.infinity,
+                                        padding: const EdgeInsets.all(24),
+                                        child: Center(
+                                          child: Text(
+                                            state.quote ?? '...',
+                                            textAlign: TextAlign.center,
+                                            style: GoogleFonts.plusJakartaSans(
+                                              fontSize: 16,
+                                              height: 1.6,
+                                              color: AppColors.textPrimary
+                                                  .withValues(alpha: 0.9),
+                                              fontStyle: FontStyle.italic,
+                                            ),
                                           ),
+                                        ),
+                                      ),
                               ),
                             ),
                           ],

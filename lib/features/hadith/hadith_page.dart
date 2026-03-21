@@ -48,12 +48,13 @@ class _HadithPageState extends State<HadithPage> {
       final sortedHadiths = List<Hadith>.from(hadiths)
         ..sort((a, b) => a.priority.compareTo(b.priority));
 
-      final collections = sortedHadiths
-          .map((h) => h.collection)
-          .where((c) => c.isNotEmpty)
-          .toSet()
-          .toList()
-        ..sort();
+      final collections =
+          sortedHadiths
+              .map((h) => h.collection)
+              .where((c) => c.isNotEmpty)
+              .toSet()
+              .toList()
+            ..sort();
 
       setState(() {
         _hadiths = sortedHadiths;
@@ -73,8 +74,9 @@ class _HadithPageState extends State<HadithPage> {
       var filtered = _hadiths;
 
       if (_selectedCollection != 'All') {
-        filtered =
-            filtered.where((h) => h.collection == _selectedCollection).toList();
+        filtered = filtered
+            .where((h) => h.collection == _selectedCollection)
+            .toList();
       }
 
       if (_searchQuery.isNotEmpty) {
@@ -625,9 +627,10 @@ class _HadithDetailSheet extends StatelessWidget {
                                   Text(
                                     hadith.grade,
                                     style: GoogleFonts.plusJakartaSans(
-                                      color: hadith.grade
-                                              .toLowerCase()
-                                              .contains('sahih')
+                                      color:
+                                          hadith.grade.toLowerCase().contains(
+                                            'sahih',
+                                          )
                                           ? Colors.green
                                           : AppColors.accent,
                                       fontWeight: FontWeight.bold,
@@ -647,16 +650,19 @@ class _HadithDetailSheet extends StatelessWidget {
                                   ),
                                 ),
                                 onPressed: () {
-                                  unawaited(Clipboard.setData(
-                                    ClipboardData(
-                                      text:
-                                          '${hadith.arabic}\n\n${hadith.translationEn}\n\n[${hadith.collection}, ${hadith.hadithNumber}]',
+                                  unawaited(
+                                    Clipboard.setData(
+                                      ClipboardData(
+                                        text:
+                                            '${hadith.arabic}\n\n${hadith.translationEn}\n\n[${hadith.collection}, ${hadith.hadithNumber}]',
+                                      ),
                                     ),
-                                  ));
+                                  );
                                   ScaffoldMessenger.of(context).showSnackBar(
                                     const SnackBar(
-                                      content:
-                                          Text('Hadith copied to clipboard'),
+                                      content: Text(
+                                        'Hadith copied to clipboard',
+                                      ),
                                       duration: Duration(seconds: 2),
                                     ),
                                   );

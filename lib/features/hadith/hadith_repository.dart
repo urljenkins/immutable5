@@ -6,8 +6,11 @@ import 'package:flutter/services.dart';
 import 'models/hadith.dart';
 
 class HadithRepository {
+  final AssetBundle _bundle;
   List<Hadith> _hadiths = [];
   bool _initialized = false;
+
+  HadithRepository({AssetBundle? bundle}) : _bundle = bundle ?? rootBundle;
 
   /// Retrieves all cached Hadiths. Initializes if not already done.
   Future<List<Hadith>> getAllHadiths() async {
@@ -22,7 +25,7 @@ class HadithRepository {
     if (_initialized) return;
 
     try {
-      final jsonString = await rootBundle.loadString('assets/hadith.json');
+      final jsonString = await _bundle.loadString('assets/hadith.json');
       final jsonList = json.decode(jsonString) as List<dynamic>;
 
       _hadiths = jsonList

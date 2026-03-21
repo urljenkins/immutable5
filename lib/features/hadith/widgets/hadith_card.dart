@@ -56,8 +56,9 @@ class HadithCard extends StatelessWidget {
                 IconButton(
                   icon: Icon(
                     isFavorite ? Icons.bookmark : Icons.bookmark_border,
-                    color:
-                        isFavorite ? AppColors.accent : AppColors.textSecondary,
+                    color: isFavorite
+                        ? AppColors.accent
+                        : AppColors.textSecondary,
                     size: 20,
                   ),
                   onPressed: onFavoriteToggle,
@@ -132,8 +133,10 @@ class HadithCard extends StatelessWidget {
               children: [
                 // Grade chip
                 Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 10,
+                    vertical: 4,
+                  ),
                   decoration: BoxDecoration(
                     color: _getGradeColor(hadith.grade).withValues(alpha: 0.2),
                     borderRadius: BorderRadius.circular(8),
@@ -163,12 +166,14 @@ class HadithCard extends StatelessWidget {
                     ),
                   ),
                   onPressed: () {
-                    unawaited(Clipboard.setData(
-                      ClipboardData(
-                        text:
-                            '${hadith.arabic}\n\n${hadith.translationEn}\n\n[${hadith.collection} ${hadith.hadithNumber}]',
+                    unawaited(
+                      Clipboard.setData(
+                        ClipboardData(
+                          text:
+                              '${hadith.arabic}\n\n${hadith.translationEn}\n\n[${hadith.collection} ${hadith.hadithNumber}]',
+                        ),
                       ),
-                    ));
+                    );
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(
                         content: Text('Hadith copied to clipboard'),

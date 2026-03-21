@@ -22,8 +22,8 @@ class _NoNetworkHttpOverrides extends HttpOverrides {
     client.findProxy = (_) => 'DIRECT';
     client.connectionFactory =
         (Uri uri, String? proxyHost, int? proxyPort) async {
-      throw const SocketException('No network requests allowed in tests');
-    };
+          throw const SocketException('No network requests allowed in tests');
+        };
     return client;
   }
 }
@@ -52,12 +52,14 @@ void main() {
     await getIt.reset();
     getIt.registerLazySingleton<PlacesService>(() => mockPlacesService);
     getIt.registerFactory<PrayerTimesServiceFactory>(
-      () => (lat, lon, method, madhab) => mockPrayerTimesService,
+      () =>
+          (lat, lon, method, madhab) => mockPrayerTimesService,
     );
 
     // Default stubbing
-    when(() => mockGeolocatorPlatform.checkPermission())
-        .thenAnswer((_) async => LocationPermission.always);
+    when(
+      () => mockGeolocatorPlatform.checkPermission(),
+    ).thenAnswer((_) async => LocationPermission.always);
     when(
       () => mockGeolocatorPlatform.getCurrentPosition(
         locationSettings: any(named: 'locationSettings'),
@@ -76,10 +78,12 @@ void main() {
         headingAccuracy: 0,
       ),
     );
-    when(() => mockPlacesService.getNearbyPlaces(any(), any()))
-        .thenAnswer((_) async => []);
-    when(() => mockPlacesService.getPendingPlaces())
-        .thenAnswer((_) async => []);
+    when(
+      () => mockPlacesService.getNearbyPlaces(any(), any()),
+    ).thenAnswer((_) async => []);
+    when(
+      () => mockPlacesService.getPendingPlaces(),
+    ).thenAnswer((_) async => []);
     when(() => mockPrayerTimesService.getNextPrayer()).thenAnswer(
       (_) async =>
           MapEntry('Fajr', DateTime.now().add(const Duration(hours: 1))),

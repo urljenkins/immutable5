@@ -63,9 +63,7 @@ class _AddPlacePageState extends State<AddPlacePage> {
             backgroundColor: AppColors.cardSurface,
             valueColor: AlwaysStoppedAnimation<Color>(AppColors.accent),
           ),
-          Expanded(
-            child: _buildStepContent(),
-          ),
+          Expanded(child: _buildStepContent()),
           _buildBottomBar(),
         ],
       ),
@@ -114,7 +112,8 @@ class _AddPlacePageState extends State<AddPlacePage> {
                 final isSelected = _selectedCategory == category['id'];
                 return GestureDetector(
                   onTap: () => setState(
-                      () => _selectedCategory = category['id'] as String?),
+                    () => _selectedCategory = category['id'] as String?,
+                  ),
                   child: DecoratedBox(
                     decoration: BoxDecoration(
                       color: isSelected
@@ -122,8 +121,9 @@ class _AddPlacePageState extends State<AddPlacePage> {
                           : AppColors.cardSurface,
                       borderRadius: BorderRadius.circular(16),
                       border: Border.all(
-                        color:
-                            isSelected ? AppColors.accent : Colors.transparent,
+                        color: isSelected
+                            ? AppColors.accent
+                            : Colors.transparent,
                         width: 2,
                       ),
                     ),
@@ -179,11 +179,7 @@ class _AddPlacePageState extends State<AddPlacePage> {
           ],
         ),
         Center(
-          child: Icon(
-            Icons.location_on,
-            size: 50,
-            color: AppColors.accent,
-          ),
+          child: Icon(Icons.location_on, size: 50, color: AppColors.accent),
         ),
         Positioned(
           top: 24,
@@ -289,20 +285,23 @@ class _AddPlacePageState extends State<AddPlacePage> {
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
         color: AppColors.cardSurface,
-        border:
-            Border(top: BorderSide(color: Colors.white.withValues(alpha: 0.1))),
+        border: Border(
+          top: BorderSide(color: Colors.white.withValues(alpha: 0.1)),
+        ),
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           if (_currentStep > 0)
             TextButton(
-              onPressed:
-                  _submitting ? null : () => setState(() => _currentStep--),
+              onPressed: _submitting
+                  ? null
+                  : () => setState(() => _currentStep--),
               child: Text(
                 'Back',
-                style:
-                    GoogleFonts.plusJakartaSans(color: AppColors.textSecondary),
+                style: GoogleFonts.plusJakartaSans(
+                  color: AppColors.textSecondary,
+                ),
               ),
             )
           else
@@ -353,9 +352,9 @@ class _AddPlacePageState extends State<AddPlacePage> {
 
   Future<void> _submit() async {
     if (_nameController.text.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please enter a name')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Please enter a name')));
       return;
     }
 

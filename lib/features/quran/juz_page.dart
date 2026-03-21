@@ -116,11 +116,12 @@ class _JuzPageState extends State<JuzPage> {
                     slice: slice,
                     bookmarks: _bookmarks,
                     ctxSettings: _ctxSettings,
-                    onLongPressVerse: (globalVerseIndex) => _showVerseContextMenu(
-                      context,
-                      chapter: slice.chapter,
-                      verseIndex: globalVerseIndex,
-                    ),
+                    onLongPressVerse: (globalVerseIndex) =>
+                        _showVerseContextMenu(
+                          context,
+                          chapter: slice.chapter,
+                          verseIndex: globalVerseIndex,
+                        ),
                   );
                 },
               ),
@@ -204,8 +205,9 @@ class _JuzPageState extends State<JuzPage> {
                         icon: isBookmarked
                             ? Icons.bookmark_rounded
                             : Icons.bookmark_add_outlined,
-                        label:
-                            isBookmarked ? 'Remove bookmark' : 'Bookmark verse',
+                        label: isBookmarked
+                            ? 'Remove bookmark'
+                            : 'Bookmark verse',
                         iconColor: isBookmarked ? AppColors.accent : null,
                         onTap: () async {
                           Navigator.pop(sheetCtx);
@@ -400,7 +402,8 @@ class _SliceCard extends StatelessWidget {
               itemCount: slice.verses.length,
               separatorBuilder: (_, __) => const SizedBox(height: 12),
               itemBuilder: (_, localVerseIndex) {
-                final globalVerseIndex = slice.startVerseIndex + localVerseIndex;
+                final globalVerseIndex =
+                    slice.startVerseIndex + localVerseIndex;
                 return ValueListenableBuilder<List<QuranBookmark>>(
                   valueListenable: bookmarks.bookmarks,
                   builder: (_, bms, __) {

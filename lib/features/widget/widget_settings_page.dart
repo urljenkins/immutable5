@@ -185,9 +185,11 @@ class _WidgetSettingsPageState extends State<WidgetSettingsPage> {
                     WidgetPreferences.getThemeName(theme),
                     style: TextStyle(
                       fontSize: 10,
-                      fontWeight:
-                          isSelected ? FontWeight.bold : FontWeight.normal,
-                      color: colors['text']! == 0xFFFFFFFF ||
+                      fontWeight: isSelected
+                          ? FontWeight.bold
+                          : FontWeight.normal,
+                      color:
+                          colors['text']! == 0xFFFFFFFF ||
                               colors['text']! == 0xFFF8FAFC
                           ? Colors.white
                           : Colors.black87,

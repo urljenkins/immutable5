@@ -74,12 +74,13 @@ class _DuasPageState extends State<DuasPage> {
           return a.id.compareTo(b.id);
         });
 
-      final categories = sortedDuas
-          .map((d) => d.category)
-          .where((c) => c.isNotEmpty)
-          .toSet()
-          .toList()
-        ..sort();
+      final categories =
+          sortedDuas
+              .map((d) => d.category)
+              .where((c) => c.isNotEmpty)
+              .toSet()
+              .toList()
+            ..sort();
 
       setState(() {
         _duas = sortedDuas;
@@ -108,20 +109,23 @@ class _DuasPageState extends State<DuasPage> {
       if (_selectedCategory == 'Recommended') {
         filtered = _recommendedDuas;
       } else if (_selectedCategory != 'All') {
-        filtered =
-            filtered.where((dua) => dua.category == _selectedCategory).toList();
+        filtered = filtered
+            .where((dua) => dua.category == _selectedCategory)
+            .toList();
       }
 
       if (_filterFavoritesOnly) {
-        filtered =
-            filtered.where((dua) => _favorites.contains(dua.id)).toList();
+        filtered = filtered
+            .where((dua) => _favorites.contains(dua.id))
+            .toList();
       }
 
       if (_searchQuery.isNotEmpty) {
         final query = _searchQuery.toLowerCase();
         filtered = filtered.where((dua) {
-          final matchesTags =
-              dua.tags.any((tag) => tag.toLowerCase().contains(query));
+          final matchesTags = dua.tags.any(
+            (tag) => tag.toLowerCase().contains(query),
+          );
           return dua.translationEn.toLowerCase().contains(query) ||
               dua.transliteration.toLowerCase().contains(query) ||
               dua.arabic.contains(query) ||
@@ -159,55 +163,57 @@ class _DuasPageState extends State<DuasPage> {
   }
 
   void _showFilterSheet() {
-    unawaited(showModalBottomSheet<void>(
-      context: context,
-      backgroundColor: AppColors.cardSurface,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
-      ),
-      builder: (context) {
-        return StatefulBuilder(
-          builder: (context, setSheetState) {
-            return SafeArea(
-              child: Padding(
-                padding: const EdgeInsets.all(24.0),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Filters',
-                      style: GoogleFonts.plusJakartaSans(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                        color: AppColors.textPrimary,
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-                    SwitchListTile(
-                      title: Text(
-                        'Favorites Only',
+    unawaited(
+      showModalBottomSheet<void>(
+        context: context,
+        backgroundColor: AppColors.cardSurface,
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+        ),
+        builder: (context) {
+          return StatefulBuilder(
+            builder: (context, setSheetState) {
+              return SafeArea(
+                child: Padding(
+                  padding: const EdgeInsets.all(24.0),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Filters',
                         style: GoogleFonts.plusJakartaSans(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
                           color: AppColors.textPrimary,
                         ),
                       ),
-                      value: _filterFavoritesOnly,
-                      onChanged: (val) {
-                        setSheetState(() => _filterFavoritesOnly = val);
-                        setState(() => _filterFavoritesOnly = val);
-                        _applyFilters();
-                      },
-                      activeThumbColor: AppColors.background,
-                      activeTrackColor: AppColors.accent,
-                    ),
-                  ],
+                      const SizedBox(height: 16),
+                      SwitchListTile(
+                        title: Text(
+                          'Favorites Only',
+                          style: GoogleFonts.plusJakartaSans(
+                            color: AppColors.textPrimary,
+                          ),
+                        ),
+                        value: _filterFavoritesOnly,
+                        onChanged: (val) {
+                          setSheetState(() => _filterFavoritesOnly = val);
+                          setState(() => _filterFavoritesOnly = val);
+                          _applyFilters();
+                        },
+                        activeThumbColor: AppColors.background,
+                        activeTrackColor: AppColors.accent,
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-            );
-          },
-        );
-      },
-    ));
+              );
+            },
+          );
+        },
+      ),
+    );
   }
 
   @override
@@ -437,8 +443,9 @@ class _DuasPageState extends State<DuasPage> {
                 IconButton(
                   icon: Icon(
                     isFavorite ? Icons.bookmark : Icons.bookmark_border,
-                    color:
-                        isFavorite ? AppColors.accent : AppColors.textSecondary,
+                    color: isFavorite
+                        ? AppColors.accent
+                        : AppColors.textSecondary,
                     size: 20,
                   ),
                   onPressed: () => _toggleFavorite(dua.id),
@@ -525,11 +532,13 @@ class _DuasPageState extends State<DuasPage> {
                     ),
                   ),
                   onPressed: () {
-                    unawaited(Clipboard.setData(
-                      ClipboardData(
-                        text: '${dua.arabic}\n\n${dua.translationEn}',
+                    unawaited(
+                      Clipboard.setData(
+                        ClipboardData(
+                          text: '${dua.arabic}\n\n${dua.translationEn}',
+                        ),
                       ),
-                    ));
+                    );
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(
                         content: Text('Dua copied to clipboard'),
@@ -568,8 +577,9 @@ class _DuaDetailSheet extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final tags = dua.tags.toSet().toList();
-    final timeWindows =
-        (dua.displayContext?.timeWindows ?? const <String>[]).toSet().toList();
+    final timeWindows = (dua.displayContext?.timeWindows ?? const <String>[])
+        .toSet()
+        .toList();
 
     return Positioned(
       left: 0,

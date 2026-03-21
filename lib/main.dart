@@ -27,13 +27,15 @@ import 'l10n/app_localizations.dart';
 import 'shared/app_colors.dart';
 import 'shared/app_theme_mode.dart';
 
-final ValueNotifier<AppThemeMode> themeNotifier =
-    ValueNotifier(AppThemeMode.dark);
+final ValueNotifier<AppThemeMode> themeNotifier = ValueNotifier(
+  AppThemeMode.dark,
+);
 final ValueNotifier<Color> accentColorNotifier = ValueNotifier(
   AppColors.accent,
 );
-final ValueNotifier<NavBarConfig> navBarConfigNotifier =
-    ValueNotifier(NavBarConfig.defaultConfig());
+final ValueNotifier<NavBarConfig> navBarConfigNotifier = ValueNotifier(
+  NavBarConfig.defaultConfig(),
+);
 const String _keyAccentColor = 'accent_color';
 
 void main() async {
@@ -127,7 +129,7 @@ class MyApp extends StatelessWidget {
                   surface: appMode == AppThemeMode.amoled
                       ? Colors.black
                       : AppColors
-                          .background, // Using background color for main surface
+                            .background, // Using background color for main surface
                   onSurface: AppColors.textPrimary,
                 ),
                 textTheme: baseTextTheme.apply(
@@ -205,11 +207,13 @@ class _AppScaffoldState extends State<AppScaffold> {
             Widget currentPage;
             if (_overflowSelectedId != null) {
               final match = allItems.where((i) => i.id == _overflowSelectedId);
-              currentPage =
-                  match.isNotEmpty ? match.first.page : barItems[0].page;
+              currentPage = match.isNotEmpty
+                  ? match.first.page
+                  : barItems[0].page;
             } else {
-              final safeIndex =
-                  _currentIndex >= barItems.length ? 0 : _currentIndex;
+              final safeIndex = _currentIndex >= barItems.length
+                  ? 0
+                  : _currentIndex;
               currentPage = barItems[safeIndex].page;
             }
 
@@ -283,8 +287,9 @@ class _AppScaffoldState extends State<AppScaffold> {
                                   horizontal: 8,
                                 ),
                                 decoration: BoxDecoration(
-                                  color: AppColors.cardSurface
-                                      .withValues(alpha: 0.8),
+                                  color: AppColors.cardSurface.withValues(
+                                    alpha: 0.8,
+                                  ),
                                   borderRadius: BorderRadius.circular(30),
                                   border: Border.all(
                                     color: Colors.white.withValues(alpha: 0.1),
@@ -299,7 +304,7 @@ class _AppScaffoldState extends State<AppScaffold> {
                                       final index = barItems.indexOf(item);
                                       final isSelected =
                                           _overflowSelectedId == null &&
-                                              index == _currentIndex;
+                                          index == _currentIndex;
 
                                       return GestureDetector(
                                         onTap: () {
@@ -309,8 +314,9 @@ class _AppScaffoldState extends State<AppScaffold> {
                                           });
                                         },
                                         child: AnimatedContainer(
-                                          duration:
-                                              const Duration(milliseconds: 200),
+                                          duration: const Duration(
+                                            milliseconds: 200,
+                                          ),
                                           padding: const EdgeInsets.symmetric(
                                             horizontal: 10,
                                             vertical: 8,
@@ -321,8 +327,9 @@ class _AppScaffoldState extends State<AppScaffold> {
                                                     alpha: 0.2,
                                                   )
                                                 : Colors.transparent,
-                                            borderRadius:
-                                                BorderRadius.circular(20),
+                                            borderRadius: BorderRadius.circular(
+                                              20,
+                                            ),
                                           ),
                                           child: Column(
                                             mainAxisSize: MainAxisSize.min,
@@ -363,8 +370,9 @@ class _AppScaffoldState extends State<AppScaffold> {
                                           accentColor,
                                         ),
                                         child: AnimatedContainer(
-                                          duration:
-                                              const Duration(milliseconds: 200),
+                                          duration: const Duration(
+                                            milliseconds: 200,
+                                          ),
                                           padding: const EdgeInsets.symmetric(
                                             horizontal: 10,
                                             vertical: 8,
@@ -375,16 +383,17 @@ class _AppScaffoldState extends State<AppScaffold> {
                                                     alpha: 0.2,
                                                   )
                                                 : Colors.transparent,
-                                            borderRadius:
-                                                BorderRadius.circular(20),
+                                            borderRadius: BorderRadius.circular(
+                                              20,
+                                            ),
                                           ),
                                           child: Column(
                                             mainAxisSize: MainAxisSize.min,
                                             children: [
                                               Icon(
                                                 Icons.more_horiz,
-                                                color: _overflowSelectedId !=
-                                                        null
+                                                color:
+                                                    _overflowSelectedId != null
                                                     ? accentColor
                                                     : AppColors.textSecondary,
                                                 size: 24,
@@ -396,10 +405,11 @@ class _AppScaffoldState extends State<AppScaffold> {
                                                   fontSize: 10,
                                                   fontWeight:
                                                       _overflowSelectedId !=
-                                                              null
-                                                          ? FontWeight.w600
-                                                          : FontWeight.normal,
-                                                  color: _overflowSelectedId !=
+                                                          null
+                                                      ? FontWeight.w600
+                                                      : FontWeight.normal,
+                                                  color:
+                                                      _overflowSelectedId !=
                                                           null
                                                       ? accentColor
                                                       : AppColors.textSecondary,
@@ -434,56 +444,59 @@ class _AppScaffoldState extends State<AppScaffold> {
     List<_NavItem> overflowItems,
     Color accentColor,
   ) {
-    unawaited(showModalBottomSheet(
-      context: context,
-      backgroundColor: AppColors.cardSurface,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
-      ),
-      builder: (ctx) {
-        return SafeArea(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const SizedBox(height: 12),
-              Container(
-                width: 40,
-                height: 4,
-                decoration: BoxDecoration(
-                  color: AppColors.textSecondary.withValues(alpha: 0.4),
-                  borderRadius: BorderRadius.circular(2),
+    unawaited(
+      showModalBottomSheet(
+        context: context,
+        backgroundColor: AppColors.cardSurface,
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+        ),
+        builder: (ctx) {
+          return SafeArea(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const SizedBox(height: 12),
+                Container(
+                  width: 40,
+                  height: 4,
+                  decoration: BoxDecoration(
+                    color: AppColors.textSecondary.withValues(alpha: 0.4),
+                    borderRadius: BorderRadius.circular(2),
+                  ),
                 ),
-              ),
-              const SizedBox(height: 16),
-              ...overflowItems.map((item) {
-                final isSelected = _overflowSelectedId == item.id;
-                return ListTile(
-                  leading: Icon(
-                    item.icon,
-                    color: isSelected ? accentColor : AppColors.textSecondary,
-                  ),
-                  title: Text(
-                    item.label,
-                    style: TextStyle(
-                      color: isSelected ? accentColor : AppColors.textPrimary,
-                      fontWeight:
-                          isSelected ? FontWeight.bold : FontWeight.normal,
+                const SizedBox(height: 16),
+                ...overflowItems.map((item) {
+                  final isSelected = _overflowSelectedId == item.id;
+                  return ListTile(
+                    leading: Icon(
+                      item.icon,
+                      color: isSelected ? accentColor : AppColors.textSecondary,
                     ),
-                  ),
-                  onTap: () {
-                    Navigator.pop(ctx);
-                    setState(() {
-                      _overflowSelectedId = item.id;
-                    });
-                  },
-                );
-              }),
-              const SizedBox(height: 8),
-            ],
-          ),
-        );
-      },
-    ));
+                    title: Text(
+                      item.label,
+                      style: TextStyle(
+                        color: isSelected ? accentColor : AppColors.textPrimary,
+                        fontWeight: isSelected
+                            ? FontWeight.bold
+                            : FontWeight.normal,
+                      ),
+                    ),
+                    onTap: () {
+                      Navigator.pop(ctx);
+                      setState(() {
+                        _overflowSelectedId = item.id;
+                      });
+                    },
+                  );
+                }),
+                const SizedBox(height: 8),
+              ],
+            ),
+          );
+        },
+      ),
+    );
   }
 
   /// Returns ALL possible nav items in a canonical order.
@@ -586,9 +599,9 @@ class NavTabEntry {
   Map<String, dynamic> toJson() => {'id': id, 'visible': visible};
 
   factory NavTabEntry.fromJson(Map<String, dynamic> json) => NavTabEntry(
-        id: json['id'] as String,
-        visible: json['visible'] as bool? ?? true,
-      );
+    id: json['id'] as String,
+    visible: json['visible'] as bool? ?? true,
+  );
 
   NavTabEntry copyWith({bool? visible}) =>
       NavTabEntry(id: id, visible: visible ?? this.visible);
@@ -623,9 +636,8 @@ class NavBarConfig {
   const NavBarConfig({required this.tabs, this.maxVisibleTabs = 5});
 
   /// Default config with all tabs visible in canonical order.
-  factory NavBarConfig.defaultConfig() => NavBarConfig(
-        tabs: allTabIds.map((id) => NavTabEntry(id: id)).toList(),
-      );
+  factory NavBarConfig.defaultConfig() =>
+      NavBarConfig(tabs: allTabIds.map((id) => NavTabEntry(id: id)).toList());
 
   /// Ordered list of visible tab IDs.
   List<String> get visibleTabIds =>
@@ -646,9 +658,9 @@ class NavBarConfig {
   // ── Persistence ────────────────────────────────────────────────────────────
 
   Map<String, dynamic> toJson() => {
-        'tabs': tabs.map((t) => t.toJson()).toList(),
-        'maxVisibleTabs': maxVisibleTabs,
-      };
+    'tabs': tabs.map((t) => t.toJson()).toList(),
+    'maxVisibleTabs': maxVisibleTabs,
+  };
 
   factory NavBarConfig.fromJson(Map<String, dynamic> json) {
     final tabsList = (json['tabs'] as List)
