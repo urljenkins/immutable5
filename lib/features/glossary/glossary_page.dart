@@ -30,9 +30,9 @@ class _GlossaryPageState extends State<GlossaryPage> {
   final _prefs = SecureStorageProvider();
 
   List<String> get _categories => [
-        'All',
-        ...{..._allItem.map((item) => item.category)},
-      ];
+    'All',
+    ...{..._allItem.map((item) => item.category)},
+  ];
 
   @override
   void initState() {
@@ -99,7 +99,8 @@ class _GlossaryPageState extends State<GlossaryPage> {
     setState(() {
       _searchQuery = _searchController.text.toLowerCase();
       _filteredItems = _allItem.where((item) {
-        final matchesSearch = item.term.toLowerCase().contains(_searchQuery) ||
+        final matchesSearch =
+            item.term.toLowerCase().contains(_searchQuery) ||
             item.definition.toLowerCase().contains(_searchQuery);
         final matchesCategory =
             _selectedCategory == 'All' || item.category == _selectedCategory;
@@ -168,8 +169,8 @@ class _GlossaryPageState extends State<GlossaryPage> {
                   child: _loading
                       ? const Center(child: CircularProgressIndicator())
                       : _filteredItems.isEmpty
-                          ? _buildEmptyState()
-                          : _buildGlossaryList(),
+                      ? _buildEmptyState()
+                      : _buildGlossaryList(),
                 ),
               ],
             ),
@@ -274,8 +275,10 @@ class _GlossaryPageState extends State<GlossaryPage> {
                 collapsedShape: const RoundedRectangleBorder(
                   borderRadius: BorderRadius.all(Radius.circular(16)),
                 ),
-                tilePadding:
-                    const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+                tilePadding: const EdgeInsets.symmetric(
+                  horizontal: 20,
+                  vertical: 8,
+                ),
                 title: Row(
                   children: [
                     Expanded(
@@ -289,7 +292,11 @@ class _GlossaryPageState extends State<GlossaryPage> {
                       ),
                     ),
                     if (isKnown)
-                      Icon(Icons.check_circle, color: AppColors.accent, size: 16),
+                      Icon(
+                        Icons.check_circle,
+                        color: AppColors.accent,
+                        size: 16,
+                      ),
                   ],
                 ),
                 subtitle: item.arabic != null
@@ -304,7 +311,10 @@ class _GlossaryPageState extends State<GlossaryPage> {
                       )
                     : null,
                 trailing: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 4,
+                  ),
                   decoration: BoxDecoration(
                     color: AppColors.accent.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(8),
@@ -349,8 +359,9 @@ class _GlossaryPageState extends State<GlossaryPage> {
                             ),
                           ),
                           style: TextButton.styleFrom(
-                            foregroundColor:
-                                isKnown ? AppColors.textSecondary : AppColors.accent,
+                            foregroundColor: isKnown
+                                ? AppColors.textSecondary
+                                : AppColors.accent,
                             padding: const EdgeInsets.symmetric(horizontal: 12),
                           ),
                         ),

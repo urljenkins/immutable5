@@ -73,8 +73,10 @@ class _NavBarCustomizationPageState extends State<NavBarCustomizationPage> {
         children: [
           // ── Max visible slider ─────────────────────────────────────────
           Padding(
-            padding:
-                const EdgeInsets.symmetric(horizontal: 24.0, vertical: 8.0),
+            padding: const EdgeInsets.symmetric(
+              horizontal: 24.0,
+              vertical: 8.0,
+            ),
             child: Row(
               children: [
                 Text(
@@ -100,8 +102,9 @@ class _NavBarCustomizationPageState extends State<NavBarCustomizationPage> {
             data: SliderThemeData(
               activeTrackColor: AppColors.accent,
               thumbColor: AppColors.accent,
-              inactiveTrackColor:
-                  AppColors.textSecondary.withValues(alpha: 0.2),
+              inactiveTrackColor: AppColors.textSecondary.withValues(
+                alpha: 0.2,
+              ),
               overlayColor: AppColors.accent.withValues(alpha: 0.15),
             ),
             child: Slider(
@@ -119,8 +122,10 @@ class _NavBarCustomizationPageState extends State<NavBarCustomizationPage> {
 
           // ── Hint text ──────────────────────────────────────────────────
           Padding(
-            padding:
-                const EdgeInsets.symmetric(horizontal: 24.0, vertical: 12.0),
+            padding: const EdgeInsets.symmetric(
+              horizontal: 24.0,
+              vertical: 12.0,
+            ),
             child: Text(
               'Drag to reorder · Toggle to show/hide',
               style: GoogleFonts.plusJakartaSans(
@@ -163,11 +168,7 @@ class _NavBarCustomizationPageState extends State<NavBarCustomizationPage> {
                       final item = reorderable.removeAt(oldIdx);
                       reorderable.insert(newIdx, item);
                       // Rebuild _tabs: home + reorderable + settings
-                      _tabs = [
-                        homeEntry,
-                        ...reorderable,
-                        settingsEntry,
-                      ];
+                      _tabs = [homeEntry, ...reorderable, settingsEntry];
                     });
                     _save();
                   },
@@ -182,13 +183,16 @@ class _NavBarCustomizationPageState extends State<NavBarCustomizationPage> {
                       visible: entry.visible,
                       onToggle: (val) {
                         setState(() {
-                          final tabIndex =
-                              _tabs.indexWhere((t) => t.id == entry.id);
-                          _tabs[tabIndex] =
-                              _tabs[tabIndex].copyWith(visible: val);
+                          final tabIndex = _tabs.indexWhere(
+                            (t) => t.id == entry.id,
+                          );
+                          _tabs[tabIndex] = _tabs[tabIndex].copyWith(
+                            visible: val,
+                          );
                           // Also update the local reorderable list reference
-                          reorderable[index] =
-                              reorderable[index].copyWith(visible: val);
+                          reorderable[index] = reorderable[index].copyWith(
+                            visible: val,
+                          );
                         });
                         _save();
                       },
@@ -232,8 +236,9 @@ class _NavBarCustomizationPageState extends State<NavBarCustomizationPage> {
 
   Widget _buildPreviewStrip() {
     final visible = _tabs.where((t) => t.visible).toList();
-    final barCount =
-        visible.length <= _maxVisible ? visible.length : _maxVisible;
+    final barCount = visible.length <= _maxVisible
+        ? visible.length
+        : _maxVisible;
     final barEntries = visible.sublist(0, barCount);
     final hasOverflow = visible.length > _maxVisible;
 
@@ -243,9 +248,7 @@ class _NavBarCustomizationPageState extends State<NavBarCustomizationPage> {
       decoration: BoxDecoration(
         color: AppColors.cardSurface.withValues(alpha: 0.9),
         borderRadius: BorderRadius.circular(30),
-        border: Border.all(
-          color: Colors.white.withValues(alpha: 0.1),
-        ),
+        border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,

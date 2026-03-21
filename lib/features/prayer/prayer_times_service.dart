@@ -6,12 +6,8 @@ import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:immutable5/services/secure_storage_provider.dart';
 
-typedef PrayerTimesServiceFactory = PrayerTimesService Function(
-  double lat,
-  double lon,
-  int method,
-  int madhab,
-);
+typedef PrayerTimesServiceFactory =
+    PrayerTimesService Function(double lat, double lon, int method, int madhab);
 
 class PrayerTimesService {
   final double latitude;
@@ -102,14 +98,16 @@ class PrayerTimesService {
     );
 
     try {
-      final response = await http.get(url).timeout(
-        const Duration(seconds: 10),
-        onTimeout: () {
-          throw TimeoutException(
-            'Prayer times request timed out. Please check your internet connection.',
+      final response = await http
+          .get(url)
+          .timeout(
+            const Duration(seconds: 10),
+            onTimeout: () {
+              throw TimeoutException(
+                'Prayer times request timed out. Please check your internet connection.',
+              );
+            },
           );
-        },
-      );
 
       if (response.statusCode == 200) {
         final data = json.decode(response.body) as Map<String, dynamic>;
@@ -185,7 +183,8 @@ class PrayerTimesService {
       final cachedTomorrowData = await prefs.getString(tomorrowCacheKey);
       if (cachedTomorrowData != null) {
         try {
-          final cached = json.decode(cachedTomorrowData) as Map<String, dynamic>;
+          final cached =
+              json.decode(cachedTomorrowData) as Map<String, dynamic>;
           if (cached.containsKey('Fajr')) {
             final fajrTime = DateTime.fromMillisecondsSinceEpoch(
               cached['Fajr'] as int,
@@ -206,14 +205,16 @@ class PrayerTimesService {
       );
 
       try {
-        final response = await http.get(url).timeout(
-          const Duration(seconds: 10),
-          onTimeout: () {
-            throw TimeoutException(
-              'Prayer times request timed out. Please check your internet connection.',
+        final response = await http
+            .get(url)
+            .timeout(
+              const Duration(seconds: 10),
+              onTimeout: () {
+                throw TimeoutException(
+                  'Prayer times request timed out. Please check your internet connection.',
+                );
+              },
             );
-          },
-        );
 
         if (response.statusCode == 200) {
           final data = json.decode(response.body) as Map<String, dynamic>;

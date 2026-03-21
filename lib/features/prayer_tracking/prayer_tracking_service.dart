@@ -5,7 +5,7 @@ class PrayerTrackingService {
   final SecureStorageProvider _prefs;
 
   PrayerTrackingService({SecureStorageProvider? prefs})
-      : _prefs = prefs ?? getIt<SecureStorageProvider>();
+    : _prefs = prefs ?? getIt<SecureStorageProvider>();
 
   final List<String> mainPrayers = ['Fajr', 'Dhuhr', 'Asr', 'Maghrib', 'Isha'];
 

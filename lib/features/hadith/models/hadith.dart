@@ -91,7 +91,8 @@ class Hadith {
               json['display_context'] as Map<String, dynamic>,
             )
           : null,
-      variants: (json['variants'] as List?)
+      variants:
+          (json['variants'] as List?)
               ?.map((e) => HadithVariant.fromJson(e as Map<String, dynamic>))
               .toList() ??
           const [],
