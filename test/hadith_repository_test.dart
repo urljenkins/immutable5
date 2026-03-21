@@ -13,13 +13,13 @@ void main() {
     });
 
     test('initialize loads hadiths from assets', () async {
-      // Note: In a real test we might want to mock rootBundle, 
-      // but here we are testing the actual asset if possible, 
+      // Note: In a real test we might want to mock rootBundle,
+      // but here we are testing the actual asset if possible,
       // or at least that the repository can handle the format.
-      
+
       // Since we can't easily mock rootBundle in this environment without extra setup,
       // we'll assume the environment has the assets or we'll mock it if needed.
-      
+
       // For this environment, let's just check if it can be initialized.
       // We'll use a try-catch because rootBundle.loadString might fail in test env if not configured.
       try {

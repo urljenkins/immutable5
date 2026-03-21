@@ -326,14 +326,19 @@ class _PrayerStatsPageState extends State<PrayerStatsPage> {
                             decoration: BoxDecoration(
                               color: bgColor,
                               borderRadius: BorderRadius.circular(16),
-                              border: Border.all(color: borderColor, width: isHighlighted ? 2 : 1),
-                              boxShadow: isHighlighted ? [
-                                BoxShadow(
-                                  color: AppColors.accent.withValues(alpha: 0.2),
-                                  blurRadius: 10,
-                                  spreadRadius: 2,
-                                )
-                              ] : null,
+                              border: Border.all(
+                                  color: borderColor,
+                                  width: isHighlighted ? 2 : 1),
+                              boxShadow: isHighlighted
+                                  ? [
+                                      BoxShadow(
+                                        color: AppColors.accent
+                                            .withValues(alpha: 0.2),
+                                        blurRadius: 10,
+                                        spreadRadius: 2,
+                                      )
+                                    ]
+                                  : null,
                             ),
                             child: Opacity(
                               opacity: isCompleted ? 0.5 : 1.0,

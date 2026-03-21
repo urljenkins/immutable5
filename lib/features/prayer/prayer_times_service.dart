@@ -185,7 +185,8 @@ class PrayerTimesService {
       final cachedTomorrowData = await prefs.getString(tomorrowCacheKey);
       if (cachedTomorrowData != null) {
         try {
-          final cached = json.decode(cachedTomorrowData) as Map<String, dynamic>;
+          final cached =
+              json.decode(cachedTomorrowData) as Map<String, dynamic>;
           if (cached.containsKey('Fajr')) {
             final fajrTime = DateTime.fromMillisecondsSinceEpoch(
               cached['Fajr'] as int,

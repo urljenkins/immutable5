@@ -19,13 +19,13 @@ class FakeQuoteService extends QuotePickerService {
 class FakeHadithRepository extends HadithRepository {
   @override
   Future<List<Hadith>> getAllHadiths() async => [];
-  
+
   @override
   Future<Hadith?> getHadithById(String id) async => null;
-  
+
   @override
   Future<List<Hadith>> getHadithsByTopic(String topic) async => [];
-  
+
   @override
   Future<List<Hadith>> getHadithsByCollection(String collection) async => [];
 }

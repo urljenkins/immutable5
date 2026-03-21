@@ -268,6 +268,41 @@ class _MyHomePageState extends State<MyHomePage> {
 
                             const SizedBox(height: 40),
 
+                            // Surah Kahf Reminder
+                            if (state.showSurahKahfReminder)
+                              Padding(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 24,
+                                  vertical: 8,
+                                ),
+                                child: _StatusBanner(
+                                  icon: Icons.menu_book_rounded,
+                                  background:
+                                      AppColors.accent.withValues(alpha: 0.1),
+                                  foreground: AppColors.accent,
+                                  message:
+                                      "It's Friday! Don't forget to read Surah Al-Kahf.",
+                                  action: TextButton(
+                                    onPressed: () {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) =>
+                                              const QuranPage(initialSurah: 18),
+                                        ),
+                                      );
+                                    },
+                                    child: const Text(
+                                      'Read',
+                                      style: TextStyle(
+                                        color: AppColors.accent,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+
                             // Contextual or Standard Quote Card
                             Padding(
                               padding: const EdgeInsets.fromLTRB(24, 0, 24, 40),
@@ -287,8 +322,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                             context,
                                             MaterialPageRoute(
                                               builder: (context) => DuasPage(
-                                                initialDua:
-                                                    state.contextualDua,
+                                                initialDua: state.contextualDua,
                                               ),
                                             ),
                                           );
@@ -307,9 +341,9 @@ class _MyHomePageState extends State<MyHomePage> {
                                                 MaterialPageRoute(
                                                   builder: (context) =>
                                                       HadithsPage(
-                                                        initialHadith:
-                                                            state.contextualHadith,
-                                                      ),
+                                                    initialHadith:
+                                                        state.contextualHadith,
+                                                  ),
                                                 ),
                                               );
                                             },
@@ -324,8 +358,8 @@ class _MyHomePageState extends State<MyHomePage> {
                                               child: Text(
                                                 state.quote ?? '...',
                                                 textAlign: TextAlign.center,
-                                                style: GoogleFonts
-                                                    .plusJakartaSans(
+                                                style:
+                                                    GoogleFonts.plusJakartaSans(
                                                   fontSize: 16,
                                                   height: 1.6,
                                                   color: AppColors.textPrimary
