@@ -356,8 +356,7 @@ class HomeController extends ChangeNotifier {
       final quoteFresh = _cachedQuoteTimestamp != null &&
           now.difference(_cachedQuoteTimestamp!) < _quoteCacheTtl;
       if (forceRefresh || quote == null || !quoteFresh) {
-        quote = await quoteService
-            .getQuote(); // Deprecated or changed API? Will fix compilation later if need be.
+        quote = await quoteService.getQuote();
         _cachedQuote = quote;
         _cachedQuoteTimestamp = DateTime.now();
       }
