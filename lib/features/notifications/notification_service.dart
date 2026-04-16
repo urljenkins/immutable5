@@ -88,13 +88,20 @@ class NotificationService {
     final now = DateTime.now();
     int notificationId = 0;
 
-    final jummahRemindersEnabled =
-        await prefs.getBool('jummahReminders') ?? true;
-    final iftarRemindersEnabled = await prefs.getBool('iftarReminders') ?? true;
+    // Fetch preferences in parallel
+    final List<Future<bool?>> prefsFutures = [
+      prefs.getBool('jummahReminders'),
+      prefs.getBool('iftarReminders'),
+    ];
+    final List<bool?> prefsResults = await Future.wait(prefsFutures);
+    final bool jummahRemindersEnabled = prefsResults[0] ?? true;
+    final bool iftarRemindersEnabled = prefsResults[1] ?? true;
 
-    for (final entry in prayerTimes.entries) {
-      final prayerName = entry.key;
-      final prayerTime = entry.value;
+    final List<Future<void>> scheduleTasks = [];
+
+    for (final MapEntry<String, DateTime> entry in prayerTimes.entries) {
+      final String prayerName = entry.key;
+      final DateTime prayerTime = entry.value;
 
       // Skip prayers that have already passed
       if (prayerTime.isBefore(now)) continue;
@@ -102,10 +109,8 @@ class NotificationService {
       // Skip non-essential prayer times (like Sunrise, Midnight, etc)
       if (!_isMainPrayer(prayerName)) continue;
 
-      await _schedulePrayerNotification(
-        notificationId++,
-        prayerName,
-        prayerTime,
+      scheduleTasks.add(
+        _schedulePrayerNotification(notificationId++, prayerName, prayerTime),
       );
 
       // Contextual Notifications Logic
@@ -113,14 +118,18 @@ class NotificationService {
       if (prayerName == 'Dhuhr' &&
           prayerTime.weekday == DateTime.friday &&
           jummahRemindersEnabled) {
-        final jummahPrepTime = prayerTime.subtract(const Duration(hours: 1));
+        final DateTime jummahPrepTime = prayerTime.subtract(
+          const Duration(hours: 1),
+        );
         if (jummahPrepTime.isAfter(now)) {
-          await _scheduleContextualNotification(
-            notificationId++,
-            'Jummah Preparation',
-            'Time to get ready for Jummah prayer! Don\'t forget to read Surah Al-Kahf.',
-            jummahPrepTime,
-            'jummah_prep',
+          scheduleTasks.add(
+            _scheduleContextualNotification(
+              notificationId++,
+              'Jummah Preparation',
+              'Time to get ready for Jummah prayer! Don\'t forget to read Surah Al-Kahf.',
+              jummahPrepTime,
+              'jummah_prep',
+            ),
           );
         }
       }
@@ -129,18 +138,26 @@ class NotificationService {
       // Note: Full Hijri calendar check requires hijri_calendar package, using simple check for demo purposes
       // The calling code should ideally pass whether it's Ramadan, but we will schedule it strictly here if enabled
       if (prayerName == 'Maghrib' && iftarRemindersEnabled) {
-        final iftarPrepTime = prayerTime.subtract(const Duration(minutes: 15));
+        final DateTime iftarPrepTime = prayerTime.subtract(
+          const Duration(minutes: 15),
+        );
         if (iftarPrepTime.isAfter(now)) {
           // Ideally check HijriCalendar.now().hMonth == 9 here before scheduling
-          await _scheduleContextualNotification(
-            notificationId++,
-            'Iftar Preparation',
-            'Maghrib is in 15 minutes. Take this time to make abundant dua.',
-            iftarPrepTime,
-            'iftar_prep',
+          scheduleTasks.add(
+            _scheduleContextualNotification(
+              notificationId++,
+              'Iftar Preparation',
+              'Maghrib is in 15 minutes. Take this time to make abundant dua.',
+              iftarPrepTime,
+              'iftar_prep',
+            ),
           );
         }
       }
+    }
+
+    if (scheduleTasks.isNotEmpty) {
+      await Future.wait(scheduleTasks);
     }
   }
 
