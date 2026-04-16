@@ -159,7 +159,7 @@ android/
       │   │   └── prayer_times_widget.xml
       │   └── xml/
       │       └── prayer_times_widget_info.xml
-      └── kotlin/com/example/immutable5/
+      └── kotlin/com/immutable5/app/
           └── PrayerTimesWidgetProvider.kt
 ios/
   └── PrayerTimesWidget/
@@ -175,11 +175,11 @@ assets/
 
 ### Android Application ID
 
-Before publishing to the Google Play Store, update the application ID in `android/app/build.gradle.kts`:
+The application ID is set in `android/app/build.gradle.kts`:
 
 ```kotlin
 defaultConfig {
-    applicationId = "com.yourcompany.immutable5"  // Change from com.example.immutable5
+    applicationId = "com.immutable5.app"
     // ...
 }
 ```
