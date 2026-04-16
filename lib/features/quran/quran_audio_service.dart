@@ -26,6 +26,14 @@ class QuranAudioService {
     int surahNumber,
     String reciterId,
   ) async {
+    // Input Validation
+    if (surahNumber < 1 || surahNumber > 114) {
+      throw ArgumentError('Invalid surahNumber: $surahNumber. Must be 1-114.');
+    }
+    if (!RegExp(r'^[a-z0-9.]+$').hasMatch(reciterId)) {
+      throw ArgumentError('Invalid reciterId format: $reciterId');
+    }
+
     final url = Uri.parse(
       'https://api.alquran.cloud/v1/surah/$surahNumber/$reciterId',
     );
