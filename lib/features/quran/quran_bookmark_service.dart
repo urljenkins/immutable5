@@ -49,9 +49,13 @@ class QuranBookmark {
 ///
 /// Subscribe to [bookmarks] to receive reactive updates.
 class QuranBookmarkService {
-  QuranBookmarkService._();
-  static final QuranBookmarkService instance = QuranBookmarkService._();
+  @visibleForTesting
+  QuranBookmarkService({SecureStorageProvider? secureStorage})
+      : _secureStorage = secureStorage ?? SecureStorageProvider();
 
+  static final QuranBookmarkService instance = QuranBookmarkService();
+
+  final SecureStorageProvider _secureStorage;
   static const _prefsKey = 'quranBookmarks';
 
   /// Reactive list of bookmarks, sorted newest-first.
@@ -63,18 +67,17 @@ class QuranBookmarkService {
     String? raw = prefs.getString(_prefsKey);
 
     if (raw == null) {
-      final securePrefs = SecureStorageProvider();
-      raw = await securePrefs.getString(_prefsKey);
+      raw = await _secureStorage.getString(_prefsKey);
       if (raw != null) {
         await prefs.setString(_prefsKey, raw);
-        await securePrefs.remove(_prefsKey);
+        await _secureStorage.remove(_prefsKey);
       }
     }
 
     if (raw == null) return;
     try {
-      final list = (jsonDecode(raw) as List)
-          .map((e) => QuranBookmark.fromJson(e as Map<String, dynamic>))
+      final list = (jsonDecode(raw) as List<dynamic>)
+          .map((dynamic e) => QuranBookmark.fromJson(e as Map<String, dynamic>))
           .toList()
         ..sort((a, b) => b.savedAt.compareTo(a.savedAt));
       bookmarks.value = list;
@@ -84,7 +87,8 @@ class QuranBookmarkService {
   }
 
   bool isBookmarked(int surahNumber, int verseIndex) => bookmarks.value.any(
-        (b) => b.surahNumber == surahNumber && b.verseIndex == verseIndex,
+        (QuranBookmark b) =>
+            b.surahNumber == surahNumber && b.verseIndex == verseIndex,
       );
 
   /// Adds a bookmark; no-op if already present. Returns `true` if added.
@@ -101,7 +105,8 @@ class QuranBookmarkService {
     final before = bookmarks.value.length;
     final updated = bookmarks.value
         .where(
-          (b) => !(b.surahNumber == surahNumber && b.verseIndex == verseIndex),
+          (QuranBookmark b) =>
+              !(b.surahNumber == surahNumber && b.verseIndex == verseIndex),
         )
         .toList();
     if (updated.length == before) return false;
@@ -123,7 +128,8 @@ class QuranBookmarkService {
 
   Future<void> _persist() async {
     final prefs = await SharedPreferences.getInstance();
-    final encoded = jsonEncode(bookmarks.value.map((b) => b.toJson()).toList());
+    final encoded =
+        jsonEncode(bookmarks.value.map((QuranBookmark b) => b.toJson()).toList());
     await prefs.setString(_prefsKey, encoded);
   }
 }
