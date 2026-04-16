@@ -165,105 +165,115 @@ class _TasbihPageState extends State<TasbihPage>
   void _startListening() {
     if (_speech.isListening) return; // Prevent "error_busy"
     _lastRecognizedWords = 0;
-    unawaited(_speech.listen(
-      onResult: (result) {
-        if (!mounted || !_isVoiceEnabled) return;
+    unawaited(
+      _speech.listen(
+        onResult: (result) {
+          if (!mounted || !_isVoiceEnabled) return;
 
-        final recognizedText = result.recognizedWords.trim();
-        if (recognizedText.isEmpty) return;
+          final recognizedText = result.recognizedWords.trim();
+          if (recognizedText.isEmpty) return;
 
-        final words = recognizedText
-            .split(RegExp(r'\s+'))
-            .where((w) => w.isNotEmpty)
-            .toList();
+          final words = recognizedText
+              .split(RegExp(r'\s+'))
+              .where((w) => w.isNotEmpty)
+              .toList();
 
-        if (words.length > _lastRecognizedWords) {
-          final int diff = words.length - _lastRecognizedWords;
+          if (words.length > _lastRecognizedWords) {
+            final int diff = words.length - _lastRecognizedWords;
 
-          // Get the current expected phrase based on phase index
-          final currentPhase = _tasbihPhases[_phaseIndex];
-          final expectedTranslit =
-              currentPhase['translit'].toString().toLowerCase().split(' ');
+            // Get the current expected phrase based on phase index
+            final Map<String, dynamic> currentPhase =
+                _tasbihPhases[_phaseIndex];
+            final List<String> expectedTranslit = currentPhase['translit']
+                .toString()
+                .toLowerCase()
+                .split(' ');
 
-          for (int i = 0; i < diff; i++) {
-            // Let's do a simple check to see if the recognized words relate to the expected transliteration
-            if (words.last.toLowerCase() == 'subhanallah' ||
-                words.last.toLowerCase() == 'alhamdulillah' ||
-                words.last.toLowerCase() == 'allahu' ||
-                words.last.toLowerCase() == 'akbar' ||
-                words.last.toLowerCase() == 'allah' ||
-                words.last.toLowerCase() == 'la' ||
-                words.last.toLowerCase() == 'ilaha' ||
-                expectedTranslit
-                    .any((part) => words.last.toLowerCase().contains(part))) {
-              _incrementCount();
-            } else {
-              // Optional: we can decide to still increment or just ignore based on precise matching
-              // For now, if they enable voice, we attempt to match any of the common dhikr words
-              // or parts of the current expected phrase. If completely unrelated, we ignore.
+            for (int i = 0; i < diff; i++) {
+              final String currentWord = words[words.length - diff + i]
+                  .toLowerCase();
+              // Let's do a simple check to see if the recognized words relate to the expected transliteration
+              if (currentWord == 'subhanallah' ||
+                  currentWord == 'alhamdulillah' ||
+                  currentWord == 'allahu' ||
+                  currentWord == 'akbar' ||
+                  currentWord == 'allah' ||
+                  currentWord == 'la' ||
+                  currentWord == 'ilaha' ||
+                  expectedTranslit.any(
+                    (String part) => currentWord.contains(part),
+                  )) {
+                _incrementCount();
+              } else {
+                // Optional: we can decide to still increment or just ignore based on precise matching
+                // For now, if they enable voice, we attempt to match any of the common dhikr words
+                // or parts of the current expected phrase. If completely unrelated, we ignore.
+              }
             }
+            _lastRecognizedWords = words.length;
           }
-          _lastRecognizedWords = words.length;
-        }
 
-        if (result.finalResult) {
-          // The current listening session ended natively;
-          // the onStatus callback handles restarting it.
-        }
-      },
-      listenFor: const Duration(seconds: 60),
-      pauseFor: const Duration(seconds: 5),
-      listenOptions: stt.SpeechListenOptions(),
-    ));
+          if (result.finalResult) {
+            // The current listening session ended natively;
+            // the onStatus callback handles restarting it.
+          }
+        },
+        listenFor: const Duration(seconds: 60),
+        pauseFor: const Duration(seconds: 5),
+        listenOptions: stt.SpeechListenOptions(),
+      ),
+    );
   }
 
   void _showTargetDialog() {
-    unawaited(showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        backgroundColor: AppColors.cardSurface,
-        title: Text(
-          AppLocalizations.of(context)!.setTarget,
-          style: GoogleFonts.plusJakartaSans(color: AppColors.textPrimary),
-        ),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            ListTile(
-              title: const Text(
-                '33',
-                style: TextStyle(color: AppColors.textPrimary),
+    unawaited(
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          backgroundColor: AppColors.cardSurface,
+          title: Text(
+            AppLocalizations.of(context)!.setTarget,
+            style: GoogleFonts.plusJakartaSans(color: AppColors.textPrimary),
+          ),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              ListTile(
+                title: const Text(
+                  '33',
+                  style: TextStyle(color: AppColors.textPrimary),
+                ),
+                onTap: () {
+                  setState(() => _target = 33);
+                  Navigator.pop(context);
+                },
               ),
-              onTap: () {
-                setState(() => _target = 33);
-                Navigator.pop(context);
-              },
-            ),
-            ListTile(
-              title: const Text(
-                '100',
-                style: TextStyle(color: AppColors.textPrimary),
+              ListTile(
+                title: const Text(
+                  '100',
+                  style: TextStyle(color: AppColors.textPrimary),
+                ),
+                onTap: () {
+                  setState(() => _target = 100);
+                  Navigator.pop(context);
+                },
               ),
-              onTap: () {
-                setState(() => _target = 100);
-                Navigator.pop(context);
-              },
-            ),
-            ListTile(
-              title: const Text(
-                'Infinite (Custom)',
-                style: TextStyle(color: AppColors.textPrimary),
+              ListTile(
+                title: const Text(
+                  'Infinite (Custom)',
+                  style: TextStyle(color: AppColors.textPrimary),
+                ),
+                onTap: () {
+                  // Simple custom input could be added here
+                  setState(() => _target = 99999);
+                  Navigator.pop(context);
+                },
               ),
-              onTap: () {
-                // Simple custom input could be added here
-                setState(() => _target = 99999);
-                Navigator.pop(context);
-              },
-            ),
-          ],
+            ],
+          ),
         ),
       ),
-    ));
+    );
   }
 
   @override
@@ -340,8 +350,10 @@ class _TasbihPageState extends State<TasbihPage>
 
           if (_target == 100)
             Padding(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+              padding: const EdgeInsets.symmetric(
+                horizontal: 16.0,
+                vertical: 8.0,
+              ),
               child: Column(
                 children: List.generate(_tasbihPhases.length, (index) {
                   final phase = _tasbihPhases[index];
@@ -373,8 +385,8 @@ class _TasbihPageState extends State<TasbihPage>
                             color: isActive
                                 ? AppColors.accent
                                 : (isDone
-                                    ? AppColors.success
-                                    : AppColors.cardSurface),
+                                      ? AppColors.success
+                                      : AppColors.cardSurface),
                             shape: BoxShape.circle,
                           ),
                           child: Center(
