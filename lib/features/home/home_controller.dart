@@ -551,7 +551,7 @@ class HomeController extends ChangeNotifier {
       final diff = target.difference(now);
       if (diff.isNegative) {
         timer.cancel();
-        loadData();
+        unawaited(loadData());
       } else {
         bool? kahfUpdate;
         if (now.weekday == DateTime.thursday ||
@@ -575,11 +575,11 @@ class HomeController extends ChangeNotifier {
 
   void _checkProhibitedTime() {
     if (_prayerTimesService == null) return;
-    _prayerTimesService!.isProhibitedPrayerTime().then((prohibited) {
+    unawaited(_prayerTimesService!.isProhibitedPrayerTime().then((prohibited) {
       if (prohibited != _state.isProhibitedTime) {
         _update(_state.copyWith(isProhibitedTime: prohibited));
       }
-    });
+    }));
   }
 
   Future<void> togglePrayerDisplayOption() async {
