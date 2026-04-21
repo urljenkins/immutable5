@@ -24,20 +24,16 @@ void setupLocator() {
   getIt.registerLazySingleton<DuaRepository>(DuaRepository.new);
   getIt.registerLazySingleton<HadithRepository>(HadithRepository.new);
   getIt.registerLazySingleton<ContextualDuaService>(
-    ContextualDuaService.new,
+    () => ContextualDuaService(getIt<DuaRepository>()),
   );
   getIt.registerLazySingleton<ContextualHadithService>(
     () => ContextualHadithService(getIt<HadithRepository>()),
   );
   getIt.registerLazySingleton<PlacesService>(PlacesService.new);
-  getIt.registerLazySingleton<SecureStorageProvider>(
-    SecureStorageProvider.new,
-  );
+  getIt.registerLazySingleton<SecureStorageProvider>(SecureStorageProvider.new);
   getIt.registerLazySingleton<BatteryOptimizer>(BatteryOptimizer.new);
   getIt.registerLazySingleton<CacheManager>(CacheManager.new);
-  getIt.registerLazySingleton<PrayerTrackingService>(
-    PrayerTrackingService.new,
-  );
+  getIt.registerLazySingleton<PrayerTrackingService>(PrayerTrackingService.new);
 
   // Adapters/ports
   getIt.registerLazySingleton<NotificationPort>(
@@ -49,11 +45,11 @@ void setupLocator() {
   getIt.registerFactory<PrayerTimesServiceFactory>(
     () =>
         (double lat, double lon, int method, int madhab) => PrayerTimesService(
-              latitude: lat,
-              longitude: lon,
-              method: method,
-              madhab: madhab,
-            ),
+          latitude: lat,
+          longitude: lon,
+          method: method,
+          madhab: madhab,
+        ),
   );
 }
 

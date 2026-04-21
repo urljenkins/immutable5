@@ -1,10 +1,11 @@
 import 'package:hijri/hijri_calendar.dart';
-import '../../di/service_locator.dart';
 import 'dua_repository.dart';
 import 'models/dua_model.dart';
 
 class ContextualDuaService {
-  final DuaRepository _repository = getIt<DuaRepository>();
+  final DuaRepository _repository;
+
+  ContextualDuaService(this._repository);
 
   /// Given the current time, Hijri calendar, and calculated prayer times (if any),
   /// returns the Dua with the highest context score. Returns null if no context matches.
@@ -22,8 +23,10 @@ class ContextualDuaService {
     int bestPriority = 999;
 
     // Compute the active context tokens
-    final activeTimeWindows =
-        _determineActiveTimeWindows(now, todayPrayerTimes);
+    final activeTimeWindows = _determineActiveTimeWindows(
+      now,
+      todayPrayerTimes,
+    );
     final activeHijriPeriods = _determineActiveHijriPeriods(hijriDate);
     final activeDayOfWeek = _determineDayOfWeek(now);
     final seasonalContext = _determineSeasonalContext(now);
@@ -110,8 +113,10 @@ class ContextualDuaService {
     final duas = await _repository.getAllDuas();
     if (duas.isEmpty) return [];
 
-    final activeTimeWindows =
-        _determineActiveTimeWindows(now, todayPrayerTimes);
+    final activeTimeWindows = _determineActiveTimeWindows(
+      now,
+      todayPrayerTimes,
+    );
     final activeHijriPeriods = _determineActiveHijriPeriods(hijriDate);
     final activeDayOfWeek = _determineDayOfWeek(now);
 
@@ -138,9 +143,7 @@ class ContextualDuaService {
 
       // 2. Check Hijri Periods
       if (ctx.hijriPeriods.isNotEmpty) {
-        final hasMatch = ctx.hijriPeriods.any(
-          activeHijriPeriods.contains,
-        );
+        final hasMatch = ctx.hijriPeriods.any(activeHijriPeriods.contains);
         if (hasMatch) {
           score += 20; // High weight for specific Islamic periods like Ramadan
         } else {
@@ -322,11 +325,13 @@ class ContextualDuaService {
 
     // Last third of the night
     if (fajr != null && maghrib != null) {
-      final nextFajr =
-          fajr.isBefore(maghrib) ? fajr.add(const Duration(days: 1)) : fajr;
+      final nextFajr = fajr.isBefore(maghrib)
+          ? fajr.add(const Duration(days: 1))
+          : fajr;
       final nightDuration = nextFajr.difference(maghrib);
-      final lastThirdStart =
-          nextFajr.subtract(Duration(seconds: nightDuration.inSeconds ~/ 3));
+      final lastThirdStart = nextFajr.subtract(
+        Duration(seconds: nightDuration.inSeconds ~/ 3),
+      );
 
       if (now.isAfter(lastThirdStart) && now.isBefore(nextFajr)) {
         windows.add('last_third_night');
