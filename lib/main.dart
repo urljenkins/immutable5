@@ -74,7 +74,9 @@ void main() async {
 
     navBarConfigNotifier.value = await NavBarConfig.fromPrefs(prefs);
   } catch (e) {
-    debugPrint('Error during initialization: $e');
+    if (kDebugMode) {
+      debugPrint('Error during initialization: $e');
+    }
   } finally {
     runApp(const MyApp());
   }

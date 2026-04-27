@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hijri/hijri_calendar.dart';
@@ -109,7 +110,9 @@ class _PrayerStatsPageState extends State<PrayerStatsPage> {
         }
       }
     } catch (e) {
-      debugPrint('Failed to load prayer times: $e');
+      if (kDebugMode) {
+        debugPrint('Failed to load prayer times: $e');
+      }
     }
 
     if (mounted) {
